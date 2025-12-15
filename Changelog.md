@@ -1,7 +1,7 @@
 ## Next 
 
 ## 2.0.0
-
+* Fix error in documentation for `Float.nearest`. 
 * Adds documentation for `WeakReference` module (#444).
 * Context dot syntax and implicit `compare` parameters enabled (#441).
   Rename 1st parameters to `self` to enable the context dot syntax.
