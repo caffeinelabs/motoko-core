@@ -167,7 +167,7 @@ module {
   public func trunc(x : Float) : Float = Prim.floatTrunc(x);
 
   /// Returns the nearest integral float to `x`.
-  /// A decimal place of exactly .5 is rounded up for `x > 0`
+  /// A decimal place of exactly .5 is rounded to the nearest even integral float.
   /// and rounded down for `x < 0`
   ///
   /// Special cases:
@@ -177,6 +177,7 @@ module {
   /// nearest(NaN)  => NaN
   /// nearest(0.0)  => 0.0
   /// nearest(-0.0) => -0.0
+  /// nearest(14.5) => 14.0
   /// ```
   ///
   /// Example:
