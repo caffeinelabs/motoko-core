@@ -23,7 +23,7 @@
 /// and reinstalls.
 ///
 /// For further usage information for timers on the IC, please consult
-/// [the documentation](https://internetcomputer.org/docs/current/developer-docs/backend/periodic-tasks#timers-library-limitations).
+/// [the documentation](https://internetcomputer.org/docs/building-apps/network-features/periodic-tasks-timers#timers-library-limitations).
 import { setTimer = setTimerNano; cancelTimer = cancel } = "mo:⛔";
 import Nat64 = "Nat64";
 import Time "Time";
