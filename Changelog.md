@@ -1,5 +1,5 @@
 ## Next 
-* Fix error in documentation for `Float.nearest`. 
+* Fix error in documentation for `Float.nearest`. (#449)
 
 ## 2.0.0
 * Adds documentation for `WeakReference` module (#444).
