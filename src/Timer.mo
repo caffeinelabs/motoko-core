@@ -7,7 +7,7 @@
 ///
 /// The resolution of the timers is similar to the block rate,
 /// so durations should be chosen well above that. For frequent
-/// canister wake-ups, consider using the [heartbeat](https://internetcomputer.org/docs/current/motoko/main/writing-motoko/heartbeats) mechanism; however, when possible, canisters should prefer timers.
+/// canister wake-ups, consider using the [heartbeat](https://internetcomputer.org/docs/motoko/icp-features/system-functions#heartbeat) mechanism; however, when possible, canisters should prefer timers.
 ///
 /// The functionality described below is enabled only when the actor does not override it by declaring an explicit `system func timer`.
 ///
@@ -23,7 +23,7 @@
 /// and reinstalls.
 ///
 /// For further usage information for timers on the IC, please consult
-/// [the documentation](https://internetcomputer.org/docs/current/developer-docs/backend/periodic-tasks#timers-library-limitations).
+/// [the documentation](https://internetcomputer.org/docs/building-apps/network-features/periodic-tasks-timers#timers-library-limitations).
 import { setTimer = setTimerNano; cancelTimer = cancel } = "mo:⛔";
 import Nat64 = "Nat64";
 import Time "Time";
