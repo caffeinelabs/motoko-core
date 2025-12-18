@@ -118,7 +118,7 @@ module {
             func() = sortInPlace<Nat32>(varSource, Nat32.compare)
           };
           case (1) {
-            let varSource = VarArray.repeat<Nat32>(0, sourceArrays[col].size());
+            let varSource = Array.toVarArray<Nat32>(sourceArrays[col]);
             func() = VarArray.sortInPlace<Nat32>(varSource, Nat32.compare)
           };
           case (_) Prim.trap("Row not implemented")
