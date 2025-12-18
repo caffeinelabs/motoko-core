@@ -223,7 +223,7 @@ module {
   ///
   /// Space: O(size)
   /// *Runtime and space assumes that `compare` runs in O(1) time and space.
-  public func sortInPlace<T>(self : [var T], compare : (T, T) -> Order.Order) {
+  public func sortInPlace<T>(self : [var T], compare : (implicit : (T, T) -> Order.Order)) : () {
     let size = Prim.natToNat32(self.size());
     if (size <= 1) return;
     if (size <= 8) {
