@@ -74,7 +74,7 @@ module {
   /// assert Int64.fromInt16(-123) == (-123 : Int64);
   /// ```
   public func fromInt16(x : Int16) : Int64 {
-    Prim.intToInt64(Prim.int16ToInt(x))
+    Prim.int32ToInt64(Prim.int16ToInt32(x))
   };
 
   /// Converts an 8-bit signed integer to a 64-bit signed integer.
@@ -84,7 +84,7 @@ module {
   /// assert Int64.fromInt8(-123) == (-123 : Int64);
   /// ```
   public func fromInt8(x : Int8) : Int64 {
-    Prim.intToInt64(Prim.int8ToInt(x))
+    Prim.int32ToInt64(Prim.int16ToInt32(Prim.int8ToInt16(x)))
   };
 
   /// Converts a 64-bit signed integer to a 32-bit signed integer.
@@ -108,7 +108,7 @@ module {
   /// assert Int64.toInt16(-123) == (-123 : Int16);
   /// ```
   public func toInt16(self : Int64) : Int16 {
-    Prim.intToInt16(Prim.int64ToInt(self))
+    Prim.int32ToInt16(Prim.int64ToInt32(self))
   };
 
   /// Converts a 64-bit signed integer to an 8-bit signed integer.
@@ -120,7 +120,7 @@ module {
   /// assert Int64.toInt8(-123) == (-123 : Int8);
   /// ```
   public func toInt8(self : Int64) : Int8 {
-    Prim.intToInt8(Prim.int64ToInt(self))
+    Prim.int16ToInt8(Prim.int32ToInt16(Prim.int64ToInt32(self)))
   };
 
   /// Converts a signed integer with infinite precision to a 64-bit signed integer.
