@@ -1,4 +1,6 @@
 ## Next 
+
+* Use `let` bindings to rebind `Prim` functions, reducing call overhead.
 * Fix error in documentation for `Float.nearest`. (#449)
 
 ## 2.0.0
