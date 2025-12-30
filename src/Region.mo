@@ -253,7 +253,7 @@ module {
   ///   }
   /// }
   /// ```
-  public let loadNat64 : (self : Region, offset : Nat64)  -> Nat64 = Prim.regionLoadNat64;
+  public let loadNat64 : (self : Region, offset : Nat64) -> Nat64 = Prim.regionLoadNat64;
 
   /// Within `region`, store a `Nat64` value at `offset`.
   /// Traps on an out-of-bounds access.

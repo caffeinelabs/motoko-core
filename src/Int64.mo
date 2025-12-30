@@ -51,7 +51,6 @@ module {
   /// ```
   public let fromInt : (x : Int) -> Int64 = Prim.intToInt64;
 
-
   /// Converts a 32-bit signed integer to a 64-bit signed integer.
   ///
   /// Traps on overflow/underflow.

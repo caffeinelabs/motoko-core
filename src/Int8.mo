@@ -86,7 +86,8 @@ module {
   /// ```motoko include=import
   /// assert Int8.fromInt32(123) == (+123 : Int8);
   /// ```
-  public func fromInt32(self : Int32) : Int8 { // TODO: rename self?
+  public func fromInt32(self : Int32) : Int8 {
+    // TODO: rename self?
     Prim.intToInt8(Prim.int32ToInt(self))
   };
 
@@ -96,7 +97,8 @@ module {
   /// ```motoko include=import
   /// assert Int8.toInt32(123) == (+123 : Int32);
   /// ```
-  public func toInt32(self : Int8) : Int32 { // TODO: go via Int16?
+  public func toInt32(self : Int8) : Int32 {
+    // TODO: go via Int16?
     Prim.intToInt32(Prim.int8ToInt(self))
   };
 
@@ -118,7 +120,8 @@ module {
   /// ```motoko include=import
   /// assert Int8.toInt64(123) == (+123 : Int64);
   /// ```
-  public func toInt64(x : Int8) : Int64 { // TODO: go via Int16/Int32?
+  public func toInt64(x : Int8) : Int64 {
+    // TODO: go via Int16/Int32?
     Prim.intToInt64(Prim.int8ToInt(x))
   };
 

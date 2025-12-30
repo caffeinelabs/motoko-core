@@ -93,7 +93,7 @@ module {
   /// assert Nat32.fromNat64(123) == (123 : Nat32);
   /// ```
   /// @deprecated M0235
-  public let fromNat64: (x : Nat64) -> Nat32 = Prim.nat64ToNat32;
+  public let fromNat64 : (x : Nat64) -> Nat32 = Prim.nat64ToNat32;
 
   /// Converts a 32-bit unsigned integer to a 64-bit unsigned integer.
   ///
