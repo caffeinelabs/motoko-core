@@ -927,7 +927,7 @@ module {
   /// let blob = Text.encodeUtf8("Hello");
   /// assert blob == "\48\65\6C\6C\6F";
   /// ```
-  public func encodeUtf8(self : Text) : Blob = Prim.encodeUtf8(self);
+  public let encodeUtf8 : (self : Text) -> Blob = Prim.encodeUtf8;
 
   /// Tries to decode the given `Blob` as UTF-8.
   /// Returns `null` if the blob is not valid UTF-8.
@@ -936,7 +936,7 @@ module {
   /// let text = Text.decodeUtf8("\48\65\6C\6C\6F");
   /// assert text == ?"Hello";
   /// ```
-  public func decodeUtf8(self : Blob) : ?Text = Prim.decodeUtf8(self);
+  public let decodeUtf8 : (self : Blob) -> ?Text = Prim.decodeUtf8;
 
   /// Returns the text argument in lowercase.
   /// WARNING: Unicode compliant only when compiled, not interpreted.
@@ -945,7 +945,7 @@ module {
   /// let text = Text.toLower("Good Day");
   /// assert text == "good day";
   /// ```
-  public func toLower(self : Text) : Text = Prim.textLowercase(self);
+  public let toLower : (self : Text) -> Text = Prim.textLowercase;
 
   /// Returns the text argument in uppercase. Unicode compliant.
   /// WARNING: Unicode compliant only when compiled, not interpreted.
@@ -954,7 +954,7 @@ module {
   /// let text = Text.toUpper("Good Day");
   /// assert text == "GOOD DAY";
   /// ```
-  public func toUpper(self : Text) : Text = Prim.textUppercase(self);
+  public let toUpper : (self : Text) -> Text = Prim.textUppercase;
 
   /// Returns the given text value unchanged.
   /// This function is provided for consistency with other modules.

@@ -42,7 +42,7 @@ module {
   ///
   /// Error.reject("Example error") // can be used as throw argument
   /// ```
-  public func reject(message : Text) : Error = Prim.error(message);
+  public let reject : (message : Text) -> Error = Prim.error;
 
   /// Returns the code of an error.
   ///
@@ -53,7 +53,7 @@ module {
   /// let error = Error.reject("Example error");
   /// Error.code(error) // #canister_reject
   /// ```
-  public func code(self : Error) : ErrorCode = Prim.errorCode(self);
+  public let code : (self : Error) -> ErrorCode = Prim.errorCode;
 
   /// Returns the message of an error.
   ///
@@ -64,7 +64,7 @@ module {
   /// let error = Error.reject("Example error");
   /// Error.message(error) // "Example error"
   /// ```
-  public func message(self : Error) : Text = Prim.errorMessage(self);
+  public let message : (self : Error) -> Text = Prim.errorMessage;
 
   /// Checks if the error is a clean reject.
   /// A clean reject means that there must be no state changes on the callee side.

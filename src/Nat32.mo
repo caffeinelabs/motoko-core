@@ -30,9 +30,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.toNat(123) == (123 : Nat);
   /// ```
-  public func toNat(self : Nat32) : Nat {
-    Prim.nat32ToNat(self)
-  };
+  public let toNat : (self : Nat32) -> Nat = Prim.nat32ToNat;
 
   /// Converts an unsigned integer with infinite precision to a 32-bit unsigned integer.
   ///
@@ -74,9 +72,7 @@ module {
   /// assert Nat32.fromNat16(123) == (123 : Nat32);
   /// ```
   /// @deprecated M0235
-  public func fromNat16(x : Nat16) : Nat32 {
-    Prim.nat16ToNat32(x)
-  };
+  public let fromNat16 : (x : Nat16) -> Nat32 = Prim.nat16ToNat32;
 
   /// Converts a 32-bit unsigned integer to a 16-bit unsigned integer.
   ///
@@ -86,9 +82,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.toNat16(123) == (123 : Nat16);
   /// ```
-  public func toNat16(self : Nat32) : Nat16 {
-    Prim.nat32ToNat16(self)
-  };
+  public let toNat16 : (self : Nat32) -> Nat16 = Prim.nat32ToNat16;
 
   /// Converts a 64-bit unsigned integer to a 32-bit unsigned integer.
   ///
@@ -99,9 +93,7 @@ module {
   /// assert Nat32.fromNat64(123) == (123 : Nat32);
   /// ```
   /// @deprecated M0235
-  public func fromNat64(x : Nat64) : Nat32 {
-    Prim.nat64ToNat32(x)
-  };
+  public let fromNat64: (x : Nat64) -> Nat32 = Prim.nat64ToNat32;
 
   /// Converts a 32-bit unsigned integer to a 64-bit unsigned integer.
   ///
@@ -109,9 +101,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.toNat64(123) == (123 : Nat64);
   /// ```
-  public func toNat64(self : Nat32) : Nat64 {
-    Prim.nat32ToNat64(self)
-  };
+  public let toNat64 : (self : Nat32) -> Nat64 = Prim.nat32ToNat64;
 
   /// Converts a signed integer with infinite precision to a 32-bit unsigned integer.
   ///
@@ -130,9 +120,7 @@ module {
   /// let unicode = Nat32.toChar(65);
   /// assert unicode == 'A';
   /// ```
-  public func toChar(self : Nat32) : Char {
-    Prim.nat32ToChar(self)
-  };
+  public let toChar : (self : Nat32) -> Char = Prim.nat32ToChar;
 
   /// Converts `x` to its textual representation. Textual representation _do not_
   /// contain underscores to represent commas.
@@ -557,7 +545,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.bitcountNonZero(5) == 2;
   /// ```
-  public func bitcountNonZero(x : Nat32) : Nat32 = Prim.popcntNat32(x);
+  public let bitcountNonZero : (x : Nat32) -> Nat32 = Prim.popcntNat32;
 
   /// Returns the count of leading zero bits in `x`.
   ///
@@ -565,7 +553,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.bitcountLeadingZero(5) == 29;
   /// ```
-  public func bitcountLeadingZero(x : Nat32) : Nat32 = Prim.clzNat32(x);
+  public let bitcountLeadingZero : (x : Nat32) -> Nat32 = Prim.clzNat32;
 
   /// Returns the count of trailing zero bits in `x`.
   ///
@@ -573,7 +561,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.bitcountTrailingZero(16) == 4;
   /// ```
-  public func bitcountTrailingZero(x : Nat32) : Nat32 = Prim.ctzNat32(x);
+  public let bitcountTrailingZero : (x : Nat32) -> Nat32 = Prim.ctzNat32;
 
   /// Returns the upper (i.e. most significant), lower (least significant)
   /// and in-between bytes of `x`.
@@ -582,7 +570,7 @@ module {
   /// ```motoko include=import
   /// assert Nat32.explode 0xaa885511 == (170, 136, 85, 17);
   /// ```
-  public func explode(x : Nat32) : (msb : Nat8, Nat8, Nat8, lsb : Nat8) = Prim.explodeNat32(x);
+  public let explode : (x : Nat32) -> (msb : Nat8, Nat8, Nat8, lsb : Nat8) = Prim.explodeNat32;
 
   /// Returns the sum of `x` and `y`, `x +% y`. Wraps on overflow.
   ///

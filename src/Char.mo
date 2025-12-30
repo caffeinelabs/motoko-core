@@ -39,7 +39,7 @@ module {
   /// let unicode = Char.toNat32(char);
   /// assert unicode == 65;
   /// ```
-  public func toNat32(self : Char) : Nat32 = Prim.charToNat32(self);
+  public let toNat32 : (self : Char) -> Nat32 = Prim.charToNat32;
 
   /// Convert `w` to a character.
   /// Traps if `w` is not a valid Unicode scalar value.
@@ -51,7 +51,7 @@ module {
   /// let char = Char.fromNat32(unicode);
   /// assert char == 'A';
   /// ```
-  public func fromNat32(nat32 : Nat32) : Char = Prim.nat32ToChar(nat32);
+  public let fromNat32 : (nat32 : Nat32) -> Char = Prim.nat32ToChar;
 
   /// Convert character `char` to single character text.
   ///
@@ -61,7 +61,7 @@ module {
   /// let text = Char.toText(char);
   /// assert text == "漢";
   /// ```
-  public func toText(self : Char) : Text = Prim.charToText(self);
+  public let toText : (self : Char) -> Text = Prim.charToText;
 
   // Not exposed pending multi-char implementation.
   private let _toUpper : (char : Char) -> Char = Prim.charToUpper;
@@ -89,7 +89,7 @@ module {
   /// assert Char.isWhitespace('\n');
   /// assert not Char.isWhitespace('A');
   /// ```
-  public func isWhitespace(self : Char) : Bool = Prim.charIsWhitespace(self);
+  public let isWhitespace : (self : Char) -> Bool = Prim.charIsWhitespace;
 
   /// Returns whether `char` is a lowercase character.
   ///
@@ -98,7 +98,7 @@ module {
   /// assert Char.isLower('a');
   /// assert not Char.isLower('A');
   /// ```
-  public func isLower(self : Char) : Bool = Prim.charIsLowercase(self);
+  public let isLower : (self : Char) -> Bool = Prim.charIsLowercase;
 
   /// Returns whether `char` is an uppercase character.
   ///
@@ -107,7 +107,7 @@ module {
   /// assert Char.isUpper('A');
   /// assert not Char.isUpper('a');
   /// ```
-  public func isUpper(self : Char) : Bool = Prim.charIsUppercase(self);
+  public let isUpper : (self : Char) -> Bool = Prim.charIsUppercase;
 
   /// Returns whether `char` is an alphabetic character.
   ///

@@ -38,7 +38,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.toInt(123) == (123 : Int);
   /// ```
-  public func toInt(self : Int8) : Int = Prim.int8ToInt(self);
+  public let toInt : (self : Int8) -> Int = Prim.int8ToInt;
 
   /// Converts a signed integer with infinite precision to an 8-bit signed integer.
   ///
@@ -76,9 +76,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.toInt16(123) == (+123 : Int16);
   /// ```
-  public func toInt16(self : Int8) : Int16 {
-    Prim.int8ToInt16(self)
-  };
+  public let toInt16 : (self : Int8) -> Int16 = Prim.int8ToInt16;
 
   /// Converts a 32-bit signed integer to an 8-bit signed integer.
   ///
@@ -88,7 +86,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.fromInt32(123) == (+123 : Int8);
   /// ```
-  public func fromInt32(self : Int32) : Int8 {
+  public func fromInt32(self : Int32) : Int8 { // TODO: rename self?
     Prim.intToInt8(Prim.int32ToInt(self))
   };
 
@@ -98,7 +96,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.toInt32(123) == (+123 : Int32);
   /// ```
-  public func toInt32(self : Int8) : Int32 {
+  public func toInt32(self : Int8) : Int32 { // TODO: go via Int16?
     Prim.intToInt32(Prim.int8ToInt(self))
   };
 
@@ -120,7 +118,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.toInt64(123) == (+123 : Int64);
   /// ```
-  public func toInt64(x : Int8) : Int64 {
+  public func toInt64(x : Int8) : Int64 { // TODO: go via Int16/Int32?
     Prim.intToInt64(Prim.int8ToInt(x))
   };
 
@@ -142,7 +140,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.toNat8(-1) == (255 : Nat8); // underflow
   /// ```
-  public func toNat8(self : Int8) : Nat8 = Prim.int8ToNat8(self);
+  public let toNat8 : (self : Int8) -> Nat8 = Prim.int8ToNat8;
 
   /// Converts an integer number to its textual representation.
   ///
@@ -598,7 +596,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.bitcountNonZero(0x0f) == +4;
   /// ```
-  public func bitcountNonZero(x : Int8) : Int8 = Prim.popcntInt8(x);
+  public let bitcountNonZero : (x : Int8) -> Int8 = Prim.popcntInt8;
 
   /// Returns the count of leading zero bits in `x`.
   ///
@@ -606,7 +604,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.bitcountLeadingZero(0x08) == +4;
   /// ```
-  public func bitcountLeadingZero(x : Int8) : Int8 = Prim.clzInt8(x);
+  public let bitcountLeadingZero : (x : Int8) -> Int8 = Prim.clzInt8;
 
   /// Returns the count of trailing zero bits in `x`.
   ///
@@ -614,7 +612,7 @@ module {
   /// ```motoko include=import
   /// assert Int8.bitcountTrailingZero(0x10) == +4;
   /// ```
-  public func bitcountTrailingZero(x : Int8) : Int8 = Prim.ctzInt8(x);
+  public let bitcountTrailingZero : (x : Int8) -> Int8 = Prim.ctzInt8;
 
   /// Returns the sum of `x` and `y`, `x +% y`.
   ///

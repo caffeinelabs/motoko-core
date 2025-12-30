@@ -77,7 +77,7 @@ module {
   /// let blob = Blob.fromArray(bytes);
   /// assert blob == "\00\FF\00";
   /// ```
-  public func fromArray(bytes : [Nat8]) : Blob = Prim.arrayToBlob bytes;
+  public let fromArray : (bytes : [Nat8]) -> Blob = Prim.arrayToBlob;
 
   /// Creates a `Blob` from a mutable array of bytes (`[var Nat8]`), by copying each element.
   ///
@@ -87,7 +87,7 @@ module {
   /// let blob = Blob.fromVarArray(bytes);
   /// assert blob == "\00\FF\00";
   /// ```
-  public func fromVarArray(bytes : [var Nat8]) : Blob = Prim.arrayMutToBlob bytes;
+  public let fromVarArray : (bytes : [var Nat8]) -> Blob = Prim.arrayMutToBlob;
 
   /// Converts a `Blob` to an array of bytes (`[Nat8]`), by copying each element.
   ///
@@ -97,7 +97,7 @@ module {
   /// let bytes = Blob.toArray(blob);
   /// assert bytes == [0, 255, 0];
   /// ```
-  public func toArray(self : Blob) : [Nat8] = Prim.blobToArray(self);
+  public let toArray : (self : Blob) -> [Nat8] = Prim.blobToArray;
 
   /// Converts a `Blob` to a mutable array of bytes (`[var Nat8]`), by copying each element.
   ///
@@ -110,7 +110,7 @@ module {
   /// let bytes = Blob.toVarArray(blob);
   /// assert VarArray.equal<Nat8>(bytes, [var 0, 255, 0], Nat8.equal);
   /// ```
-  public func toVarArray(self : Blob) : [var Nat8] = Prim.blobToArrayMut(self);
+  public let toVarArray : (self : Blob) -> [var Nat8] = Prim.blobToArrayMut;
 
   /// Returns the (non-cryptographic) hash of `blob`.
   ///
@@ -120,7 +120,7 @@ module {
   /// let h = Blob.hash(blob);
   /// assert h == 1_818_567_776;
   /// ```
-  public func hash(self : Blob) : Types.Hash = Prim.hashBlob(self);
+  public let hash : (self : Blob) -> Types.Hash = Prim.hashBlob;
 
   /// General purpose comparison function for `Blob` by comparing the value of
   /// the bytes. Returns the `Order` (either `#less`, `#equal`, or `#greater`)
