@@ -1,7 +1,7 @@
 ## Next 
 
-* Use `let` bindings to rebind `Prim` functions, reducing call overhead.
-* Fix error in documentation for `Float.nearest`. (#449)
+* Use `let` bindings to rebind `Prim` functions, reducing call overhead (#456).
+* Fix error in documentation for `Float.nearest` (#449).
 
 ## 2.0.0
 * Adds documentation for `WeakReference` module (#444).
