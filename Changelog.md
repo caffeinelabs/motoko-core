@@ -1,4 +1,5 @@
 ## Next 
+* Makes `start` index in `List.reader` implicit with default `0`. (#447)
 * Fix error in documentation for `Float.nearest`. (#449)
 
 ## 2.0.0
