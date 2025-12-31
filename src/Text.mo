@@ -536,7 +536,7 @@ module {
   ///
   /// ```motoko include=import
   /// let words = Text.split("This is a sentence.", #char ' ');
-  /// assert Text.join("|", words) == "This|is|a|sentence.";
+  /// assert Text.join(words, "|") == "This|is|a|sentence.";
   /// ```
   public func split(self : Text, p : Pattern) : Iter.Iter<Text> {
     let match = matchOfPattern(p);
@@ -599,7 +599,7 @@ module {
   ///
   /// ```motoko include=import
   /// let tokens = Text.tokens("this needs\n an   example", #predicate (func(c) { c == ' ' or c == '\n' }));
-  /// assert Text.join("|", tokens) == "this|needs|an|example";
+  /// assert Text.join(tokens, "|") == "this|needs|an|example";
   /// ```
   public func tokens(self : Text, p : Pattern) : Iter.Iter<Text> {
     let fs = split(self, p);

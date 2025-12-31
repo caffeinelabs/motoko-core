@@ -40,7 +40,7 @@
       "public func sliceToArray<T>(self : [T], fromInclusive : Int, toExclusive : Int) : [T]",
       "public func sliceToVarArray<T>(self : [T], fromInclusive : Int, toExclusive : Int) : [var T]",
       "public func sort<T>(self : [T], compare : (implicit : (T, T) -> Order.Order)) : [T]",
-      "public let tabulate : (<T>(size : Nat, generator : Nat -> T) -> [T])",
+      "public let tabulate : <T>(size : Nat, generator : Nat -> T) -> [T]",
       "public func toText<T>(self : [T], f : (implicit : (toText : T -> Text))) : Text",
       "public func toVarArray<T>(self : [T]) : [var T]",
       "public func values<T>(self : [T]) : Types.Iter<T>"
