@@ -1,6 +1,7 @@
 ## Next 
 
-* Use `let` bindings to rebind `Prim` functions, reducing call overhead (#456).
+* Use `let`, not `func`, bindings to rebind `Prim` functions, reducing call overhead and some allocation (#456).
+* **Breaking:** `Int8.fromInt32` no longer takes inappropriate `self` parameter (#456).
 * Fix error in documentation for `Float.nearest` (#449).
 
 ## 2.0.0

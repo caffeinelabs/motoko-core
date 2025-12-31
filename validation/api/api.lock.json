@@ -441,7 +441,7 @@
       "public func equal(x : Int8, y : Int8) : Bool",
       "public let fromInt : Int -> Int8",
       "public let fromInt16 : Int16 -> Int8",
-      "public func fromInt32(self : Int32) : Int8",
+      "public func fromInt32(x : Int32) : Int8",
       "public func fromInt64(x : Int64) : Int8",
       "public let fromIntWrap : Int -> Int8",
       "public let fromNat8 : Nat8 -> Int8",
