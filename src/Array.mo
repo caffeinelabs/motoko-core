@@ -72,6 +72,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(1)
+  /// @deprecated M0235
   public func fromVarArray<T>(varArray : [var T]) : [T] = Prim.Array_tabulate<T>(varArray.size(), func i = varArray[i]);
 
   /// Transforms an immutable array into a mutable array.
