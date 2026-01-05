@@ -637,6 +637,7 @@ module {
   public func isEmpty<T>(self : [T]) : Bool = self.size() == 0;
 
   /// Converts an iterator to an array.
+  /// @deprecated M0235
   public func fromIter<T>(iter : Types.Iter<T>) : [T] {
     var list : Types.Pure.List<T> = null;
     var size = 0;
