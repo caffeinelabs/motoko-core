@@ -25,7 +25,7 @@
 ///       canister wake-ups the heartbeat mechanism should be considered.
 
 import Types "Types";
-import Nat "Nat";
+import Int "Int";
 import Prim "mo:⛔";
 
 module {
@@ -45,6 +45,56 @@ module {
   ///
   /// Note: While an implementation will likely try to keep the system time close to the real time, this is not formally guaranteed.
   public func now() : Time = Prim.nat64ToNat(Prim.time());
+
+  /// Equality function for Time types.
+  /// This is equivalent to `x == y`.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import Time "mo:core/Time";
+  ///
+  /// let time1 = Time.now();
+  /// let time2 = time1 + Time.toNanoseconds(#seconds(60));
+  /// let time3 = time1 + Time.toNanoseconds(#minutes(1));
+  /// assert not Time.equal(time1, time2);
+  /// assert Time.equal(time1, time3);
+  /// ```
+  ///
+  /// Note: The reason why this function is defined in this library (in addition
+  /// to the existing `==` operator) is so that you can use it as a function
+  /// value to pass to a higher order function. It is not possible to use `==`
+  /// as a function value at the moment.
+  public let equal = Int.equal;
+
+  /// General purpose comparison function for `Time`. Returns the `Order` (
+  /// either `#less`, `#equal`, or `#greater`) of comparing `x` with `y`.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import Time "mo:core/Time";
+  ///
+  /// let now = Time.now();
+  /// let later = now + Time.toNanoseconds(#hours(1));
+  /// assert Time.compare(now, later) == #less;
+  /// ```
+  ///
+  /// This function can be used as value for a high order function, such as a sort function.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import Array "mo:core/Array";
+  /// import Time "mo:core/Time";
+  ///
+  /// let now = Time.now();
+  /// let times : [Time.Time] = [
+  ///   now + Time.toNanoseconds(#days(2)),
+  ///   now,
+  ///   now + Time.toNanoseconds(#days(1))
+  /// ];
+  /// let sorted = Array.sort(times, Time.compare);
+  /// assert sorted[0] == now;
+  /// ```
+  public let compare = Int.compare;
 
   public type TimerId = Nat;
 
