@@ -39,9 +39,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.toInt(123_456) == (123_456 : Int);
   /// ```
-  public func toInt(self : Int64) : Int {
-    Prim.int64ToInt(self)
-  };
+  public let toInt : (self : Int64) -> Int = Prim.int64ToInt;
 
   /// Converts a signed integer with infinite precision to a 64-bit signed integer.
   ///
@@ -51,9 +49,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.fromInt(123_456) == (+123_456 : Int64);
   /// ```
-  public func fromInt(x : Int) : Int64 {
-    Prim.intToInt64(x)
-  };
+  public let fromInt : (x : Int) -> Int64 = Prim.intToInt64;
 
   /// Converts a 32-bit signed integer to a 64-bit signed integer.
   ///
@@ -63,9 +59,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.fromInt32(-123_456) == (-123_456 : Int64);
   /// ```
-  public func fromInt32(x : Int32) : Int64 {
-    Prim.int32ToInt64(x)
-  };
+  public let fromInt32 : (x : Int32) -> Int64 = Prim.int32ToInt64;
 
   /// Converts a 16-bit signed integer to a 64-bit signed integer.
   ///
@@ -151,9 +145,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.toNat64(-1) == (18_446_744_073_709_551_615 : Nat64); // underflow
   /// ```
-  public func toNat64(self : Int64) : Nat64 {
-    Prim.int64ToNat64(self)
-  };
+  public let toNat64 : (self : Int64) -> Nat64 = Prim.int64ToNat64;
 
   /// Returns the Text representation of `x`. Textual representation _do not_
   /// contain underscores to represent commas.
@@ -620,7 +612,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.bitcountNonZero(0xffff) == +16;
   /// ```
-  public func bitcountNonZero(x : Int64) : Int64 = Prim.popcntInt64(x);
+  public let bitcountNonZero : (x : Int64) -> Int64 = Prim.popcntInt64;
 
   /// Returns the count of leading zero bits in `x`.
   ///
@@ -628,7 +620,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.bitcountLeadingZero(0x8000_0000) == +32;
   /// ```
-  public func bitcountLeadingZero(x : Int64) : Int64 = Prim.clzInt64(x);
+  public let bitcountLeadingZero : (x : Int64) -> Int64 = Prim.clzInt64;
 
   /// Returns the count of trailing zero bits in `x`.
   ///
@@ -636,7 +628,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.bitcountTrailingZero(0x0201_0000) == +16;
   /// ```
-  public func bitcountTrailingZero(x : Int64) : Int64 = Prim.ctzInt64(x);
+  public let bitcountTrailingZero : (x : Int64) -> Int64 = Prim.ctzInt64;
 
   /// Returns the upper (i.e. most significant), lower (least significant)
   /// and in-between bytes of `x`.
@@ -645,7 +637,7 @@ module {
   /// ```motoko include=import
   /// assert Int64.explode 0x33772266aa885511 == (51, 119, 34, 102, 170, 136, 85, 17);
   /// ```
-  public func explode(x : Int64) : (msb : Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, lsb : Nat8) = Prim.explodeInt64(x);
+  public let explode : (x : Int64) -> (msb : Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, lsb : Nat8) = Prim.explodeInt64;
 
   /// Returns the sum of `x` and `y`, `x +% y`.
   ///

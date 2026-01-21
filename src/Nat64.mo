@@ -30,9 +30,7 @@ module {
   /// ```motoko include=import
   /// assert Nat64.toNat(123) == (123 : Nat);
   /// ```
-  public func toNat(self : Nat64) : Nat {
-    Prim.nat64ToNat(self)
-  };
+  public let toNat : (self : Nat64) -> Nat = Prim.nat64ToNat;
 
   /// Converts an unsigned integer with infinite precision to a 64-bit unsigned integer.
   ///
@@ -97,9 +95,7 @@ module {
   /// assert Nat64.fromNat32(123) == (123 : Nat64);
   /// ```
   /// @deprecated M0235
-  public func fromNat32(x : Nat32) : Nat64 {
-    Prim.nat32ToNat64(x)
-  };
+  public let fromNat32 : (x : Nat32) -> Nat64 = Prim.nat32ToNat64;
 
   /// Converts a 64-bit unsigned integer to a 32-bit unsigned integer.
   ///
@@ -109,9 +105,7 @@ module {
   /// ```motoko include=import
   /// assert Nat64.toNat32(123) == (123 : Nat32);
   /// ```
-  public func toNat32(self : Nat64) : Nat32 {
-    Prim.nat64ToNat32(self)
-  };
+  public let toNat32 : (self : Nat64) -> Nat32 = Prim.nat64ToNat32;
 
   /// Converts a signed integer with infinite precision to a 64-bit unsigned integer.
   ///
@@ -546,7 +540,7 @@ module {
   /// ```motoko include=import
   /// assert Nat64.bitcountNonZero(5) == 2;
   /// ```
-  public func bitcountNonZero(x : Nat64) : Nat64 = Prim.popcntNat64(x);
+  public let bitcountNonZero : (x : Nat64) -> Nat64 = Prim.popcntNat64;
 
   /// Returns the count of leading zero bits in `x`.
   ///
@@ -554,7 +548,7 @@ module {
   /// ```motoko include=import
   /// assert Nat64.bitcountLeadingZero(5) == 61;
   /// ```
-  public func bitcountLeadingZero(x : Nat64) : Nat64 = Prim.clzNat64(x);
+  public let bitcountLeadingZero : (x : Nat64) -> Nat64 = Prim.clzNat64;
 
   /// Returns the count of trailing zero bits in `x`.
   ///
@@ -562,7 +556,7 @@ module {
   /// ```motoko include=import
   /// assert Nat64.bitcountTrailingZero(16) == 4;
   /// ```
-  public func bitcountTrailingZero(x : Nat64) : Nat64 = Prim.ctzNat64(x);
+  public let bitcountTrailingZero : (x : Nat64) -> Nat64 = Prim.ctzNat64;
 
   /// Returns the upper (i.e. most significant), lower (least significant)
   /// and in-between bytes of `x`.
@@ -571,7 +565,7 @@ module {
   /// ```motoko include=import
   /// assert Nat64.explode 0xbb772266aa885511 == (187, 119, 34, 102, 170, 136, 85, 17);
   /// ```
-  public func explode(x : Nat64) : (msb : Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, lsb : Nat8) = Prim.explodeNat64(x);
+  public let explode : (x : Nat64) -> (msb : Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, Nat8, lsb : Nat8) = Prim.explodeNat64;
 
   /// Returns the sum of `x` and `y`, `x +% y`. Wraps on overflow.
   ///

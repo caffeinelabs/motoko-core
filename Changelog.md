@@ -1,5 +1,8 @@
 ## Next 
-* Fix error in documentation for `Float.nearest`. (#449)
+
+* **Breaking:** `Int8.fromInt32` no longer takes inappropriate `self` parameter (#456).
+  Use `let` (not `func`) bindings to rebind `Prim` functions, reducing call overhead and some allocation.
+* Fix error in documentation for `Float.nearest` (#449).
 
 ## 2.0.0
 * Adds documentation for `WeakReference` module (#444).

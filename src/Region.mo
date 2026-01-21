@@ -88,7 +88,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func id(self : Region) : Nat = Prim.regionId(self);
+  public let id : (self : Region) -> Nat = Prim.regionId;
 
   /// Current size of `region`, in pages.
   /// Each page is 64KiB (65536 bytes).
@@ -108,7 +108,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func size(self : Region) : (pages : Nat64) = Prim.regionSize(self);
+  public let size : (self : Region) -> (pages : Nat64) = Prim.regionSize;
 
   /// Grow current `size` of `region` by the given number of pages.
   /// Each page is 64KiB (65536 bytes).
@@ -134,7 +134,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func grow(self : Region, newPages : Nat64) : (oldPages : Nat64) = Prim.regionGrow(self, newPages);
+  public let grow : (self : Region, newPages : Nat64) -> (oldPages : Nat64) = Prim.regionGrow;
 
   /// Within `region`, load a `Nat8` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -151,7 +151,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadNat8(self : Region, offset : Nat64) : Nat8 = Prim.regionLoadNat8(self, offset);
+  public let loadNat8 : (self : Region, offset : Nat64) -> Nat8 = Prim.regionLoadNat8;
 
   /// Within `region`, store a `Nat8` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -168,7 +168,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeNat8(self : Region, offset : Nat64, value : Nat8) : () = Prim.regionStoreNat8(self, offset, value);
+  public let storeNat8 : (self : Region, offset : Nat64, value : Nat8) -> () = Prim.regionStoreNat8;
 
   /// Within `region`, load a `Nat16` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -185,7 +185,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadNat16(self : Region, offset : Nat64) : Nat16 = Prim.regionLoadNat16(self, offset);
+  public let loadNat16 : (self : Region, offset : Nat64) -> Nat16 = Prim.regionLoadNat16;
 
   /// Within `region`, store a `Nat16` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -202,7 +202,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeNat16(self : Region, offset : Nat64, value : Nat16) : () = Prim.regionStoreNat16(self, offset, value);
+  public let storeNat16 : (self : Region, offset : Nat64, value : Nat16) -> () = Prim.regionStoreNat16;
 
   /// Within `region`, load a `Nat32` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -219,7 +219,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadNat32(self : Region, offset : Nat64) : Nat32 = Prim.regionLoadNat32(self, offset);
+  public let loadNat32 : (self : Region, offset : Nat64) -> Nat32 = Prim.regionLoadNat32;
 
   /// Within `region`, store a `Nat32` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -253,7 +253,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadNat64(self : Region, offset : Nat64) : Nat64 = Prim.regionLoadNat64(self, offset);
+  public let loadNat64 : (self : Region, offset : Nat64) -> Nat64 = Prim.regionLoadNat64;
 
   /// Within `region`, store a `Nat64` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -270,7 +270,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeNat64(self : Region, offset : Nat64, value : Nat64) : () = Prim.regionStoreNat64(self, offset, value);
+  public let storeNat64 : (self : Region, offset : Nat64, value : Nat64) -> () = Prim.regionStoreNat64;
 
   /// Within `region`, load a `Int8` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -287,7 +287,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadInt8(self : Region, offset : Nat64) : Int8 = Prim.regionLoadInt8(self, offset);
+  public let loadInt8 : (self : Region, offset : Nat64) -> Int8 = Prim.regionLoadInt8;
 
   /// Within `region`, store a `Int8` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -304,7 +304,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeInt8(self : Region, offset : Nat64, value : Int8) : () = Prim.regionStoreInt8(self, offset, value);
+  public let storeInt8 : (self : Region, offset : Nat64, value : Int8) -> () = Prim.regionStoreInt8;
 
   /// Within `region`, load a `Int16` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -321,7 +321,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadInt16(self : Region, offset : Nat64) : Int16 = Prim.regionLoadInt16(self, offset);
+  public let loadInt16 : (self : Region, offset : Nat64) -> Int16 = Prim.regionLoadInt16;
 
   /// Within `region`, store a `Int16` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -338,7 +338,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeInt16(self : Region, offset : Nat64, value : Int16) : () = Prim.regionStoreInt16(self, offset, value);
+  public let storeInt16 : (self : Region, offset : Nat64, value : Int16) -> () = Prim.regionStoreInt16;
 
   /// Within `region`, load a `Int32` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -355,7 +355,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadInt32(self : Region, offset : Nat64) : Int32 = Prim.regionLoadInt32(self, offset);
+  public let loadInt32 : (self : Region, offset : Nat64) -> Int32 = Prim.regionLoadInt32;
 
   /// Within `region`, store a `Int32` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -372,7 +372,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeInt32(self : Region, offset : Nat64, value : Int32) : () = Prim.regionStoreInt32(self, offset, value);
+  public let storeInt32 : (self : Region, offset : Nat64, value : Int32) -> () = Prim.regionStoreInt32;
 
   /// Within `region`, load a `Int64` value from `offset`.
   /// Traps on an out-of-bounds access.
@@ -389,7 +389,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadInt64(self : Region, offset : Nat64) : Int64 = Prim.regionLoadInt64(self, offset);
+  public let loadInt64 : (self : Region, offset : Nat64) -> Int64 = Prim.regionLoadInt64;
 
   /// Within `region`, store a `Int64` value at `offset`.
   /// Traps on an out-of-bounds access.
@@ -406,7 +406,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeInt64(self : Region, offset : Nat64, value : Int64) : () = Prim.regionStoreInt64(self, offset, value);
+  public let storeInt64 : (self : Region, offset : Nat64, value : Int64) -> () = Prim.regionStoreInt64;
 
   /// Within `region`, loads a `Float` value from the given `offset`.
   /// Traps on an out-of-bounds access.
@@ -423,7 +423,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadFloat(self : Region, offset : Nat64) : Float = Prim.regionLoadFloat(self, offset);
+  public let loadFloat : (self : Region, offset : Nat64) -> Float = Prim.regionLoadFloat;
 
   /// Within `region`, store float `value` at the given `offset`.
   /// Traps on an out-of-bounds access.
@@ -440,7 +440,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeFloat(self : Region, offset : Nat64, value : Float) : () = Prim.regionStoreFloat(self, offset, value);
+  public let storeFloat : (self : Region, offset : Nat64, value : Float) -> () = Prim.regionStoreFloat;
 
   /// Within `region,` load `size` bytes starting from `offset` as a `Blob`.
   /// Traps on an out-of-bounds access.
@@ -460,7 +460,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func loadBlob(self : Region, offset : Nat64, size : Nat) : Blob = Prim.regionLoadBlob(self, offset, size);
+  public let loadBlob : (self : Region, offset : Nat64, size : Nat) -> Blob = Prim.regionLoadBlob;
 
   /// Within `region, write `blob.size()` bytes of `blob` beginning at `offset`.
   /// Traps on an out-of-bounds access.
@@ -480,6 +480,6 @@ module {
   ///   }
   /// }
   /// ```
-  public func storeBlob(self : Region, offset : Nat64, value : Blob) : () = Prim.regionStoreBlob(self, offset, value);
+  public let storeBlob : (self : Region, offset : Nat64, value : Blob) -> () = Prim.regionStoreBlob;
 
 }

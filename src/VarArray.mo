@@ -81,7 +81,7 @@ module {
   /// Space: O(size)
   ///
   /// *Runtime and space assumes that `generator` runs in O(1) time and space.
-  public func tabulate<T>(size : Nat, generator : Nat -> T) : [var T] = Prim.Array_tabulateVar(size, generator);
+  public let tabulate : <T>(size : Nat, generator : Nat -> T) -> [var T] = Prim.Array_tabulateVar;
 
   /// Tests if two arrays contain equal values (i.e. they represent the same
   /// list of elements). Uses `equal` to compare elements in the arrays.

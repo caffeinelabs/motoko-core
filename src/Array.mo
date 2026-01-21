@@ -58,7 +58,7 @@ module {
   /// Space: O(size)
   ///
   /// *Runtime and space assumes that `generator` runs in O(1) time and space.
-  public func tabulate<T>(size : Nat, generator : Nat -> T) : [T] = Prim.Array_tabulate<T>(size, generator);
+  public let tabulate : <T>(size : Nat, generator : Nat -> T) -> [T] = Prim.Array_tabulate;
 
   /// Transforms a mutable array into an immutable array.
   ///

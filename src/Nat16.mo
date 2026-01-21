@@ -30,9 +30,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.toNat(123) == (123 : Nat);
   /// ```
-  public func toNat(self : Nat16) : Nat {
-    Prim.nat16ToNat(self)
-  };
+  public let toNat : (self : Nat16) -> Nat = Prim.nat16ToNat;
 
   /// Converts an unsigned integer with infinite precision to a 16-bit unsigned integer.
   ///
@@ -51,9 +49,7 @@ module {
   /// assert Nat16.fromNat8(123) == (123 : Nat16);
   /// ```
   /// @deprecated M0235
-  public func fromNat8(x : Nat8) : Nat16 {
-    Prim.nat8ToNat16(x)
-  };
+  public let fromNat8 : (x : Nat8) -> Nat16 = Prim.nat8ToNat16;
 
   /// Converts a 16-bit unsigned integer to an 8-bit unsigned integer.
   ///
@@ -63,9 +59,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.toNat8(123) == (123 : Nat8);
   /// ```
-  public func toNat8(self : Nat16) : Nat8 {
-    Prim.nat16ToNat8(self)
-  };
+  public let toNat8 : (self : Nat16) -> Nat8 = Prim.nat16ToNat8;
 
   /// Converts a 32-bit unsigned integer to a 16-bit unsigned integer.
   ///
@@ -76,9 +70,7 @@ module {
   /// assert Nat16.fromNat32(123) == (123 : Nat16);
   /// ```
   /// @deprecated M0235
-  public func fromNat32(x : Nat32) : Nat16 {
-    Prim.nat32ToNat16(x)
-  };
+  public let fromNat32 : (x : Nat32) -> Nat16 = Prim.nat32ToNat16;
 
   /// Converts a 16-bit unsigned integer to a 32-bit unsigned integer.
   ///
@@ -86,9 +78,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.toNat32(123) == (123 : Nat32);
   /// ```
-  public func toNat32(self : Nat16) : Nat32 {
-    Prim.nat16ToNat32(self)
-  };
+  public let toNat32 : (self : Nat16) -> Nat32 = Prim.nat16ToNat32;
 
   /// Converts a 64-bit unsigned integer to a 16-bit unsigned integer.
   ///
@@ -537,7 +527,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.bitcountNonZero(5) == 2;
   /// ```
-  public func bitcountNonZero(x : Nat16) : Nat16 = Prim.popcntNat16(x);
+  public let bitcountNonZero : (x : Nat16) -> Nat16 = Prim.popcntNat16;
 
   /// Returns the count of leading zero bits in `x`.
   ///
@@ -545,7 +535,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.bitcountLeadingZero(5) == 13;
   /// ```
-  public func bitcountLeadingZero(x : Nat16) : Nat16 = Prim.clzNat16(x);
+  public let bitcountLeadingZero : (x : Nat16) -> Nat16 = Prim.clzNat16;
 
   /// Returns the count of trailing zero bits in `x`.
   ///
@@ -553,7 +543,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.bitcountTrailingZero(5) == 0;
   /// ```
-  public func bitcountTrailingZero(x : Nat16) : Nat16 = Prim.ctzNat16(x);
+  public let bitcountTrailingZero : (x : Nat16) -> Nat16 = Prim.ctzNat16;
 
   /// Returns the upper (i.e. most significant) and lower (least significant) byte of `x`.
   ///
@@ -561,7 +551,7 @@ module {
   /// ```motoko include=import
   /// assert Nat16.explode 0xaa88 == (170, 136);
   /// ```
-  public func explode(x : Nat16) : (msb : Nat8, lsb : Nat8) = Prim.explodeNat16(x);
+  public let explode : (x : Nat16) -> (msb : Nat8, lsb : Nat8) = Prim.explodeNat16;
 
   /// Returns the sum of `x` and `y`, `x +% y`. Wraps on overflow.
   ///

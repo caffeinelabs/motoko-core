@@ -20,9 +20,7 @@ module {
   /// Debug.print "Hello New World!";
   /// Debug.print(debug_show(4)) // Often used with `debug_show` to convert values to Text
   /// ```
-  public func print(text : Text) {
-    Prim.debugPrint(text)
-  };
+  public let print : (text : Text) -> () = Prim.debugPrint;
 
   /// Mark incomplete code with the `todo()` function.
   ///
