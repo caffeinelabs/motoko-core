@@ -228,10 +228,10 @@ module {
     if (size <= 1) return;
     if (size <= 8) {
       InsertionSort.insertionSortSmall(self, self, compare, 0 : Nat32, size);
-      return;
+      return
     };
     let buffer = repeat<T>(self[0], nat(size / 2));
-    mergeSortRec(self, buffer, compare, 0 : Nat32, size, true, 0 : Nat32);
+    mergeSortRec(self, buffer, compare, 0 : Nat32, size, true, 0 : Nat32)
   };
 
   // input data is alwways in array
@@ -245,7 +245,7 @@ module {
     from : Nat32,
     to : Nat32,
     even : Bool,
-    offset : Nat32,
+    offset : Nat32
   ) {
     debug assert from < to;
     let size = to -% from;
@@ -257,7 +257,7 @@ module {
       } else {
         InsertionSort.insertionSortSmallMove(array, buffer, compare, from, size, offset); // sorts to buffer at offset
       };
-      return;
+      return
     };
 
     let len1 = size / 2;
@@ -272,7 +272,7 @@ module {
       mergeSortRec(array, buffer, compare, from, mid, true, 0 : Nat32); // lower half to array in place
       mergeSortRec(array, buffer, compare, mid, to, false, offset +% len1); // sort upper half to buffer starting shifted offset
       merge2(array, buffer, compare, from, mid, size, offset); // merge to buffer at offset
-    };
+    }
   };
 
   func merge1<T>(array : [var T], buffer : [var T], compare : (T, T) -> Order.Order, from : Nat32, mid : Nat32, to : Nat32) {
@@ -295,21 +295,21 @@ module {
             while (i < len) {
               array[nat(pos)] := buffer[nat(i)];
               i +%= 1;
-              pos +%= 1;
+              pos +%= 1
             };
-            break L;
+            break L
           };
-          jElem := array[nat(j)];
+          jElem := array[nat(j)]
         };
         case (_) {
           array[nat(pos)] := iElem;
           i +%= 1;
           pos +%= 1;
           if (i == len) break L;
-          iElem := buffer[nat(i)];
-        };
-      };
-    };
+          iElem := buffer[nat(i)]
+        }
+      }
+    }
   };
 
   func merge2<T>(array : [var T], buffer : [var T], compare : (T, T) -> Order.Order, from : Nat32, mid : Nat32, size : Nat32, offset : Nat32) {
@@ -333,21 +333,21 @@ module {
             while (i < mid) {
               buffer[nat(pos)] := array[nat(i)];
               i +%= 1;
-              pos +%= 1;
+              pos +%= 1
             };
-            break L;
+            break L
           };
-          jElem := buffer[nat(j)];
+          jElem := buffer[nat(j)]
         };
         case (_) {
           buffer[nat(pos)] := iElem;
           i +%= 1;
           pos +%= 1;
           if (i == mid) break L;
-          iElem := array[nat(i)];
-        };
-      };
-    };
+          iElem := array[nat(i)]
+        }
+      }
+    }
   };
 
   /// Creates a new mutable array by reversing the order of elements in `array`.
