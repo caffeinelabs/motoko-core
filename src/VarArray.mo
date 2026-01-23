@@ -18,7 +18,7 @@ import Order "Order";
 import Result "Result";
 import Option "Option";
 import Prim "mo:⛔";
-import InsertionSort "internal/sortHelper";
+import InsertionSort "internal/SortHelper";
 
 module {
   let nat = Prim.nat32ToNat;
