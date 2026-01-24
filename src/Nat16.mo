@@ -90,7 +90,7 @@ module {
   /// ```
   /// @deprecated M0235
   public func fromNat64(x : Nat64) : Nat16 {
-    Prim.natToNat16(Prim.nat64ToNat(x))
+    Prim.nat32ToNat16(Prim.nat64ToNat32(x))
   };
 
   /// Converts a 16-bit unsigned integer to a 64-bit unsigned integer.
@@ -100,7 +100,7 @@ module {
   /// assert Nat16.toNat64(123) == (123 : Nat64);
   /// ```
   public func toNat64(self : Nat16) : Nat64 {
-    Prim.natToNat64(Prim.nat16ToNat(self))
+    Prim.nat32ToNat64(Prim.nat16ToNat32(self))
   };
 
   /// Converts a signed integer with infinite precision to a 16-bit unsigned integer.
