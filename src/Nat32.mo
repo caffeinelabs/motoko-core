@@ -51,7 +51,7 @@ module {
   /// assert Nat32.toNat8(123) == (123 : Nat8);
   /// ```
   public func toNat8(self : Nat32) : Nat8 {
-    Prim.natToNat8(Prim.nat32ToNat(self))
+    Prim.nat16ToNat8(Prim.nat32ToNat16(self))
   };
 
   /// Converts an 8-bit unsigned integer to a 32-bit unsigned integer.
@@ -62,7 +62,7 @@ module {
   /// ```
   /// @deprecated M0235
   public func fromNat8(x : Nat8) : Nat32 {
-    Prim.natToNat32(Prim.nat8ToNat(x))
+    Prim.nat16ToNat32(Prim.nat8ToNat16(x))
   };
 
   /// Converts a 16-bit unsigned integer to a 32-bit unsigned integer.
