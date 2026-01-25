@@ -43,7 +43,11 @@ async function main() {
 
   const snippets: Snippet[] = (
     await Promise.all(
-      (await glob(join(rootDirectory, "src/**/*.mo")))
+      (
+        await glob(join(rootDirectory, "src/**/*.mo"), {
+          ignore: join(rootDirectory, "src/internal/**"),
+        })
+      )
         .sort()
         .map(async (path) => {
           const virtualPath = relative(rootDirectory, path);
@@ -171,7 +175,10 @@ async function main() {
     if (snippet.path !== previousSnippet?.path) {
       console.log(chalk.gray(snippet.path));
     }
-    if (snippet.language === "motoko" && !snippet.tags.includes("no-validate")) {
+    if (
+      snippet.language === "motoko" &&
+      !snippet.tags.includes("no-validate")
+    ) {
       const startTime = Date.now();
       let status: TestResult["status"];
       let error;
