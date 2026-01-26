@@ -41,13 +41,10 @@ async function main() {
   const virtualBaseDirectory = "motoko-base";
   motoko.usePackage("core", join(virtualBaseDirectory, "src")); // Register `mo:core`
 
+  let skippable = true;
   const snippets: Snippet[] = (
     await Promise.all(
-      (
-        await glob(join(rootDirectory, "src/**/*.mo"), {
-          ignore: join(rootDirectory, "src/internal/**"),
-        })
-      )
+      (await glob(join(rootDirectory, "src/**/*.mo")))
         .sort()
         .map(async (path) => {
           const virtualPath = relative(rootDirectory, path);
@@ -62,6 +59,11 @@ async function main() {
             testFilters.every((testFilter) => !virtualPath.includes(testFilter))
           ) {
             return [];
+          }
+
+          // Skip internal modules
+          if (skippable && !virtualPath.startsWith("src/internal/")) {
+            skippable = false;
           }
 
           // Empty non-doc-comment lines to preserve line numbers
@@ -149,7 +151,7 @@ async function main() {
       snippets.length === 1 ? "" : "s"
     } in ${allPaths.length} file${allPaths.length === 1 ? "" : "s"}.`
   );
-  if (snippets.length == 0) {
+  if (!skippable && snippets.length == 0) {
     process.exit(1);
   }
 
@@ -252,7 +254,7 @@ async function main() {
 
   // Exit code 1 for failed tests
   const hasError =
-    !testResults.length ||
+    (!skippable && testResults.length === 0) ||
     testResults.some((result) => result.status === "failed");
   process.exit(hasError ? 1 : 0);
 }
