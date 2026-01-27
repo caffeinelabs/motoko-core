@@ -1031,6 +1031,26 @@ module {
     null
   };
 
+  /// Returns true if the `array` contains `element` using the provided `equal` function.
+  ///
+  /// ```motoko include=import
+  /// import Char "mo:core/Char";
+  ///
+  /// let array = [var 'c', 'o', 'f', 'f', 'e', 'e'];
+  /// assert VarArray.contains<Char>(array, Char.equal, 'f');
+  /// assert not VarArray.contains<Char>(array, Char.equal, 'g');
+  /// ```
+  ///
+  /// Runtime: O(array.size())
+  ///
+  /// Space: O(1)
+  public func contains<T>(self : [var T], equal : (implicit : (T, T) -> Bool), element : T) : Bool {
+    switch (indexOf<T>(self, equal, element)) {
+      case (?_) true;
+      case null false
+    }
+  };
+
   /// Returns an iterator over a slice of `array` starting at `fromInclusive` up to (but not including) `toExclusive`.
   ///
   /// Negative indices are relative to the end of the array. For example, `-1` corresponds to the last element in the array.

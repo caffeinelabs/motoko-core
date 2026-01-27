@@ -139,6 +139,31 @@ let suite = Suite.suite(
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
+      "contains",
+      VarArray.contains<Nat>([var 1, 9, 4, 8], Nat.equal, 9),
+      M.equals(T.bool(true))
+    ),
+    Suite.test(
+      "contains not found",
+      VarArray.contains<Nat>([var 1, 9, 4, 8], Nat.equal, 5),
+      M.equals(T.bool(false))
+    ),
+    Suite.test(
+      "contains empty",
+      VarArray.contains<Nat>([var], Nat.equal, 1),
+      M.equals(T.bool(false))
+    ),
+    Suite.test(
+      "contains first element",
+      VarArray.contains<Nat>([var 1, 2, 3], Nat.equal, 1),
+      M.equals(T.bool(true))
+    ),
+    Suite.test(
+      "contains last element",
+      VarArray.contains<Nat>([var 1, 2, 3], Nat.equal, 3),
+      M.equals(T.bool(true))
+    ),
+    Suite.test(
       "concat",
       VarArray.concat<Int>([var 1, 2, 3], [var 4, 5, 6]),
       M.equals(varArray<Int>(T.intTestable, [var 1, 2, 3, 4, 5, 6]))
