@@ -889,10 +889,12 @@ module {
   ///
   /// Space: O(1)
   public func contains<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : Bool {
-    switch (indexOf<T>(self, equal, element)) {
-      case (?_) true;
-      case null false
-    }
+    for (item in self.vals()) {
+      if (equal(item, element)) {
+        return true
+      }
+    };
+    false
   };
 
   /// Returns an iterator over a slice of `array` starting at `fromInclusive` up to (but not including) `toExclusive`.
