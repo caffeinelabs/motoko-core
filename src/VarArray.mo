@@ -18,8 +18,10 @@ import Order "Order";
 import Result "Result";
 import Option "Option";
 import Prim "mo:⛔";
+import InsertionSort "internal/SortHelper";
 
 module {
+  let nat = Prim.nat32ToNat;
 
   /// Creates an empty mutable array (equivalent to `[var]`).
   ///
@@ -222,66 +224,128 @@ module {
   /// Space: O(size)
   /// *Runtime and space assumes that `compare` runs in O(1) time and space.
   public func sortInPlace<T>(self : [var T], compare : (implicit : (T, T) -> Order.Order)) : () {
-    // Stable merge sort in a bottom-up iterative style. Same algorithm as the sort in Buffer.
-    let size = self.size();
-    if (size == 0) {
+    let size = Prim.natToNat32(self.size());
+    if (size <= 1) return;
+    if (size <= 8) {
+      InsertionSort.insertionSortSmall(self, self, compare, 0 : Nat32, size);
       return
     };
-    let scratchSpace = Prim.Array_init<T>(size, self[0]);
+    let buffer = repeat<T>(self[0], nat(size / 2));
+    mergeSortRec(self, buffer, compare, 0 : Nat32, size, true, 0 : Nat32)
+  };
 
-    var currSize = 1; // current size of the subarrays being merged
-    var oddIteration = false;
+  // input data is alwways in array
+  // even: write output data to array in place
+  // odd: write output data to buffer at offset
+  // offset is only used when odd
+  func mergeSortRec<T>(
+    array : [var T],
+    buffer : [var T],
+    compare : (T, T) -> Order.Order,
+    from : Nat32,
+    to : Nat32,
+    even : Bool,
+    offset : Nat32
+  ) {
+    debug assert from < to;
+    let size = to -% from;
+    debug assert size >= 4;
 
-    // when the current size == size, the array has been merged into a single sorted array
-    while (currSize < size) {
-      let (fromArray, toArray) = if (oddIteration) (scratchSpace, self) else (self, scratchSpace);
-      var leftStart = 0; // selects the current left subarray being merged
-
-      while (leftStart < size) {
-        let mid = if (leftStart + currSize < size) leftStart + currSize else size;
-        let rightEnd = if (leftStart + 2 * currSize < size) leftStart + 2 * currSize else size;
-
-        // merge [leftStart, mid) with [mid, rightEnd)
-        var left = leftStart;
-        var right = mid;
-        var nextSorted = leftStart;
-        while (left < mid and right < rightEnd) {
-          let leftElement = fromArray[left];
-          let rightElement = fromArray[right];
-          toArray[nextSorted] := switch (compare(leftElement, rightElement)) {
-            case (#less or #equal) {
-              left += 1;
-              leftElement
-            };
-            case (#greater) {
-              right += 1;
-              rightElement
-            }
-          };
-          nextSorted += 1
-        };
-        while (left < mid) {
-          toArray[nextSorted] := fromArray[left];
-          nextSorted += 1;
-          left += 1
-        };
-        while (right < rightEnd) {
-          toArray[nextSorted] := fromArray[right];
-          nextSorted += 1;
-          right += 1
-        };
-
-        leftStart += 2 * currSize
+    if (size <= 8) {
+      if (even) {
+        InsertionSort.insertionSortSmall(array, array, compare, from, size); // sorts array in place
+      } else {
+        InsertionSort.insertionSortSmallMove(array, buffer, compare, from, size, offset); // sorts to buffer at offset
       };
-
-      currSize *= 2;
-      oddIteration := not oddIteration
+      return
     };
-    if (oddIteration) {
-      var i = 0;
-      while (i < size) {
-        self[i] := scratchSpace[i];
-        i += 1
+
+    let len1 = size / 2;
+    let mid = from +% len1;
+    if (even) {
+      // merge to array in place
+      mergeSortRec(array, buffer, compare, mid, to, true, 0 : Nat32); // sort upper half to array in place
+      mergeSortRec(array, buffer, compare, from, mid, false, 0 : Nat32); // sort lower half to beginning of buffer
+      merge1(array, buffer, compare, from, mid, to); // merge to array in place
+    } else {
+      // merge to buffer at offset
+      mergeSortRec(array, buffer, compare, from, mid, true, 0 : Nat32); // lower half to array in place
+      mergeSortRec(array, buffer, compare, mid, to, false, offset +% len1); // sort upper half to buffer starting shifted offset
+      merge2(array, buffer, compare, from, mid, size, offset); // merge to buffer at offset
+    }
+  };
+
+  func merge1<T>(array : [var T], buffer : [var T], compare : (T, T) -> Order.Order, from : Nat32, mid : Nat32, to : Nat32) {
+    debug assert from < mid;
+    debug assert mid < to;
+    let len = mid -% from;
+    var pos = from;
+    var i = 0 : Nat32;
+    var j = mid;
+
+    var iElem = buffer[nat(i)];
+    var jElem = array[nat(j)];
+    label L loop {
+      switch (compare(jElem, iElem)) {
+        case (#less) {
+          array[nat(pos)] := jElem;
+          j +%= 1;
+          pos +%= 1;
+          if (j == to) {
+            while (i < len) {
+              array[nat(pos)] := buffer[nat(i)];
+              i +%= 1;
+              pos +%= 1
+            };
+            break L
+          };
+          jElem := array[nat(j)]
+        };
+        case (_) {
+          array[nat(pos)] := iElem;
+          i +%= 1;
+          pos +%= 1;
+          if (i == len) break L;
+          iElem := buffer[nat(i)]
+        }
+      }
+    }
+  };
+
+  func merge2<T>(array : [var T], buffer : [var T], compare : (T, T) -> Order.Order, from : Nat32, mid : Nat32, size : Nat32, offset : Nat32) {
+    debug assert from < mid;
+    debug assert mid < from +% size;
+    let len = mid -% from;
+    var pos = offset;
+    var i = from;
+    var j = offset +% len;
+    let j_max = offset +% size;
+
+    var iElem = array[nat(i)];
+    var jElem = buffer[nat(j)];
+    label L loop {
+      switch (compare(jElem, iElem)) {
+        case (#less) {
+          buffer[nat(pos)] := jElem;
+          j +%= 1;
+          pos +%= 1;
+          if (j == j_max) {
+            while (i < mid) {
+              buffer[nat(pos)] := array[nat(i)];
+              i +%= 1;
+              pos +%= 1
+            };
+            break L
+          };
+          jElem := buffer[nat(j)]
+        };
+        case (_) {
+          buffer[nat(pos)] := iElem;
+          i +%= 1;
+          pos +%= 1;
+          if (i == mid) break L;
+          iElem := array[nat(i)]
+        }
       }
     }
   };
@@ -790,6 +854,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(1)
+  /// @deprecated M0235
   public func fromArray<T>(array : [T]) : [var T] = Prim.Array_tabulateVar<T>(array.size(), func i = array[i]);
 
   /// Converts an iterator to a mutable array.

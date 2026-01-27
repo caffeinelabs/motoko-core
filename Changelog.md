@@ -1,9 +1,11 @@
 ## Next 
 
 * Add `contains` to `Array` and `VarArray` (#462).
+* Add Caffeine deprecation for `fromVarArray` and `fromArray` (#458).
 * **Breaking:** `Int8.fromInt32` no longer takes inappropriate `self` parameter (#456).
   Use `let` (not `func`) bindings to rebind `Prim` functions, reducing call overhead and some allocation.
 * Optimise various `fromIntX`, `toIntX` conversions (#455).
+* Optimize `VarArray/sortInPlace` (#453).
 * Fix error in documentation for `Float.nearest` (#449).
 
 ## 2.0.0
@@ -11,17 +13,17 @@
 * Context dot syntax and implicit `compare` parameters enabled (#441).
   Rename 1st parameters to `self` to enable the context dot syntax.
   Make `compare` parameters implicit to skip them at call sites.
-  - **Breaking:** `Text.join`, `Float.format` parameter order swap.
-  - Add missing conversion functions like `toArray`, `fromVarArray`, etc.
-    + `Set` : `toSet`, `fromArray`, `toArray`, `toPure`
-    + `Int` : `toFloat`
-    + `List` : `toArray`
-    + `Map` : `fromArray`, `fromIter`, `fromPure`, `fromVarArray`, `toArray`, `toMap`
-    + `Nat` : `toFloat`, `toInt`
-    + `Nat32` : `toChar`
-    + `Queue` : `fromVarArray`, `reverseValues`, `toArray`, `toPure`, `toQueue`
-    + `Stack` : `fromArray`, `fromVarArray`, `reverseValues`, `toArray`, `toPure`, `toStack`
-    + `VarArray` : `toArray`
+  * **Breaking:** `Text.join`, `Float.format` parameter order swap.
+  * Add missing conversion functions like `toArray`, `fromVarArray`, etc.
+    * `Set` : `toSet`, `fromArray`, `toArray`, `toPure`
+    * `Int` : `toFloat`
+    * `List` : `toArray`
+    * `Map` : `fromArray`, `fromIter`, `fromPure`, `fromVarArray`, `toArray`, `toMap`
+    * `Nat` : `toFloat`, `toInt`
+    * `Nat32` : `toChar`
+    * `Queue` : `fromVarArray`, `reverseValues`, `toArray`, `toPure`, `toQueue`
+    * `Stack` : `fromArray`, `fromVarArray`, `reverseValues`, `toArray`, `toPure`, `toStack`
+    * `VarArray` : `toArray`
 * Simplify `Random.seedFromState` implementation (#438).
 * Add `find` and `findIndex` to `Stack` (#435).
 * Add conversions between any two `Int*` types (#433).
