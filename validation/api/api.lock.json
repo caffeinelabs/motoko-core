@@ -468,7 +468,7 @@
       "public let toInt : (self : Int8) -> Int",
       "public let toInt16 : (self : Int8) -> Int16",
       "public func toInt32(self : Int8) : Int32",
-      "public func toInt64(x : Int8) : Int64",
+      "public func toInt64(self : Int8) : Int64",
       "public let toNat8 : (self : Int8) -> Nat8",
       "public func toText(self : Int8) : Text"
     ]
