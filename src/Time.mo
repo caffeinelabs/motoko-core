@@ -26,6 +26,7 @@
 
 import Types "Types";
 import Nat "Nat";
+import Order "Order";
 import Prim "mo:⛔";
 
 module {
@@ -45,6 +46,26 @@ module {
   ///
   /// Note: While an implementation will likely try to keep the system time close to the real time, this is not formally guaranteed.
   public func now() : Time = Prim.nat64ToNat(Prim.time());
+
+  /// Compares two `Time` values by their order.
+  ///
+  /// Returns `#less` if `x < y`, `#equal` if `x == y`, and `#greater` if `x > y`.
+  ///
+  /// This function can be used as value for a high order function, such as a sort function.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import Time "mo:core/Time";
+  /// import Array "mo:core/Array";
+  /// 
+  /// let times = [1704067200000000000, 1672531200000000000, 1688169600000000000];
+  /// assert Array.sort(times, Time.compare) == [1672531200000000000, 1688169600000000000, 1704067200000000000];
+  /// ```
+  public func compare(x : Time, y : Time) : Order.Order {
+    if (x < y) { #less } else if (x == y) { #equal } else {
+      #greater
+    }
+  };
 
   public type TimerId = Nat;
 
