@@ -43,4 +43,29 @@ module {
     trap("Runtime.unreachable()")
   };
 
+  /// Returns the names of all canister environment variables.
+  ///
+  /// Example:
+  /// ```motoko no-repl
+  /// let names = Runtime.envVarNames();
+  /// ```
+  public func envVarNames<system>() : [Text] {
+    return Prim.envVarNames<system>()
+  };
+
+  /// Returns the value of the canister environment variable named `name`, or null if not set.
+  ///
+  /// Example:
+  /// ```motoko no-repl
+  /// let value = Runtime.envVar("MY_ENV_VAR");
+  /// if (value != null) {
+  ///   // use value
+  /// } else {
+  ///   // variable not set
+  /// }
+  /// ```
+  public func envVar<system>(name : Text) : ?Text {
+    return Prim.envVar<system>(name)
+  }
+
 }

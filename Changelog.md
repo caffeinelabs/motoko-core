@@ -7,7 +7,7 @@
 * Optimise various `fromIntX`, `toIntX` conversions (#455).
 * Optimize `VarArray/sortInPlace` (#453).
 * Fix error in documentation for `Float.nearest` (#449).
-* Add `Canister` module with `envVarNames` and `envVar` functions.
+* Add `Runtime.envVarNames` and `Runtime.envVar` functions.
 
 ## 2.0.0
 * Adds documentation for `WeakReference` module (#444).
