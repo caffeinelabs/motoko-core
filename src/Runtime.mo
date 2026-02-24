@@ -58,11 +58,10 @@ module {
   /// Example:
   /// ```motoko include=import no-validate
   /// let value = Runtime.envVar("MY_ENV_VAR");
-  /// if (value != null) {
-  ///   // use value
-  /// } else {
-  ///   // variable not set
-  /// }
+  /// let result = switch (value) {
+  ///   case (?v) v;
+  ///   case null Runtime.trap("Unknown environment variable");
+  /// };
   /// ```
   public func envVar<system>(name : Text) : ?Text {
     return Prim.envVar<system>(name)
