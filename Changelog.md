@@ -1,5 +1,6 @@
 ## Next 
 
+* Add `Runtime.envVarNames` and `Runtime.envVar` functions (#465).
 * Add `contains` to `Array` and `VarArray` (#462).
 * Add Caffeine deprecation for `fromVarArray` and `fromArray` (#458).
 * **Breaking:** `Int8.fromInt32` no longer takes inappropriate `self` parameter (#456).
@@ -7,7 +8,6 @@
 * Optimise various `fromIntX`, `toIntX` conversions (#455).
 * Optimize `VarArray/sortInPlace` (#453).
 * Fix error in documentation for `Float.nearest` (#449).
-* Add `Runtime.envVarNames` and `Runtime.envVar` functions (#).
 
 ## 2.0.0
 * Adds documentation for `WeakReference` module (#444).
