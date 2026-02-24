@@ -46,7 +46,7 @@ module {
   /// Returns the names of all canister environment variables.
   ///
   /// Example:
-  /// ```motoko no-repl
+  /// ```motoko include=import no-validate
   /// let names = Runtime.envVarNames();
   /// ```
   public func envVarNames<system>() : [Text] {
@@ -56,7 +56,7 @@ module {
   /// Returns an optional value of the canister environment variable with the given name.
   ///
   /// Example:
-  /// ```motoko no-repl
+  /// ```motoko include=import no-validate
   /// let value = Runtime.envVar("MY_ENV_VAR");
   /// if (value != null) {
   ///   // use value
