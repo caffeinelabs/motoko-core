@@ -53,7 +53,7 @@ module {
     return Prim.envVarNames<system>()
   };
 
-  /// Returns the value of the canister environment variable named `name`, or null if not set.
+  /// Returns an optional value of the canister environment variable with the given name.
   ///
   /// Example:
   /// ```motoko no-repl
