@@ -1,4 +1,6 @@
-## Next 
+## Next
+
+## 2.1.0
 
 * Add `contains` to `Array` and `VarArray` (#462).
 * Add Caffeine deprecation for `fromVarArray` and `fromArray` (#458).
