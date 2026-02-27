@@ -60,7 +60,7 @@ module {
   /// let value = Runtime.envVar("MY_ENV_VAR");
   /// let result = switch (value) {
   ///   case (?v) v;
-  ///   case null Runtime.trap("Unknown environment variable");
+  ///   case null Runtime.trap("Unknown env var");
   /// };
   /// ```
   public func envVar<system>(name : Text) : ?Text {
