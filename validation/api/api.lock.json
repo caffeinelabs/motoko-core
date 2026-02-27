@@ -1109,6 +1109,8 @@
   {
     "name": "Runtime",
     "exports": [
+      "public func envVar<system>(name : Text) : ?Text",
+      "public func envVarNames<system>() : [Text]",
       "public func trap(errorMessage : Text) : None",
       "public func unreachable() : None"
     ]

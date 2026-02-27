@@ -2,6 +2,7 @@
 
 ## 2.1.0
 
+* Add `Runtime.envVarNames` and `Runtime.envVar` functions (#465).
 * Add `contains` to `Array` and `VarArray` (#462).
 * Add Caffeine deprecation for `fromVarArray` and `fromArray` (#458).
 * **Breaking:** `Int8.fromInt32` no longer takes inappropriate `self` parameter (#456).
