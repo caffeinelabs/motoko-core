@@ -1,4 +1,6 @@
-## Next 
+## Next
+
+## 2.1.0
 
 * Add `Runtime.envVarNames` and `Runtime.envVar` functions (#465).
 * Add `contains` to `Array` and `VarArray` (#462).
