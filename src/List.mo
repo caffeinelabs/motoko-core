@@ -3106,7 +3106,8 @@ module {
   /// Runtime: `O(1)`
   ///
   /// Space: `O(1)`
-  public func reader<T>(self : List<T>, start : Nat) : () -> T {
+  public let defaultReaderStart : Nat = 0;
+  public func reader<T>(self : List<T>, start : (implicit : (defaultReaderStart : Nat))) : () -> T {
     var blockIndex = 0;
     var elementIndex = 0;
     if (start != 0) {
