@@ -318,7 +318,7 @@ module {
   /// persistent actor {
   ///   transient let iter = [0, 1, 2, 3, 4].values();
   ///
-  ///   let queue = iter.toQeuue();
+  ///   let queue = iter.toQueue();
   ///   assert Queue.size(queue) == 5;
   /// }
   /// ```

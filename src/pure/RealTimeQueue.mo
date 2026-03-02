@@ -551,7 +551,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   transiet let iter = [0, 1, 2, 3, 4].values();
+  ///   transient let iter = [0, 1, 2, 3, 4].values();
   ///
   ///   let queue = iter.toQueue();
   ///
