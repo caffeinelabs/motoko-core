@@ -221,5 +221,88 @@ module {
       List.put(heap, index, bestElem);
       index := best
     }
+  };
+
+  /// Creates a new priority queue from an iterator.
+  ///
+  /// `compare` – comparison function that defines priority ordering.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  ///
+  /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+  /// assert PriorityQueue.size(pq) == 3;
+  /// assert PriorityQueue.peek(pq) == ?10;
+  /// ```
+  ///
+  /// Runtime: `O(n * log(n))`.
+  /// Space: `O(n)`.
+  /// `n` denotes the number of elements in the iterator.
+  public func fromIter<T>(iter : Types.Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : PriorityQueue<T> {
+    let pq = empty<T>();
+    for (element in iter) {
+      push(pq, element)
+    };
+    pq
+  };
+
+  /// Returns an iterator that yields elements in descending priority order
+  /// (highest priority first, matching `pop` semantics).
+  ///
+  /// The original queue is not modified. Internally clones the heap
+  /// and pops from the clone on each `next()` call.
+  ///
+  /// `compare` – comparison function that defines priority ordering.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  /// import Iter "mo:core/Iter";
+  ///
+  /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+  /// assert Iter.toArray(PriorityQueue.values(pq, Nat.compare)) == [10, 5, 3];
+  /// ```
+  ///
+  /// Runtime: `O(n)` to create the iterator, `O(log n)` per `next()` call.
+  /// Space: `O(n)` for the internal clone.
+  /// `n` denotes the number of elements in the priority queue.
+  public func values<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Types.Iter<T> {
+    let clone : PriorityQueue<T> = { heap = self.heap.clone() };
+    object {
+      public func next() : ?T {
+        pop(clone)
+      }
+    }
+  };
+
+  /// Returns a new priority queue containing only elements that satisfy the given predicate.
+  ///
+  /// `compare` – comparison function that defines priority ordering.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  ///
+  /// let pq = PriorityQueue.fromIter<Nat>([1, 5, 10, 3].values(), Nat.compare);
+  /// let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 4 });
+  /// assert PriorityQueue.size(filtered) == 2;
+  /// assert PriorityQueue.peek(filtered) == ?10;
+  /// ```
+  ///
+  /// Runtime: `O(n * log(n))`.
+  /// Space: `O(n)`.
+  /// `n` denotes the number of elements in the priority queue.
+  public func filter<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : PriorityQueue<T> {
+    let result = empty<T>();
+    for (element in self.heap.values()) {
+      if (predicate(element)) {
+        push(result, element)
+      }
+    };
+    result
   }
 }

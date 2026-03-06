@@ -1,4 +1,5 @@
 ## Next
+* Add `fromIter`, `values`, and `filter` to `PriorityQueue` (#2103).
 
 ## 2.1.0
 
