@@ -1,5 +1,7 @@
 ## Next 
 
+* Add `fromIter`, `values`, and `filter` to `PriorityQueue`.
+
 ## 2.0.0
 
 * Adds documentation for `WeakReference` module (#444).

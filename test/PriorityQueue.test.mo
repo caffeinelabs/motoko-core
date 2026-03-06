@@ -520,4 +520,192 @@ suite(
       }
     )
   }
+);
+
+suite(
+  "fromIter",
+  func() {
+    test(
+      "empty iterator",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>(Iter.empty<Nat>(), Nat.compare);
+        expect.bool(PriorityQueue.isEmpty(pq)).equal(true);
+        expect.nat(PriorityQueue.size(pq)).equal(0)
+      }
+    );
+
+    test(
+      "single element",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([42].values(), Nat.compare);
+        expect.nat(PriorityQueue.size(pq)).equal(1);
+        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?42)
+      }
+    );
+
+    test(
+      "multiple elements",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        expect.nat(PriorityQueue.size(pq)).equal(3);
+        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
+      }
+    );
+
+    test(
+      "preserves all elements in priority order",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([3, 1, 4, 1, 5, 9, 2, 6].values(), Nat.compare);
+        expect.nat(PriorityQueue.size(pq)).equal(8);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?9);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?6);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?4);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?3);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?2);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?1);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?1);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(null)
+      }
+    );
+
+    test(
+      "duplicates",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([5, 5, 5].values(), Nat.compare);
+        expect.nat(PriorityQueue.size(pq)).equal(3);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(null)
+      }
+    )
+  }
+);
+
+suite(
+  "values",
+  func() {
+    test(
+      "empty queue",
+      func() {
+        let pq = PriorityQueue.empty<Nat>();
+        let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([])
+      }
+    );
+
+    test(
+      "singleton",
+      func() {
+        let pq = PriorityQueue.singleton<Nat>(42);
+        let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([42])
+      }
+    );
+
+    test(
+      "yields elements in descending priority order",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([10, 5, 3])
+      }
+    );
+
+    test(
+      "does not modify the original queue",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        ignore Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        expect.nat(PriorityQueue.size(pq)).equal(3);
+        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
+      }
+    );
+
+    test(
+      "with duplicates",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([3, 1, 4, 1, 5].values(), Nat.compare);
+        let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([5, 4, 3, 1, 1])
+      }
+    );
+
+    test(
+      "can be called multiple times",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([2, 7, 1].values(), Nat.compare);
+        let vals1 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        let vals2 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
+        expect.array<Nat>(vals1, Nat.toText, Nat.equal).equal([7, 2, 1]);
+        expect.array<Nat>(vals2, Nat.toText, Nat.equal).equal([7, 2, 1])
+      }
+    )
+  }
+);
+
+suite(
+  "filter",
+  func() {
+    test(
+      "empty queue",
+      func() {
+        let pq = PriorityQueue.empty<Nat>();
+        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 0 });
+        expect.bool(PriorityQueue.isEmpty(filtered)).equal(true)
+      }
+    );
+
+    test(
+      "no elements match",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([1, 2, 3].values(), Nat.compare);
+        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 10 });
+        expect.bool(PriorityQueue.isEmpty(filtered)).equal(true)
+      }
+    );
+
+    test(
+      "all elements match",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([1, 2, 3].values(), Nat.compare);
+        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 0 });
+        expect.nat(PriorityQueue.size(filtered)).equal(3);
+        expect.option<Nat>(PriorityQueue.peek(filtered), Nat.toText, Nat.equal).equal(?3)
+      }
+    );
+
+    test(
+      "some elements match",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([1, 5, 10, 3].values(), Nat.compare);
+        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 4 });
+        expect.nat(PriorityQueue.size(filtered)).equal(2);
+        expect.option<Nat>(PriorityQueue.pop(filtered, Nat.compare), Nat.toText, Nat.equal).equal(?10);
+        expect.option<Nat>(PriorityQueue.pop(filtered, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option<Nat>(PriorityQueue.pop(filtered, Nat.compare), Nat.toText, Nat.equal).equal(null)
+      }
+    );
+
+    test(
+      "does not modify the original queue",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([1, 5, 10, 3].values(), Nat.compare);
+        ignore PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 4 });
+        expect.nat(PriorityQueue.size(pq)).equal(4);
+        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
+      }
+    );
+
+    test(
+      "even numbers only",
+      func() {
+        let pq = PriorityQueue.fromIter<Nat>([1, 2, 3, 4, 5, 6].values(), Nat.compare);
+        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x % 2 == 0 });
+        let vals = Iter.toArray(PriorityQueue.values(filtered, Nat.compare));
+        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([6, 4, 2])
+      }
+    )
+  }
 )
