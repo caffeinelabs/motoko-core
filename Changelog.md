@@ -1,4 +1,5 @@
 ## Next
+* Add `fromIter`, `values`, and `filter` to `PriorityQueue`.
 
 ## 2.1.0
 
@@ -10,8 +11,6 @@
 * Optimise various `fromIntX`, `toIntX` conversions (#455).
 * Optimize `VarArray/sortInPlace` (#453).
 * Fix error in documentation for `Float.nearest` (#449).
-
-* Add `fromIter`, `values`, and `filter` to `PriorityQueue`.
 
 ## 2.0.0
 * Adds documentation for `WeakReference` module (#444).
