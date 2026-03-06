@@ -25,9 +25,7 @@ module {
   /// ```motoko include=import
   /// assert Int.abs(-12) == 12;
   /// ```
-  public func abs(x : Int) : Nat {
-    Prim.abs(x)
-  };
+  public let abs : (x : Int) -> Nat = Prim.abs;
 
   /// Converts an integer number to its textual representation. Textual
   /// representation _do not_ contain underscores to represent commas.
@@ -156,9 +154,7 @@ module {
   /// ```motoko include=import
   /// assert Int.toFloat(-123) == -123.0;
   /// ```
-  public func toFloat(self : Int) : Float {
-    Prim.intToFloat(self)
-  };
+  public let toFloat : (self : Int) -> Float = Prim.intToFloat;
 
   /// Converts a signed integer with infinite precision to an 8-bit signed integer.
   ///
@@ -168,9 +164,7 @@ module {
   /// ```motoko include=import
   /// assert Int.toInt8(123) == (123 : Int8);
   /// ```
-  public func toInt8(self : Int) : Int8 {
-    Prim.intToInt8(self)
-  };
+  public let toInt8 : (self : Int) -> Int8 = Prim.intToInt8;
 
   /// Converts a signed integer with infinite precision to a 16-bit signed integer.
   ///
@@ -180,9 +174,7 @@ module {
   /// ```motoko include=import
   /// assert Int.toInt16(12_345) == (12_345 : Int16);
   /// ```
-  public func toInt16(self : Int) : Int16 {
-    Prim.intToInt16(self)
-  };
+  public let toInt16 : (self : Int) -> Int16 = Prim.intToInt16;
 
   /// Converts a signed integer with infinite precision to a 32-bit signed integer.
   ///
@@ -192,9 +184,7 @@ module {
   /// ```motoko include=import
   /// assert Int.toInt32(123_456) == (123_456 : Int32);
   /// ```
-  public func toInt32(self : Int) : Int32 {
-    Prim.intToInt32(self)
-  };
+  public let toInt32 : (self : Int) -> Int32 = Prim.intToInt32;
 
   /// Converts a signed integer with infinite precision to a 64-bit signed integer.
   ///
@@ -204,9 +194,7 @@ module {
   /// ```motoko include=import
   /// assert Int.toInt64(123_456_789) == (123_456_789 : Int64);
   /// ```
-  public func toInt64(self : Int) : Int64 {
-    Prim.intToInt64(self)
-  };
+  public let toInt64 : (self : Int) -> Int64 = Prim.intToInt64;
 
   /// Converts an 8-bit signed integer to a signed integer with infinite precision.
   ///
@@ -214,9 +202,7 @@ module {
   /// ```motoko include=import
   /// assert Int.fromInt8(123 : Int8) == 123;
   /// ```
-  public func fromInt8(x : Int8) : Int {
-    Prim.int8ToInt(x)
-  };
+  public let fromInt8 : (x : Int8) -> Int = Prim.int8ToInt;
 
   /// Converts a 16-bit signed integer to a signed integer with infinite precision.
   ///
@@ -224,9 +210,7 @@ module {
   /// ```motoko include=import
   /// assert Int.fromInt16(12_345 : Int16) == 12_345;
   /// ```
-  public func fromInt16(x : Int16) : Int {
-    Prim.int16ToInt(x)
-  };
+  public let fromInt16 : (x : Int16) -> Int = Prim.int16ToInt;
 
   /// Converts a 32-bit signed integer to a signed integer with infinite precision.
   ///
@@ -234,9 +218,7 @@ module {
   /// ```motoko include=import
   /// assert Int.fromInt32(123_456 : Int32) == 123_456;
   /// ```
-  public func fromInt32(x : Int32) : Int {
-    Prim.int32ToInt(x)
-  };
+  public let fromInt32 : (x : Int32) -> Int = Prim.int32ToInt;
 
   /// Converts a 64-bit signed integer to a signed integer with infinite precision.
   ///
@@ -244,9 +226,7 @@ module {
   /// ```motoko include=import
   /// assert Int.fromInt64(123_456_789 : Int64) == 123_456_789;
   /// ```
-  public func fromInt64(x : Int64) : Int {
-    Prim.int64ToInt(x)
-  };
+  public let fromInt64 : (x : Int64) -> Int = Prim.int64ToInt;
 
   /// Returns the minimum of `x` and `y`.
   ///

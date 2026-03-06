@@ -139,6 +139,31 @@ let suite = Suite.suite(
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
+      "contains",
+      Array.contains<Nat>([1, 9, 4, 8], Nat.equal, 9),
+      M.equals(T.bool(true))
+    ),
+    Suite.test(
+      "contains not found",
+      Array.contains<Nat>([1, 9, 4, 8], Nat.equal, 5),
+      M.equals(T.bool(false))
+    ),
+    Suite.test(
+      "contains empty",
+      Array.contains<Nat>([], Nat.equal, 1),
+      M.equals(T.bool(false))
+    ),
+    Suite.test(
+      "contains first element",
+      Array.contains<Nat>([1, 2, 3], Nat.equal, 1),
+      M.equals(T.bool(true))
+    ),
+    Suite.test(
+      "contains last element",
+      Array.contains<Nat>([1, 2, 3], Nat.equal, 3),
+      M.equals(T.bool(true))
+    ),
+    Suite.test(
       "concat",
       Array.concat<Int>([1, 2, 3], [4, 5, 6]),
       M.equals(T.array<Int>(T.intTestable, [1, 2, 3, 4, 5, 6]))

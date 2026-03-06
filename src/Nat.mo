@@ -27,9 +27,7 @@ module {
   /// ```motoko include=import
   /// assert Nat.toText(1234) == "1234";
   /// ```
-  public func toText(self : Nat) : Text {
-    Int.toText(self)
-  };
+  public let toText : (self : Nat) -> Text = Int.toText;
 
   /// Creates a natural number from its textual representation. Returns `null`
   /// if the input is not a valid natural number.
@@ -67,9 +65,7 @@ module {
   /// ```motoko include=import
   /// assert "1234".toNat() == ?1234;
   /// ```
-  public func toNat(self : Text) : ?Nat {
-    fromText(self)
-  };
+  public let toNat : (self : Text) -> ?Nat = fromText;
 
   /// Converts an integer to a natural number. Traps if the integer is negative.
   ///
@@ -95,9 +91,7 @@ module {
   /// ```motoko include=import
   /// assert Nat.toFloat(123) == 123.0;
   /// ```
-  public func toFloat(self : Nat) : Float {
-    Int.toFloat(self)
-  };
+  public let toFloat : (self : Nat) -> Float = Int.toFloat;
 
   /// Converts a natural number to an integer.
   ///
@@ -117,9 +111,7 @@ module {
   /// ```motoko include=import
   /// assert Nat.toNat8(123) == (123 : Nat8);
   /// ```
-  public func toNat8(self : Nat) : Nat8 {
-    Prim.natToNat8(self)
-  };
+  public let toNat8 : (self : Nat) -> Nat8 = Prim.natToNat8;
 
   /// Converts an unsigned integer with infinite precision to a 16-bit unsigned integer.
   ///
@@ -129,9 +121,7 @@ module {
   /// ```motoko include=import
   /// assert Nat.toNat16(123) == (123 : Nat16);
   /// ```
-  public func toNat16(self : Nat) : Nat16 {
-    Prim.natToNat16(self)
-  };
+  public let toNat16 : (self : Nat) -> Nat16 = Prim.natToNat16;
 
   /// Converts an unsigned integer with infinite precision to a 32-bit unsigned integer.
   ///
@@ -141,9 +131,7 @@ module {
   /// ```motoko include=import
   /// assert Nat.toNat32(123) == (123 : Nat32);
   /// ```
-  public func toNat32(self : Nat) : Nat32 {
-    Prim.natToNat32(self)
-  };
+  public let toNat32 : (self : Nat) -> Nat32 = Prim.natToNat32;
 
   /// Converts an unsigned integer with infinite precision to a 64-bit unsigned integer.
   ///
@@ -153,9 +141,7 @@ module {
   /// ```motoko include=import
   /// assert Nat.toNat64(123) == (123 : Nat64);
   /// ```
-  public func toNat64(self : Nat) : Nat64 {
-    Prim.natToNat64(self)
-  };
+  public let toNat64 : (self : Nat) -> Nat64 = Prim.natToNat64;
 
   /// Converts an 8-bit unsigned integer to an unsigned integer with infinite precision.
   ///
@@ -452,9 +438,7 @@ module {
   /// of bit patterns, conceptually it can be regarded as such, and the operation
   /// is provided as a high-performance version of the corresponding arithmetic
   /// rule.
-  public func bitshiftLeft(x : Nat, y : Nat32) : Nat {
-    Prim.shiftLeft(x, y)
-  };
+  public let bitshiftLeft : (x : Nat, y : Nat32) -> Nat = Prim.shiftLeft;
 
   /// Returns the (conceptual) bitwise shift right of `x` by `y`, `x / (2 ** y)`.
   ///
@@ -469,9 +453,7 @@ module {
   /// of bit patterns, conceptually it can be regarded as such, and the operation
   /// is provided as a high-performance version of the corresponding arithmetic
   /// rule.
-  public func bitshiftRight(x : Nat, y : Nat32) : Nat {
-    Prim.shiftRight(x, y)
-  };
+  public let bitshiftRight : (x : Nat, y : Nat32) -> Nat = Prim.shiftRight;
 
   /// Returns an iterator over `Nat` values from the first to second argument with an exclusive upper bound.
   /// ```motoko include=import

@@ -44,7 +44,7 @@ module {
   /// The system times of different canisters are unrelated, and calls from one canister to another may appear to travel "backwards in time"
   ///
   /// Note: While an implementation will likely try to keep the system time close to the real time, this is not formally guaranteed.
-  public let now : () -> Time = func() : Int = Prim.nat64ToNat(Prim.time());
+  public func now() : Time = Prim.nat64ToNat(Prim.time());
 
   public type TimerId = Nat;
 

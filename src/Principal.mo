@@ -50,7 +50,7 @@ module {
   ///   }
   /// }
   /// ```
-  public func fromActor(a : actor {}) : Principal = Prim.principalOfActor a;
+  public let fromActor : (a : actor {}) -> Principal = Prim.principalOfActor;
 
   /// Compute the Ledger account identifier of a principal. Optionally specify a sub-account.
   ///
@@ -92,7 +92,7 @@ module {
   /// let blob = Principal.toBlob(principal);
   /// assert blob == "\00\00\00\00\00\30\00\D3\01\01";
   /// ```
-  public func toBlob(self : Principal) : Blob = Prim.blobOfPrincipal self;
+  public let toBlob : (self : Principal) -> Blob = Prim.blobOfPrincipal;
 
   /// Converts a `Blob` (bytes) representation of a `Principal` to a `Principal` value.
   ///
@@ -102,7 +102,7 @@ module {
   /// let principal = Principal.fromBlob(blob);
   /// assert Principal.toText(principal) == "un4fu-tqaaa-aaaab-qadjq-cai";
   /// ```
-  public func fromBlob(self : Blob) : Principal = Prim.principalOfBlob self;
+  public let fromBlob : (self : Blob) -> Principal = Prim.principalOfBlob;
 
   /// Converts a `Principal` to its `Text` representation.
   ///

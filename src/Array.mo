@@ -58,7 +58,7 @@ module {
   /// Space: O(size)
   ///
   /// *Runtime and space assumes that `generator` runs in O(1) time and space.
-  public func tabulate<T>(size : Nat, generator : Nat -> T) : [T] = Prim.Array_tabulate<T>(size, generator);
+  public let tabulate : <T>(size : Nat, generator : Nat -> T) -> [T] = Prim.Array_tabulate;
 
   /// Transforms a mutable array into an immutable array.
   ///
@@ -72,6 +72,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(1)
+  /// @deprecated M0235
   public func fromVarArray<T>(varArray : [var T]) : [T] = Prim.Array_tabulate<T>(varArray.size(), func i = varArray[i]);
 
   /// Transforms an immutable array into a mutable array.
@@ -636,6 +637,7 @@ module {
   public func isEmpty<T>(self : [T]) : Bool = self.size() == 0;
 
   /// Converts an iterator to an array.
+  /// @deprecated M0235
   public func fromIter<T>(iter : Types.Iter<T>) : [T] {
     var list : Types.Pure.List<T> = null;
     var size = 0;
@@ -874,6 +876,27 @@ module {
       }
     };
     null
+  };
+
+  /// Returns true if the `array` contains `element` using the provided `equal` function.
+  ///
+  /// ```motoko include=import
+  /// import Char "mo:core/Char";
+  /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
+  /// assert Array.contains<Char>(array, Char.equal, 'f');
+  /// assert not Array.contains<Char>(array, Char.equal, 'g');
+  /// ```
+  ///
+  /// Runtime: O(array.size())
+  ///
+  /// Space: O(1)
+  public func contains<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : Bool {
+    for (item in self.vals()) {
+      if (equal(item, element)) {
+        return true
+      }
+    };
+    false
   };
 
   /// Returns an iterator over a slice of `array` starting at `fromInclusive` up to (but not including) `toExclusive`.

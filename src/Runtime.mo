@@ -43,4 +43,28 @@ module {
     trap("Runtime.unreachable()")
   };
 
+  /// Returns the names of all canister environment variables.
+  ///
+  /// Example:
+  /// ```motoko include=import no-validate
+  /// let names = Runtime.envVarNames();
+  /// ```
+  public func envVarNames<system>() : [Text] {
+    return Prim.envVarNames<system>()
+  };
+
+  /// Returns an optional value of the canister environment variable with the given name.
+  ///
+  /// Example:
+  /// ```motoko include=import no-validate
+  /// let value = Runtime.envVar("MY_ENV_VAR");
+  /// let result = switch (value) {
+  ///   case (?v) v;
+  ///   case null Runtime.trap("Unknown environment variable");
+  /// };
+  /// ```
+  public func envVar<system>(name : Text) : ?Text {
+    return Prim.envVar<system>(name)
+  }
+
 }
