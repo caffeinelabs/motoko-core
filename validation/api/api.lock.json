@@ -984,8 +984,8 @@
     "name": "PriorityQueue",
     "exports": [
       "public func clear<T>(self : PriorityQueue<T>)",
+      "public func clone<T>(self : PriorityQueue<T>) : PriorityQueue<T>",
       "public func empty<T>() : PriorityQueue<T>",
-      "public func filter<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : PriorityQueue<T>",
       "public func fromIter<T>(iter : Types.Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : PriorityQueue<T>",
       "public func isEmpty<T>(self : PriorityQueue<T>) : Bool",
       "public func peek<T>(self : PriorityQueue<T>) : ?T",
