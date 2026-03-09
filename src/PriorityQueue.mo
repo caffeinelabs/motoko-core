@@ -248,6 +248,25 @@ module {
     pq
   };
 
+  /// Creates a copy of the priority queue.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  ///
+  /// let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+  /// let copy = PriorityQueue.clone(original);
+  /// assert PriorityQueue.pop(copy, Nat.compare) == ?10;
+  /// assert PriorityQueue.size(original) == 3;
+  /// ```
+  ///
+  /// Runtime: `O(n)`. Space: `O(n)`.
+  /// `n` denotes the number of elements in the priority queue.
+  public func clone<T>(self : PriorityQueue<T>) : PriorityQueue<T> = {
+    heap = List.clone(self.heap)
+  };
+
   /// Returns an iterator that yields elements in descending priority order
   /// (highest priority first, matching `pop` semantics).
   ///
@@ -270,39 +289,11 @@ module {
   /// Space: `O(n)` for the internal clone.
   /// `n` denotes the number of elements in the priority queue.
   public func values<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Types.Iter<T> {
-    let clone : PriorityQueue<T> = { heap = self.heap.clone() };
+    let copy : PriorityQueue<T> = clone(self);
     object {
       public func next() : ?T {
-        pop(clone)
+        pop(copy)
       }
     }
-  };
-
-  /// Returns a new priority queue containing only elements that satisfy the given predicate.
-  ///
-  /// `compare` – comparison function that defines priority ordering.
-  ///
-  /// Example:
-  /// ```motoko
-  /// import PriorityQueue "mo:core/PriorityQueue";
-  /// import Nat "mo:core/Nat";
-  ///
-  /// let pq = PriorityQueue.fromIter<Nat>([1, 5, 10, 3].values(), Nat.compare);
-  /// let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 4 });
-  /// assert PriorityQueue.size(filtered) == 2;
-  /// assert PriorityQueue.peek(filtered) == ?10;
-  /// ```
-  ///
-  /// Runtime: `O(n * log(n))`.
-  /// Space: `O(n)`.
-  /// `n` denotes the number of elements in the priority queue.
-  public func filter<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : PriorityQueue<T> {
-    let result = empty<T>();
-    for (element in self.heap.values()) {
-      if (predicate(element)) {
-        push(result, element)
-      }
-    };
-    result
   }
 }

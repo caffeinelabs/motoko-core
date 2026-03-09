@@ -584,6 +584,55 @@ suite(
 );
 
 suite(
+  "clone",
+  func() {
+    test(
+      "empty queue",
+      func() {
+        let original = PriorityQueue.empty<Nat>();
+        let copy = PriorityQueue.clone(original);
+        expect.bool(PriorityQueue.isEmpty(copy)).equal(true)
+      }
+    );
+
+    test(
+      "deep copy preserves elements",
+      func() {
+        let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let copy = PriorityQueue.clone(original);
+        expect.nat(PriorityQueue.size(copy)).equal(3);
+        expect.option<Nat>(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
+      }
+    );
+
+    test(
+      "mutating the copy does not affect the original",
+      func() {
+        let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let copy = PriorityQueue.clone(original);
+        ignore PriorityQueue.pop(copy, Nat.compare);
+        ignore PriorityQueue.pop(copy, Nat.compare);
+        expect.nat(PriorityQueue.size(copy)).equal(1);
+        expect.nat(PriorityQueue.size(original)).equal(3);
+        expect.option<Nat>(PriorityQueue.peek(original), Nat.toText, Nat.equal).equal(?10)
+      }
+    );
+
+    test(
+      "mutating the original does not affect the copy",
+      func() {
+        let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let copy = PriorityQueue.clone(original);
+        PriorityQueue.clear(original);
+        expect.bool(PriorityQueue.isEmpty(original)).equal(true);
+        expect.nat(PriorityQueue.size(copy)).equal(3);
+        expect.option<Nat>(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
+      }
+    )
+  }
+);
+
+suite(
   "values",
   func() {
     test(
@@ -640,71 +689,6 @@ suite(
         let vals2 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         expect.array<Nat>(vals1, Nat.toText, Nat.equal).equal([7, 2, 1]);
         expect.array<Nat>(vals2, Nat.toText, Nat.equal).equal([7, 2, 1])
-      }
-    )
-  }
-);
-
-suite(
-  "filter",
-  func() {
-    test(
-      "empty queue",
-      func() {
-        let pq = PriorityQueue.empty<Nat>();
-        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 0 });
-        expect.bool(PriorityQueue.isEmpty(filtered)).equal(true)
-      }
-    );
-
-    test(
-      "no elements match",
-      func() {
-        let pq = PriorityQueue.fromIter<Nat>([1, 2, 3].values(), Nat.compare);
-        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 10 });
-        expect.bool(PriorityQueue.isEmpty(filtered)).equal(true)
-      }
-    );
-
-    test(
-      "all elements match",
-      func() {
-        let pq = PriorityQueue.fromIter<Nat>([1, 2, 3].values(), Nat.compare);
-        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 0 });
-        expect.nat(PriorityQueue.size(filtered)).equal(3);
-        expect.option<Nat>(PriorityQueue.peek(filtered), Nat.toText, Nat.equal).equal(?3)
-      }
-    );
-
-    test(
-      "some elements match",
-      func() {
-        let pq = PriorityQueue.fromIter<Nat>([1, 5, 10, 3].values(), Nat.compare);
-        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 4 });
-        expect.nat(PriorityQueue.size(filtered)).equal(2);
-        expect.option<Nat>(PriorityQueue.pop(filtered, Nat.compare), Nat.toText, Nat.equal).equal(?10);
-        expect.option<Nat>(PriorityQueue.pop(filtered, Nat.compare), Nat.toText, Nat.equal).equal(?5);
-        expect.option<Nat>(PriorityQueue.pop(filtered, Nat.compare), Nat.toText, Nat.equal).equal(null)
-      }
-    );
-
-    test(
-      "does not modify the original queue",
-      func() {
-        let pq = PriorityQueue.fromIter<Nat>([1, 5, 10, 3].values(), Nat.compare);
-        ignore PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x > 4 });
-        expect.nat(PriorityQueue.size(pq)).equal(4);
-        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
-      }
-    );
-
-    test(
-      "even numbers only",
-      func() {
-        let pq = PriorityQueue.fromIter<Nat>([1, 2, 3, 4, 5, 6].values(), Nat.compare);
-        let filtered = PriorityQueue.filter(pq, Nat.compare, func(x : Nat) : Bool { x % 2 == 0 });
-        let vals = Iter.toArray(PriorityQueue.values(filtered, Nat.compare));
-        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([6, 4, 2])
       }
     )
   }
