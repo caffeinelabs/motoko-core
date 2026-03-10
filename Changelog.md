@@ -1,5 +1,6 @@
 ## Next
 * Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#2103).
+* Add `Base64` module with `encode : Blob -> Text` (RFC 4648 standard alphabet) (#468).
 
 ## 2.1.0
 
