@@ -48,6 +48,12 @@
     ]
   },
   {
+    "name": "Base64",
+    "exports": [
+      "public func encode(data : Blob) : Text"
+    ]
+  },
+  {
     "name": "Blob",
     "exports": [
       "public type Blob",
