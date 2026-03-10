@@ -1,5 +1,5 @@
 ## Next
-* Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#2103).
+* Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#467).
 
 ## 2.1.0
 
