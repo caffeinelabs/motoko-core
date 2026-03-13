@@ -1,4 +1,5 @@
 ## Next
+* Make `compare`, `equal`, and `toText` parameters implicit in `Tuples` module.
 * Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#467).
 
 ## 2.1.0

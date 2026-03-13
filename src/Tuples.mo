@@ -35,7 +35,11 @@ module {
     /// import Nat "mo:core/Nat";
     /// assert Tuple2.toText((1, "hello"), Nat.toText, func (x: Text): Text = x) == "(1, hello)";
     /// ```
-    public func toText<A, B>(self : (A, B), toTextA : A -> Text, toTextB : B -> Text) : Text = "(" # toTextA(self.0) # ", " # toTextB(self.1) # ")";
+    public func toText<A, B>(
+      self : (A, B),
+      toTextA : (implicit : (toText : A -> Text)),
+      toTextB : (implicit : (toText : B -> Text))
+    ) : Text = "(" # toTextA(self.0) # ", " # toTextB(self.1) # ")";
 
     /// Compares two tuples for equality.
     ///
@@ -46,7 +50,12 @@ module {
     /// import Text "mo:core/Text";
     /// assert Tuple2.equal((1, "hello"), (1, "hello"), Nat.equal, Text.equal);
     /// ```
-    public func equal<A, B>(self : (A, B), other : (A, B), aEqual : (A, A) -> Bool, bEqual : (B, B) -> Bool) : Bool = aEqual(self.0, other.0) and bEqual(self.1, other.1);
+    public func equal<A, B>(
+      self : (A, B),
+      other : (A, B),
+      equalA : (implicit : (equal : (A, A) -> Bool)),
+      equalB : (implicit : (equal : (B, B) -> Bool))
+    ) : Bool = equalA(self.0, other.0) and equalB(self.1, other.1);
 
     /// Compares two tuples lexicographically.
     ///
@@ -61,8 +70,13 @@ module {
     /// assert Tuple2.compare((2, "hello"), (1, "hello"), Nat.compare, Text.compare) == #greater;
     /// assert Tuple2.compare((1, "world"), (1, "hello"), Nat.compare, Text.compare) == #greater;
     /// ```
-    public func compare<A, B>(self : (A, B), other : (A, B), aCompare : (A, A) -> Types.Order, bCompare : (B, B) -> Types.Order) : Types.Order = switch (aCompare(self.0, other.0)) {
-      case (#equal) bCompare(self.1, other.1);
+    public func compare<A, B>(
+      self : (A, B),
+      other : (A, B),
+      compareA : (implicit : (compare : (A, A) -> Types.Order)),
+      compareB : (implicit : (compare : (B, B) -> Types.Order))
+    ) : Types.Order = switch (compareA(self.0, other.0)) {
+      case (#equal) compareB(self.1, other.1);
       case order order
     };
 
@@ -76,7 +90,10 @@ module {
     /// let tupleToText = Tuple2.makeToText<Nat, Text>(Nat.toText, func x = x);
     /// assert tupleToText((1, "hello")) == "(1, hello)";
     /// ```
-    public func makeToText<A, B>(toTextA : A -> Text, toTextB : B -> Text) : ((A, B)) -> Text = func t = toText(t, toTextA, toTextB);
+    public func makeToText<A, B>(
+      toTextA : (implicit : (toText : A -> Text)),
+      toTextB : (implicit : (toText : B -> Text))
+    ) : ((A, B)) -> Text = func t = toText(t, toTextA, toTextB);
 
     /// Creates an `equal` function for a tuple given `equal` functions for its elements.
     /// This is useful when you need to reuse the same equality comparison multiple times.
@@ -89,7 +106,10 @@ module {
     /// let tupleEqual = Tuple2.makeEqual(Nat.equal, Text.equal);
     /// assert tupleEqual((1, "hello"), (1, "hello"));
     /// ```
-    public func makeEqual<A, B>(aEqual : (A, A) -> Bool, bEqual : (B, B) -> Bool) : ((A, B), (A, B)) -> Bool = func(t1, t2) = equal(t1, t2, aEqual, bEqual);
+    public func makeEqual<A, B>(
+      equalA : (implicit : (equal : (A, A) -> Bool)),
+      equalB : (implicit : (equal : (B, B) -> Bool))
+    ) : ((A, B), (A, B)) -> Bool = func(t1, t2) = equal(t1, t2, equalA, equalB);
 
     /// Creates a `compare` function for a tuple given `compare` functions for its elements.
     /// This is useful when you need to reuse the same comparison multiple times.
@@ -102,7 +122,10 @@ module {
     /// let tupleCompare = Tuple2.makeCompare(Nat.compare, Text.compare);
     /// assert tupleCompare((1, "hello"), (1, "world")) == #less;
     /// ```
-    public func makeCompare<A, B>(aCompare : (A, A) -> Types.Order, bCompare : (B, B) -> Types.Order) : ((A, B), (A, B)) -> Types.Order = func(t1, t2) = compare(t1, t2, aCompare, bCompare)
+    public func makeCompare<A, B>(
+      compareA : (implicit : (compare : (A, A) -> Types.Order)),
+      compareB : (implicit : (compare : (B, B) -> Types.Order))
+    ) : ((A, B), (A, B)) -> Types.Order = func(t1, t2) = compare(t1, t2, compareA, compareB)
   };
 
   public module Tuple3 {
@@ -114,7 +137,12 @@ module {
     /// import Nat "mo:core/Nat";
     /// assert Tuple3.toText((1, "hello", 2), Nat.toText, func (x: Text): Text = x, Nat.toText) == "(1, hello, 2)";
     /// ```
-    public func toText<A, B, C>(self : (A, B, C), toTextA : A -> Text, toTextB : B -> Text, toTextC : C -> Text) : Text = "(" # toTextA(self.0) # ", " # toTextB(self.1) # ", " # toTextC(self.2) # ")";
+    public func toText<A, B, C>(
+      self : (A, B, C),
+      toTextA : (implicit : (toText : A -> Text)),
+      toTextB : (implicit : (toText : B -> Text)),
+      toTextC : (implicit : (toText : C -> Text))
+    ) : Text = "(" # toTextA(self.0) # ", " # toTextB(self.1) # ", " # toTextC(self.2) # ")";
 
     /// Compares two 3-tuples for equality.
     ///
@@ -125,7 +153,13 @@ module {
     /// import Text "mo:core/Text";
     /// assert Tuple3.equal((1, "hello", 2), (1, "hello", 2), Nat.equal, Text.equal, Nat.equal);
     /// ```
-    public func equal<A, B, C>(self : (A, B, C), other : (A, B, C), aEqual : (A, A) -> Bool, bEqual : (B, B) -> Bool, cEqual : (C, C) -> Bool) : Bool = aEqual(self.0, other.0) and bEqual(self.1, other.1) and cEqual(self.2, other.2);
+    public func equal<A, B, C>(
+      self : (A, B, C),
+      other : (A, B, C),
+      equalA : (implicit : (equal : (A, A) -> Bool)),
+      equalB : (implicit : (equal : (B, B) -> Bool)),
+      equalC : (implicit : (equal : (C, C) -> Bool))
+    ) : Bool = equalA(self.0, other.0) and equalB(self.1, other.1) and equalC(self.2, other.2);
 
     /// Compares two 3-tuples lexicographically.
     ///
@@ -139,10 +173,16 @@ module {
     /// assert Tuple3.compare((1, "hello", 2), (1, "hello", 2), Nat.compare, Text.compare, Nat.compare) == #equal;
     /// assert Tuple3.compare((2, "hello", 2), (1, "hello", 2), Nat.compare, Text.compare, Nat.compare) == #greater;
     /// ```
-    public func compare<A, B, C>(self : (A, B, C), other : (A, B, C), aCompare : (A, A) -> Types.Order, bCompare : (B, B) -> Types.Order, cCompare : (C, C) -> Types.Order) : Types.Order = switch (aCompare(self.0, other.0)) {
+    public func compare<A, B, C>(
+      self : (A, B, C),
+      other : (A, B, C),
+      compareA : (implicit : (compare : (A, A) -> Types.Order)),
+      compareB : (implicit : (compare : (B, B) -> Types.Order)),
+      compareC : (implicit : (compare : (C, C) -> Types.Order))
+    ) : Types.Order = switch (compareA(self.0, other.0)) {
       case (#equal) {
-        switch (bCompare(self.1, other.1)) {
-          case (#equal) cCompare(self.2, other.2);
+        switch (compareB(self.1, other.1)) {
+          case (#equal) compareC(self.2, other.2);
           case order order
         }
       };
@@ -159,7 +199,11 @@ module {
     /// let toText = Tuple3.makeToText<Nat, Text, Nat>(Nat.toText, func x = x, Nat.toText);
     /// assert toText((1, "hello", 2)) == "(1, hello, 2)";
     /// ```
-    public func makeToText<A, B, C>(toTextA : A -> Text, toTextB : B -> Text, toTextC : C -> Text) : ((A, B, C)) -> Text = func t = toText(t, toTextA, toTextB, toTextC);
+    public func makeToText<A, B, C>(
+      toTextA : (implicit : (toText : A -> Text)),
+      toTextB : (implicit : (toText : B -> Text)),
+      toTextC : (implicit : (toText : C -> Text))
+    ) : ((A, B, C)) -> Text = func t = toText(t, toTextA, toTextB, toTextC);
 
     /// Creates an `equal` function for a 3-tuple given `equal` functions for its elements.
     /// This is useful when you need to reuse the same equality comparison multiple times.
@@ -172,7 +216,11 @@ module {
     /// let equal = Tuple3.makeEqual(Nat.equal, Text.equal, Nat.equal);
     /// assert equal((1, "hello", 2), (1, "hello", 2));
     /// ```
-    public func makeEqual<A, B, C>(aEqual : (A, A) -> Bool, bEqual : (B, B) -> Bool, cEqual : (C, C) -> Bool) : ((A, B, C), (A, B, C)) -> Bool = func(t1, t2) = equal(t1, t2, aEqual, bEqual, cEqual);
+    public func makeEqual<A, B, C>(
+      equalA : (implicit : (equal : (A, A) -> Bool)),
+      equalB : (implicit : (equal : (B, B) -> Bool)),
+      equalC : (implicit : (equal : (C, C) -> Bool))
+    ) : ((A, B, C), (A, B, C)) -> Bool = func(t1, t2) = equal(t1, t2, equalA, equalB, equalC);
 
     /// Creates a `compare` function for a 3-tuple given `compare` functions for its elements.
     /// This is useful when you need to reuse the same comparison multiple times.
@@ -185,7 +233,11 @@ module {
     /// let compare = Tuple3.makeCompare(Nat.compare, Text.compare, Nat.compare);
     /// assert compare((1, "hello", 2), (1, "world", 1)) == #less;
     /// ```
-    public func makeCompare<A, B, C>(aCompare : (A, A) -> Types.Order, bCompare : (B, B) -> Types.Order, cCompare : (C, C) -> Types.Order) : ((A, B, C), (A, B, C)) -> Types.Order = func(t1, t2) = compare(t1, t2, aCompare, bCompare, cCompare)
+    public func makeCompare<A, B, C>(
+      compareA : (implicit : (compare : (A, A) -> Types.Order)),
+      compareB : (implicit : (compare : (B, B) -> Types.Order)),
+      compareC : (implicit : (compare : (C, C) -> Types.Order))
+    ) : ((A, B, C), (A, B, C)) -> Types.Order = func(t1, t2) = compare(t1, t2, compareA, compareB, compareC)
   };
 
   public module Tuple4 {
@@ -197,7 +249,13 @@ module {
     /// import Nat "mo:core/Nat";
     /// assert Tuple4.toText((1, "hello", 2, 3), Nat.toText, func (x: Text): Text = x, Nat.toText, Nat.toText) == "(1, hello, 2, 3)";
     /// ```
-    public func toText<A, B, C, D>(self : (A, B, C, D), toTextA : A -> Text, toTextB : B -> Text, toTextC : C -> Text, toTextD : D -> Text) : Text = "(" # toTextA(self.0) # ", " # toTextB(self.1) # ", " # toTextC(self.2) # ", " # toTextD(self.3) # ")";
+    public func toText<A, B, C, D>(
+      self : (A, B, C, D),
+      toTextA : (implicit : (toText : A -> Text)),
+      toTextB : (implicit : (toText : B -> Text)),
+      toTextC : (implicit : (toText : C -> Text)),
+      toTextD : (implicit : (toText : D -> Text))
+    ) : Text = "(" # toTextA(self.0) # ", " # toTextB(self.1) # ", " # toTextC(self.2) # ", " # toTextD(self.3) # ")";
 
     /// Compares two 4-tuples for equality.
     ///
@@ -208,7 +266,14 @@ module {
     /// import Text "mo:core/Text";
     /// assert Tuple4.equal((1, "hello", 2, 3), (1, "hello", 2, 3), Nat.equal, Text.equal, Nat.equal, Nat.equal);
     /// ```
-    public func equal<A, B, C, D>(self : (A, B, C, D), other : (A, B, C, D), aEqual : (A, A) -> Bool, bEqual : (B, B) -> Bool, cEqual : (C, C) -> Bool, dEqual : (D, D) -> Bool) : Bool = aEqual(self.0, other.0) and bEqual(self.1, other.1) and cEqual(self.2, other.2) and dEqual(self.3, other.3);
+    public func equal<A, B, C, D>(
+      self : (A, B, C, D),
+      other : (A, B, C, D),
+      equalA : (implicit : (equal : (A, A) -> Bool)),
+      equalB : (implicit : (equal : (B, B) -> Bool)),
+      equalC : (implicit : (equal : (C, C) -> Bool)),
+      equalD : (implicit : (equal : (D, D) -> Bool))
+    ) : Bool = equalA(self.0, other.0) and equalB(self.1, other.1) and equalC(self.2, other.2) and equalD(self.3, other.3);
 
     /// Compares two 4-tuples lexicographically.
     ///
@@ -222,12 +287,19 @@ module {
     /// assert Tuple4.compare((1, "hello", 2, 3), (1, "hello", 2, 3), Nat.compare, Text.compare, Nat.compare, Nat.compare) == #equal;
     /// assert Tuple4.compare((2, "hello", 2, 3), (1, "hello", 2, 3), Nat.compare, Text.compare, Nat.compare, Nat.compare) == #greater;
     /// ```
-    public func compare<A, B, C, D>(self : (A, B, C, D), other : (A, B, C, D), aCompare : (A, A) -> Types.Order, bCompare : (B, B) -> Types.Order, cCompare : (C, C) -> Types.Order, dCompare : (D, D) -> Types.Order) : Types.Order = switch (aCompare(self.0, other.0)) {
+    public func compare<A, B, C, D>(
+      self : (A, B, C, D),
+      other : (A, B, C, D),
+      compareA : (implicit : (compare : (A, A) -> Types.Order)),
+      compareB : (implicit : (compare : (B, B) -> Types.Order)),
+      compareC : (implicit : (compare : (C, C) -> Types.Order)),
+      compareD : (implicit : (compare : (D, D) -> Types.Order))
+    ) : Types.Order = switch (compareA(self.0, other.0)) {
       case (#equal) {
-        switch (bCompare(self.1, other.1)) {
+        switch (compareB(self.1, other.1)) {
           case (#equal) {
-            switch (cCompare(self.2, other.2)) {
-              case (#equal) dCompare(self.3, other.3);
+            switch (compareC(self.2, other.2)) {
+              case (#equal) compareD(self.3, other.3);
               case order order
             }
           };
@@ -247,7 +319,12 @@ module {
     /// let toText = Tuple4.makeToText(Nat.toText, func (x: Text): Text = x, Nat.toText, Nat.toText);
     /// assert toText((1, "hello", 2, 3)) == "(1, hello, 2, 3)";
     /// ```
-    public func makeToText<A, B, C, D>(toTextA : A -> Text, toTextB : B -> Text, toTextC : C -> Text, toTextD : D -> Text) : ((A, B, C, D)) -> Text = func t = toText(t, toTextA, toTextB, toTextC, toTextD);
+    public func makeToText<A, B, C, D>(
+      toTextA : (implicit : (toText : A -> Text)),
+      toTextB : (implicit : (toText : B -> Text)),
+      toTextC : (implicit : (toText : C -> Text)),
+      toTextD : (implicit : (toText : D -> Text))
+    ) : ((A, B, C, D)) -> Text = func t = toText(t, toTextA, toTextB, toTextC, toTextD);
 
     /// Creates an `equal` function for a 4-tuple given `equal` functions for its elements.
     /// This is useful when you need to reuse the same equality comparison multiple times.
@@ -260,7 +337,12 @@ module {
     /// let equal = Tuple4.makeEqual(Nat.equal, Text.equal, Nat.equal, Nat.equal);
     /// assert equal((1, "hello", 2, 3), (1, "hello", 2, 3));
     /// ```
-    public func makeEqual<A, B, C, D>(aEqual : (A, A) -> Bool, bEqual : (B, B) -> Bool, cEqual : (C, C) -> Bool, dEqual : (D, D) -> Bool) : ((A, B, C, D), (A, B, C, D)) -> Bool = func(t1, t2) = equal(t1, t2, aEqual, bEqual, cEqual, dEqual);
+    public func makeEqual<A, B, C, D>(
+      equalA : (implicit : (equal : (A, A) -> Bool)),
+      equalB : (implicit : (equal : (B, B) -> Bool)),
+      equalC : (implicit : (equal : (C, C) -> Bool)),
+      equalD : (implicit : (equal : (D, D) -> Bool))
+    ) : ((A, B, C, D), (A, B, C, D)) -> Bool = func(t1, t2) = equal(t1, t2, equalA, equalB, equalC, equalD);
 
     /// Creates a `compare` function for a 4-tuple given `compare` functions for its elements.
     /// This is useful when you need to reuse the same comparison multiple times.
@@ -273,6 +355,11 @@ module {
     /// let compare = Tuple4.makeCompare(Nat.compare, Text.compare, Nat.compare, Nat.compare);
     /// assert compare((1, "hello", 2, 3), (1, "world", 1, 3)) == #less;
     /// ```
-    public func makeCompare<A, B, C, D>(aCompare : (A, A) -> Types.Order, bCompare : (B, B) -> Types.Order, cCompare : (C, C) -> Types.Order, dCompare : (D, D) -> Types.Order) : ((A, B, C, D), (A, B, C, D)) -> Types.Order = func(t1, t2) = compare(t1, t2, aCompare, bCompare, cCompare, dCompare)
+    public func makeCompare<A, B, C, D>(
+      compareA : (implicit : (compare : (A, A) -> Types.Order)),
+      compareB : (implicit : (compare : (B, B) -> Types.Order)),
+      compareC : (implicit : (compare : (C, C) -> Types.Order)),
+      compareD : (implicit : (compare : (D, D) -> Types.Order))
+    ) : ((A, B, C, D), (A, B, C, D)) -> Types.Order = func(t1, t2) = compare(t1, t2, compareA, compareB, compareC, compareD)
   }
 }
