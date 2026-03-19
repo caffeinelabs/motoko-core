@@ -1,5 +1,8 @@
 ## Next
 * Add `Base64` module with `encode : Blob -> Text` (RFC 4648 standard alphabet) (#468).
+
+## 2.2.0
+* Make `compare`, `equal`, and `toText` parameters implicit in `Tuples` module (#470).
 * Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#467).
 
 ## 2.1.0
