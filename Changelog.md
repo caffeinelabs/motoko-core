@@ -1,7 +1,6 @@
 ## Next
 
 ## 2.3.1
-
 * Fix empty files in 2.3.0 (#473).
 
 ## 2.3.0
