@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: 24
         cache: npm
@@ -22,7 +22,7 @@ runs:
     - name: Cache mops packages before installing dependencies
       if: ${{ inputs.setup-mops == 'true' }}
       id: mops-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         key: mops-packages-${{ hashFiles('mops.toml') }}
         restore-keys: |

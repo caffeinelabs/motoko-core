@@ -26,14 +26,14 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
         with:
           setup-dfx: true
 
       - name: Checkout out the branch with benchmark results
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: benchmark-results
           path: .benchmark-results-branch/
