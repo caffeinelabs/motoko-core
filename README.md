@@ -21,7 +21,7 @@ This adds the following dependency to your `mops.toml` config file:
 
 ```toml
 [dependencies]
-core = "2.2.0"
+core = "2.3.0"
 ```
 
 ## Contributing
