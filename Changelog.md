@@ -1,5 +1,7 @@
 ## Next
 
+## 2.3.1
+
 ## 2.3.0
 * Add `Base64` module with `encode : Blob -> Text` (RFC 4648 standard alphabet) (#468).
 
