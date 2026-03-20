@@ -11,7 +11,7 @@ jobs:
       PR_PATH: pull/${{github.event.number}}
     steps:
       - name: Checkout website repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Make empty dir
         run: mkdir docs
