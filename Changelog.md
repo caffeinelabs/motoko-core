@@ -2,6 +2,8 @@
 
 ## 2.3.1
 
+* Fix empty files in 2.3.0 (#473).
+
 ## 2.3.0
 * Add `Base64` module with `encode : Blob -> Text` (RFC 4648 standard alphabet) (#468).
 
