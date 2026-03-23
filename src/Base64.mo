@@ -47,12 +47,11 @@ module {
   /// assert Base64.encode("foobar" : Blob) == "Zm9vYmFy";
   /// ```
   ///
-  /// Typical use — encoding HTTP Basic Auth credentials:
+  /// Typical use — embedding text in a data URI:
   /// ```motoko include=import
-  /// // Encodes "user:pass" → "dXNlcjpwYXNz"
-  /// let credentials = "user:pass" : Blob;
-  /// let header = "Basic " # Base64.encode(credentials);
-  /// assert header == "Basic dXNlcjpwYXNz";
+  /// let payload = "Hello" : Blob;
+  /// let uri = "data:text/plain;base64," # Base64.encode(payload);
+  /// assert uri == "data:text/plain;base64,SGVsbG8=";
   /// ```
   public func encode(data : Blob) : Text {
     let bytes = Blob.toArray(data);
