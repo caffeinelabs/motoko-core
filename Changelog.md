@@ -1,4 +1,5 @@
 ## Next
+* Update `Base64.encode` doc example (#475).
 
 ## 2.3.1
 * Fix empty files in 2.3.0 (#473).
