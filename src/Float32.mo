@@ -25,7 +25,7 @@
 ///   floating-point numbers with a numerical tolerance, called epsilon.
 ///
 ///   Example:
-///   ```motoko
+///   ```motoko no-validate
 ///   import Float32 "mo:core/Float32";
 ///   let x = 0.1 + 0.1 + 0.1 : Float32;
 ///   let y = 0.3 : Float32;

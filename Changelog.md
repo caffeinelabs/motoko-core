@@ -1,7 +1,7 @@
 ## Next
-* Test, benchmark and optimization for `Base64.encode` (#476). 
-* Update `Base64.encode` doc example (#475).
 * Add `Float32` module for single-precision (32-bit) floating-point arithmetic (#477).
+* Test, benchmark and optimization for `Base64.encode` (#476).
+* Update `Base64.encode` doc example (#475).
 
 ## 2.3.1
 * Fix empty files in 2.3.0 (#473).
