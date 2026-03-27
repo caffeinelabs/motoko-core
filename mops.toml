@@ -18,6 +18,7 @@ bench = "1.0.0"
 fuzz = "1.0.0"
 matchers = "2.1.0"
 base-0-14-13 = "https://github.com/dfinity/motoko-base#moc-0.14.13@794174a307975c225cfb26b57f73e38a841c0415"
+bench-helper = "0.0.3"
 
 [requirements]
 moc = "1.4.0"
