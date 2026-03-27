@@ -49,9 +49,25 @@ module {
   /// 32-bit floating point number type.
   public type Float32 = Prim.Types.Float32;
 
-  // Internal helpers for converting via Float
-  let toF64 : Float32 -> Float = Prim.float32ToFloat;
-  let fromF64 : Float -> Float32 = Prim.floatToFloat32;
+  /// Conversion to Float (64-bit double precision).
+  ///
+  /// This is a lossless widening conversion.
+  ///
+  /// Example:
+  /// ```motoko include=import no-validate
+  /// assert Float32.toFloat(1.5) == 1.5;
+  /// ```
+  public let toFloat : (self : Float32) -> Float = Prim.float32ToFloat;
+
+  /// Conversion from Float (64-bit double precision) to Float32.
+  ///
+  /// Note: This may lose precision for values that are not exactly representable in 32-bit.
+  ///
+  /// Example:
+  /// ```motoko include=import no-validate
+  /// assert Float32.fromFloat(1.5) == 1.5;
+  /// ```
+  public let fromFloat : (x : Float) -> Float32 = Prim.floatToFloat32;
 
   /// Ratio of the circumference of a circle to its diameter.
   /// Note: Limited precision (approximately 7 significant decimal digits).
@@ -91,7 +107,7 @@ module {
   /// assert Float32.equal(Float32.abs(-1.2), 1.2, epsilon);
   /// ```
   public func abs(x : Float32) : Float32 {
-    fromF64(Prim.floatAbs(toF64(x)))
+    fromFloat(Prim.floatAbs(toFloat(x)))
   };
 
   /// Returns the square root of `x`.
@@ -110,7 +126,7 @@ module {
   /// assert Float32.equal(Float32.sqrt(6.25), 2.5, epsilon);
   /// ```
   public func sqrt(x : Float32) : Float32 {
-    fromF64(Prim.floatSqrt(toF64(x)))
+    fromFloat(Prim.floatSqrt(toFloat(x)))
   };
 
   /// Returns the smallest integral float greater than or equal to `x`.
@@ -130,7 +146,7 @@ module {
   /// assert Float32.equal(Float32.ceil(1.2), 2.0, epsilon);
   /// ```
   public func ceil(x : Float32) : Float32 {
-    fromF64(Prim.floatCeil(toF64(x)))
+    fromFloat(Prim.floatCeil(toFloat(x)))
   };
 
   /// Returns the largest integral float less than or equal to `x`.
@@ -150,7 +166,7 @@ module {
   /// assert Float32.equal(Float32.floor(1.2), 1.0, epsilon);
   /// ```
   public func floor(x : Float32) : Float32 {
-    fromF64(Prim.floatFloor(toF64(x)))
+    fromFloat(Prim.floatFloor(toFloat(x)))
   };
 
   /// Returns the nearest integral float not greater in magnitude than `x`.
@@ -171,7 +187,7 @@ module {
   /// assert Float32.equal(Float32.trunc(2.75), 2.0, epsilon);
   /// ```
   public func trunc(x : Float32) : Float32 {
-    fromF64(Prim.floatTrunc(toF64(x)))
+    fromFloat(Prim.floatTrunc(toFloat(x)))
   };
 
   /// Returns the nearest integral float to `x`.
@@ -192,7 +208,7 @@ module {
   /// assert Float32.nearest(2.75) == 3.0
   /// ```
   public func nearest(x : Float32) : Float32 {
-    fromF64(Prim.floatNearest(toF64(x)))
+    fromFloat(Prim.floatNearest(toFloat(x)))
   };
 
   /// Returns `x` if `x` and `y` have same sign, otherwise `x` with negated sign.
@@ -205,7 +221,7 @@ module {
   /// assert Float32.equal(Float32.copySign(1.2, -2.3), -1.2, epsilon);
   /// ```
   public func copySign(x : Float32, y : Float32) : Float32 {
-    fromF64(Prim.floatCopySign(toF64(x), toF64(y)))
+    fromFloat(Prim.floatCopySign(toFloat(x), toFloat(y)))
   };
 
   /// Returns the smaller value of `x` and `y`.
@@ -221,7 +237,7 @@ module {
   /// assert Float32.min(1.2, -2.3) == -2.3; // with numerical imprecision
   /// ```
   public func min(x : Float32, y : Float32) : Float32 {
-    fromF64(Prim.floatMin(toF64(x), toF64(y)))
+    fromFloat(Prim.floatMin(toFloat(x), toFloat(y)))
   };
 
   /// Returns the larger value of `x` and `y`.
@@ -237,7 +253,7 @@ module {
   /// assert Float32.max(1.2, -2.3) == 1.2;
   /// ```
   public func max(x : Float32, y : Float32) : Float32 {
-    fromF64(Prim.floatMax(toF64(x), toF64(y)))
+    fromFloat(Prim.floatMax(toFloat(x), toFloat(y)))
   };
 
   /// Returns the sine of the radian angle `x`.
@@ -255,7 +271,7 @@ module {
   /// assert Float32.equal(Float32.sin(Float32.pi / 2.0), 1.0, epsilon);
   /// ```
   public func sin(x : Float32) : Float32 {
-    fromF64(Prim.sin(toF64(x)))
+    fromFloat(Prim.sin(toFloat(x)))
   };
 
   /// Returns the cosine of the radian angle `x`.
@@ -273,7 +289,7 @@ module {
   /// assert Float32.equal(Float32.cos(Float32.pi / 2.0), 0.0, epsilon);
   /// ```
   public func cos(x : Float32) : Float32 {
-    fromF64(Prim.cos(toF64(x)))
+    fromFloat(Prim.cos(toFloat(x)))
   };
 
   /// Returns the tangent of the radian angle `x`.
@@ -291,7 +307,7 @@ module {
   /// assert Float32.equal(Float32.tan(Float32.pi / 4.0), 1.0, epsilon);
   /// ```
   public func tan(x : Float32) : Float32 {
-    fromF64(Prim.tan(toF64(x)))
+    fromFloat(Prim.tan(toFloat(x)))
   };
 
   /// Returns the arc sine of `x` in radians.
@@ -309,7 +325,7 @@ module {
   /// assert Float32.equal(Float32.arcsin(1.0), Float32.pi / 2.0, epsilon);
   /// ```
   public func arcsin(x : Float32) : Float32 {
-    fromF64(Prim.arcsin(toF64(x)))
+    fromFloat(Prim.arcsin(toFloat(x)))
   };
 
   /// Returns the arc cosine of `x` in radians.
@@ -327,7 +343,7 @@ module {
   /// assert Float32.equal(Float32.arccos(1.0), 0.0, epsilon);
   /// ```
   public func arccos(x : Float32) : Float32 {
-    fromF64(Prim.arccos(toF64(x)))
+    fromFloat(Prim.arccos(toFloat(x)))
   };
 
   /// Returns the arc tangent of `x` in radians.
@@ -345,7 +361,7 @@ module {
   /// assert Float32.equal(Float32.arctan(1.0), Float32.pi / 4.0, epsilon);
   /// ```
   public func arctan(x : Float32) : Float32 {
-    fromF64(Prim.arctan(toF64(x)))
+    fromFloat(Prim.arctan(toFloat(x)))
   };
 
   /// Given `(y, x)`, returns the arc tangent in radians of `y/x` based on the signs of both values to determine the correct quadrant.
@@ -370,7 +386,7 @@ module {
   /// assert Float32.arctan2(sqrt2over2, sqrt2over2) == Float32.pi / 4.0;
   /// ```
   public func arctan2(x : Float32, y : Float32) : Float32 {
-    fromF64(Prim.arctan2(toF64(x), toF64(y)))
+    fromFloat(Prim.arctan2(toFloat(x), toFloat(y)))
   };
 
   /// Returns the value of `e` raised to the `x`-th power.
@@ -388,7 +404,7 @@ module {
   /// assert Float32.equal(Float32.exp(1.0), Float32.e, epsilon);
   /// ```
   public func exp(x : Float32) : Float32 {
-    fromF64(Prim.exp(toF64(x)))
+    fromFloat(Prim.exp(toFloat(x)))
   };
 
   /// Returns the natural logarithm (base-`e`) of `x`.
@@ -408,7 +424,7 @@ module {
   /// assert Float32.equal(Float32.log(Float32.e), 1.0, epsilon);
   /// ```
   public func log(x : Float32) : Float32 {
-    fromF64(Prim.log(toF64(x)))
+    fromFloat(Prim.log(toFloat(x)))
   };
 
   /// Formatting. `format(fmt, x)` formats `x` to `Text` according to the
@@ -432,7 +448,7 @@ module {
   /// assert Float32.format(#exp 3, 123.0) == "1.230e+02";
   /// ```
   public func format(self : Float32, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text {
-    let f = toF64(self);
+    let f = toFloat(self);
     switch fmt {
       case (#fix(prec)) { Prim.floatToFormattedText(f, prec, 0) };
       case (#exp(prec)) { Prim.floatToFormattedText(f, prec, 1) };
@@ -457,28 +473,8 @@ module {
   /// assert Float32.toText(1.5) == "1.5";
   /// ```
   public func toText(self : Float32) : Text {
-    Prim.floatToText(toF64(self))
+    Prim.floatToText(toFloat(self))
   };
-
-  /// Conversion to Float (64-bit double precision).
-  ///
-  /// This is a lossless widening conversion.
-  ///
-  /// Example:
-  /// ```motoko include=import no-validate
-  /// assert Float32.toFloat(1.5) == 1.5;
-  /// ```
-  public let toFloat : (self : Float32) -> Float = Prim.float32ToFloat;
-
-  /// Conversion from Float (64-bit double precision) to Float32.
-  ///
-  /// Note: This may lose precision for values that are not exactly representable in 32-bit.
-  ///
-  /// Example:
-  /// ```motoko include=import no-validate
-  /// assert Float32.fromFloat(1.5) == 1.5;
-  /// ```
-  public let fromFloat : (x : Float) -> Float32 = Prim.floatToFloat32;
 
   /// Conversion to Int64 by truncating Float32, equivalent to `toInt64(trunc(f))`
   ///
@@ -490,7 +486,7 @@ module {
   /// assert Float32.toInt64(-12.0) == -12;
   /// ```
   public func toInt64(self : Float32) : Int64 {
-    Prim.floatToInt64(toF64(self))
+    Prim.floatToInt64(toFloat(self))
   };
 
   /// Conversion from Int64.
@@ -502,7 +498,7 @@ module {
   /// assert Float32.fromInt64(-42) == -42.0;
   /// ```
   public func fromInt64(x : Int64) : Float32 {
-    fromF64(Prim.int64ToFloat(x))
+    fromFloat(Prim.int64ToFloat(x))
   };
 
   /// Conversion to Int.
@@ -514,7 +510,7 @@ module {
   /// assert Float32.toInt(1.0e6) == +1_000_000;
   /// ```
   public func toInt(self : Float32) : Int {
-    Prim.floatToInt(toF64(self))
+    Prim.floatToInt(toFloat(self))
   };
 
   /// Determines whether `x` is equal to `y` within the defined tolerance of `epsilon`.
@@ -822,7 +818,7 @@ module {
   /// assert Float32.equal(Float32.rem(7.2, 2.3), 0.3, epsilon);
   /// ```
   public func rem(x : Float32, y : Float32) : Float32 {
-    fromF64(toF64(x) % toF64(y))
+    fromFloat(toFloat(x) % toFloat(y))
   };
 
   /// Returns `x` to the power of `y`, `x ** y`.
