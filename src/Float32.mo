@@ -819,9 +819,7 @@ module {
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.rem(7.2, 2.3), 0.3, epsilon);
   /// ```
-  public func rem(x : Float32, y : Float32) : Float32 {
-    fromFloat(toFloat(x) % toFloat(y))
-  };
+  public func rem(x : Float32, y : Float32) : Float32 { x % y };
 
   /// Returns `x` to the power of `y`, `x ** y`.
   ///
