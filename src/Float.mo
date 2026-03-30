@@ -321,7 +321,7 @@ module {
   /// ```
   public let arctan : (x : Float) -> Float = Prim.arctan;
 
-  /// Given `(y,x)`, returns the arc tangent in radians of `y/x` based on the signs of both values to determine the correct quadrant.
+  /// Given `(y, x)`, returns the arc tangent in radians of `y/x` based on the signs of both values to determine the correct quadrant.
   ///
   /// Special cases:
   /// ```
