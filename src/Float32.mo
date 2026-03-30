@@ -387,8 +387,8 @@ module {
   /// let sqrt2over2 = Float32.sqrt(2.0) / 2.0;
   /// assert Float32.arctan2(sqrt2over2, sqrt2over2) == Float32.pi / 4.0;
   /// ```
-  public func arctan2(x : Float32, y : Float32) : Float32 {
-    fromFloat(Prim.arctan2(toFloat(x), toFloat(y)))
+  public func arctan2(y : Float32, x : Float32) : Float32 {
+    fromFloat(Prim.arctan2(toFloat(y), toFloat(x)))
   };
 
   /// Returns the value of `e` raised to the `x`-th power.
