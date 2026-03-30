@@ -2,7 +2,7 @@
 ///
 /// This module contains common floating-point constants and utility functions.
 ///
-/// ```motoko name=import no-validate
+/// ```motoko name=import
 /// import Float32 "mo:core/Float32";
 /// ```
 ///
@@ -25,7 +25,7 @@
 ///   floating-point numbers with a numerical tolerance, called epsilon.
 ///
 ///   Example:
-///   ```motoko no-validate
+///   ```motoko
 ///   import Float32 "mo:core/Float32";
 ///   let x = 0.1 + 0.1 + 0.1 : Float32;
 ///   let y = 0.3 : Float32;
@@ -36,6 +36,8 @@
 ///
 /// * For absolute precision, it is recommended to encode the fraction number as a pair of a Nat for the base
 ///   and a Nat for the exponent (decimal point).
+///
+/// Note: As of `moc` 1.4, `Float32` support is experimental.
 ///
 /// NaN sign:
 /// * The NaN sign is only applied by `abs`, `neg`, and `copySign`. Other operations can have an arbitrary
@@ -54,7 +56,7 @@ module {
   /// This is a lossless widening conversion.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.toFloat(1.5) == 1.5;
   /// ```
   public let toFloat : (self : Float32) -> Float = Prim.float32ToFloat;
@@ -64,7 +66,7 @@ module {
   /// Note: This may lose precision for values that are not exactly representable in 32-bit.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.fromFloat(1.5) == 1.5;
   /// ```
   public let fromFloat : (x : Float) -> Float32 = Prim.floatToFloat32;
@@ -84,7 +86,7 @@ module {
   ///   signalling and quiet NaNs, each with many different bit representations.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.isNaN(0.0/0.0);
   /// ```
   public func isNaN(self : Float32) : Bool {
@@ -102,7 +104,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.abs(-1.2), 1.2, epsilon);
   /// ```
@@ -121,7 +123,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.sqrt(6.25), 2.5, epsilon);
   /// ```
@@ -141,7 +143,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.ceil(1.2), 2.0, epsilon);
   /// ```
@@ -161,7 +163,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.floor(1.2), 1.0, epsilon);
   /// ```
@@ -182,7 +184,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.trunc(2.75), 2.0, epsilon);
   /// ```
@@ -204,7 +206,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.nearest(2.75) == 3.0
   /// ```
   public func nearest(x : Float32) : Float32 {
@@ -216,7 +218,7 @@ module {
   /// The sign bit of zero, infinity, and `NaN` is considered.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.copySign(1.2, -2.3), -1.2, epsilon);
   /// ```
@@ -233,7 +235,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.min(1.2, -2.3) == -2.3; // with numerical imprecision
   /// ```
   public func min(x : Float32, y : Float32) : Float32 {
@@ -249,7 +251,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.max(1.2, -2.3) == 1.2;
   /// ```
   public func max(x : Float32, y : Float32) : Float32 {
@@ -266,7 +268,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.sin(Float32.pi / 2.0), 1.0, epsilon);
   /// ```
@@ -284,7 +286,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.cos(Float32.pi / 2.0), 0.0, epsilon);
   /// ```
@@ -302,7 +304,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.tan(Float32.pi / 4.0), 1.0, epsilon);
   /// ```
@@ -320,7 +322,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.arcsin(1.0), Float32.pi / 2.0, epsilon);
   /// ```
@@ -338,7 +340,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.arccos(1.0), 0.0, epsilon);
   /// ```
@@ -356,7 +358,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.arctan(1.0), Float32.pi / 4.0, epsilon);
   /// ```
@@ -381,7 +383,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let sqrt2over2 = Float32.sqrt(2.0) / 2.0;
   /// assert Float32.arctan2(sqrt2over2, sqrt2over2) == Float32.pi / 4.0;
   /// ```
@@ -399,7 +401,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.exp(1.0), Float32.e, epsilon);
   /// ```
@@ -419,7 +421,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.log(Float32.e), 1.0, epsilon);
   /// ```
@@ -444,8 +446,8 @@ module {
   /// differently, i.e. "NaN" or "nan", potentially omitting the `NaN` sign.
   ///
   /// Example:
-  /// ```motoko include=import no-validate no-validate
-  /// assert Float32.format(#exp 3, 123.0) == "1.230e+02";
+  /// ```motoko include=import no-validate
+  /// assert Float32.format(123.0 : Float32, #exp (3 : Nat8)) == "1.230e+02";
   /// ```
   public func format(self : Float32, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text {
     let f = toFloat(self);
@@ -469,7 +471,7 @@ module {
   /// differently, i.e. "NaN" or "nan", potentially omitting the `NaN` sign.
   ///
   /// Example:
-  /// ```motoko include=import no-validate no-validate
+  /// ```motoko include=import no-validate
   /// assert Float32.toText(1.5) == "1.5";
   /// ```
   public func toText(self : Float32) : Text {
@@ -482,7 +484,7 @@ module {
   /// Also traps for `inf`, `-inf`, and `NaN`.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.toInt64(-12.0) == -12;
   /// ```
   public func toInt64(self : Float32) : Int64 {
@@ -494,7 +496,7 @@ module {
   /// Note: The floating point number may be imprecise for large or small Int64.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.fromInt64(-42) == -42.0;
   /// ```
   public func fromInt64(x : Int64) : Float32 {
@@ -506,7 +508,7 @@ module {
   /// Traps for `inf`, `-inf`, and `NaN`.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.toInt(1.0e6) == +1_000_000;
   /// ```
   public func toInt(self : Float32) : Int {
@@ -530,7 +532,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(-12.3, -1.23e1, epsilon);
   /// ```
@@ -559,7 +561,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert not Float32.notEqual(-12.3, -1.23e1, epsilon);
   /// ```
@@ -582,7 +584,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.less(Float32.e, Float32.pi);
   /// ```
   public func less(x : Float32, y : Float32) : Bool { x < y };
@@ -598,7 +600,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.lessOrEqual(0.123, 0.1234);
   /// ```
   public func lessOrEqual(x : Float32, y : Float32) : Bool { x <= y };
@@ -614,7 +616,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.greater(Float32.pi, Float32.e);
   /// ```
   public func greater(x : Float32, y : Float32) : Bool { x > y };
@@ -630,7 +632,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.greaterOrEqual(0.1234, 0.123);
   /// ```
   public func greaterOrEqual(x : Float32, y : Float32) : Bool {
@@ -656,7 +658,7 @@ module {
   /// * positive NaN (no distinction between signalling and quiet positive NaN)
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// assert Float32.compare(0.123, 0.1234) == #less;
   /// ```
   public func compare(x : Float32, y : Float32) : Order.Order {
@@ -698,7 +700,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.neg(1.23), -1.23, epsilon);
   /// ```
@@ -718,7 +720,7 @@ module {
   /// The same cases apply commutatively, i.e. for `add(y, x)`.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.add(1.23, 0.123), 1.353, epsilon);
   /// ```
@@ -741,7 +743,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.sub(1.23, 0.123), 1.107, epsilon);
   /// ```
@@ -764,7 +766,7 @@ module {
   /// The same cases apply commutatively, i.e. for `mul(y, x)`.
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.mul(1.23, 1e2), 123.0, epsilon);
   /// ```
@@ -790,7 +792,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.div(1.23, 1e2), 0.0123, epsilon);
   /// ```
@@ -813,7 +815,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.rem(7.2, 2.3), 0.3, epsilon);
   /// ```
@@ -841,7 +843,7 @@ module {
   /// ```
   ///
   /// Example:
-  /// ```motoko include=import no-validate
+  /// ```motoko include=import
   /// let epsilon = 1e-5 : Float32;
   /// assert Float32.equal(Float32.pow(2.5, 2.0), 6.25, epsilon);
   /// ```

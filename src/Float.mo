@@ -466,6 +466,26 @@ module {
   /// @deprecated M0235
   public let fromInt : (x : Int) -> Float = Prim.intToFloat;
 
+  /// Conversion to Float32 (32-bit single precision).
+  ///
+  /// Note: This may lose precision for values that are not exactly representable in 32-bit.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// assert Float.toFloat32(1.5) == 1.5;
+  /// ```
+  public let toFloat32 : (self : Float) -> Prim.Types.Float32 = Prim.floatToFloat32;
+
+  /// Conversion from Float32 (32-bit single precision) to Float (64-bit double precision).
+  ///
+  /// This is a lossless widening conversion.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// assert Float.fromFloat32(1.5) == 1.5;
+  /// ```
+  public let fromFloat32 : (x : Prim.Types.Float32) -> Float = Prim.float32ToFloat;
+
   /// Determines whether `x` is equal to `y` within the defined tolerance of `epsilon`.
   /// The `epsilon` considers numerical erros, see comment above.
   /// Equivalent to `Float.abs(x - y) <= epsilon` for a non-negative epsilon.
