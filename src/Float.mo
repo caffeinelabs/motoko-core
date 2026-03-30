@@ -321,7 +321,7 @@ module {
   /// ```
   public let arctan : (x : Float) -> Float = Prim.arctan;
 
-  /// Given `(y,x)`, returns the arc tangent in radians of `y/x` based on the signs of both values to determine the correct quadrant.
+  /// Given `(y, x)`, returns the arc tangent in radians of `y/x` based on the signs of both values to determine the correct quadrant.
   ///
   /// Special cases:
   /// ```
@@ -342,7 +342,7 @@ module {
   /// let sqrt2over2 = Float.sqrt(2) / 2;
   /// assert Float.arctan2(sqrt2over2, sqrt2over2) == Float.pi / 4;
   /// ```
-  public let arctan2 : (x : Float, y : Float) -> Float = Prim.arctan2;
+  public let arctan2 : (y : Float, x : Float) -> Float = Prim.arctan2;
 
   /// Returns the value of `e` raised to the `x`-th power.
   ///
