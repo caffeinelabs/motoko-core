@@ -21,8 +21,8 @@ base-0-14-13 = "https://github.com/dfinity/motoko-base#moc-0.14.13@794174a307975
 bench-helper = "0.0.3"
 
 [requirements]
-moc = "1.4.0"
+moc = "1.4.1"
 
 [toolchain]
-moc = "1.4.0"
+moc = "1.4.1"
 wasmtime = "35.0.0"
