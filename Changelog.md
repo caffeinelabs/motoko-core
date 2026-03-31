@@ -1,4 +1,6 @@
 ## Next
+
+## 2.4.0
 * Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
 * Flip x/y arg names in `arctan2` functions (#481).
 * Add `Float32` module for single-precision (32-bit) floating-point arithmetic (#477).
