@@ -15,7 +15,7 @@ jobs:
     continue-on-error: true
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup
         with:
           setup-mops: false
@@ -32,7 +32,7 @@ jobs:
   validate-version:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup
         with:
           setup-mops: false
@@ -41,7 +41,7 @@ jobs:
   validate-api:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup
       - run: npm run validate:api
       - name: Check for API changes
@@ -61,7 +61,7 @@ jobs:
     if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true' || needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup
       - name: Validate docs for changed src/*.mo files
         if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false'
@@ -80,7 +80,7 @@ jobs:
   format:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup
       - run: npm run format:check
 
@@ -89,7 +89,7 @@ jobs:
     if: needs.check-motoko-changes.outputs.has_mo_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: "0"
       - name: Check for Motoko file changes in 'src' directory
