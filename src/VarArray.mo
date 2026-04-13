@@ -860,19 +860,20 @@ module {
   /// Converts an iterator to a mutable array.
   public func fromIter<T>(iter : Types.Iter<T>) : [var T] {
     var list : Types.Pure.List<T> = null;
-    var size = 0;
+    var size : Nat64 = 0;
+    let next = iter.next;
     label l loop {
-      switch (iter.next()) {
+      switch (next()) {
         case (?element) {
           list := ?(element, list);
-          size += 1
+          size +%= 1
         };
         case null { break l }
       }
     };
     if (size == 0) { return [var] };
     let array = Prim.Array_init<T>(
-      size,
+      Prim.nat64ToNat(size),
       switch list {
         case (?(h, _)) h;
         case null {
@@ -882,10 +883,10 @@ module {
     );
     var i = size;
     while (i > 0) {
-      i -= 1;
+      i -%= 1;
       switch list {
         case (?(h, t)) {
-          array[i] := h;
+          array[Prim.nat64ToNat(i)] := h;
           list := t
         };
         case null {
