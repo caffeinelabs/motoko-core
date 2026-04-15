@@ -82,7 +82,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
+  ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].vals());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
   ///   assert (mutable.values()).toArray() == [1, 2, 3];
   /// }
@@ -195,7 +195,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   Stack.clear(stack);
   ///   assert Stack.isEmpty(stack);
   /// }
@@ -216,7 +216,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let original = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let original = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   let copy = Stack.clone(original);
   ///   assert Stack.equal(copy, original, Nat.equal);
   /// }
@@ -259,7 +259,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert Stack.size(stack) == 3;
   /// }
   /// ```
@@ -279,7 +279,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert Stack.contains(stack, Nat.equal, 2);
   /// }
   /// ```
@@ -492,7 +492,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([2, 4, 6].values());
+  ///   let stack = Stack.fromIter<Nat>([2, 4, 6].vals());
   ///   assert Stack.all<Nat>(stack, func(n) = n % 2 == 0);
   /// }
   /// ```
@@ -517,7 +517,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert Stack.any<Nat>(stack, func(n) = n == 2);
   /// }
   /// ```
@@ -728,8 +728,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack1 = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack1 = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert Stack.equal(stack1, stack2, Nat.equal);
   /// }
   /// ```
@@ -743,7 +743,7 @@ module {
       return false
     };
     let iterator1 = self.values();
-    let iterator2 = values(other);
+    let iterator2 = other.values();
     loop {
       let element1 = iterator1.next();
       let element2 = iterator2.next();
@@ -771,7 +771,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert (stack.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -797,7 +797,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   transient let iter = [3, 2, 1].values();
+  ///   transient let iter = [3, 2, 1].vals();
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
@@ -821,7 +821,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert Stack.toText(stack, Nat.toText) == "Stack[1, 2, 3]";
   /// }
   /// ```
@@ -849,8 +849,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack1 = Stack.fromIter<Nat>([2, 1].values());
-  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack1 = Stack.fromIter<Nat>([2, 1].vals());
+  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].vals());
   ///   assert Stack.compare(stack1, stack2, Nat.compare) == #less;
   /// }
   /// ```
@@ -861,7 +861,7 @@ module {
   /// assuming that `compare` has O(1) costs.
   public func compare<T>(self : Stack<T>, other : Stack<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order {
     let iterator1 = self.values();
-    let iterator2 = values(other);
+    let iterator2 = other.values();
     loop {
       switch (iterator1.next(), iterator2.next()) {
         case (null, null) return #equal;

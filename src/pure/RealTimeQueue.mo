@@ -530,7 +530,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([0, 1, 2, 3, 4].values());
+  ///   let queue = Queue.fromIter<Nat>([0, 1, 2, 3, 4].vals());
   ///   assert Queue.peekFront(queue) == ?0;
   ///   assert Queue.peekBack(queue) == ?4;
   ///   assert Queue.size(queue) == 5;
@@ -551,7 +551,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   transient let iter = [0, 1, 2, 3, 4].values();
+  ///   transient let iter = [0, 1, 2, 3, 4].vals();
   ///
   ///   let queue = iter.toQueue();
   ///
@@ -575,7 +575,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
   ///   assert (queue.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -606,9 +606,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let queue3 = Queue.fromIter<Nat>([1, 3, 2].values());
+  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue3 = Queue.fromIter<Nat>([1, 3, 2].vals());
   ///   assert Queue.equal(queue1, queue2, Nat.equal);
   ///   assert not Queue.equal(queue1, queue3, Nat.equal);
   /// }
@@ -637,8 +637,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 4].values());
+  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 4].vals());
   ///   assert Queue.compare(queue1, queue2, Nat.compare) == #less;
   /// }
   /// ```
@@ -663,7 +663,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([2, 4, 6].values());
+  ///   let queue = Queue.fromIter<Nat>([2, 4, 6].vals());
   ///   assert Queue.all<Nat>(queue, func n = n % 2 == 0);
   ///   assert not Queue.all<Nat>(queue, func n = n > 4);
   /// }
@@ -680,7 +680,7 @@ module {
     case (#two(x, y)) predicate x and predicate y;
     case (#three(x, y, z)) predicate x and predicate y and predicate z;
     case _ {
-      for (item in values self) if (not (predicate item)) return false;
+      for (item in self.values()) if (not (predicate item)) return false;
       return true
     }
   };
@@ -690,7 +690,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
   ///   assert Queue.any<Nat>(queue, func n = n > 2);
   ///   assert not Queue.any<Nat>(queue, func n = n > 3);
   /// }
@@ -707,7 +707,7 @@ module {
     case (#two(x, y)) predicate x or predicate y;
     case (#three(x, y, z)) predicate x or predicate y or predicate z;
     case _ {
-      for (item in values self) if (predicate item) return true;
+      for (item in self.values()) if (predicate item) return true;
       return false
     }
   };
@@ -719,7 +719,7 @@ module {
   /// import Nat "mo:core/Nat";
   /// persistent actor {
   ///   var text = "";
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
   ///   Queue.forEach<Nat>(queue, func n = text #= Nat.toText(n));
   ///   assert text == "123";
   /// }
@@ -737,7 +737,7 @@ module {
     case (#three(x, y, z)) { f x; f y; f z };
     // Preserve the order when visiting the elements. Note that the #idles case would require reversing the second stack.
     case _ {
-      for (t in values self) f t
+      for (t in self.values()) f t
     }
   };
 
@@ -750,7 +750,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
   ///   let mapped = Queue.map<Nat, Nat>(queue, func n = n * 2);
   ///   assert Queue.size(mapped) == 3;
   ///   assert Queue.peekFront(mapped) == ?2;
@@ -773,7 +773,7 @@ module {
       // No reason to rebuild the #rebal state.
       // future work: It could be further optimized by building a balanced #idles state directly since we know the sizes.
       var q = empty<T2>();
-      for (t in values self) q := pushBack(q, f t);
+      for (t in self.values()) q := pushBack(q, f t);
       q
     }
   };
@@ -784,7 +784,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
   ///   let filtered = Queue.filter<Nat>(queue, func n = n % 2 == 0);
   ///   assert Queue.size(filtered) == 2;
   ///   assert Queue.peekFront(filtered) == ?2;
@@ -799,7 +799,7 @@ module {
   /// *Runtime and space assumes that `predicate` runs in `O(1)` time and space.
   public func filter<T>(self : Queue<T>, predicate : T -> Bool) : Queue<T> {
     var q = empty<T>();
-    for (t in values self) if (predicate t) q := pushBack(q, t);
+    for (t in self.values()) if (predicate t) q := pushBack(q, t);
     q
   };
 
@@ -809,7 +809,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
   ///   let filtered = Queue.filterMap<Nat, Nat>(queue, func n = if (n % 2 == 0) { ?n } else null);
   ///   assert Queue.size(filtered) == 2;
   ///   assert Queue.peekFront(filtered) == ?2;
@@ -824,7 +824,7 @@ module {
   /// *Runtime and space assumes that f runs in `O(1)` time and space.
   public func filterMap<T, U>(self : Queue<T>, f : T -> ?U) : Queue<U> {
     var q = empty<U>();
-    for (t in values self) {
+    for (t in self.values()) {
       switch (f t) {
         case (?x) q := pushBack(q, x);
         case null ()
@@ -840,7 +840,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
   ///   assert Queue.toText(queue, Nat.toText) == "RealTimeQueue[1, 2, 3]";
   /// }
   /// ```
@@ -853,7 +853,7 @@ module {
   public func toText<T>(self : Queue<T>, f : (implicit : (toText : T -> Text))) : Text {
     var text = "RealTimeQueue[";
     var first = true;
-    for (t in values self) {
+    for (t in self.values()) {
       if (first) first := false else text #= ", ";
       text #= f(t)
     };
@@ -866,7 +866,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
   ///   let reversed = Queue.reverse(queue);
   ///   assert Queue.peekFront(reversed) == ?3;
   ///   assert Queue.peekBack(reversed) == ?1;

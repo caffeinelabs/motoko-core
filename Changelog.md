@@ -1,5 +1,7 @@
 ## Next
 
+* Bump the `motoko` npm package used for doc-snippet checks, fix iterator call patterns (`entries`/`values`), and correct a few documentation examples (#489).
+
 ## 2.2.0
 * Make `compare`, `equal`, and `toText` parameters implicit in `Tuples` module (#470).
 * Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#467).

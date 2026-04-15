@@ -173,7 +173,7 @@ module {
   /// Creates a `Text` value from a `Char` iterator.
   ///
   /// ```motoko include=import
-  /// let text = Text.fromIter(['a', 'b', 'c'].values());
+  /// let text = Text.fromIter(['a', 'b', 'c'].vals());
   /// assert text == "abc";
   /// ```
   public func fromIter(cs : Iter.Iter<Char>) : Text {
@@ -330,7 +330,7 @@ module {
   /// Join an iterator of `Text` values with a given delimiter.
   ///
   /// ```motoko include=import
-  /// let joined = Text.join(["a", "b", "c"].values(), ", ");
+  /// let joined = Text.join(["a", "b", "c"].vals(), ", ");
   /// assert joined == "a, b, c";
   /// ```
   public func join(self : Iter.Iter<Text>, sep : Text) : Text {

@@ -116,7 +116,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   assert Queue.contains(queue, Nat.equal, 2);
   ///   assert not Queue.contains(queue, Nat.equal, 4);
   /// }
@@ -299,7 +299,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([0, 1, 2, 3, 4].values());
+  ///   let queue = Queue.fromIter([0, 1, 2, 3, 4].vals());
   ///   assert Queue.size(queue) == 5;
   /// }
   /// ```
@@ -316,7 +316,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   transient let iter = [0, 1, 2, 3, 4].values();
+  ///   transient let iter = [0, 1, 2, 3, 4].vals();
   ///
   ///   let queue = iter.toQueue();
   ///   assert Queue.size(queue) == 5;
@@ -391,7 +391,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   assert (queue.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -408,9 +408,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter([1, 2].values());
-  ///   let queue2 = Queue.fromIter([1, 2].values());
-  ///   let queue3 = Queue.fromIter([1, 3].values());
+  ///   let queue1 = Queue.fromIter([1, 2].vals());
+  ///   let queue2 = Queue.fromIter([1, 2].vals());
+  ///   let queue3 = Queue.fromIter([1, 3].vals());
   ///   assert Queue.equal(queue1, queue2, Nat.equal);
   ///   assert not Queue.equal(queue1, queue3, Nat.equal);
   /// }
@@ -441,7 +441,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   let allGreaterThanOne = Queue.all<Nat>(queue, func n = n > 1);
   ///   assert not allGreaterThanOne; // false because 1 is not > 1
   /// }
@@ -453,7 +453,7 @@ module {
   ///
   /// *Runtime and space assumes that the `predicate` runs in `O(1)` time and space.
   public func all<T>(self : Queue<T>, predicate : T -> Bool) : Bool {
-    for (item in values self) if (not (predicate item)) return false;
+    for (item in self.values()) if (not (predicate item)) return false;
     return true
   };
 
@@ -463,7 +463,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   let hasGreaterThanOne = Queue.any<Nat>(queue, func n = n > 1);
   ///   assert hasGreaterThanOne; // true because 2 and 3 are > 1
   /// }
@@ -475,7 +475,7 @@ module {
   ///
   /// *Runtime and space assumes that the `predicate` runs in `O(1)` time and space.
   public func any<T>(self : Queue<T>, predicate : T -> Bool) : Bool {
-    for (item in values self) if (predicate item) return true;
+    for (item in self.values()) if (predicate item) return true;
     return false
   };
 
@@ -486,7 +486,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   var text = "";
-  ///   let queue = Queue.fromIter(["A", "B", "C"].values());
+  ///   let queue = Queue.fromIter(["A", "B", "C"].vals());
   ///   Queue.forEach<Text>(queue, func n = text #= n);
   ///   assert text == "ABC";
   /// }
@@ -497,7 +497,7 @@ module {
   /// Space: `O(size)`
   ///
   /// *Runtime and space assumes that `f` runs in `O(1)` time and space.
-  public func forEach<T>(self : Queue<T>, f : T -> ()) = for (item in values self) f item;
+  public func forEach<T>(self : Queue<T>, f : T -> ()) = for (item in self.values()) f item;
 
   /// Call the given function `f` on each queue element and collect the results
   /// in a new queue.
@@ -510,9 +510,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([0, 1, 2].values());
+  ///   let queue = Queue.fromIter([0, 1, 2].vals());
   ///   let textQueue = Queue.map<Nat, Text>(queue, Nat.toText);
-  ///   assert (text.values()).toArray() == ["0", "1", "2"];
+  ///   assert (textQueue.values()).toArray() == ["0", "1", "2"];
   /// }
   /// ```
   ///
@@ -534,7 +534,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([0, 1, 2, 1].values());
+  ///   let queue = Queue.fromIter([0, 1, 2, 1].vals());
   ///   let filtered = Queue.filter<Nat>(queue, func n = n != 1);
   ///   assert Queue.size(filtered) == 2;
   /// }
@@ -560,7 +560,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   let doubled = Queue.filterMap<Nat, Nat>(
   ///     queue,
   ///     func n = if (n > 1) ?(n * 2) else null
@@ -589,7 +589,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   assert Queue.toText(queue, Nat.toText) == "PureQueue[1, 2, 3]";
   /// }
   /// ```
@@ -615,8 +615,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter([1, 2].values());
-  ///   let queue2 = Queue.fromIter([1, 3].values());
+  ///   let queue1 = Queue.fromIter([1, 2].vals());
+  ///   let queue2 = Queue.fromIter([1, 3].vals());
   ///   assert Queue.compare(queue1, queue2, Nat.compare) == #less;
   /// }
   /// ```
@@ -627,7 +627,7 @@ module {
   ///
   /// *Runtime and space assumes that argument `compareItem` runs in `O(1)` time and space.
   public func compare<T>(self : Queue<T>, other : Queue<T>, compareItem : (implicit : (compare : (T, T) -> Order.Order))) : Order.Order {
-    let (i1, i2) = (values self, values other);
+    let (i1, i2) = (self.values(), other.values());
     loop switch (i1.next(), i2.next()) {
       case (?v1, ?v2) switch (compareItem(v1, v2)) {
         case (#equal) ();
@@ -645,7 +645,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   let queue = Queue.fromIter([1, 2, 3].vals());
   ///   let reversed = Queue.reverse(queue);
   ///   assert Queue.peekFront(reversed) == ?3;
   ///   assert Queue.peekBack(reversed) == ?1;
