@@ -124,37 +124,37 @@ run(
       ),
       test(
         "get absent",
-        Map.get(buildTestMap(), Nat.compare, 0),
+        buildTestMap().get(0),
         M.equals(T.optional(T.textTestable, null : ?Text))
       ),
       test(
         "containsKey absent",
-        Map.containsKey(buildTestMap(), Nat.compare, 0),
+        buildTestMap().containsKey(0),
         M.equals(T.bool(false))
       ),
       test(
         "maxEntry",
-        Map.maxEntry(buildTestMap()),
+        buildTestMap().maxEntry(),
         M.equals(T.optional(entryTestable, null : ?(Nat, Text)))
       ),
       test(
         "minEntry",
-        Map.minEntry(buildTestMap()),
+        buildTestMap().minEntry(),
         M.equals(T.optional(entryTestable, null : ?(Nat, Text)))
       ),
       test(
         "take absent",
-        Map.take(buildTestMap(), Nat.compare, 0).1,
+        buildTestMap().take(0).1,
         M.equals(T.optional(T.textTestable, null : ?Text))
       ),
       test(
         "replace absent/no value",
-        Map.swap(buildTestMap(), Nat.compare, 0, "Test").1,
+        buildTestMap().swap(0, "Test").1,
         M.equals(T.optional(T.textTestable, null : ?Text))
       ),
       test(
         "replace absent/key appeared",
-        Map.swap(buildTestMap(), Nat.compare, 0, "Test").0,
+        buildTestMap().swap(0, "Test").0,
         MapMatcher([(0, "Test")])
       ),
       test(
@@ -184,7 +184,7 @@ run(
       ),
       test(
         "empty map filter",
-        Map.filterMap(buildTestMap(), Nat.compare, ifKeyLessThan(0, multiplyKeyAndConcat)),
+        buildTestMap().filterMap(ifKeyLessThan(0, multiplyKeyAndConcat)),
         MapMatcher([])
       ),
       test(
@@ -305,27 +305,27 @@ run(
       ),
       test(
         "get",
-        Map.get(buildTestMap(), Nat.compare, 0),
+        buildTestMap().get(0),
         M.equals(T.optional(T.textTestable, ?"0"))
       ),
       test(
         "containsKey",
-        Map.containsKey(buildTestMap(), Nat.compare, 0),
+        buildTestMap().containsKey(0),
         M.equals(T.bool(true))
       ),
       test(
         "maxEntry",
-        Map.maxEntry(buildTestMap()),
+        buildTestMap().maxEntry(),
         M.equals(T.optional(entryTestable, ?(0, "0")))
       ),
       test(
         "minEntry",
-        Map.minEntry(buildTestMap()),
+        buildTestMap().minEntry(),
         M.equals(T.optional(entryTestable, ?(0, "0")))
       ),
       test(
         "swap function result",
-        Map.swap(buildTestMap(), Nat.compare, 0, "TEST").1,
+        buildTestMap().swap(0, "TEST").1,
         M.equals(T.optional(T.textTestable, ?"0"))
       ),
       test(
@@ -338,7 +338,7 @@ run(
       ),
       test(
         "take function result",
-        Map.take(buildTestMap(), Nat.compare, 0).1,
+        buildTestMap().take(0).1,
         M.equals(T.optional(T.textTestable, ?"0"))
       ),
       test(
@@ -378,12 +378,12 @@ run(
       ),
       test(
         "filter map/filter all",
-        Map.filterMap(buildTestMap(), Nat.compare, ifKeyLessThan(0, multiplyKeyAndConcat)),
+        buildTestMap().filterMap(ifKeyLessThan(0, multiplyKeyAndConcat)),
         MapMatcher([])
       ),
       test(
         "filter map/no filter",
-        Map.filterMap(buildTestMap(), Nat.compare, ifKeyLessThan(1, multiplyKeyAndConcat)),
+        buildTestMap().filterMap(ifKeyLessThan(1, multiplyKeyAndConcat)),
         MapMatcher([(0, "00")])
       ),
       test(
@@ -544,17 +544,17 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   ),
   test(
     "containsKey",
-    Array.tabulate<Bool>(4, func(k : Nat) = (Map.containsKey(buildTestMap(), Nat.compare, k))),
+    Array.tabulate<Bool>(4, func(k : Nat) = (buildTestMap().containsKey(k))),
     M.equals(T.array<Bool>(T.boolTestable, [true, true, true, false]))
   ),
   test(
     "maxEntry",
-    Map.maxEntry(buildTestMap()),
+    buildTestMap().maxEntry(),
     M.equals(T.optional(entryTestable, ?(2, "2")))
   ),
   test(
     "minEntry",
-    Map.minEntry(buildTestMap()),
+    buildTestMap().minEntry(),
     M.equals(T.optional(entryTestable, ?(0, "0")))
   ),
   test(
@@ -589,17 +589,17 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   ),
   test(
     "filter map/filter all",
-    Map.filterMap(buildTestMap(), Nat.compare, ifKeyLessThan(0, multiplyKeyAndConcat)),
+    buildTestMap().filterMap(ifKeyLessThan(0, multiplyKeyAndConcat)),
     MapMatcher([])
   ),
   test(
     "filter map/filter one",
-    Map.filterMap(buildTestMap(), Nat.compare, ifKeyLessThan(1, multiplyKeyAndConcat)),
+    buildTestMap().filterMap(ifKeyLessThan(1, multiplyKeyAndConcat)),
     MapMatcher([(0, "00")])
   ),
   test(
     "filter map/no filter",
-    Map.filterMap(buildTestMap(), Nat.compare, ifKeyLessThan(3, multiplyKeyAndConcat)),
+    buildTestMap().filterMap(ifKeyLessThan(3, multiplyKeyAndConcat)),
     MapMatcher([(0, "00"), (1, "21"), (2, "42")])
   ),
   test(
@@ -949,7 +949,7 @@ run(
           for (index in Nat.range(0, smallSize)) {
             assert (map.get(index) == ?Nat.toText(index))
           };
-          assert (Map.equal(map, smallMap(), Nat.compare, Text.equal));
+          assert (map.equal(smallMap()));
           map.size
         },
         M.equals(T.nat(smallSize))
@@ -1111,7 +1111,7 @@ run(
       test(
         "compare less key",
         do {
-          let (map1, result1) = Map.delete(smallMap(), Nat.compare, smallSize - 1 : Nat);
+          let (map1, result1) = smallMap().delete(smallSize - 1 : Nat);
           assert result1;
           let map2 = smallMap();
           assert (map1.compare(map2) == #less);
@@ -1123,7 +1123,7 @@ run(
         "compare less value",
         do {
           let map1 = smallMap();
-          let (map2, _) = Map.swap(smallMap(), Nat.compare, smallSize - 1 : Nat, "Last");
+          let (map2, _) = smallMap().swap(smallSize - 1 : Nat, "Last");
           assert (map1.compare(map2) == #less);
           true
         },
@@ -1143,7 +1143,7 @@ run(
         "compare greater key",
         do {
           let map1 = smallMap();
-          let (map2, result2) = Map.delete(smallMap(), Nat.compare, smallSize - 1 : Nat);
+          let (map2, result2) = smallMap().delete(smallSize - 1 : Nat);
           assert result2;
           assert (map1.compare(map2) == #greater);
           true
@@ -1153,7 +1153,7 @@ run(
       test(
         "compare greater value",
         do {
-          let (map1, _) = Map.swap(smallMap(), Nat.compare, smallSize - 1 : Nat, "Last");
+          let (map1, _) = smallMap().swap(smallSize - 1 : Nat, "Last");
           let map2 = smallMap();
           assert (map1.compare(map2) == #greater);
           true
