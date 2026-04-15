@@ -1,3 +1,5 @@
+import { readOptionalPbtSeed } from "./oracleFixtureSeed";
 import { runMapModelPbt } from "./pureMapCommands";
 
-runMapModelPbt();
+const pbtSeed = readOptionalPbtSeed();
+runMapModelPbt(pbtSeed !== undefined ? { seed: pbtSeed } : {});

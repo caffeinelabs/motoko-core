@@ -1,6 +1,6 @@
 // @testmode wasi
 
-/// Replays oracle traces from `test/ts/pbt/emitMapOracleFixtures.ts` (output in
+/// Replays oracle traces from `test/ts/pbt/emitOracleFixtures.ts` (output in
 /// `test/generated/MapOracleFixtures.mo` via `npm run generate:oracle-fixtures`).
 
 import Map "../../src/pure/Map";

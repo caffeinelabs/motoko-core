@@ -1,3 +1,5 @@
+import { readOptionalPbtSeed } from "./oracleFixtureSeed";
 import { runQueueModelPbt } from "./pureQueueCommands";
 
-runQueueModelPbt();
+const pbtSeed = readOptionalPbtSeed();
+runQueueModelPbt(pbtSeed !== undefined ? { seed: pbtSeed } : {});

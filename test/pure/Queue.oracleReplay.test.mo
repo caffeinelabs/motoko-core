@@ -1,6 +1,6 @@
 // @testmode wasi
 
-/// Replays oracle traces from `test/ts/pbt/emitQueueOracleFixtures.ts` (written to
+/// Replays oracle traces from `test/ts/pbt/emitOracleFixtures.ts` (written to
 /// `test/generated/QueueOracleFixtures.mo` when you run `npm run generate:oracle-fixtures` or `npm test`).
 
 import Queue "../../src/pure/Queue";
