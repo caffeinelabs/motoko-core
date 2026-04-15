@@ -26,17 +26,19 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
         with:
           setup-dfx: true
 
-      - name: Checkout out the branch with benchmark results
+      - name: Checkout baseline benchmark-results from upstream
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
+          repository: dfinity/motoko-core
           ref: benchmark-results
           path: .benchmark-results-branch/
+          fetch-depth: 1
       - name: Move Saved Benchmarks
         if: github.event_name == 'pull_request'
         run: mv .benchmark-results-branch/.bench .bench

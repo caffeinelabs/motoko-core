@@ -2,6 +2,19 @@
 
 * Bump the `motoko` npm package used for doc-snippet checks, fix iterator call patterns (`entries`/`values`), and correct a few documentation examples (#489).
 
+## 2.4.0
+* Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
+* Flip x/y arg names in `arctan2` functions (#481).
+* Add `Float32` module for single-precision (32-bit) floating-point arithmetic (#477).
+* Test, benchmark and optimization for `Base64.encode` (#476).
+* Update `Base64.encode` doc example (#475).
+
+## 2.3.1
+* Fix empty files in 2.3.0 (#473).
+
+## 2.3.0
+* Add `Base64` module with `encode : Blob -> Text` (RFC 4648 standard alphabet) (#468).
+
 ## 2.2.0
 * Make `compare`, `equal`, and `toText` parameters implicit in `Tuples` module (#470).
 * Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#467).

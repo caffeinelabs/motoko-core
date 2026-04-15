@@ -48,6 +48,12 @@
     ]
   },
   {
+    "name": "Base64",
+    "exports": [
+      "public func encode(data : Blob) : Text"
+    ]
+  },
+  {
     "name": "Blob",
     "exports": [
       "public type Blob",
@@ -147,7 +153,7 @@
       "public let arccos : (x : Float) -> Float",
       "public let arcsin : (x : Float) -> Float",
       "public let arctan : (x : Float) -> Float",
-      "public let arctan2 : (x : Float, y : Float) -> Float",
+      "public let arctan2 : (y : Float, x : Float) -> Float",
       "public let ceil : (x : Float) -> Float",
       "public func compare(x : Float, y : Float) : Order.Order",
       "public let copySign : (x : Float, y : Float) -> Float",
@@ -159,6 +165,7 @@
       "public type Float",
       "public let floor : (x : Float) -> Float",
       "public func format(self : Float, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text",
+      "public let fromFloat32 : (x : Prim.Types.Float32) -> Float",
       "public let fromInt : (x : Int) -> Float",
       "public let fromInt64 : (x : Int64) -> Float",
       "public func greater(x : Float, y : Float) : Bool",
@@ -180,10 +187,59 @@
       "public let sqrt : (x : Float) -> Float",
       "public func sub(x : Float, y : Float) : Float",
       "public let tan : (x : Float) -> Float",
+      "public let toFloat32 : (self : Float) -> Prim.Types.Float32",
       "public let toInt : (self : Float) -> Int",
       "public let toInt64 : (self : Float) -> Int64",
       "public let toText : (self : Float) -> Text",
       "public let trunc : (x : Float) -> Float"
+    ]
+  },
+  {
+    "name": "Float32",
+    "exports": [
+      "public func abs(x : Float32) : Float32",
+      "public func add(x : Float32, y : Float32) : Float32",
+      "public func arccos(x : Float32) : Float32",
+      "public func arcsin(x : Float32) : Float32",
+      "public func arctan(x : Float32) : Float32",
+      "public func arctan2(y : Float32, x : Float32) : Float32",
+      "public func ceil(x : Float32) : Float32",
+      "public func compare(x : Float32, y : Float32) : Order.Order",
+      "public func copySign(x : Float32, y : Float32) : Float32",
+      "public func cos(x : Float32) : Float32",
+      "public func div(x : Float32, y : Float32) : Float32",
+      "public let e : Float32",
+      "public func equal(x : Float32, y : Float32, epsilon : Float32) : Bool",
+      "public func exp(x : Float32) : Float32",
+      "public type Float32",
+      "public func floor(x : Float32) : Float32",
+      "public func format(self : Float32, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text",
+      "public let fromFloat : (x : Float) -> Float32",
+      "public func fromInt64(x : Int64) : Float32",
+      "public func greater(x : Float32, y : Float32) : Bool",
+      "public func greaterOrEqual(x : Float32, y : Float32) : Bool",
+      "public func isNaN(self : Float32) : Bool",
+      "public func less(x : Float32, y : Float32) : Bool",
+      "public func lessOrEqual(x : Float32, y : Float32) : Bool",
+      "public func log(x : Float32) : Float32",
+      "public func max(x : Float32, y : Float32) : Float32",
+      "public func min(x : Float32, y : Float32) : Float32",
+      "public func mul(x : Float32, y : Float32) : Float32",
+      "public func nearest(x : Float32) : Float32",
+      "public func neg(x : Float32) : Float32",
+      "public func notEqual(x : Float32, y : Float32, epsilon : Float32) : Bool",
+      "public let pi : Float32",
+      "public func pow(x : Float32, y : Float32) : Float32",
+      "public func rem(x : Float32, y : Float32) : Float32",
+      "public func sin(x : Float32) : Float32",
+      "public func sqrt(x : Float32) : Float32",
+      "public func sub(x : Float32, y : Float32) : Float32",
+      "public func tan(x : Float32) : Float32",
+      "public let toFloat : (self : Float32) -> Float",
+      "public func toInt(self : Float32) : Int",
+      "public func toInt64(self : Float32) : Int64",
+      "public func toText(self : Float32) : Text",
+      "public func trunc(x : Float32) : Float32"
     ]
   },
   {

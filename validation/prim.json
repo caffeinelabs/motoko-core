@@ -17,7 +17,7 @@
     {
       "name": "Number",
       "extends": ["Prim"],
-      "modules": ["Float"],
+      "modules": ["Float", "Float32"],
       "functions": []
     },
     {

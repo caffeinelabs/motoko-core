@@ -1,9 +1,9 @@
-/// Double precision (64-bit) floating-point numbers in IEEE 754 representation.
+/// Single precision (32-bit) floating-point numbers in IEEE 754 representation.
 ///
 /// This module contains common floating-point constants and utility functions.
 ///
 /// ```motoko name=import
-/// import Float "mo:core/Float";
+/// import Float32 "mo:core/Float32";
 /// ```
 ///
 /// Notation for special values in the documentation below:
@@ -13,17 +13,12 @@
 ///
 /// Note:
 /// Floating point numbers have limited precision and operations may inherently result in numerical errors.
+/// `Float32` has less precision than `Float` (64-bit); only about 7 significant decimal digits.
 ///
 /// Examples of numerical errors:
 ///   ```motoko
 ///   assert 0.1 + 0.1 + 0.1 != 0.3;
 ///   ```
-///
-///   ```motoko
-///   assert not (1e16 + 1.0 != 1e16);
-///   ```
-///
-///  (and many more cases)
 ///
 /// Advice:
 /// * Floating point number comparisons by `==` or `!=` are discouraged. Instead, it is better to compare
@@ -31,37 +26,58 @@
 ///
 ///   Example:
 ///   ```motoko
-///   import Float "mo:core/Float";
-///   let x = 0.1 + 0.1 + 0.1;
-///   let y = 0.3;
+///   import Float32 "mo:core/Float32";
+///   let x = 0.1 + 0.1 + 0.1 : Float32;
+///   let y = 0.3 : Float32;
 ///
-///   let epsilon = 1e-6; // This depends on the application case (needs a numerical error analysis).
-///   assert Float.equal(x, y, epsilon);
+///   let epsilon = 1e-5 : Float32; // This depends on the application case (needs a numerical error analysis).
+///   assert Float32.equal(x, y, epsilon);
 ///   ```
 ///
-/// * For absolute precision, it is recommened to encode the fraction number as a pair of a Nat for the base
+/// * For absolute precision, it is recommended to encode the fraction number as a pair of a Nat for the base
 ///   and a Nat for the exponent (decimal point).
+///
+/// Note: As of `moc` 1.4, `Float32` support is experimental.
 ///
 /// NaN sign:
 /// * The NaN sign is only applied by `abs`, `neg`, and `copySign`. Other operations can have an arbitrary
 ///   sign bit for NaN results.
 
 import Prim "mo:⛔";
-import Int "Int";
 import Order "Order";
 
 module {
 
-  /// 64-bit floating point number type.
-  public type Float = Prim.Types.Float;
+  /// 32-bit floating point number type.
+  public type Float32 = Prim.Types.Float32;
+
+  /// Conversion to Float (64-bit double precision).
+  ///
+  /// This is a lossless widening conversion.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// assert Float32.toFloat(1.5) == 1.5;
+  /// ```
+  public let toFloat : (self : Float32) -> Float = Prim.float32ToFloat;
+
+  /// Conversion from Float (64-bit double precision) to Float32.
+  ///
+  /// Note: This may lose precision for values that are not exactly representable in 32-bit.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// assert Float32.fromFloat(1.5) == 1.5;
+  /// ```
+  public let fromFloat : (x : Float) -> Float32 = Prim.floatToFloat32;
 
   /// Ratio of the circumference of a circle to its diameter.
-  /// Note: Limited precision.
-  public let pi : Float = 3.14159265358979323846; // taken from musl math.h
+  /// Note: Limited precision (approximately 7 significant decimal digits).
+  public let pi : Float32 = 3.14159265358979323846;
 
   /// Base of the natural logarithm.
-  /// Note: Limited precision.
-  public let e : Float = 2.7182818284590452354; // taken from musl math.h
+  /// Note: Limited precision (approximately 7 significant decimal digits).
+  public let e : Float32 = 2.7182818284590452354;
 
   /// Determines whether the `number` is a `NaN` ("not a number" in the floating point representation).
   /// Notes:
@@ -71,9 +87,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.isNaN(0.0/0.0);
+  /// assert Float32.isNaN(0.0/0.0);
   /// ```
-  public func isNaN(self : Float) : Bool {
+  public func isNaN(self : Float32) : Bool {
     self != self
   };
 
@@ -89,10 +105,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.abs(-1.2), 1.2, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.abs(-1.2), 1.2, epsilon);
   /// ```
-  public let abs : (x : Float) -> Float = Prim.floatAbs;
+  public func abs(x : Float32) : Float32 {
+    fromFloat(Prim.floatAbs(toFloat(x)))
+  };
 
   /// Returns the square root of `x`.
   ///
@@ -106,10 +124,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.sqrt(6.25), 2.5, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.sqrt(6.25), 2.5, epsilon);
   /// ```
-  public let sqrt : (x : Float) -> Float = Prim.floatSqrt;
+  public func sqrt(x : Float32) : Float32 {
+    fromFloat(Prim.floatSqrt(toFloat(x)))
+  };
 
   /// Returns the smallest integral float greater than or equal to `x`.
   ///
@@ -124,10 +144,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.ceil(1.2), 2.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.ceil(1.2), 2.0, epsilon);
   /// ```
-  public let ceil : (x : Float) -> Float = Prim.floatCeil;
+  public func ceil(x : Float32) : Float32 {
+    fromFloat(Prim.floatCeil(toFloat(x)))
+  };
 
   /// Returns the largest integral float less than or equal to `x`.
   ///
@@ -142,10 +164,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.floor(1.2), 1.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.floor(1.2), 1.0, epsilon);
   /// ```
-  public let floor : (x : Float) -> Float = Prim.floatFloor;
+  public func floor(x : Float32) : Float32 {
+    fromFloat(Prim.floatFloor(toFloat(x)))
+  };
 
   /// Returns the nearest integral float not greater in magnitude than `x`.
   /// This is equivalent to returning `x` with truncating its decimal places.
@@ -161,14 +185,15 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.trunc(2.75), 2.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.trunc(2.75), 2.0, epsilon);
   /// ```
-  public let trunc : (x : Float) -> Float = Prim.floatTrunc;
+  public func trunc(x : Float32) : Float32 {
+    fromFloat(Prim.floatTrunc(toFloat(x)))
+  };
 
   /// Returns the nearest integral float to `x`.
   /// A decimal place of exactly .5 is rounded to the nearest even integral float.
-  /// and rounded down for `x < 0`
   ///
   /// Special cases:
   /// ```
@@ -182,9 +207,11 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.nearest(2.75) == 3.0
+  /// assert Float32.nearest(2.75) == 3.0
   /// ```
-  public let nearest : (x : Float) -> Float = Prim.floatNearest;
+  public func nearest(x : Float32) : Float32 {
+    fromFloat(Prim.floatNearest(toFloat(x)))
+  };
 
   /// Returns `x` if `x` and `y` have same sign, otherwise `x` with negated sign.
   ///
@@ -192,38 +219,44 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.copySign(1.2, -2.3), -1.2, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.copySign(1.2, -2.3), -1.2, epsilon);
   /// ```
-  public let copySign : (x : Float, y : Float) -> Float = Prim.floatCopySign;
+  public func copySign(x : Float32, y : Float32) : Float32 {
+    fromFloat(Prim.floatCopySign(toFloat(x), toFloat(y)))
+  };
 
   /// Returns the smaller value of `x` and `y`.
   ///
   /// Special cases:
   /// ```
-  /// min(NaN, y) => NaN for any Float y
-  /// min(x, NaN) => NaN for any Float x
+  /// min(NaN, y) => NaN for any Float32 y
+  /// min(x, NaN) => NaN for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.min(1.2, -2.3) == -2.3; // with numerical imprecision
+  /// assert Float32.min(1.2, -2.3) == -2.3; // with numerical imprecision
   /// ```
-  public let min : (x : Float, y : Float) -> Float = Prim.floatMin;
+  public func min(x : Float32, y : Float32) : Float32 {
+    fromFloat(Prim.floatMin(toFloat(x), toFloat(y)))
+  };
 
   /// Returns the larger value of `x` and `y`.
   ///
   /// Special cases:
   /// ```
-  /// max(NaN, y) => NaN for any Float y
-  /// max(x, NaN) => NaN for any Float x
+  /// max(NaN, y) => NaN for any Float32 y
+  /// max(x, NaN) => NaN for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.max(1.2, -2.3) == 1.2;
+  /// assert Float32.max(1.2, -2.3) == 1.2;
   /// ```
-  public let max : (x : Float, y : Float) -> Float = Prim.floatMax;
+  public func max(x : Float32, y : Float32) : Float32 {
+    fromFloat(Prim.floatMax(toFloat(x), toFloat(y)))
+  };
 
   /// Returns the sine of the radian angle `x`.
   ///
@@ -236,10 +269,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.sin(Float.pi / 2), 1.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.sin(Float32.pi / 2.0), 1.0, epsilon);
   /// ```
-  public let sin : (x : Float) -> Float = Prim.sin;
+  public func sin(x : Float32) : Float32 {
+    fromFloat(Prim.sin(toFloat(x)))
+  };
 
   /// Returns the cosine of the radian angle `x`.
   ///
@@ -252,10 +287,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.cos(Float.pi / 2), 0.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.cos(Float32.pi / 2.0), 0.0, epsilon);
   /// ```
-  public let cos : (x : Float) -> Float = Prim.cos;
+  public func cos(x : Float32) : Float32 {
+    fromFloat(Prim.cos(toFloat(x)))
+  };
 
   /// Returns the tangent of the radian angle `x`.
   ///
@@ -268,10 +305,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.tan(Float.pi / 4), 1.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.tan(Float32.pi / 4.0), 1.0, epsilon);
   /// ```
-  public let tan : (x : Float) -> Float = Prim.tan;
+  public func tan(x : Float32) : Float32 {
+    fromFloat(Prim.tan(toFloat(x)))
+  };
 
   /// Returns the arc sine of `x` in radians.
   ///
@@ -284,26 +323,30 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.arcsin(1.0), Float.pi / 2, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.arcsin(1.0), Float32.pi / 2.0, epsilon);
   /// ```
-  public let arcsin : (x : Float) -> Float = Prim.arcsin;
+  public func arcsin(x : Float32) : Float32 {
+    fromFloat(Prim.arcsin(toFloat(x)))
+  };
 
   /// Returns the arc cosine of `x` in radians.
   ///
   /// Special cases:
   /// ```
-  /// arccos(x)  => NaN if x > 1.0
-  /// arccos(x)  => NaN if x < -1.0
-  /// arcos(NaN) => NaN
+  /// arccos(x)   => NaN if x > 1.0
+  /// arccos(x)   => NaN if x < -1.0
+  /// arccos(NaN) => NaN
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.arccos(1.0), 0.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.arccos(1.0), 0.0, epsilon);
   /// ```
-  public let arccos : (x : Float) -> Float = Prim.arccos;
+  public func arccos(x : Float32) : Float32 {
+    fromFloat(Prim.arccos(toFloat(x)))
+  };
 
   /// Returns the arc tangent of `x` in radians.
   ///
@@ -316,10 +359,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.arctan(1.0), Float.pi / 4, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.arctan(1.0), Float32.pi / 4.0, epsilon);
   /// ```
-  public let arctan : (x : Float) -> Float = Prim.arctan;
+  public func arctan(x : Float32) : Float32 {
+    fromFloat(Prim.arctan(toFloat(x)))
+  };
 
   /// Given `(y, x)`, returns the arc tangent in radians of `y/x` based on the signs of both values to determine the correct quadrant.
   ///
@@ -333,16 +378,18 @@ module {
   /// arctan2(+inf, -inf) => 3 * pi / 4
   /// arctan2(-inf, +inf) => -pi / 4
   /// arctan2(-inf, -inf) => -3 * pi / 4
-  /// arctan2(NaN, x)     => NaN for any Float x
-  /// arctan2(y, NaN)     => NaN for any Float y
+  /// arctan2(NaN, x)     => NaN for any Float32 x
+  /// arctan2(y, NaN)     => NaN for any Float32 y
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// let sqrt2over2 = Float.sqrt(2) / 2;
-  /// assert Float.arctan2(sqrt2over2, sqrt2over2) == Float.pi / 4;
+  /// let sqrt2over2 = Float32.sqrt(2.0) / 2.0;
+  /// assert Float32.arctan2(sqrt2over2, sqrt2over2) == Float32.pi / 4.0;
   /// ```
-  public let arctan2 : (y : Float, x : Float) -> Float = Prim.arctan2;
+  public func arctan2(y : Float32, x : Float32) : Float32 {
+    fromFloat(Prim.arctan2(toFloat(y), toFloat(x)))
+  };
 
   /// Returns the value of `e` raised to the `x`-th power.
   ///
@@ -355,10 +402,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.exp(1.0), Float.e, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.exp(1.0), Float32.e, epsilon);
   /// ```
-  public let exp : (x : Float) -> Float = Prim.exp;
+  public func exp(x : Float32) : Float32 {
+    fromFloat(Prim.exp(toFloat(x)))
+  };
 
   /// Returns the natural logarithm (base-`e`) of `x`.
   ///
@@ -373,10 +422,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.log(Float.e), 1.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.log(Float32.e), 1.0, epsilon);
   /// ```
-  public let log : (x : Float) -> Float = Prim.log;
+  public func log(x : Float32) : Float32 {
+    fromFloat(Prim.log(toFloat(x)))
+  };
 
   /// Formatting. `format(fmt, x)` formats `x` to `Text` according to the
   /// formatting directive `fmt`, which can take one of the following forms:
@@ -396,13 +447,16 @@ module {
   ///
   /// Example:
   /// ```motoko include=import no-validate
-  /// assert Float.format(#exp 3, 123.0) == "1.230e+02";
+  /// assert Float32.format(123.0 : Float32, #exp (3 : Nat8)) == "1.230e+02";
   /// ```
-  public func format(self : Float, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text = switch fmt {
-    case (#fix(prec)) { Prim.floatToFormattedText(self, prec, 0) };
-    case (#exp(prec)) { Prim.floatToFormattedText(self, prec, 1) };
-    case (#gen(prec)) { Prim.floatToFormattedText(self, prec, 2) };
-    case (#exact) { Prim.floatToFormattedText(self, 17, 2) }
+  public func format(self : Float32, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text {
+    let f = toFloat(self);
+    switch fmt {
+      case (#fix(prec)) { Prim.floatToFormattedText(f, prec, 0) };
+      case (#exp(prec)) { Prim.floatToFormattedText(f, prec, 1) };
+      case (#gen(prec)) { Prim.floatToFormattedText(f, prec, 2) };
+      case (#exact) { Prim.floatToFormattedText(f, 17, 2) }
+    }
   };
 
   /// Conversion to Text. Use `format(fmt, x)` for more detailed control.
@@ -418,20 +472,24 @@ module {
   ///
   /// Example:
   /// ```motoko include=import no-validate
-  /// assert Float.toText(1.2) == "1.2";
+  /// assert Float32.toText(1.5) == "1.5";
   /// ```
-  public let toText : (self : Float) -> Text = Prim.floatToText;
+  public func toText(self : Float32) : Text {
+    Prim.floatToText(toFloat(self))
+  };
 
-  /// Conversion to Int64 by truncating Float, equivalent to `toInt64(trunc(f))`
+  /// Conversion to Int64 by truncating Float32, equivalent to `toInt64(trunc(f))`
   ///
   /// Traps if the floating point number is larger or smaller than the representable Int64.
   /// Also traps for `inf`, `-inf`, and `NaN`.
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.toInt64(-12.3) == -12;
+  /// assert Float32.toInt64(-12.0) == -12;
   /// ```
-  public let toInt64 : (self : Float) -> Int64 = Prim.floatToInt64;
+  public func toInt64(self : Float32) : Int64 {
+    Prim.floatToInt64(toFloat(self))
+  };
 
   /// Conversion from Int64.
   ///
@@ -439,9 +497,11 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.fromInt64(-42) == -42.0;
+  /// assert Float32.fromInt64(-42) == -42.0;
   /// ```
-  public let fromInt64 : (x : Int64) -> Float = Prim.int64ToFloat;
+  public func fromInt64(x : Int64) : Float32 {
+    fromFloat(Prim.int64ToFloat(x))
+  };
 
   /// Conversion to Int.
   ///
@@ -449,46 +509,15 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.toInt(1.2e6) == +1_200_000;
+  /// assert Float32.toInt(1.0e6) == +1_000_000;
   /// ```
-  public let toInt : (self : Float) -> Int = Prim.floatToInt;
-
-  /// Conversion from Int. May result in `Inf`.
-  ///
-  /// Note: The floating point number may be imprecise for large or small Int values.
-  /// Returns `inf` if the integer is greater than the maximum floating point number.
-  /// Returns `-inf` if the integer is less than the minimum floating point number.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Float.fromInt(-123) == -123.0;
-  /// ```
-  /// @deprecated M0235
-  public let fromInt : (x : Int) -> Float = Prim.intToFloat;
-
-  /// Conversion to Float32 (32-bit single precision).
-  ///
-  /// Note: This may lose precision for values that are not exactly representable in 32-bit.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Float.toFloat32(1.5) == 1.5;
-  /// ```
-  public let toFloat32 : (self : Float) -> Prim.Types.Float32 = Prim.floatToFloat32;
-
-  /// Conversion from Float32 (32-bit single precision) to Float (64-bit double precision).
-  ///
-  /// This is a lossless widening conversion.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Float.fromFloat32(1.5) == 1.5;
-  /// ```
-  public let fromFloat32 : (x : Prim.Types.Float32) -> Float = Prim.float32ToFloat;
+  public func toInt(self : Float32) : Int {
+    Prim.floatToInt(toFloat(self))
+  };
 
   /// Determines whether `x` is equal to `y` within the defined tolerance of `epsilon`.
-  /// The `epsilon` considers numerical erros, see comment above.
-  /// Equivalent to `Float.abs(x - y) <= epsilon` for a non-negative epsilon.
+  /// The `epsilon` considers numerical errors, see comment above.
+  /// Equivalent to `Float32.abs(x - y) <= epsilon` for a non-negative epsilon.
   ///
   /// Traps if `epsilon` is negative or `NaN`.
   ///
@@ -504,19 +533,19 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(-12.3, -1.23e1, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(-12.3, -1.23e1, epsilon);
   /// ```
-  public func equal(x : Float, y : Float, epsilon : Float) : Bool {
-    if (not (epsilon >= 0.0)) {
+  public func equal(x : Float32, y : Float32, epsilon : Float32) : Bool {
+    if (not (epsilon >= (0.0 : Float32))) {
       // also considers NaN, not identical to `epsilon < 0.0`
-      Prim.trap("Float.equal(): epsilon must be greater or equal 0.0")
+      Prim.trap("Float32.equal(): epsilon must be greater or equal 0.0")
     };
     x == y or abs(x - y) <= epsilon // `x == y` to also consider infinity equal
   };
 
   /// Determines whether `x` is not equal to `y` within the defined tolerance of `epsilon`.
-  /// The `epsilon` considers numerical erros, see comment above.
+  /// The `epsilon` considers numerical errors, see comment above.
   /// Equivalent to `not equal(x, y, epsilon)`.
   ///
   /// Traps if `epsilon` is negative or `NaN`.
@@ -533,13 +562,13 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert not Float.notEqual(-12.3, -1.23e1, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert not Float32.notEqual(-12.3, -1.23e1, epsilon);
   /// ```
-  public func notEqual(x : Float, y : Float, epsilon : Float) : Bool {
-    if (not (epsilon >= 0.0)) {
+  public func notEqual(x : Float32, y : Float32, epsilon : Float32) : Bool {
+    if (not (epsilon >= (0.0 : Float32))) {
       // also considers NaN, not identical to `epsilon < 0.0`
-      Prim.trap("Float.notEqual(): epsilon must be greater or equal 0.0")
+      Prim.trap("Float32.notEqual(): epsilon must be greater or equal 0.0")
     };
     not (x == y or abs(x - y) <= epsilon)
   };
@@ -550,15 +579,15 @@ module {
   /// ```
   /// less(+0.0, -0.0) => false
   /// less(-0.0, +0.0) => false
-  /// less(NaN, y)     => false for any Float y
-  /// less(x, NaN)     => false for any Float x
+  /// less(NaN, y)     => false for any Float32 y
+  /// less(x, NaN)     => false for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.less(Float.e, Float.pi);
+  /// assert Float32.less(Float32.e, Float32.pi);
   /// ```
-  public func less(x : Float, y : Float) : Bool { x < y };
+  public func less(x : Float32, y : Float32) : Bool { x < y };
 
   /// Returns `x <= y`.
   ///
@@ -566,15 +595,15 @@ module {
   /// ```
   /// lessOrEqual(+0.0, -0.0) => true
   /// lessOrEqual(-0.0, +0.0) => true
-  /// lessOrEqual(NaN, y)     => false for any Float y
-  /// lessOrEqual(x, NaN)     => false for any Float x
+  /// lessOrEqual(NaN, y)     => false for any Float32 y
+  /// lessOrEqual(x, NaN)     => false for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.lessOrEqual(0.123, 0.1234);
+  /// assert Float32.lessOrEqual(0.123, 0.1234);
   /// ```
-  public func lessOrEqual(x : Float, y : Float) : Bool { x <= y };
+  public func lessOrEqual(x : Float32, y : Float32) : Bool { x <= y };
 
   /// Returns `x > y`.
   ///
@@ -582,15 +611,15 @@ module {
   /// ```
   /// greater(+0.0, -0.0) => false
   /// greater(-0.0, +0.0) => false
-  /// greater(NaN, y)     => false for any Float y
-  /// greater(x, NaN)     => false for any Float x
+  /// greater(NaN, y)     => false for any Float32 y
+  /// greater(x, NaN)     => false for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.greater(Float.pi, Float.e);
+  /// assert Float32.greater(Float32.pi, Float32.e);
   /// ```
-  public func greater(x : Float, y : Float) : Bool { x > y };
+  public func greater(x : Float32, y : Float32) : Bool { x > y };
 
   /// Returns `x >= y`.
   ///
@@ -598,22 +627,22 @@ module {
   /// ```
   /// greaterOrEqual(+0.0, -0.0) => true
   /// greaterOrEqual(-0.0, +0.0) => true
-  /// greaterOrEqual(NaN, y)     => false for any Float y
-  /// greaterOrEqual(x, NaN)     => false for any Float x
+  /// greaterOrEqual(NaN, y)     => false for any Float32 y
+  /// greaterOrEqual(x, NaN)     => false for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.greaterOrEqual(0.1234, 0.123);
+  /// assert Float32.greaterOrEqual(0.1234, 0.123);
   /// ```
-  public func greaterOrEqual(x : Float, y : Float) : Bool {
+  public func greaterOrEqual(x : Float32, y : Float32) : Bool {
     x >= y
   };
 
   /// Defines a total order of `x` and `y` for use in sorting.
   ///
   /// Note: Using this operation to determine equality or inequality is discouraged for two reasons:
-  /// * It does not consider numerical errors, see comment above. Use `equal(x, y, espilon)` or
+  /// * It does not consider numerical errors, see comment above. Use `equal(x, y, epsilon)` or
   ///   `notEqual(x, y, epsilon)` to test for equality or inequality, respectively.
   /// * `NaN` are here considered equal if their sign matches, which is different to the standard equality
   ///    by `==` or when using `equal()` or `notEqual()`.
@@ -630,9 +659,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float.compare(0.123, 0.1234) == #less;
+  /// assert Float32.compare(0.123, 0.1234) == #less;
   /// ```
-  public func compare(x : Float, y : Float) : Order.Order {
+  public func compare(x : Float32, y : Float32) : Order.Order {
     if (isNaN(x)) {
       if (isNegative(x)) {
         if (isNaN(y) and isNegative(y)) { #equal } else { #less }
@@ -652,11 +681,11 @@ module {
     }
   };
 
-  func isNegative(self : Float) : Bool {
-    copySign(1.0, self) < 0.0
+  func isNegative(self : Float32) : Bool {
+    copySign(1.0, self) < (0.0 : Float32)
   };
 
-  /// Returns the negation of `x`, `-x` .
+  /// Returns the negation of `x`, `-x`.
   ///
   /// Changes the sign bit for infinity.
   ///
@@ -672,10 +701,10 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.neg(1.23), -1.23, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.neg(1.23), -1.23, epsilon);
   /// ```
-  public func neg(x : Float) : Float { -x };
+  public func neg(x : Float32) : Float32 { -x };
 
   /// Returns the sum of `x` and `y`, `x + y`.
   ///
@@ -683,19 +712,19 @@ module {
   ///
   /// Special cases:
   /// ```
-  /// add(+inf, y)    => +inf if y is any Float except -inf and NaN
-  /// add(-inf, y)    => -inf if y is any Float except +inf and NaN
+  /// add(+inf, y)    => +inf if y is any Float32 except -inf and NaN
+  /// add(-inf, y)    => -inf if y is any Float32 except +inf and NaN
   /// add(+inf, -inf) => NaN
-  /// add(NaN, y)     => NaN for any Float y
+  /// add(NaN, y)     => NaN for any Float32 y
   /// ```
   /// The same cases apply commutatively, i.e. for `add(y, x)`.
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.add(1.23, 0.123), 1.353, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.add(1.23, 0.123), 1.353, epsilon);
   /// ```
-  public func add(x : Float, y : Float) : Float { x + y };
+  public func add(x : Float32, y : Float32) : Float32 { x + y };
 
   /// Returns the difference of `x` and `y`, `x - y`.
   ///
@@ -703,22 +732,22 @@ module {
   ///
   /// Special cases:
   /// ```
-  /// sub(+inf, y)    => +inf if y is any Float except +inf or NaN
-  /// sub(-inf, y)    => -inf if y is any Float except -inf and NaN
-  /// sub(x, +inf)    => -inf if x is any Float except +inf and NaN
-  /// sub(x, -inf)    => +inf if x is any Float except -inf and NaN
+  /// sub(+inf, y)    => +inf if y is any Float32 except +inf or NaN
+  /// sub(-inf, y)    => -inf if y is any Float32 except -inf and NaN
+  /// sub(x, +inf)    => -inf if x is any Float32 except +inf and NaN
+  /// sub(x, -inf)    => +inf if x is any Float32 except -inf and NaN
   /// sub(+inf, +inf) => NaN
   /// sub(-inf, -inf) => NaN
-  /// sub(NaN, y)     => NaN for any Float y
-  /// sub(x, NaN)     => NaN for any Float x
+  /// sub(NaN, y)     => NaN for any Float32 y
+  /// sub(x, NaN)     => NaN for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.sub(1.23, 0.123), 1.107, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.sub(1.23, 0.123), 1.107, epsilon);
   /// ```
-  public func sub(x : Float, y : Float) : Float { x - y };
+  public func sub(x : Float32, y : Float32) : Float32 { x - y };
 
   /// Returns the product of `x` and `y`, `x * y`.
   ///
@@ -732,16 +761,16 @@ module {
   /// mul(-inf, y) => +inf if y < 0.0
   /// mul(+inf, 0.0) => NaN
   /// mul(-inf, 0.0) => NaN
-  /// mul(NaN, y) => NaN for any Float y
+  /// mul(NaN, y) => NaN for any Float32 y
   /// ```
   /// The same cases apply commutatively, i.e. for `mul(y, x)`.
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.mul(1.23, 1e2), 123.0, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.mul(1.23, 1e2), 123.0, epsilon);
   /// ```
-  public func mul(x : Float, y : Float) : Float { x * y };
+  public func mul(x : Float32, y : Float32) : Float32 { x * y };
 
   /// Returns the division of `x` by `y`, `x / y`.
   ///
@@ -758,16 +787,16 @@ module {
   /// div(+inf, y)  => -inf if y < 0.0
   /// div(-inf, y)  => -inf if y >= 0.0
   /// div(-inf, y)  => +inf if y < 0.0
-  /// div(NaN, y)   => NaN for any Float y
-  /// div(x, NaN)   => NaN for any Float x
+  /// div(NaN, y)   => NaN for any Float32 y
+  /// div(x, NaN)   => NaN for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.div(1.23, 1e2), 0.0123, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.div(1.23, 1e2), 0.0123, epsilon);
   /// ```
-  public func div(x : Float, y : Float) : Float { x / y };
+  public func div(x : Float32, y : Float32) : Float32 { x / y };
 
   /// Returns the floating point division remainder `x % y`,
   /// which is defined as `x - trunc(x / y) * y`.
@@ -777,22 +806,20 @@ module {
   /// Special cases:
   /// ```
   /// rem(0.0, 0.0) => NaN
-  /// rem(x, y)     => +inf if sign(x) == sign(y) for any x and y not being +inf, -inf, or NaN
-  /// rem(x, y)     => -inf if sign(x) != sign(y) for any x and y not being +inf, -inf, or NaN
   /// rem(x, +inf)  => x for any x except +inf, -inf, and NaN
   /// rem(x, -inf)  => x for any x except +inf, -inf, and NaN
-  /// rem(+inf, y)  => NaN for any Float y
-  /// rem(-inf, y)  => NaN for any Float y
-  /// rem(NaN, y)   => NaN for any Float y
-  /// rem(x, NaN)   => NaN for any Float x
+  /// rem(+inf, y)  => NaN for any Float32 y
+  /// rem(-inf, y)  => NaN for any Float32 y
+  /// rem(NaN, y)   => NaN for any Float32 y
+  /// rem(x, NaN)   => NaN for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.rem(7.2, 2.3), 0.3, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.rem(7.2, 2.3), 0.3, epsilon);
   /// ```
-  public func rem(x : Float, y : Float) : Float { x % y };
+  public func rem(x : Float32, y : Float32) : Float32 { x % y };
 
   /// Returns `x` to the power of `y`, `x ** y`.
   ///
@@ -807,23 +834,17 @@ module {
   /// pow(0.0, +inf)  => 0.0
   /// pow(x, -inf)    => 0.0 if x > 0.0 or x < 0.0
   /// pow(0.0, -inf)  => +inf
-  /// pow(x, y)       => NaN if x < 0.0 and y is a non-integral Float
-  /// pow(-inf, y)    => +inf if y > 0.0 and y is a non-integral or an even integral Float
-  /// pow(-inf, y)    => -inf if y > 0.0 and y is an odd integral Float
-  /// pow(-inf, 0.0)  => 1.0
-  /// pow(-inf, y)    => 0.0 if y < 0.0
-  /// pow(-inf, +inf) => +inf
-  /// pow(-inf, -inf) => 1.0
+  /// pow(x, y)       => NaN if x < 0.0 and y is a non-integral Float32
   /// pow(NaN, y)     => NaN if y != 0.0
   /// pow(NaN, 0.0)   => 1.0
-  /// pow(x, NaN)     => NaN for any Float x
+  /// pow(x, NaN)     => NaN for any Float32 x
   /// ```
   ///
   /// Example:
   /// ```motoko include=import
-  /// let epsilon = 1e-6;
-  /// assert Float.equal(Float.pow(2.5, 2.0), 6.25, epsilon);
+  /// let epsilon = 1e-5 : Float32;
+  /// assert Float32.equal(Float32.pow(2.5, 2.0), 6.25, epsilon);
   /// ```
-  public func pow(x : Float, y : Float) : Float { x ** y };
+  public func pow(x : Float32, y : Float32) : Float32 { x ** y };
 
 }

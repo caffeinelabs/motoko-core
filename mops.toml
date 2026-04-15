@@ -1,6 +1,6 @@
 [package]
 name = "core"
-version = "2.2.0"
+version = "2.4.0"
 description = "The Motoko standard library"
 repository = "https://github.com/caffeinelabs/motoko-core"
 keywords = [
@@ -18,10 +18,11 @@ bench = "1.0.0"
 fuzz = "1.0.0"
 matchers = "2.1.0"
 base-0-14-13 = "https://github.com/dfinity/motoko-base#moc-0.14.13@794174a307975c225cfb26b57f73e38a841c0415"
+bench-helper = "0.0.3"
 
 [requirements]
-moc = "1.0.0"
+moc = "1.4.1"
 
 [toolchain]
-moc = "1.3.0"
+moc = "1.4.1"
 wasmtime = "35.0.0"
