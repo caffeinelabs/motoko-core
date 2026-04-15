@@ -64,7 +64,7 @@ module {
   public func singleton<T>(element : T) : List<T> = {
     var blockIndex = 2;
     var blocks = [var [var], [var ?element]];
-    var elementIndex = 0
+    var elementIndex = 0;
   };
 
   func repeatInternal<T>(initValue : ?T, size : Nat) : List<T> {
@@ -90,7 +90,7 @@ module {
     {
       var blocks = dataBlocks;
       var blockIndex = blockIndex;
-      var elementIndex = elementIndex
+      var elementIndex = elementIndex;
     }
   };
 
@@ -195,7 +195,7 @@ module {
   /// @deprecated M0235
   public func fromPure<T>(pure : PureList.List<T>) : List<T> {
     var p = pure;
-    var list = empty<T>();
+    let list = empty<T>();
     loop {
       switch (p) {
         case (?(x, xs)) {
@@ -319,7 +319,7 @@ module {
     if (elementIndex != 0) {
       let block = newBlocks[blockIndex];
       var i = elementIndex;
-      var to = block.size();
+      let to = block.size();
       while (i < to) {
         block[i] := null;
         i += 1
