@@ -715,53 +715,53 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "binarySearch found",
-      Array.binarySearch<Nat>([1, 3, 5, 7, 9, 11], Nat.compare, 5) == #found(2),
+      ([1, 3, 5, 7, 9, 11]).binarySearch<Nat>(5) == #found(2),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch not found",
-      Array.binarySearch<Nat>([1, 3, 5, 7, 9, 11], Nat.compare, 6) == #insertionIndex(3),
+      ([1, 3, 5, 7, 9, 11]).binarySearch<Nat>(6) == #insertionIndex(3),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch first element",
       do {
-        Array.binarySearch<Nat>([1, 3, 5, 7, 9, 11], Nat.compare, 1) == #found(0)
+        ([1, 3, 5, 7, 9, 11]).binarySearch<Nat>(1) == #found(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch last element",
       do {
-        Array.binarySearch<Nat>([1, 3, 5, 7, 9, 11], Nat.compare, 11) == #found(5)
+        ([1, 3, 5, 7, 9, 11]).binarySearch<Nat>(11) == #found(5)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch empty array",
       do {
-        Array.binarySearch<Nat>([], Nat.compare, 5) == #insertionIndex(0)
+        ([]).binarySearch<Nat>(5) == #insertionIndex(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch single element found",
       do {
-        Array.binarySearch<Nat>([42], Nat.compare, 42) == #found(0)
+        ([42]).binarySearch<Nat>(42) == #found(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch single element not found",
       do {
-        Array.binarySearch<Nat>([42], Nat.compare, 43) == #insertionIndex(1)
+        ([42]).binarySearch<Nat>(43) == #insertionIndex(1)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch duplicates",
       do {
-        let result = Array.binarySearch<Nat>([1, 2, 2, 2, 3], Nat.compare, 2);
+        let result = ([1, 2, 2, 2, 3]).binarySearch<Nat>(2);
         switch result {
           case (#found index) { index >= 1 and index <= 3 };
           case _ { false }
@@ -771,32 +771,32 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "isSorted empty array",
-      Array.isSorted<Nat>([], Nat.compare),
+      ([]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted single element",
-      Array.isSorted<Nat>([42], Nat.compare),
+      ([42]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted already sorted",
-      Array.isSorted<Nat>([1, 2, 3, 4, 5], Nat.compare),
+      ([1, 2, 3, 4, 5]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted with duplicates",
-      Array.isSorted<Nat>([1, 2, 2, 3, 3, 3], Nat.compare),
+      ([1, 2, 2, 3, 3, 3]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted not sorted",
-      Array.isSorted<Nat>([1, 3, 2, 4, 5], Nat.compare),
+      ([1, 3, 2, 4, 5]).isSorted<Nat>(),
       M.equals(T.bool(false))
     ),
     Suite.test(
       "isSorted reverse sorted",
-      Array.isSorted<Nat>([5, 4, 3, 2, 1], Nat.compare),
+      ([5, 4, 3, 2, 1]).isSorted<Nat>(),
       M.equals(T.bool(false))
     )
   ]
