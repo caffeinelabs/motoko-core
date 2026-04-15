@@ -9,7 +9,7 @@
     "format": "prettier --write '**/*.mo' --ignore-path .gitignore",
     "test": "run-s test:ts test:mops",
     "test:ts": "cd test/ts && tsx .",
-    "generate:oracle-fixtures": "tsx test/ts/pbt/emitQueueOracleFixtures.ts",
+    "generate:oracle-fixtures": "tsx test/ts/pbt/emitQueueOracleFixtures.ts && tsx test/ts/pbt/emitMapOracleFixtures.ts",
     "test:mops": "run-s generate:oracle-fixtures mops:test:inner",
     "mops:test:inner": "mops test",
     "validate": "run-s validate:changelog validate:version validate:api",
