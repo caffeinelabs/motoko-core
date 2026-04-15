@@ -530,7 +530,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([0, 1, 2, 3, 4].vals());
+  ///   let queue = Queue.fromIter<Nat>([0, 1, 2, 3, 4].values());
   ///   assert Queue.peekFront(queue) == ?0;
   ///   assert Queue.peekBack(queue) == ?4;
   ///   assert Queue.size(queue) == 5;
@@ -551,7 +551,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   transient let iter = [0, 1, 2, 3, 4].vals();
+  ///   transient let iter = [0, 1, 2, 3, 4].values();
   ///
   ///   let queue = iter.toQueue();
   ///
@@ -575,7 +575,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   assert (queue.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -606,9 +606,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].vals());
-  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 3].vals());
-  ///   let queue3 = Queue.fromIter<Nat>([1, 3, 2].vals());
+  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue3 = Queue.fromIter<Nat>([1, 3, 2].values());
   ///   assert Queue.equal(queue1, queue2, Nat.equal);
   ///   assert not Queue.equal(queue1, queue3, Nat.equal);
   /// }
@@ -637,8 +637,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].vals());
-  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 4].vals());
+  ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].values());
+  ///   let queue2 = Queue.fromIter<Nat>([1, 2, 4].values());
   ///   assert Queue.compare(queue1, queue2, Nat.compare) == #less;
   /// }
   /// ```
@@ -663,7 +663,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([2, 4, 6].vals());
+  ///   let queue = Queue.fromIter<Nat>([2, 4, 6].values());
   ///   assert Queue.all<Nat>(queue, func n = n % 2 == 0);
   ///   assert not Queue.all<Nat>(queue, func n = n > 4);
   /// }
@@ -690,7 +690,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   assert Queue.any<Nat>(queue, func n = n > 2);
   ///   assert not Queue.any<Nat>(queue, func n = n > 3);
   /// }
@@ -719,7 +719,7 @@ module {
   /// import Nat "mo:core/Nat";
   /// persistent actor {
   ///   var text = "";
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   Queue.forEach<Nat>(queue, func n = text #= Nat.toText(n));
   ///   assert text == "123";
   /// }
@@ -750,7 +750,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   let mapped = Queue.map<Nat, Nat>(queue, func n = n * 2);
   ///   assert Queue.size(mapped) == 3;
   ///   assert Queue.peekFront(mapped) == ?2;
@@ -784,7 +784,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
   ///   let filtered = Queue.filter<Nat>(queue, func n = n % 2 == 0);
   ///   assert Queue.size(filtered) == 2;
   ///   assert Queue.peekFront(filtered) == ?2;
@@ -809,7 +809,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
   ///   let filtered = Queue.filterMap<Nat, Nat>(queue, func n = if (n % 2 == 0) { ?n } else null);
   ///   assert Queue.size(filtered) == 2;
   ///   assert Queue.peekFront(filtered) == ?2;
@@ -840,7 +840,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   assert Queue.toText(queue, Nat.toText) == "RealTimeQueue[1, 2, 3]";
   /// }
   /// ```
@@ -866,7 +866,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   let reversed = Queue.reverse(queue);
   ///   assert Queue.peekFront(reversed) == ?3;
   ///   assert Queue.peekBack(reversed) == ?1;

@@ -1044,7 +1044,7 @@ run(
 // Helper function to run tests
 func runTest(name : Text, test : (Nat) -> Bool) {
   let testSizes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100];
-  for (n in testSizes.vals()) {
+  for (n in testSizes.values()) {
     if (test(n)) {
       Debug.print("✅ " # name # " passed for n = " # Nat.toText(n))
     } else {
@@ -1339,7 +1339,7 @@ func testMapInPlace(n : Nat) : Bool {
 
 func testFlatMap(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i));
-  let flatMapped = List.flatMap<Nat, Nat>(vec, func(x) = [x, x].vals());
+  let flatMapped = List.flatMap<Nat, Nat>(vec, func(x) = [x, x].values());
 
   let expected = List.fromArray<Nat>(Array.tabulate<Nat>(2 * n, func(i) = i / 2));
   List.equal(flatMapped, expected, Nat.equal)
@@ -1494,7 +1494,7 @@ func testDeduplicate(n : Nat) : Bool {
     List.fromArray<Nat>([1, 1, 2, 3])
   ];
 
-  for (list in lists.vals()) {
+  for (list in lists.values()) {
     List.deduplicate(list, Nat.equal);
     if (not List.equal(list, List.fromArray<Nat>([1, 2, 3]), Nat.equal)) {
       Debug.print("Deduplicate failed for " # List.toText(list, Nat.toText));
@@ -1754,7 +1754,7 @@ func testJoin(n : Nat) : Bool {
   let iter = Array.tabulate<List.List<Nat>>(
     n,
     func(i) = List.fromArray<Nat>(Array.tabulate<Nat>(i + 1, func(j) = j))
-  ).vals();
+  ).values();
   let flattened = List.join<Nat>(iter);
   let expectedSize = (n * (n + 1)) / 2;
 

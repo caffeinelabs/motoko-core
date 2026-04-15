@@ -384,7 +384,7 @@ suite(
   }
 );
 
-queue := Queue.filter<Nat>(Queue.fromIter([1, 2, 3, 4, 5].vals()), func n = n < 3);
+queue := Queue.filter<Nat>(Queue.fromIter([1, 2, 3, 4, 5].values()), func n = n < 3);
 
 suite(
   "filter invariants",

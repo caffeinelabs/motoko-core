@@ -41,7 +41,7 @@ func concatenateKeys2(accum : Text, key : Nat) : Text {
 };
 
 func containsAll(set : Set.Set<Nat>, elems : [Nat]) {
-  for (elem in elems.vals()) {
+  for (elem in elems.values()) {
     assert (set.contains(elem))
   }
 };

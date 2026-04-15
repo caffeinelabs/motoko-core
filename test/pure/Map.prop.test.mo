@@ -59,7 +59,7 @@ func mapGen(samples_number : Nat, size : Nat, range : (Nat, Nat)) : Iter.Iter<Ma
       if (n > samples_number) {
         null
       } else {
-        ?Map.fromIter(Random.nextEntries(range, size).vals(), c)
+        ?Map.fromIter(Random.nextEntries(range, size).values(), c)
       }
     }
   }

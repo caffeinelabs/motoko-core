@@ -82,7 +82,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].vals());
+  ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
   ///   assert (mutable.values()).toArray() == [1, 2, 3];
   /// }
@@ -195,7 +195,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   Stack.clear(stack);
   ///   assert Stack.isEmpty(stack);
   /// }
@@ -216,7 +216,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let original = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let original = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   let copy = Stack.clone(original);
   ///   assert Stack.equal(copy, original, Nat.equal);
   /// }
@@ -259,7 +259,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert Stack.size(stack) == 3;
   /// }
   /// ```
@@ -279,7 +279,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert Stack.contains(stack, Nat.equal, 2);
   /// }
   /// ```
@@ -492,7 +492,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([2, 4, 6].vals());
+  ///   let stack = Stack.fromIter<Nat>([2, 4, 6].values());
   ///   assert Stack.all<Nat>(stack, func(n) = n % 2 == 0);
   /// }
   /// ```
@@ -517,7 +517,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert Stack.any<Nat>(stack, func(n) = n == 2);
   /// }
   /// ```
@@ -728,8 +728,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack1 = Stack.fromIter<Nat>([3, 2, 1].vals());
-  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack1 = Stack.fromIter<Nat>([3, 2, 1].values());
+  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert Stack.equal(stack1, stack2, Nat.equal);
   /// }
   /// ```
@@ -771,7 +771,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert (stack.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -797,7 +797,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   transient let iter = [3, 2, 1].vals();
+  ///   transient let iter = [3, 2, 1].values();
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
@@ -821,7 +821,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert Stack.toText(stack, Nat.toText) == "Stack[1, 2, 3]";
   /// }
   /// ```
@@ -849,8 +849,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let stack1 = Stack.fromIter<Nat>([2, 1].vals());
-  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].vals());
+  ///   let stack1 = Stack.fromIter<Nat>([2, 1].values());
+  ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   assert Stack.compare(stack1, stack2, Nat.compare) == #less;
   /// }
   /// ```

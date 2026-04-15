@@ -826,10 +826,10 @@ run(
           let copy = smallMap();
           let clone = original.clone();
           let keys = original.keys().toArray();
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             original.add(key, "X")
           };
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             assert clone.get(key) == copy.get(key)
           };
           clone.size()

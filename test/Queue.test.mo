@@ -289,7 +289,7 @@ suite(
     test(
       "pop front",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         let results = [
           Queue.popFront(queue),
           Queue.popFront(queue),
@@ -304,7 +304,7 @@ suite(
     test(
       "pop back",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         let results = [
           Queue.popBack(queue),
           Queue.popBack(queue),
@@ -319,7 +319,7 @@ suite(
     test(
       "mixed pop",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
         let results = [
           Queue.popFront(queue),
           Queue.popBack(queue),
@@ -340,7 +340,7 @@ suite(
     test(
       "map",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         let mapped = Queue.map<Nat, Text>(queue, Nat.toText);
         assert (mapped.values()).toArray() == ["1", "2", "3"]
       }
@@ -349,7 +349,7 @@ suite(
     test(
       "filter",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
         let filtered = Queue.filter<Nat>(queue, func n = n % 2 == 0);
         assert (filtered.values()).toArray() == [2, 4]
       }
@@ -358,7 +358,7 @@ suite(
     test(
       "filter map",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
         let result = Queue.filterMap<Nat, Text>(
           queue,
           func n = if (n % 2 == 0) ?Nat.toText(n) else null
@@ -370,7 +370,7 @@ suite(
     test(
       "for each",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         var sum = 0;
         Queue.forEach<Nat>(queue, func n { sum += n });
         assert sum == 6
@@ -385,7 +385,7 @@ suite(
     test(
       "all true",
       func() {
-        let queue = Queue.fromIter<Nat>([2, 4, 6].vals());
+        let queue = Queue.fromIter<Nat>([2, 4, 6].values());
         assert Queue.all<Nat>(queue, func n = n % 2 == 0)
       }
     );
@@ -393,7 +393,7 @@ suite(
     test(
       "all false",
       func() {
-        let queue = Queue.fromIter<Nat>([2, 3, 4].vals());
+        let queue = Queue.fromIter<Nat>([2, 3, 4].values());
         assert not Queue.all<Nat>(queue, func n = n % 2 == 0)
       }
     );
@@ -401,7 +401,7 @@ suite(
     test(
       "any true",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         assert Queue.any<Nat>(queue, func n = n % 2 == 0)
       }
     );
@@ -409,7 +409,7 @@ suite(
     test(
       "any false",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 3, 5].vals());
+        let queue = Queue.fromIter<Nat>([1, 3, 5].values());
         assert not Queue.any<Nat>(queue, func n = n % 2 == 0)
       }
     )
@@ -458,7 +458,7 @@ suite(
     test(
       "multiple elements to pure",
       func() {
-        let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         let pureQueue = Queue.toPure(queue);
         assert (pureQueue.values()).toArray() == [1, 2, 3]
       }
@@ -479,7 +479,7 @@ suite(
     test(
       "round trip mutable to pure to mutable",
       func() {
-        let original = Queue.fromIter<Nat>([1, 2, 3].vals());
+        let original = Queue.fromIter<Nat>([1, 2, 3].values());
         let pureQueue = Queue.toPure(original);
         let roundTrip = Queue.fromPure<Nat>(pureQueue);
         assert (roundTrip.values()).toArray() == [1, 2, 3]

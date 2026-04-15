@@ -302,19 +302,19 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "flatMap",
-      Array.flatMap<Int, Int>([0, 1, 2], func x = [x, -x].vals()),
+      Array.flatMap<Int, Int>([0, 1, 2], func x = [x, -x].values()),
       M.equals(T.array<Int>(T.intTestable, [0, 0, 1, -1, 2, -2]))
     ),
     Suite.test(
       "flatMap empty",
-      Array.flatMap<Int, Int>([], func x = [x, -x].vals()),
+      Array.flatMap<Int, Int>([], func x = [x, -x].values()),
       M.equals(T.array<Int>(T.intTestable, []))
     ),
     Suite.test(
       "flatMap mix",
       Array.flatMap<Nat, Nat>(
         [1, 2, 1, 2, 3],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, [0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -322,7 +322,7 @@ let suite = Suite.suite(
       "flatMap mix empty right",
       Array.flatMap<Nat, Nat>(
         [0, 1, 2, 0, 1, 2, 3, 0],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, [0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -330,7 +330,7 @@ let suite = Suite.suite(
       "flatMap mix empties right",
       Array.flatMap<Nat, Nat>(
         [0, 1, 2, 0, 1, 2, 3, 0, 0, 0],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, [0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -338,7 +338,7 @@ let suite = Suite.suite(
       "flatMap mix empty left",
       Array.flatMap<Nat, Nat>(
         [0, 1, 2, 0, 1, 2, 3],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, [0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -346,7 +346,7 @@ let suite = Suite.suite(
       "flatMap mix empties left",
       Array.flatMap<Nat, Nat>(
         [0, 0, 0, 1, 2, 0, 1, 2, 3],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, [0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -354,7 +354,7 @@ let suite = Suite.suite(
       "flatMap mix empties middle",
       Array.flatMap<Nat, Nat>(
         [0, 1, 2, 0, 0, 0, 1, 2, 3],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, [0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -362,7 +362,7 @@ let suite = Suite.suite(
       "flatMap mix empties",
       Array.flatMap<Nat, Nat>(
         [0, 0, 0],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, []))
     ),
@@ -370,7 +370,7 @@ let suite = Suite.suite(
       "flatMap mix empty",
       Array.flatMap<Nat, Nat>(
         [],
-        func n = Array.tabulate<Nat>(n, func i = i).vals()
+        func n = Array.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(T.array<Nat>(T.natTestable, []))
     ),

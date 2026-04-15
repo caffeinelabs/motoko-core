@@ -35,7 +35,7 @@ func insert(rbTree : Map.Map<Nat, Text>, key : Nat) : Map.Map<Nat, Text> {
 };
 
 func getAll(rbTree : Map.Map<Nat, Text>, keys : [Nat]) {
-  for (key in keys.vals()) {
+  for (key in keys.values()) {
     let value = rbTree.get(key);
     assert (value == ?debug_show (key))
   }

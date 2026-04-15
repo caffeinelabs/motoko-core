@@ -945,10 +945,10 @@ run(
           let copy = smallSet();
           let clone = original.clone();
           let keys = original.values().toArray();
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             original.remove(key)
           };
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             assert clone.contains(key) == copy.contains(key)
           };
           clone.size()

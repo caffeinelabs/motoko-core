@@ -8,7 +8,7 @@
 /// import Nat "mo:core/Nat";
 ///
 /// persistent actor {
-///   let set = Set.fromIter([3, 1, 2, 3].vals(), Nat.compare);
+///   let set = Set.fromIter([3, 1, 2, 3].values(), Nat.compare);
 ///   assert Set.size(set) == 3;
 ///   assert not Set.contains(set, Nat.compare, 4);
 ///   let diff = Set.difference(set, set, Nat.compare);
@@ -59,7 +59,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 2, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter<Nat>([0, 2, 1].values(), Nat.compare);
   ///   let pureSet = Set.toPure(set, Nat.compare);
   ///   assert (pureSet.values()).toArray() == (set.values()).toArray();
   /// }
@@ -86,7 +86,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let pureSet = PureSet.fromIter([3, 1, 2].vals(), Nat.compare);
+  ///   let pureSet = PureSet.fromIter([3, 1, 2].values(), Nat.compare);
   ///   let set = Set.fromPure(pureSet, Nat.compare);
   ///   assert (set.values()).toArray() == (pureSet.values()).toArray();
   /// }
@@ -113,7 +113,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let originalSet = Set.fromIter([1, 2, 3].vals(), Nat.compare);
+  ///   let originalSet = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let clonedSet = Set.clone(originalSet);
   ///   Set.add(originalSet, Nat.compare, 4);
   ///   assert Set.size(clonedSet) == 3;
@@ -266,9 +266,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([1, 2].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([2, 1].vals(), Nat.compare);
-  ///   let set3 = Set.fromIter([2, 1, 0].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([1, 2].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([2, 1].values(), Nat.compare);
+  ///   let set3 = Set.fromIter([2, 1, 0].values(), Nat.compare);
   ///   assert Set.equal(set1, set2, Nat.compare);
   ///   assert not Set.equal(set1, set3, Nat.compare);
   /// }
@@ -424,7 +424,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([1, 2, 3].vals(), Nat.compare);
+  ///   let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///
   ///   Set.remove(set, Nat.compare, 2);
   ///   assert not Set.contains(set, Nat.compare, 2);
@@ -455,7 +455,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([1, 2, 3].vals(), Nat.compare);
+  ///   let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///
   ///   assert Set.delete(set, Nat.compare, 2);
   ///   assert not Set.contains(set, Nat.compare, 2);
@@ -581,7 +581,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 2, 3, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter([0, 2, 3, 1].values(), Nat.compare);
   ///
   ///   var tmp = "";
   ///   for (number in set.values()) {
@@ -613,7 +613,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 3, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter([0, 3, 1].values(), Nat.compare);
   ///   assert (Set.valuesFrom(set, Nat.compare, 1)).toArray() == [1, 3];
   ///   assert (Set.valuesFrom(set, Nat.compare, 2)).toArray() == [3];
   /// }
@@ -644,7 +644,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 2, 3, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter([0, 2, 3, 1].values(), Nat.compare);
   ///
   ///   var tmp = "";
   ///   for (number in set.reverseValues()) {
@@ -676,7 +676,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 1, 3].vals(), Nat.compare);
+  ///   let set = Set.fromIter([0, 1, 3].values(), Nat.compare);
   ///   assert (Set.reverseValuesFrom(set, Nat.compare, 0)).toArray() == [0];
   ///   assert (Set.reverseValuesFrom(set, Nat.compare, 2)).toArray() == [1, 0];
   /// }
@@ -709,7 +709,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([3, 1, 2, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter<Nat>([3, 1, 2, 1].values(), Nat.compare);
   ///   assert (set.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -737,7 +737,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   transient let iter = [3, 1, 2, 1].vals();
+  ///   transient let iter = [3, 1, 2, 1].values();
   ///
   ///   let set = iter.toSet(Nat.compare);
   ///
@@ -762,9 +762,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([1, 2].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([2, 1, 0].vals(), Nat.compare);
-  ///   let set3 = Set.fromIter([3, 4].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([1, 2].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([2, 1, 0].values(), Nat.compare);
+  ///   let set3 = Set.fromIter([3, 4].values(), Nat.compare);
   ///   assert Set.isSubset(set1, set2, Nat.compare);
   ///   assert not Set.isSubset(set1, set3, Nat.compare);
   /// }
@@ -797,8 +797,8 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([1, 2, 3].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([3, 4, 5].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let union = Set.union(set1, set2, Nat.compare);
   ///   assert (union.values()).toArray() == [1, 2, 3, 4, 5];
   /// }
@@ -828,8 +828,8 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([0, 1, 2].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([1, 2, 3].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([0, 1, 2].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let intersection = Set.intersection(set1, set2, Nat.compare);
   ///   assert (intersection.values()).toArray() == [1, 2];
   /// }
@@ -859,8 +859,8 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([1, 2, 3].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([3, 4, 5].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let difference = Set.difference(set1, set2, Nat.compare);
   ///   assert (difference.values()).toArray() == [1, 2];
   /// }
@@ -890,8 +890,8 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([1, 2, 3].vals(), Nat.compare);
-  ///   Set.addAll(set, Nat.compare, [3, 4, 5].vals());
+  ///   let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
+  ///   Set.addAll(set, Nat.compare, [3, 4, 5].values());
   ///   assert (set.values()).toArray() == [1, 2, 3, 4, 5];
   /// }
   /// ```
@@ -917,8 +917,8 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 1, 2].vals(), Nat.compare);
-  ///   assert Set.deleteAll(set, Nat.compare, [0, 2].vals());
+  ///   let set = Set.fromIter([0, 1, 2].values(), Nat.compare);
+  ///   assert Set.deleteAll(set, Nat.compare, [0, 2].values());
   ///   assert (set.values()).toArray() == [1];
   /// }
   /// ```
@@ -947,10 +947,10 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 1, 2].vals(), Nat.compare);
-  ///   assert Set.insertAll(set, Nat.compare, [0, 2, 3].vals());
+  ///   let set = Set.fromIter([0, 1, 2].values(), Nat.compare);
+  ///   assert Set.insertAll(set, Nat.compare, [0, 2, 3].values());
   ///   assert (set.values()).toArray() == [0, 1, 2, 3];
-  ///   assert not Set.insertAll(set, Nat.compare, [0, 1, 2].vals()); // no change
+  ///   assert not Set.insertAll(set, Nat.compare, [0, 1, 2].values()); // no change
   /// }
   /// ```
   ///
@@ -978,7 +978,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([3, 1, 2].vals(), Nat.compare);
+  ///   let set = Set.fromIter([3, 1, 2].values(), Nat.compare);
   ///
   ///   let sizeChanged = Set.retainAll<Nat>(set, Nat.compare, func n { n % 2 == 0 });
   ///   assert (set.values()).toArray() == [2];
@@ -990,7 +990,7 @@ module {
     deleteAll(
       self,
       compare,
-      Iter.filter<T>(array.vals(), func(element : T) : Bool = not predicate(element))
+      Iter.filter<T>(array.values(), func(element : T) : Bool = not predicate(element))
     )
   };
 
@@ -1003,7 +1003,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let numbers = Set.fromIter([0, 3, 1, 2].vals(), Nat.compare);
+  ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   var tmp = "";
   ///   Set.forEach<Nat>(numbers, func (element) {
@@ -1035,7 +1035,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let numbers = Set.fromIter([0, 3, 1, 2].vals(), Nat.compare);
+  ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   let evenNumbers = Set.filter<Nat>(numbers, Nat.compare, func (number) {
   ///     number % 2 == 0
@@ -1070,7 +1070,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let numbers = Set.fromIter([3, 1, 2].vals(), Nat.compare);
+  ///   let numbers = Set.fromIter([3, 1, 2].values(), Nat.compare);
   ///
   ///   let textNumbers =
   ///     Set.map<Nat, Text>(numbers, Text.compare, Nat.toText);
@@ -1106,7 +1106,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let numbers = Set.fromIter([3, 0, 2, 1].vals(), Nat.compare);
+  ///   let numbers = Set.fromIter([3, 0, 2, 1].values(), Nat.compare);
   ///
   ///   let evenTextNumbers = Set.filterMap<Nat, Text>(numbers, Text.compare, func (number) {
   ///     if (number % 2 == 0) {
@@ -1144,7 +1144,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 3, 2, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
   ///   let text = Set.foldLeft<Nat, Text>(
   ///      set,
@@ -1183,7 +1183,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter([0, 3, 2, 1].vals(), Nat.compare);
+  ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
   ///   let text = Set.foldRight<Nat, Text>(
   ///      set,
@@ -1227,10 +1227,10 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([1, 2, 3].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([3, 4, 5].vals(), Nat.compare);
-  ///   let set3 = Set.fromIter([5, 6, 7].vals(), Nat.compare);
-  ///   let combined = Set.join([set1, set2, set3].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
+  ///   let set3 = Set.fromIter([5, 6, 7].values(), Nat.compare);
+  ///   let combined = Set.join([set1, set2, set3].values(), Nat.compare);
   ///   assert (combined.values()).toArray() == [1, 2, 3, 4, 5, 6, 7];
   /// }
   /// ```
@@ -1268,10 +1268,10 @@ module {
   ///      Set.compare(first, second, Nat.compare)
   ///   };
   ///
-  ///   let set1 = Set.fromIter([1, 2, 3].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([3, 4, 5].vals(), Nat.compare);
-  ///   let set3 = Set.fromIter([5, 6, 7].vals(), Nat.compare);
-  ///   let setOfSets = Set.fromIter([set1, set2, set3].vals(), setCompare);
+  ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
+  ///   let set3 = Set.fromIter([5, 6, 7].values(), Nat.compare);
+  ///   let setOfSets = Set.fromIter([set1, set2, set3].values(), setCompare);
   ///   let flatSet = Set.flatten(setOfSets, Nat.compare);
   ///   assert (flatSet.values()).toArray() == [1, 2, 3, 4, 5, 6, 7];
   /// }
@@ -1301,7 +1301,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].vals(), Nat.compare);
+  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   let belowTen = Set.all<Nat>(set, func (number) {
   ///     number < 10
@@ -1335,7 +1335,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].vals(), Nat.compare);
+  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   let aboveTen = Set.any<Nat>(set, func (number) {
   ///     number > 10
@@ -1397,7 +1397,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].vals(), Nat.compare);
+  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   assert Set.toText(set, Nat.toText) == "Set{0, 1, 2, 3}"
   /// }
@@ -1440,8 +1440,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter([0, 1].vals(), Nat.compare);
-  ///   let set2 = Set.fromIter([0, 2].vals(), Nat.compare);
+  ///   let set1 = Set.fromIter([0, 1].values(), Nat.compare);
+  ///   let set2 = Set.fromIter([0, 2].values(), Nat.compare);
   ///
   ///   assert Set.compare(set1, set2, Nat.compare) == #less;
   ///   assert Set.compare(set1, set1, Nat.compare) == #equal;

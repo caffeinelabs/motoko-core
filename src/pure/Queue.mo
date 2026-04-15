@@ -116,7 +116,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   assert Queue.contains(queue, Nat.equal, 2);
   ///   assert not Queue.contains(queue, Nat.equal, 4);
   /// }
@@ -299,7 +299,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([0, 1, 2, 3, 4].vals());
+  ///   let queue = Queue.fromIter([0, 1, 2, 3, 4].values());
   ///   assert Queue.size(queue) == 5;
   /// }
   /// ```
@@ -316,7 +316,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   transient let iter = [0, 1, 2, 3, 4].vals();
+  ///   transient let iter = [0, 1, 2, 3, 4].values();
   ///
   ///   let queue = iter.toQueue();
   ///   assert Queue.size(queue) == 5;
@@ -391,7 +391,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   assert (queue.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
@@ -408,9 +408,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter([1, 2].vals());
-  ///   let queue2 = Queue.fromIter([1, 2].vals());
-  ///   let queue3 = Queue.fromIter([1, 3].vals());
+  ///   let queue1 = Queue.fromIter([1, 2].values());
+  ///   let queue2 = Queue.fromIter([1, 2].values());
+  ///   let queue3 = Queue.fromIter([1, 3].values());
   ///   assert Queue.equal(queue1, queue2, Nat.equal);
   ///   assert not Queue.equal(queue1, queue3, Nat.equal);
   /// }
@@ -441,7 +441,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   let allGreaterThanOne = Queue.all<Nat>(queue, func n = n > 1);
   ///   assert not allGreaterThanOne; // false because 1 is not > 1
   /// }
@@ -463,7 +463,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   let hasGreaterThanOne = Queue.any<Nat>(queue, func n = n > 1);
   ///   assert hasGreaterThanOne; // true because 2 and 3 are > 1
   /// }
@@ -486,7 +486,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   var text = "";
-  ///   let queue = Queue.fromIter(["A", "B", "C"].vals());
+  ///   let queue = Queue.fromIter(["A", "B", "C"].values());
   ///   Queue.forEach<Text>(queue, func n = text #= n);
   ///   assert text == "ABC";
   /// }
@@ -510,7 +510,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([0, 1, 2].vals());
+  ///   let queue = Queue.fromIter([0, 1, 2].values());
   ///   let textQueue = Queue.map<Nat, Text>(queue, Nat.toText);
   ///   assert (textQueue.values()).toArray() == ["0", "1", "2"];
   /// }
@@ -534,7 +534,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([0, 1, 2, 1].vals());
+  ///   let queue = Queue.fromIter([0, 1, 2, 1].values());
   ///   let filtered = Queue.filter<Nat>(queue, func n = n != 1);
   ///   assert Queue.size(filtered) == 2;
   /// }
@@ -560,7 +560,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   let doubled = Queue.filterMap<Nat, Nat>(
   ///     queue,
   ///     func n = if (n > 1) ?(n * 2) else null
@@ -589,7 +589,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   assert Queue.toText(queue, Nat.toText) == "PureQueue[1, 2, 3]";
   /// }
   /// ```
@@ -615,8 +615,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let queue1 = Queue.fromIter([1, 2].vals());
-  ///   let queue2 = Queue.fromIter([1, 3].vals());
+  ///   let queue1 = Queue.fromIter([1, 2].values());
+  ///   let queue2 = Queue.fromIter([1, 3].values());
   ///   assert Queue.compare(queue1, queue2, Nat.compare) == #less;
   /// }
   /// ```
@@ -645,7 +645,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromIter([1, 2, 3].vals());
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
   ///   let reversed = Queue.reverse(queue);
   ///   assert Queue.peekFront(reversed) == ?3;
   ///   assert Queue.peekBack(reversed) == ?1;

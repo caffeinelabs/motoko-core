@@ -232,7 +232,7 @@ module {
   /// import PriorityQueue "mo:core/PriorityQueue";
   /// import Nat "mo:core/Nat";
   ///
-  /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].vals(), Nat.compare);
+  /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
   /// assert PriorityQueue.size(pq) == 3;
   /// assert PriorityQueue.peek(pq) == ?10;
   /// ```
@@ -255,7 +255,7 @@ module {
   /// import PriorityQueue "mo:core/PriorityQueue";
   /// import Nat "mo:core/Nat";
   ///
-  /// let original = PriorityQueue.fromIter<Nat>([5, 10, 3].vals(), Nat.compare);
+  /// let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
   /// let copy = PriorityQueue.clone(original);
   /// assert PriorityQueue.pop(copy, Nat.compare) == ?10;
   /// assert PriorityQueue.size(original) == 3;
@@ -281,7 +281,7 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Iter "mo:core/Iter";
   ///
-  /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].vals(), Nat.compare);
+  /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
   /// assert (PriorityQueue.values(pq, Nat.compare)).toArray() == [10, 5, 3];
   /// ```
   ///

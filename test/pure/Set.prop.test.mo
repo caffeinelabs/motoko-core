@@ -60,7 +60,7 @@ func setGenN(samples_number : Nat, size : Nat, range : (Nat, Nat), chunkSize : N
         ?Array.tabulate<Set.Set<Nat>>(
           chunkSize,
           func _ = Set.fromIter(
-            Random.nextEntries(range, size).vals(),
+            Random.nextEntries(range, size).values(),
             c
           )
         )
