@@ -64,7 +64,7 @@ module {
   public func singleton<T>(element : T) : List<T> = {
     var blockIndex = 2;
     var blocks = [var [var], [var ?element]];
-    var elementIndex = 0;
+    var elementIndex = 0
   };
 
   func repeatInternal<T>(initValue : ?T, size : Nat) : List<T> {
@@ -90,7 +90,7 @@ module {
     {
       var blocks = dataBlocks;
       var blockIndex = blockIndex;
-      var elementIndex = elementIndex;
+      var elementIndex = elementIndex
     }
   };
 

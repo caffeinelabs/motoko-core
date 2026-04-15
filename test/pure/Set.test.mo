@@ -124,7 +124,8 @@ run(
         "filter",
         do {
           let input = Set.empty<Nat>();
-          let output = input.filter<Nat>(func(_) {
+          let output = input.filter<Nat>(
+            func(_) {
               Runtime.trap("test failed")
             }
           );
@@ -254,7 +255,8 @@ run(
         "filter",
         do {
           let input = buildTestSet();
-          let output = input.filter<Nat>(func(number) {
+          let output = input.filter<Nat>(
+            func(number) {
               assert (number == 0);
               true
             }
@@ -465,7 +467,8 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     "filter",
     do {
       let input = buildTestSet();
-      let output = input.filter<Nat>(func(number) {
+      let output = input.filter<Nat>(
+        func(number) {
           number % 2 == 0
         }
       );

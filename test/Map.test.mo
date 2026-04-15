@@ -605,7 +605,8 @@ run(
         "filter",
         do {
           let input = Map.singleton<Nat, Text>(0, "0");
-          let output = input.filter<Nat, Text>(func(key, value) {
+          let output = input.filter<Nat, Text>(
+            func(key, value) {
               assert (key == 0);
               assert (value == "0");
               true
@@ -636,7 +637,8 @@ run(
         "filter map",
         do {
           let input = Map.singleton<Nat, Text>(0, "0");
-          let output = input.filterMap<Nat, Text, Int>(func(key, value) {
+          let output = input.filterMap<Nat, Text, Int>(
+            func(key, value) {
               assert (key == 0);
               assert (value == "0");
               ?+key
@@ -1024,7 +1026,8 @@ run(
         "filter",
         do {
           let input = smallMap();
-          let output = input.filter<Nat, Text>(func(key, value) {
+          let output = input.filter<Nat, Text>(
+            func(key, value) {
               key % 2 == 0
             }
           );
@@ -1062,7 +1065,8 @@ run(
         "filter map",
         do {
           let input = smallMap();
-          let output = input.filterMap<Nat, Text, Int>(func(key, value) {
+          let output = input.filterMap<Nat, Text, Int>(
+            func(key, value) {
               if (key % 2 == 0) {
                 ?+key
               } else {

@@ -219,7 +219,8 @@ run(
         "filter",
         do {
           let input = Map.empty<Nat, Text>();
-          let output = input.filter<Nat, Text>(func(_, _) {
+          let output = input.filter<Nat, Text>(
+            func(_, _) {
               Runtime.trap("test failed")
             }
           );
@@ -419,7 +420,8 @@ run(
         "filter",
         do {
           let input = Map.singleton<Nat, Text>(0, "0");
-          let output = input.filter<Nat, Text>(func(key, value) {
+          let output = input.filter<Nat, Text>(
+            func(key, value) {
               assert (key == 0);
               assert (value == "0");
               true
@@ -647,7 +649,8 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
     "filter",
     do {
       let input = buildTestMap();
-      let output = input.filter<Nat, Text>(func(key, value) {
+      let output = input.filter<Nat, Text>(
+        func(key, value) {
           key % 2 == 0
         }
       );
@@ -974,7 +977,8 @@ run(
         "filter",
         do {
           let input = smallMap();
-          let output = input.filter<Nat, Text>(func(key, value) {
+          let output = input.filter<Nat, Text>(
+            func(key, value) {
               key % 2 == 0
             }
           );
