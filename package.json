@@ -32,6 +32,7 @@
   "devDependencies": {
     "@dfinity/pic": "^0.13.1",
     "execa": "^4.1.0",
+    "fast-check": "^4.6.0",
     "fast-glob": "^3.3.2",
     "ic-mops": "^1.11.1",
     "mo-dev": "^0.13.0",
