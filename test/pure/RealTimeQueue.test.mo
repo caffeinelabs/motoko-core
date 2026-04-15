@@ -781,7 +781,7 @@ suite(
         let testCompare = func(testElements1 : [Nat], testElements2 : [Nat]) {
           let q1 = Queue.fromIter(testElements1.vals());
           let q2 = Queue.fromIter(testElements2.vals());
-          expect.bool(Queue.compare(q1, q2, Nat.compare) == Array.compare<Nat>(testElements1, testElements2, Nat.compare)).isTrue()
+          expect.bool(q1.compare(q2) == Array.compare<Nat>(testElements1, testElements2, Nat.compare)).isTrue()
         };
 
         testCompare([], []);
