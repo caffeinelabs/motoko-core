@@ -146,7 +146,7 @@ suite(
       "values iterates in LIFO order",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].vals());
-        expect.array((Stack.values(s)).toArray(), Nat.toText, Nat.equal).equal([3, 2, 1])
+        expect.array((s.values()).toArray(), Nat.toText, Nat.equal).equal([3, 2, 1])
       }
     )
   }
@@ -160,7 +160,7 @@ suite(
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].vals());
         Stack.reverse(s);
-        expect.array((Stack.values(s)).toArray(), Nat.toText, Nat.equal).equal([1, 2, 3])
+        expect.array((s.values()).toArray(), Nat.toText, Nat.equal).equal([1, 2, 3])
       }
     );
 
@@ -169,7 +169,7 @@ suite(
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].vals());
         let mapped = Stack.map<Nat, Nat>(s, func(x) { x + 1 });
-        expect.array((Stack.values(mapped)).toArray(), Nat.toText, Nat.equal).equal([4, 3, 2])
+        expect.array((mapped.values()).toArray(), Nat.toText, Nat.equal).equal([4, 3, 2])
       }
     );
 
@@ -178,7 +178,7 @@ suite(
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3, 4].vals());
         let evens = Stack.filter<Nat>(s, func(x) { x % 2 == 0 });
-        expect.array((Stack.values(evens)).toArray(), Nat.toText, Nat.equal).equal([4, 2])
+        expect.array((evens.values()).toArray(), Nat.toText, Nat.equal).equal([4, 2])
       }
     );
 
@@ -192,7 +192,7 @@ suite(
             if (x % 2 == 0) { ?(x * 2) } else { null }
           }
         );
-        expect.array((Stack.values(evenDoubled)).toArray(), Nat.toText, Nat.equal).equal([8, 4])
+        expect.array((evenDoubled.values()).toArray(), Nat.toText, Nat.equal).equal([8, 4])
       }
     )
   }
@@ -378,7 +378,7 @@ suite(
         var sum = 0;
         var count = 0;
 
-        for (value in Stack.values(s)) {
+        for (value in s.values()) {
           sum += value;
           count += 1
         };

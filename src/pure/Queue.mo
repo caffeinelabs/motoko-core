@@ -368,7 +368,7 @@ module {
   ///
   /// Space: O(size)
   public func toArray<T>(self : Queue<T>) : [T] {
-    let iter = values(self);
+    let iter = self.values();
     Array.tabulate<T>(
       self.1,
       func(i) {
@@ -392,7 +392,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert (Queue.values(queue)).toArray() == [1, 2, 3];
+  ///   assert (queue.values()).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -423,7 +423,7 @@ module {
     if (self.1 != other.1) {
       return false
     };
-    let (iter1, iter2) = (values(self), values(other));
+    let (iter1, iter2) = (self.values(), other.values());
     loop {
       switch (iter1.next(), iter2.next()) {
         case (null, null) { return true };
@@ -512,7 +512,7 @@ module {
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2].values());
   ///   let textQueue = Queue.map<Nat, Text>(queue, Nat.toText);
-  ///   assert (Queue.values(textQueue)).toArray() == ["0", "1", "2"];
+  ///   assert (text.values()).toArray() == ["0", "1", "2"];
   /// }
   /// ```
   ///

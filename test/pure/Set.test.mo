@@ -79,12 +79,12 @@ run(
       ),
       test(
         "values",
-        (Set.values(buildTestSet())).toArray(),
+        (buildTestSet().values()).toArray(),
         M.equals(T.array<Nat>(entryTestable, []))
       ),
       test(
         "reverseValues",
-        (Set.reverseValues(buildTestSet())).toArray(),
+        (buildTestSet().reverseValues()).toArray(),
         M.equals(T.array<Nat>(entryTestable, []))
       ),
       test(
@@ -214,12 +214,12 @@ run(
       ),
       test(
         "values",
-        (Set.values(buildTestSet())).toArray(),
+        (buildTestSet().values()).toArray(),
         M.equals(T.array<Nat>(entryTestable, expected))
       ),
       test(
         "reverseValues",
-        (Set.reverseValues(buildTestSet())).toArray(),
+        (buildTestSet().reverseValues()).toArray(),
         M.equals(T.array<Nat>(entryTestable, expected))
       ),
       test(
@@ -399,12 +399,12 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   ),
   test(
     "values",
-    (Set.values(buildTestSet())).toArray(),
+    (buildTestSet().values()).toArray(),
     M.equals(T.array<Nat>(entryTestable, expected))
   ),
   test(
     "reverseValues",
-    Array.reverse((Set.reverseValues(buildTestSet())).toArray()),
+    Array.reverse((buildTestSet().reverseValues()).toArray()),
     M.equals(T.array<Nat>(entryTestable, expected))
   ),
   test(

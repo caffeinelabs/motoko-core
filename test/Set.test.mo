@@ -84,12 +84,12 @@ run(
       ),
       test(
         "iterate forward",
-        (Set.values(Set.empty<Nat>())).toArray(),
+        (Set.empty<Nat>().values()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, []))
       ),
       test(
         "iterate backward",
-        (Set.reverseValues(Set.empty<Nat>())).toArray(),
+        (Set.empty<Nat>().reverseValues()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, []))
       ),
       test(
@@ -426,12 +426,12 @@ run(
       ),
       test(
         "iterate forward",
-        (Set.values(Set.singleton<Nat>(0))).toArray(),
+        (Set.singleton<Nat>(0).values()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, [0]))
       ),
       test(
         "iterate backward",
-        (Set.reverseValues(Set.singleton<Nat>(0))).toArray(),
+        (Set.singleton<Nat>(0).reverseValues()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, [0]))
       ),
       test(
@@ -514,12 +514,12 @@ run(
       ),
       test(
         "iterate forward",
-        (Set.values(Set.singleton<Nat>(0))).toArray(),
+        (Set.singleton<Nat>(0).values()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, [0]))
       ),
       test(
         "iterate backwards",
-        (Set.reverseValues(Set.singleton<Nat>(0))).toArray(),
+        (Set.singleton<Nat>(0).reverseValues()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, [0]))
       ),
       test(
@@ -957,7 +957,7 @@ run(
       ),
       test(
         "iterate forward",
-        (Set.values(smallSet())).toArray(),
+        (smallSet().values()).toArray(),
         M.equals(
           T.array<Nat>(
             T.natTestable,
@@ -967,7 +967,7 @@ run(
       ),
       test(
         "iterate backward",
-        (Set.reverseValues(smallSet())).toArray(),
+        (smallSet().reverseValues()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, Array.reverse(Array.tabulate<Nat>(smallSize, func(index) { index }))))
       ),
       test(
@@ -1046,12 +1046,12 @@ run(
       ),
       test(
         "forward iteration",
-        (Set.values(smallSet())).toArray(),
+        (smallSet().values()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { index })))
       ),
       test(
         "backwards iteration",
-        (Set.reverseValues(smallSet())).toArray(),
+        (smallSet().reverseValues()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { smallSize - 1 - index : Nat })))
       ),
       test(
@@ -1528,7 +1528,7 @@ run(
             set.add(index)
           };
           var index = numberOfElements;
-          for (element in Set.reverseValues(set)) {
+          for (element in set.reverseValues()) {
             index -= 1;
             assert (element == index)
           };
@@ -1975,7 +1975,7 @@ Test.suite(
           set.add(i);
           for (j in Nat.range(0, i + 2)) {
             let actual = (set.reverseValuesFrom(j)).toArray();
-            let expected = (Iter.dropWhile<(Nat)>(Set.reverseValues(set), func(k) = k > j)).toArray();
+            let expected = (Iter.dropWhile<(Nat)>(set.reverseValues(), func(k) = k > j)).toArray();
             Test.expect.array(actual, Nat.toText, Nat.equal).equal(expected)
           }
         }

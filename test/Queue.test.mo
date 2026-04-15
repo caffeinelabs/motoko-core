@@ -83,7 +83,7 @@ suite(
     test(
       "values",
       func() {
-        assert (Queue.values(Queue.empty<Nat>())).toArray() == []
+        assert (Queue.empty<Nat>().values()).toArray() == []
       }
     );
 
@@ -197,7 +197,7 @@ suite(
     test(
       "vals",
       func() {
-        assert (Queue.values(Queue.singleton<Nat>(0))).toArray() == [0]
+        assert (Queue.singleton<Nat>(0).values()).toArray() == [0]
       }
     );
 
@@ -255,7 +255,7 @@ suite(
         Queue.pushFront(queue, 1);
         Queue.pushFront(queue, 2);
         Queue.pushFront(queue, 3);
-        assert (Queue.values(queue)).toArray() == [3, 2, 1]
+        assert (queue.values()).toArray() == [3, 2, 1]
       }
     );
 
@@ -266,7 +266,7 @@ suite(
         Queue.pushBack(queue, 1);
         Queue.pushBack(queue, 2);
         Queue.pushBack(queue, 3);
-        assert (Queue.values(queue)).toArray() == [1, 2, 3]
+        assert (queue.values()).toArray() == [1, 2, 3]
       }
     );
 
@@ -277,7 +277,7 @@ suite(
         Queue.pushFront(queue, 2);
         Queue.pushBack(queue, 3);
         Queue.pushFront(queue, 1);
-        assert (Queue.values(queue)).toArray() == [1, 2, 3]
+        assert (queue.values()).toArray() == [1, 2, 3]
       }
     )
   }
@@ -342,7 +342,7 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
         let mapped = Queue.map<Nat, Text>(queue, Nat.toText);
-        assert (Queue.values(mapped)).toArray() == ["1", "2", "3"]
+        assert (mapped.values()).toArray() == ["1", "2", "3"]
       }
     );
 
@@ -351,7 +351,7 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
         let filtered = Queue.filter<Nat>(queue, func n = n % 2 == 0);
-        assert (Queue.values(filtered)).toArray() == [2, 4]
+        assert (filtered.values()).toArray() == [2, 4]
       }
     );
 
@@ -363,7 +363,7 @@ suite(
           queue,
           func n = if (n % 2 == 0) ?Nat.toText(n) else null
         );
-        assert (Queue.values(result)).toArray() == ["2", "4"]
+        assert (result.values()).toArray() == ["2", "4"]
       }
     );
 
@@ -442,7 +442,7 @@ suite(
       func() {
         let queue = Queue.singleton<Nat>(1);
         let pureQueue = Queue.toPure(queue);
-        assert (PureQueue.values(pureQueue)).toArray() == [1]
+        assert (pureQueue.values()).toArray() == [1]
       }
     );
 
@@ -451,7 +451,7 @@ suite(
       func() {
         let pureQueue = PureQueue.pushBack(PureQueue.empty(), 1);
         let queue = Queue.fromPure<Nat>(pureQueue);
-        assert (Queue.values(queue)).toArray() == [1]
+        assert (queue.values()).toArray() == [1]
       }
     );
 
@@ -460,7 +460,7 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
         let pureQueue = Queue.toPure(queue);
-        assert (PureQueue.values(pureQueue)).toArray() == [1, 2, 3]
+        assert (pureQueue.values()).toArray() == [1, 2, 3]
       }
     );
 
@@ -472,7 +472,7 @@ suite(
         pureQueue := PureQueue.pushBack(pureQueue, 2);
         pureQueue := PureQueue.pushBack(pureQueue, 3);
         let queue = Queue.fromPure<Nat>(pureQueue);
-        assert (Queue.values(queue)).toArray() == [1, 2, 3]
+        assert (queue.values()).toArray() == [1, 2, 3]
       }
     );
 
@@ -482,7 +482,7 @@ suite(
         let original = Queue.fromIter<Nat>([1, 2, 3].vals());
         let pureQueue = Queue.toPure(original);
         let roundTrip = Queue.fromPure<Nat>(pureQueue);
-        assert (Queue.values(roundTrip)).toArray() == [1, 2, 3]
+        assert (roundTrip.values()).toArray() == [1, 2, 3]
       }
     );
 
@@ -495,7 +495,7 @@ suite(
         original := PureQueue.pushBack(original, 3);
         let mutableQueue = Queue.fromPure<Nat>(original);
         let roundTrip = Queue.toPure(mutableQueue);
-        assert (PureQueue.values(roundTrip)).toArray() == [1, 2, 3]
+        assert (roundTrip.values()).toArray() == [1, 2, 3]
       }
     )
   }
@@ -590,7 +590,7 @@ suite(
           Queue.pushBack(queue, number)
         };
         var counter = 0;
-        for (number in Queue.values(queue)) {
+        for (number in queue.values()) {
           assert number == counter;
           counter += 1
         };
@@ -599,7 +599,7 @@ suite(
           assert Queue.popFront(queue) == ?number
         };
         counter := numberOfSteps / 2;
-        for (number in Queue.values(queue)) {
+        for (number in queue.values()) {
           assert number == counter;
           counter += 1
         };

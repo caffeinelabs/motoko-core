@@ -7,9 +7,9 @@ import Iter "../../src/Iter";
 import Prim "mo:prim";
 import { suite; test; expect } "mo:test";
 
-func iterateForward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = Queue.values(queue);
+func iterateForward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = queue.values();
 
-func iterateBackward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = Queue.values(Queue.reverse(queue));
+func iterateBackward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = Queue.reverse(queue).values();
 
 func frontToText(t : (Nat, Queue.Queue<Nat>)) : Text {
   "(" # Nat.toText(t.0) # ", " # Queue.toText(t.1, Nat.toText) # ")"
