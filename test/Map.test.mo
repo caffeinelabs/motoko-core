@@ -582,7 +582,7 @@ run(
         do {
           let map = Map.fromIter<Nat, Text>(Iter.fromArray<(Nat, Text)>([(0, "0")]), Nat.compare);
           assert (map.get(0) == ?"0");
-          assert (Map.equal(map, Map.singleton<Nat, Text>(0, "0"), Nat.compare, Text.equal));
+          assert (map.equal(Map.singleton<Nat, Text>(0, "0")));
           map.size()
         },
         M.equals(T.nat(1))
@@ -999,7 +999,7 @@ run(
           for (index in Nat.range(0, smallSize)) {
             assert (map.get(index) == ?Nat.toText(index))
           };
-          assert (Map.equal(map, smallMap(), Nat.compare, Text.equal));
+          assert (map.equal(smallMap()));
           map.size()
         },
         M.equals(T.nat(smallSize))
