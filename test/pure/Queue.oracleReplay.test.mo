@@ -31,7 +31,7 @@ func replay(q : Queue.Queue<Nat>, ops : [Fixture.Op]) : Queue.Queue<Nat> {
           case null Prim.trap("oracle trace: popBack on empty");
           case (?(q2, _)) current := q2
         }
-      };
+      }
     }
   };
   current
@@ -49,10 +49,10 @@ suite(
           expect.array<Nat>(
             Iter.toArray(Queue.values(finalQ)),
             Nat.toText,
-            Nat.equal,
+            Nat.equal
           ).equal(fx.expectedFinal)
         }
       }
     )
-  },
-);
+  }
+)

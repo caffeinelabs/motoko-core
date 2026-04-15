@@ -1,5 +1,7 @@
 ## Next
 
+* internal: TypeScript-generated oracle fixtures for pure Queue replay tests (#488).
+
 ## 2.2.0
 * Make `compare`, `equal`, and `toText` parameters implicit in `Tuples` module (#470).
 * Add `fromIter`, `values`, and `clone` to `PriorityQueue` (#467).
