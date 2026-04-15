@@ -1,13 +1,13 @@
 // @testmode wasi
 
-/// Replays a fixed operation trace produced by `test/ts/pbt/emitQueueReplayFixture.ts`
-/// and checks that `pure/Queue` matches the TypeScript `OracleDeque` reference.
+/// Replays oracle traces from `test/ts/pbt/emitQueueOracleFixtures.ts` (written to
+/// `test/generated/QueueOracleFixtures.mo` when you run `npm run generate:oracle-fixtures` or `npm test`).
 
 import Queue "../../src/pure/Queue";
 import Nat "../../src/Nat";
 import Iter "../../src/Iter";
 import Prim "mo:prim";
-import Fixture "../oracleReplay/QueueReplayFixture";
+import Fixture "../generated/QueueOracleFixtures";
 import { suite; test; expect } "mo:test";
 
 func replay(q : Queue.Queue<Nat>, ops : [Fixture.Op]) : Queue.Queue<Nat> {
@@ -41,14 +41,17 @@ suite(
   "oracle replay (TS reference)",
   func() {
     test(
-      "replay matches OracleDeque final state",
+      "100 generated traces match OracleDeque final state",
       func() {
-        let finalQ = replay(Queue.empty<Nat>(), Fixture.trace);
-        expect.array<Nat>(
-          Iter.toArray(Queue.values(finalQ)),
-          Nat.toText,
-          Nat.equal,
-        ).equal(Fixture.expectedFinal)
+        assert Fixture.fixtures.size() == Fixture.fixtureCount;
+        for (fx in Fixture.fixtures.vals()) {
+          let finalQ = replay(Queue.empty<Nat>(), fx.trace);
+          expect.array<Nat>(
+            Iter.toArray(Queue.values(finalQ)),
+            Nat.toText,
+            Nat.equal,
+          ).equal(fx.expectedFinal)
+        }
       }
     )
   },

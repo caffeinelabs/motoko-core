@@ -1,5 +1,6 @@
 import * as assert from "node:assert/strict";
 import fc from "fast-check";
+import type { OracleOp } from "./oracleOps";
 import { OracleDeque } from "./references/arrayDequeOracle";
 
 /** Logical queue state shared by model and oracle (front at index 0). */
@@ -75,6 +76,31 @@ class PopBackCommand implements fc.Command<QueueModel, OracleDeque> {
   toString(): string {
     return "popBack";
   }
+}
+
+/**
+ * Decode a command from `fc.commands` output. Uses `toString()` because fast-check
+ * may clone commands in ways that break `instanceof`.
+ */
+export function commandToOracleOp(
+  cmd: fc.Command<QueueModel, OracleDeque>,
+): OracleOp {
+  const s = cmd.toString();
+  let m = /^pushFront\((\d+)\)$/.exec(s);
+  if (m) {
+    return { kind: "pushFront", value: Number(m[1]) };
+  }
+  m = /^pushBack\((\d+)\)$/.exec(s);
+  if (m) {
+    return { kind: "pushBack", value: Number(m[1]) };
+  }
+  if (s === "popFront") {
+    return { kind: "popFront" };
+  }
+  if (s === "popBack") {
+    return { kind: "popBack" };
+  }
+  throw new Error(`unknown queue command: ${s}`);
 }
 
 const pushFrontArb = fc.nat().map((n) => new PushFrontCommand(n));
