@@ -639,7 +639,7 @@ suite(
       "empty queue",
       func() {
         let pq = PriorityQueue.empty<Nat>();
-        let vals = Iter.toArray(pq.values());
+        let vals = (pq.values()).toArray();
         expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([])
       }
     );
@@ -648,7 +648,7 @@ suite(
       "singleton",
       func() {
         let pq = PriorityQueue.singleton<Nat>(42);
-        let vals = Iter.toArray(pq.values());
+        let vals = (pq.values()).toArray();
         expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([42])
       }
     );
@@ -657,7 +657,7 @@ suite(
       "yields elements in descending priority order",
       func() {
         let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
-        let vals = Iter.toArray(pq.values());
+        let vals = (pq.values()).toArray();
         expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([10, 5, 3])
       }
     );
@@ -666,7 +666,7 @@ suite(
       "does not modify the original queue",
       func() {
         let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
-        ignore Iter.toArray(pq.values());
+        ignore (pq.values()).toArray();
         expect.nat(PriorityQueue.size(pq)).equal(3);
         expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
       }
@@ -676,7 +676,7 @@ suite(
       "with duplicates",
       func() {
         let pq = PriorityQueue.fromIter<Nat>([3, 1, 4, 1, 5].values(), Nat.compare);
-        let vals = Iter.toArray(pq.values());
+        let vals = (pq.values()).toArray();
         expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([5, 4, 3, 1, 1])
       }
     );
@@ -685,8 +685,8 @@ suite(
       "can be called multiple times",
       func() {
         let pq = PriorityQueue.fromIter<Nat>([2, 7, 1].values(), Nat.compare);
-        let vals1 = Iter.toArray(pq.values());
-        let vals2 = Iter.toArray(pq.values());
+        let vals1 = (pq.values()).toArray();
+        let vals2 = (pq.values()).toArray();
         expect.array<Nat>(vals1, Nat.toText, Nat.equal).equal([7, 2, 1]);
         expect.array<Nat>(vals2, Nat.toText, Nat.equal).equal([7, 2, 1])
       }

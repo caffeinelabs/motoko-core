@@ -67,14 +67,14 @@ suite(
     test(
       "iterate forward",
       func() {
-        expect.array<Nat>(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array<Nat>((iterateForward(queue)).toArray(), Nat.toText, Nat.equal).size(0)
       }
     );
 
     test(
       "iterate backward",
       func() {
-        expect.array(Iter.toArray(iterateBackward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array((iterateBackward(queue)).toArray(), Nat.toText, Nat.equal).size(0)
       }
     );
 
@@ -131,14 +131,14 @@ suite(
     test(
       "iterate forward",
       func() {
-        expect.array(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).equal([1])
+        expect.array((iterateForward(queue)).toArray(), Nat.toText, Nat.equal).equal([1])
       }
     );
 
     test(
       "iterate backward",
       func() {
-        expect.array(Iter.toArray(iterateBackward(queue)), Nat.toText, Nat.equal).equal([1])
+        expect.array((iterateBackward(queue)).toArray(), Nat.toText, Nat.equal).equal([1])
       }
     );
 
@@ -206,7 +206,7 @@ suite(
       "iterate forward",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          (iterateForward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -224,7 +224,7 @@ suite(
       "iterate backward",
       func() {
         expect.array(
-          Iter.toArray(iterateBackward(queue)),
+          (iterateBackward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -303,7 +303,7 @@ suite(
       "iterate forward",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          (iterateForward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -321,7 +321,7 @@ suite(
       "iterate backward",
       func() {
         expect.array(
-          Iter.toArray(iterateBackward(queue)),
+          (iterateBackward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -436,7 +436,7 @@ func randomPopulate(amount : Nat) : Queue<Nat> {
 };
 
 func isSorted(queue : Queue<Nat>) : Bool {
-  let array = Iter.toArray(iterateForward(queue));
+  let array = (iterateForward(queue)).toArray();
   let sorted = Array.sort(array, Nat.compare);
   Array.equal(array, sorted, Nat.equal)
 };
@@ -484,10 +484,10 @@ suite(
       "consistent iteration",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          (iterateForward(queue)).toArray(),
           Nat.toText,
           Nat.equal
-        ).equal(Array.reverse(Iter.toArray(iterateBackward(queue))))
+        ).equal(Array.reverse((iterateBackward(queue)).toArray()))
       }
     );
 
@@ -618,7 +618,7 @@ suite(
             func n = if (n % 2 == 0) ?Nat.toText(n) else null
           );
           expect.array<Text>(
-            Iter.toArray(Queue.values(mapped)),
+            (Queue.values(mapped)).toArray(),
             func t = t,
             Text.equal
           ).equal(Array.filterMap<Nat, Text>(testElements, func n = if (n % 2 == 0) ?Nat.toText(n) else null))
@@ -737,7 +737,7 @@ suite(
           let q = Queue.fromIter(testElements.vals());
           let mapped = Queue.map<Nat, Nat>(q, func n = n * 2);
           expect.array(
-            Iter.toArray(Queue.values(mapped)),
+            (Queue.values(mapped)).toArray(),
             Nat.toText,
             Nat.equal
           ).equal(Array.map<Nat, Nat>(testElements, func n = n * 2))
@@ -759,7 +759,7 @@ suite(
           let q = Queue.fromIter(testElements.vals());
           let reversed = Queue.reverse(q);
           expect.array(
-            Iter.toArray(Queue.values(reversed)),
+            (Queue.values(reversed)).toArray(),
             Nat.toText,
             Nat.equal
           ).equal(Array.reverse(testElements))
@@ -866,7 +866,7 @@ suite(
         q := Queue.pushFront(q, 300);
         // Verify order is maintained
         expect.array(
-          Iter.toArray(Queue.values(q)),
+          (Queue.values(q)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal([300, 4, 3, 2, 1, 0, 100, 101, 102, 103, 104, 200])
@@ -879,7 +879,7 @@ suite(
   "regression: stack overflow should not happen when iterating over large queues",
   func() {
     let queue = populateForward(1, 17_001);
-    let actual = Iter.toArray(iterateBackward(queue));
+    let actual = (iterateBackward(queue)).toArray();
     expect.array(
       actual,
       Nat.toText,

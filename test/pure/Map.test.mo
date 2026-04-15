@@ -18,11 +18,11 @@ let entryTestable = T.tuple2Testable(T.natTestable, T.textTestable);
 
 class MapMatcher(expected : [(Nat, Text)]) : M.Matcher<Map.Map<Nat, Text>> {
   public func describeMismatch(actual : Map.Map<Nat, Text>, _description : M.Description) {
-    Debug.print(debug_show (Iter.toArray(actual.entries())) # " should be " # debug_show (expected))
+    Debug.print(debug_show ((actual.entries()).toArray()) # " should be " # debug_show (expected))
   };
 
   public func matches(actual : Map.Map<Nat, Text>) : Bool {
-    Iter.toArray(actual.entries()) == expected
+    (actual.entries()).toArray() == expected
   }
 };
 
@@ -99,22 +99,22 @@ run(
       ),
       test(
         "entries",
-        Iter.toArray(buildTestMap().entries()),
+        (buildTestMap().entries()).toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
       test(
         "reverseEntries",
-        Iter.toArray(buildTestMap().reverseEntries()),
+        (buildTestMap().reverseEntries()).toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
       test(
         "keys",
-        Iter.toArray(buildTestMap().keys()),
+        (buildTestMap().keys()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, []))
       ),
       test(
         "vals",
-        Iter.toArray(buildTestMap().values()),
+        (buildTestMap().values()).toArray(),
         M.equals(T.array<Text>(T.textTestable, []))
       ),
       test(
@@ -280,22 +280,22 @@ run(
       ),
       test(
         "entries",
-        Iter.toArray(buildTestMap().entries()),
+        (buildTestMap().entries()).toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, expected))
       ),
       test(
         "reverseEntries",
-        Iter.toArray(buildTestMap().reverseEntries()),
+        (buildTestMap().reverseEntries()).toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, expected))
       ),
       test(
         "keys",
-        Iter.toArray(buildTestMap().keys()),
+        (buildTestMap().keys()).toArray(),
         M.equals(T.array<Nat>(T.natTestable, [0]))
       ),
       test(
         "values",
-        Iter.toArray(buildTestMap().values()),
+        (buildTestMap().values()).toArray(),
         M.equals(T.array<Text>(T.textTestable, ["0"]))
       ),
       test(
@@ -510,22 +510,22 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   ),
   test(
     "entries",
-    Iter.toArray(buildTestMap().entries()),
+    (buildTestMap().entries()).toArray(),
     M.equals(T.array<(Nat, Text)>(entryTestable, expected))
   ),
   test(
     "reverserEntries",
-    Iter.toArray(buildTestMap().reverseEntries()),
+    (buildTestMap().reverseEntries()).toArray(),
     M.equals(T.array<(Nat, Text)>(entryTestable, Array.reverse(expected)))
   ),
   test(
     "keys",
-    Iter.toArray(buildTestMap().keys()),
+    (buildTestMap().keys()).toArray(),
     M.equals(T.array<Nat>(T.natTestable, [0, 1, 2]))
   ),
   test(
     "values",
-    Iter.toArray(buildTestMap().values()),
+    (buildTestMap().values()).toArray(),
     M.equals(T.array<Text>(T.textTestable, ["0", "1", "2"]))
   ),
   test(
@@ -793,7 +793,7 @@ run(
       ),
       test(
         "iterate forward",
-        Iter.toArray(Map.entries(smallMap())),
+        (Map.entries(smallMap())).toArray(),
         M.equals(
           T.array<(Nat, Text)>(
             entryTestable,
@@ -803,7 +803,7 @@ run(
       ),
       test(
         "iterate backward",
-        Iter.toArray(Map.reverseEntries(smallMap())),
+        (Map.reverseEntries(smallMap())).toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, Array.reverse(Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) }))))
       ),
       test(
@@ -933,12 +933,12 @@ run(
       ),
       test(
         "iterate keys",
-        Iter.toArray(Map.keys(smallMap())),
+        (Map.keys(smallMap())).toArray(),
         M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { index })))
       ),
       test(
         "iterate values",
-        Iter.toArray(Map.values(smallMap())),
+        (Map.values(smallMap())).toArray(),
         M.equals(T.array<Text>(T.textTestable, Array.tabulate<Text>(smallSize, func(index) { Nat.toText(index) })))
       ),
       test(

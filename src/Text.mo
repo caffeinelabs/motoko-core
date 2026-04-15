@@ -120,7 +120,7 @@ module {
 
   /// Creates a new `Array` containing characters of the given `Text`.
   ///
-  /// Equivalent to `Iter.toArray(t.chars())`.
+  /// Equivalent to `(t.chars()).toArray()`.
   ///
   /// ```motoko include=import
   /// assert Text.toArray("Café") == ['C', 'a', 'f', 'é'];

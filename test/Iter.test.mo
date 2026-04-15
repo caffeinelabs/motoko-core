@@ -79,7 +79,7 @@ suite(
   func() {
     func mk(inputs : [Nat], expected : [Nat]) {
       let actual = Iter.filterMap<Nat, Nat>(inputs.vals(), func(x) = if (x % 2 == 0) ?(x * 10) else null);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4], [20, 40]));
     test("none", func() = mk([1, 3, 5, 7], []));
@@ -92,7 +92,7 @@ suite(
   func() {
     func mk(inputs : [[Nat]], expected : [Nat]) {
       let actual = Iter.flatten(Iter.map<[Nat], Iter.Iter<Nat>>(inputs.vals(), func(x) = Iter.fromArray<Nat>(x)));
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([[1, 2], [3], [4, 5, 6]], [1, 2, 3, 4, 5, 6]));
     test("none", func() = mk([[], []], []));
@@ -105,7 +105,7 @@ suite(
   func() {
     func mk(inputs : [Nat], expected : [Nat]) {
       let actual = Iter.flatMap<Nat, Nat>(inputs.vals(), func(x) = [x, x * 10].vals());
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3], [1, 10, 2, 20, 3, 30]));
     test("none", func() = mk([], []))
@@ -117,7 +117,7 @@ suite(
   func() {
     func mk(inputs : [Nat], n : Nat, expected : [Nat]) {
       let actual = Iter.take<Nat>(inputs.vals(), n);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4, 5], 3, [1, 2, 3]));
     test("zero", func() = mk([1, 2, 3], 0, []));
@@ -132,7 +132,7 @@ suite(
   func() {
     func mk(inputs : [Nat], n : Nat, expected : [Nat]) {
       let actual = Iter.drop<Nat>(inputs.vals(), n);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4, 5], 3, [4, 5]));
     test("zero", func() = mk([1, 2, 3], 0, [1, 2, 3]));
@@ -147,7 +147,7 @@ suite(
   func() {
     func mk(inputs : [Nat], expected : [Nat]) {
       let actual = Iter.takeWhile<Nat>(inputs.vals(), func(x) = x < 4);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4, 5, 4, 3, 2, 1], [1, 2, 3]));
     test("none", func() = mk([4, 5, 6], []));
@@ -161,7 +161,7 @@ suite(
   func() {
     func mk(inputs : [Nat], expected : [Nat]) {
       let actual = Iter.dropWhile<Nat>(inputs.vals(), func(x) = x < 4);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4, 5, 4, 3, 2, 1], [4, 5, 4, 3, 2, 1]));
     test("all", func() = mk([4, 5, 6], [4, 5, 6]));
@@ -175,7 +175,7 @@ suite(
   func() {
     func mk(input1 : [Nat], input2 : [Nat], expected : [(Nat, Nat)]) {
       let actual = Iter.zip<Nat, Nat>(input1.vals(), input2.vals());
-      expect.array<(Nat, Nat)>(Iter.toArray(actual), Tuple2.makeToText<Nat, Nat>(Nat.toText, Nat.toText), Tuple2.makeEqual<Nat, Nat>(Nat.equal, Nat.equal)).equal(expected)
+      expect.array<(Nat, Nat)>(actual.toArray(), Tuple2.makeToText<Nat, Nat>(Nat.toText, Nat.toText), Tuple2.makeEqual<Nat, Nat>(Nat.equal, Nat.equal)).equal(expected)
     };
     test("matched", func() = mk([1, 2, 3], [4, 5, 6], [(1, 4), (2, 5), (3, 6)]));
     test("left skipped", func() = mk([1, 2, 3], [4, 5], [(1, 4), (2, 5)]));
@@ -191,7 +191,7 @@ suite(
   func() {
     func mk(input1 : [Nat], input2 : [Nat], expected : [Nat]) {
       let actual = Iter.zipWith<Nat, Nat, Nat>(input1.vals(), input2.vals(), func(x, y) = x + y);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("matched", func() = mk([1, 2, 3], [4, 5, 6], [5, 7, 9]));
     test("left skipped", func() = mk([1, 2, 3], [4, 5], [5, 7]));
@@ -207,7 +207,7 @@ suite(
   func() {
     func mk(input1 : [Nat], input2 : [Nat], input3 : [Nat], expected : [(Nat, Nat, Nat)]) {
       let actual = Iter.zip3<Nat, Nat, Nat>(input1.vals(), input2.vals(), input3.vals());
-      expect.array<(Nat, Nat, Nat)>(Iter.toArray(actual), Tuple3.makeToText<Nat, Nat, Nat>(Nat.toText, Nat.toText, Nat.toText), Tuple3.makeEqual<Nat, Nat, Nat>(Nat.equal, Nat.equal, Nat.equal)).equal(expected)
+      expect.array<(Nat, Nat, Nat)>(actual.toArray(), Tuple3.makeToText<Nat, Nat, Nat>(Nat.toText, Nat.toText, Nat.toText), Tuple3.makeEqual<Nat, Nat, Nat>(Nat.equal, Nat.equal, Nat.equal)).equal(expected)
     };
     test("matched", func() = mk([1, 2, 3], [4, 5, 6], [7, 8, 9], [(1, 4, 7), (2, 5, 8), (3, 6, 9)]));
     test("left skipped", func() = mk([1, 2, 3], [4, 5], [7, 8, 9], [(1, 4, 7), (2, 5, 8)]));
@@ -224,7 +224,7 @@ suite(
   func() {
     func mk(input1 : [Nat], input2 : [Nat], input3 : [Nat], expected : [Nat]) {
       let actual = Iter.zipWith3<Nat, Nat, Nat, Nat>(input1.vals(), input2.vals(), input3.vals(), func(x, y, z) = x + y + z);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("matched", func() = mk([1, 2, 3], [4, 5, 6], [7, 8, 9], [12, 15, 18]));
     test("left skipped", func() = mk([1, 2, 3], [4, 5], [7, 8, 9], [12, 15]));
@@ -320,7 +320,7 @@ suite(
       "converts iterator to array",
       func() {
         let expected = [1, 2, 3];
-        let actual = Iter.toArray<Nat>(expected.vals());
+        let actual = (expected.vals()).toArray<Nat>();
         expect.nat(actual.size()).equal(expected.size());
         for (i in actual.keys()) {
           expect.nat(actual[i]).equal(expected[i])
@@ -355,7 +355,7 @@ suite(
       func() {
         let input : [Nat] = [4, 3, 1, 2, 5];
         let expected : [Nat] = [1, 2, 3, 4, 5];
-        let actual = Iter.toArray(Iter.sort<Nat>(input.vals(), Nat.compare));
+        let actual = (Iter.sort<Nat>(input.vals(), Nat.compare)).toArray();
         expect.array<Nat>(actual, Nat.toText, Nat.equal).equal(expected)
       }
     )
@@ -696,7 +696,7 @@ suite(
       let iter = inputs.vals();
       let actual = Iter.all<Nat>(iter, func(x) = x % 2 == 0);
       expect.bool(actual).equal(expected);
-      let remaining = Iter.toArray(iter);
+      let remaining = iter.toArray();
       expect.array<Nat>(remaining, Nat.toText, Nat.equal).equal(rest)
     };
     test("empty", func() = mk([], true, []));
@@ -712,7 +712,7 @@ suite(
       let iter = inputs.vals();
       let actual = Iter.any<Nat>(iter, func(x) = x % 2 == 0);
       expect.bool(actual).equal(expected);
-      let remaining = Iter.toArray(iter);
+      let remaining = iter.toArray();
       expect.array<Nat>(remaining, Nat.toText, Nat.equal).equal(rest)
     };
     test("empty", func() = mk([], false, []));
@@ -728,7 +728,7 @@ suite(
       let iter = inputs.vals();
       let actual = Iter.find<Nat>(iter, func(x) = x % 2 == 0);
       expect.option(actual, Nat.toText, Nat.equal).equal(expected);
-      let remaining = Iter.toArray(iter);
+      let remaining = iter.toArray();
       expect.array<Nat>(remaining, Nat.toText, Nat.equal).equal(rest)
     };
     test("empty", func() = mk([], null, []));
@@ -744,7 +744,7 @@ suite(
       let iter = inputs.vals();
       let actual = Iter.findIndex<Nat>(iter, func(x) = x % 2 == 0);
       expect.option(actual, Nat.toText, Nat.equal).equal(expected);
-      let remaining = Iter.toArray(iter);
+      let remaining = iter.toArray();
       expect.array<Nat>(remaining, Nat.toText, Nat.equal).equal(rest)
     };
     test("empty", func() = mk([], null, []));
@@ -760,7 +760,7 @@ suite(
       let iter = inputs.vals();
       let actual = Iter.contains<Nat>(iter, Nat.equal, x);
       expect.bool(actual).equal(expected);
-      let remaining = Iter.toArray(iter);
+      let remaining = iter.toArray();
       expect.array<Nat>(remaining, Nat.toText, Nat.equal).equal(rest)
     };
     test("empty", func() = mk([], 1, false, []));
@@ -811,7 +811,7 @@ suite(
   func() {
     func mk(inputs : [Nat], expected : [Nat]) {
       let actual = Iter.scanLeft<Nat, Nat>(inputs.vals(), 0, func(acc, x) = acc + x);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4], [0, 1, 3, 6, 10]));
     test("empty", func() = mk([], [0]))
@@ -823,7 +823,7 @@ suite(
   func() {
     func mk(inputs : [Nat], expected : [Nat]) {
       let actual = Iter.scanRight<Nat, Nat>(inputs.vals(), 0, func(x, acc) = acc + x);
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([1, 2, 3, 4], [0, 4, 7, 9, 10]));
     test("empty", func() = mk([], [0]))
@@ -835,7 +835,7 @@ suite(
   func() {
     func mk(n : Nat, expected : [Nat]) {
       let actual = Iter.unfold<Nat, Nat>(n, func(x) = if (x == 0) null else ?(x, x - 1));
-      expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
+      expect.array<Nat>(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk(5, [5, 4, 3, 2, 1]));
     test("zero", func() = mk(0, []))

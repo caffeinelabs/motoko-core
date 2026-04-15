@@ -52,7 +52,7 @@ module {
   ///   Stack.push(mutableStack, 2);
   ///   Stack.push(mutableStack, 1);
   ///   let immutableList = Stack.toPure(mutableStack);
-  ///   assert Iter.toArray(PureList.values(immutableList)) == [1, 2, 3];
+  ///   assert (PureList.values(immutableList)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -65,7 +65,7 @@ module {
   };
 
   public func toArray<T>(self : Stack<T>) : [T] {
-    Iter.toArray(values(self))
+    values(self).toArray()
   };
 
   public func toVarArray<T>(self : Stack<T>) : [var T] {
@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
-  ///   assert Iter.toArray(Stack.values(mutableStack)) == [1, 2, 3];
+  ///   assert (Stack.values(mutableStack)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -149,7 +149,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.tabulate<Nat>(3, func(i) { 2 * i });
-  ///   assert Iter.toArray(Stack.values(stack)) == [4, 2, 0];
+  ///   assert (Stack.values(stack)).toArray() == [4, 2, 0];
   /// }
   /// ```
   ///
@@ -462,7 +462,7 @@ module {
   ///   Stack.push(stack, 3);
   ///   Stack.push(stack, 2);
   ///   Stack.push(stack, 1);
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert (Stack.values(stack)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -772,7 +772,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert (Stack.values(stack)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -801,7 +801,7 @@ module {
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert (Stack.values(stack)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///

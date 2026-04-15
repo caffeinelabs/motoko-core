@@ -320,7 +320,7 @@ run(
       ),
       test(
         "add many with vals",
-        Iter.toArray(for_add_many.values()),
+        (for_add_many.values()).toArray(),
         M.equals(T.array(T.natTestable, Array.tabulate<Nat>(2 * n, func(_) = 0)))
       ),
       test(
@@ -1350,7 +1350,7 @@ func testRange(n : Nat) : Bool {
   let vec = List.tabulate<Nat>(n, func(i) = i);
   for (left in Nat.range(0, n)) {
     for (right in Nat.range(left, n + 1)) {
-      let range = Iter.toArray<Nat>(List.range<Nat>(vec, left, right));
+      let range = (List.range<Nat>(vec, left, right)).toArray<Nat>();
       let expected = Array.tabulate<Nat>(right - left, func(i) = left + i);
       if (range != expected) {
         Debug.print(

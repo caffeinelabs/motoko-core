@@ -282,7 +282,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
-  /// assert Iter.toArray(PriorityQueue.values(pq, Nat.compare)) == [10, 5, 3];
+  /// assert (PriorityQueue.values(pq, Nat.compare)).toArray() == [10, 5, 3];
   /// ```
   ///
   /// Runtime: `O(n)` to create the iterator, `O(log n)` per `next()` call.

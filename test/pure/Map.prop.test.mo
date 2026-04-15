@@ -19,11 +19,11 @@ let entryTestable = T.tuple2Testable(T.natTestable, T.textTestable);
 
 class MapMatcher(expected : Map.Map<Nat, Text>) : M.Matcher<Map.Map<Nat, Text>> {
   public func describeMismatch(actual : Map.Map<Nat, Text>, _description : M.Description) {
-    Debug.print(debug_show (Iter.toArray(Map.entries(actual))) # " should be " # debug_show (Iter.toArray(Map.entries(expected))))
+    Debug.print(debug_show ((Map.entries(actual)).toArray()) # " should be " # debug_show ((Map.entries(expected)).toArray()))
   };
 
   public func matches(actual : Map.Map<Nat, Text>) : Bool {
-    Iter.toArray(Map.entries(actual)) == Iter.toArray(Map.entries(expected))
+    (Map.entries(actual)).toArray() == (Map.entries(expected)).toArray()
   }
 };
 
@@ -75,7 +75,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
         label stop for (map in mapGen(map_samples, size, range)) {
           if (not f(map)) {
             error_msg := "Property \"" # name # "\" failed\n";
-            error_msg #= "\n m: " # debug_show (Iter.toArray(Map.entries(map)));
+            error_msg #= "\n m: " # debug_show ((Map.entries(map)).toArray());
             break stop
           }
         };
@@ -94,7 +94,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             let key = Random.nextNat(range);
             if (not f(map, key)) {
               error_msg #= "Property \"" # name # "\" failed";
-              error_msg #= "\n m: " # debug_show (Iter.toArray(Map.entries(map)));
+              error_msg #= "\n m: " # debug_show ((Map.entries(map)).toArray());
               error_msg #= "\n k: " # debug_show (key);
               break stop
             }
@@ -290,8 +290,8 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "Array.fromIter(entries(m)) == Array.fromIter(reverseEntries(m)).reverse()",
               func(m) {
-                let a = Iter.toArray(Map.entries(m));
-                let b = Array.reverse(Iter.toArray(Map.reverseEntries(m)));
+                let a = (Map.entries(m)).toArray();
+                let b = Array.reverse((Map.reverseEntries(m)).toArray());
                 M.equals(T.array<(Nat, Text)>(entryTestable, a)).matches(b)
               }
             )

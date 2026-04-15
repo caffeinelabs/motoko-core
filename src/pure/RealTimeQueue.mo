@@ -576,7 +576,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Iter.toArray(Queue.values(queue)) == [1, 2, 3];
+  ///   assert (Queue.values(queue)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
