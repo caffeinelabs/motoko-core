@@ -35,7 +35,7 @@ run(
         do {
           let map = Map.empty<Nat, Text>();
           map.add(0, "0");
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array(entryTestable, [(0, "0")]))
       ),
@@ -44,7 +44,7 @@ run(
         do {
           let map = Map.empty<Nat, Text>();
           assert map.insert(0, "0");
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array(entryTestable, [(0, "0")]))
       ),
@@ -53,7 +53,7 @@ run(
         do {
           let map = Map.empty<Nat, Text>();
           map.remove(0);
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
@@ -62,7 +62,7 @@ run(
         do {
           let map = Map.empty<Nat, Text>();
           assert (not map.delete(0));
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
@@ -95,12 +95,12 @@ run(
       ),
       test(
         "iterate forward",
-        (Map.empty<Nat, Text>().entries()).toArray(),
+        Map.empty<Nat, Text>().entries().toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
       test(
         "iterate backward",
-        (Map.empty<Nat, Text>().reverseEntries()).toArray(),
+        Map.empty<Nat, Text>().reverseEntries().toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
       test(
@@ -173,12 +173,12 @@ run(
       ),
       test(
         "iterate keys",
-        (Map.empty<Nat, Text>().keys()).toArray(),
+        Map.empty<Nat, Text>().keys().toArray(),
         M.equals(T.array<Nat>(T.natTestable, []))
       ),
       test(
         "iterate values",
-        (Map.empty<Nat, Text>().values()).toArray(),
+        Map.empty<Nat, Text>().values().toArray(),
         M.equals(T.array<Text>(T.textTestable, []))
       ),
       test(
@@ -334,7 +334,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           map.add(0, "1");
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "1")]))
       ),
@@ -343,7 +343,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           map.add(1, "1");
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0"), (1, "1")]))
       ),
@@ -352,7 +352,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           assert (not map.insert(0, "1"));
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "1")]))
       ),
@@ -361,7 +361,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           assert map.insert(1, "1");
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0"), (1, "1")]))
       ),
@@ -370,7 +370,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           map.remove(0);
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
@@ -379,7 +379,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           map.remove(1);
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
       ),
@@ -388,7 +388,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           assert (map.delete(0));
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, []))
       ),
@@ -397,7 +397,7 @@ run(
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
           assert (not map.delete(1));
-          (map.entries()).toArray()
+          map.entries().toArray()
         },
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
       ),
@@ -441,12 +441,12 @@ run(
       ),
       test(
         "iterate forward",
-        (Map.singleton<Nat, Text>(0, "0").entries()).toArray(),
+        Map.singleton<Nat, Text>(0, "0").entries().toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
       ),
       test(
         "iterate backward",
-        (Map.singleton<Nat, Text>(0, "0").reverseEntries()).toArray(),
+        Map.singleton<Nat, Text>(0, "0").reverseEntries().toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
       ),
       test(
@@ -569,12 +569,12 @@ run(
       ),
       test(
         "iterate keys",
-        (Map.singleton<Nat, Text>(0, "0").keys()).toArray(),
+        Map.singleton<Nat, Text>(0, "0").keys().toArray(),
         M.equals(T.array<Nat>(T.natTestable, [0]))
       ),
       test(
         "iterate values",
-        (Map.singleton<Nat, Text>(0, "0").values()).toArray(),
+        Map.singleton<Nat, Text>(0, "0").values().toArray(),
         M.equals(T.array<Text>(T.textTestable, ["0"]))
       ),
       test(
@@ -823,7 +823,7 @@ run(
           let original = smallMap();
           let copy = smallMap();
           let clone = original.clone();
-          let keys = (original.keys()).toArray();
+          let keys = original.keys().toArray();
           for (key in keys.vals()) {
             original.add(key, "X")
           };
@@ -836,7 +836,7 @@ run(
       ),
       test(
         "iterate forward",
-        (smallMap().entries()).toArray(),
+        smallMap().entries().toArray(),
         M.equals(
           T.array<(Nat, Text)>(
             entryTestable,
@@ -846,7 +846,7 @@ run(
       ),
       test(
         "iterate backward",
-        (smallMap().reverseEntries()).toArray(),
+        smallMap().reverseEntries().toArray(),
         M.equals(T.array<(Nat, Text)>(entryTestable, Array.reverse(Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) }))))
       ),
       test(
@@ -983,12 +983,12 @@ run(
       ),
       test(
         "iterate keys",
-        (smallMap().keys()).toArray(),
+        smallMap().keys().toArray(),
         M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { index })))
       ),
       test(
         "iterate values",
-        (smallMap().values()).toArray(),
+        smallMap().values().toArray(),
         M.equals(T.array<Text>(T.textTestable, Array.tabulate<Text>(smallSize, func(index) { Nat.toText(index) })))
       ),
       test(

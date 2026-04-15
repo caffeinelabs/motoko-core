@@ -320,7 +320,7 @@ run(
       ),
       test(
         "add many with vals",
-        (for_add_many.values()).toArray(),
+        for_add_many.values().toArray(),
         M.equals(T.array(T.natTestable, Array.tabulate<Nat>(2 * n, func(_) = 0)))
       ),
       test(

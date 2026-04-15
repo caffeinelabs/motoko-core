@@ -18,11 +18,11 @@ let entryTestable = T.natTestable;
 
 class SetMatcher(expected : [Nat]) : M.Matcher<Set.Set<Nat>> {
   public func describeMismatch(actual : Set.Set<Nat>, _description : M.Description) {
-    Debug.print(debug_show ((actual.values()).toArray()) # " should be " # debug_show (expected))
+    Debug.print(debug_show (actual.values().toArray()) # " should be " # debug_show (expected))
   };
 
   public func matches(actual : Set.Set<Nat>) : Bool {
-    (actual.values()).toArray() == expected
+    actual.values().toArray() == expected
   }
 };
 
@@ -351,7 +351,7 @@ run(
           let set2 = Set.singleton<Nat>(1);
           let set3 = Set.singleton<Nat>(2);
           let combined = Set.join(Iter.fromArray([set1, set2, set3]), Nat.compare);
-          (combined.values()).toArray()
+          combined.values().toArray()
         },
         M.equals(
           T.array<Nat>(
@@ -369,7 +369,7 @@ run(
           let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
           let setOfSets = Set.fromIter<Set.Set<Nat>>(iterator, func(first, second) { first.compare(second) });
           let combined = setOfSets.flatten();
-          (combined.values()).toArray()
+          combined.values().toArray()
         },
         M.equals(
           T.array<Nat>(
@@ -569,7 +569,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
       let set2 = buildTestSet().map<Nat, Int>(func(number) { -number });
       let set3 = Set.fromIter(Iter.fromArray<Int>([-1, 1]), Int.compare);
       let combined = Set.join(Iter.fromArray([set1, set2, set3]));
-      (combined.values()).toArray()
+      combined.values().toArray()
     },
     do {
       let size = buildTestSet().size;
@@ -595,7 +595,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
       let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
       let setOfSets = Set.fromIter<Set.Set<Int>>(iterator, func(first, second) { first.compare(second) });
       let combined = Set.flatten(setOfSets, Int.compare);
-      (combined.values()).toArray()
+      combined.values().toArray()
     },
     do {
       let size = buildTestSet().size;

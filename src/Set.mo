@@ -73,7 +73,7 @@ module {
   /// Note: Creates `O(n * log(n))` temporary objects that will be collected as garbage.
   /// @deprecated M0235
   public func toPure<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : PureSet.Set<T> {
-    PureSet.fromIter(values(self), compare)
+    PureSet.fromIter(self.values(), compare)
   };
 
   /// Convert an immutable, purely functional set to a mutable set.
@@ -279,7 +279,7 @@ module {
   public func equal<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Types.Order)) : Bool {
     if (self.size != other.size) return false;
     // TODO: optimize
-    let iterator1 = values(self);
+    let iterator1 = self.values();
     let iterator2 = values(other);
     loop {
       let next1 = iterator1.next();
@@ -565,11 +565,11 @@ module {
   /// Space: `O(1)`.
   /// where `n` denotes the number of elements stored in the set.
   public func min<T>(self : Set<T>) : ?T {
-    values(self).next()
+    self.values().next()
   };
 
   public func toArray<T>(self : Set<T>) : [T] {
-    (values(self)).toArray()
+    self.values().toArray()
   };
 
   /// Returns an iterator over the elements in the set,
@@ -777,7 +777,7 @@ module {
   public func isSubset<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Bool {
     if (self.size > other.size) { return false };
     // TODO: optimize
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not contains(other, compare, element)) {
         return false
       }
@@ -841,7 +841,7 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func intersection<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (contains(other, compare, element)) {
         add(result, compare, element)
       }
@@ -872,7 +872,7 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func difference<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not contains(other, compare, element)) {
         add(result, compare, element)
       }
@@ -986,7 +986,7 @@ module {
   /// }
   /// ```
   public func retainAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : Bool {
-    let array = Array.fromIter<T>(values(self));
+    let array = Array.fromIter<T>(self.values());
     deleteAll(
       self,
       compare,
@@ -1019,7 +1019,7 @@ module {
   ///
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func forEach<T>(self : Set<T>, operation : T -> ()) {
-    for (element in values(self)) {
+    for (element in self.values()) {
       operation(element)
     }
   };
@@ -1050,7 +1050,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   public func filter<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), criterion : T -> Bool) : Set<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (criterion(element)) {
         add(result, compare, element)
       }
@@ -1086,7 +1086,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func map<T1, T2>(self : Set<T1>, compare : (implicit : (T2, T2) -> Order.Order), project : T1 -> T2) : Set<T2> {
     let result = empty<T2>();
-    for (element1 in values(self)) {
+    for (element1 in self.values()) {
       let element2 = project(element1);
       add(result, compare, element2)
     };
@@ -1126,7 +1126,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func filterMap<T1, T2>(self : Set<T1>, compare : (implicit : (T2, T2) -> Order.Order), project : T1 -> ?T2) : Set<T2> {
     let result = empty<T2>();
-    for (element1 in values(self)) {
+    for (element1 in self.values()) {
       switch (project(element1)) {
         case null {};
         case (?element2) add(result, compare, element2)
@@ -1168,7 +1168,7 @@ module {
     combine : (A, T) -> A
   ) : A {
     var accumulator = base;
-    for (element in values(self)) {
+    for (element in self.values()) {
       accumulator := combine(accumulator, element)
     };
     accumulator
@@ -1283,7 +1283,7 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func flatten<T>(self : Set<Set<T>>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
-    for (subSet in values(self)) {
+    for (subSet in self.values()) {
       for (element in values(subSet)) {
         add(result, compare, element)
       }
@@ -1317,7 +1317,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func all<T>(self : Set<T>, predicate : T -> Bool) : Bool {
     // TODO optimize, avoiding iterator
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not predicate(element)) {
         return false
       }
@@ -1351,7 +1351,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func any<T>(self : Set<T>, predicate : T -> Bool) : Bool {
     // TODO optimize, avoiding iterator
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (predicate(element)) {
         return true
       }
@@ -1383,7 +1383,7 @@ module {
         }
       }
     };
-    checkIteration(values(self), #less);
+    checkIteration(self.values(), #less);
     checkIteration(reverseValues(self), #greater)
   };
 
@@ -1412,7 +1412,7 @@ module {
   public func toText<T>(self : Set<T>, toText : (implicit : T -> Text)) : Text {
     var text = "Set{";
     var sep = "";
-    for (element in values(self)) {
+    for (element in self.values()) {
       text #= sep # toText(element);
       sep := ", "
     };
@@ -1456,7 +1456,7 @@ module {
   ///
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func compare<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order {
-    let iterator1 = values(self);
+    let iterator1 = self.values();
     let iterator2 = values(other);
     loop {
       switch (iterator1.next(), iterator2.next()) {
