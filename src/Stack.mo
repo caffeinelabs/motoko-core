@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
-  ///   assert mutable.toArray() == [1, 2, 3];
+  ///   assert mutableStack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
