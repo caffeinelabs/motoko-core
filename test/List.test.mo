@@ -256,7 +256,7 @@ run(
     [
       test(
         "values",
-        list.values().toArray(),
+        list.toArray(),
         M.equals(T.array(T.natTestable, Nat.rangeInclusive(0, n).toArray()))
       ),
       test(
@@ -310,7 +310,7 @@ run(
       ),
       test(
         "init with values",
-        List.repeat<Nat>(0, n).values().toArray(),
+        List.repeat<Nat>(0, n).toArray(),
         M.equals(T.array(T.natTestable, Array.tabulate<Nat>(n, func(_) = 0)))
       ),
       test(
@@ -320,7 +320,7 @@ run(
       ),
       test(
         "add many with vals",
-        for_add_many.values().toArray(),
+        for_add_many.toArray(),
         M.equals(T.array(T.natTestable, Array.tabulate<Nat>(2 * n, func(_) = 0)))
       ),
       test(

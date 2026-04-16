@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
-  ///   assert mutable.values().toArray() == [1, 2, 3];
+  ///   assert mutable.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -149,7 +149,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.tabulate<Nat>(3, func(i) { 2 * i });
-  ///   assert stack.values().toArray() == [4, 2, 0];
+  ///   assert stack.toArray() == [4, 2, 0];
   /// }
   /// ```
   ///
@@ -462,7 +462,7 @@ module {
   ///   Stack.push(stack, 3);
   ///   Stack.push(stack, 2);
   ///   Stack.push(stack, 1);
-  ///   assert stack.values().toArray() == [1, 2, 3];
+  ///   assert stack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -772,7 +772,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert stack.values().toArray() == [1, 2, 3];
+  ///   assert stack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -801,7 +801,7 @@ module {
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
-  ///   assert stack.values().toArray() == [1, 2, 3];
+  ///   assert stack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///

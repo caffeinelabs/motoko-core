@@ -1932,7 +1932,7 @@ module {
   /// let iter = array.values();
   ///
   /// let list = List.fromIter<Nat>(iter);
-  /// assert list.values().toArray() == [1, 1, 1];
+  /// assert list.toArray() == [1, 1, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1954,7 +1954,7 @@ module {
   /// let iter = array.values();
   ///
   /// let list = iter.toList<Nat>();
-  /// assert list.values().toArray() == [1, 1, 1];
+  /// assert list.toArray() == [1, 1, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2011,7 +2011,7 @@ module {
   /// let list = List.repeat<Nat>(2, 1);
   ///
   /// list.addAll<Nat>(iter);
-  /// assert list.values().toArray() == [2, 1, 1, 1];
+  /// assert list.toArray() == [2, 1, 1, 1];
   /// ```
   ///
   /// The maximum number of elements in a `List` is 2^32.
@@ -2066,7 +2066,7 @@ module {
   ///
   /// let array = [2, 3];
   /// let list = List.fromArray<Nat>(array);
-  /// assert list.values().toArray() == [2, 3];
+  /// assert list.toArray() == [2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2153,7 +2153,7 @@ module {
   ///
   /// let array = [var 2, 3];
   /// let list = List.fromVarArray<Nat>(array);
-  /// assert list.values().toArray() == [2, 3];
+  /// assert list.toArray() == [2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2976,7 +2976,7 @@ module {
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
   /// list.reverseInPlace<Nat>();
-  /// assert list.values().toArray() == [3, 2, 1];
+  /// assert list.toArray() == [3, 2, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3033,7 +3033,7 @@ module {
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
   /// let rlist = list.reverse<Nat>();
-  /// assert rlist.values().toArray() == [3, 2, 1];
+  /// assert rlist.toArray() == [3, 2, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
