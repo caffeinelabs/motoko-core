@@ -61,7 +61,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter<Nat>([0, 2, 1].values(), Nat.compare);
   ///   let pureSet = Set.toPure(set, Nat.compare);
-  ///   assert pureSet.toArray() == set.toArray();
+  ///   assert pureSet.values().toArray() == set.values().toArray();
   /// }
   /// ```
   ///
@@ -88,7 +88,7 @@ module {
   /// persistent actor {
   ///   let pureSet = PureSet.fromIter([3, 1, 2].values(), Nat.compare);
   ///   let set = Set.fromPure(pureSet, Nat.compare);
-  ///   assert set.toArray() == pureSet.toArray();
+  ///   assert set.values().toArray() == pureSet.values().toArray();
   /// }
   /// ```
   ///
