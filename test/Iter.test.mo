@@ -320,7 +320,7 @@ suite(
       "converts iterator to array",
       func() {
         let expected = [1, 2, 3];
-        let actual = (expected.values()).toArray<Nat>();
+        let actual = expected.values().toArray<Nat>();
         expect.nat(actual.size()).equal(expected.size());
         for (i in actual.keys()) {
           expect.nat(actual[i]).equal(expected[i])

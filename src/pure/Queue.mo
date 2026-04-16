@@ -392,7 +392,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert (queue.values()).toArray() == [1, 2, 3];
+  ///   assert queue.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -512,7 +512,7 @@ module {
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2].values());
   ///   let textQueue = Queue.map<Nat, Text>(queue, Nat.toText);
-  ///   assert (textQueue.values()).toArray() == ["0", "1", "2"];
+  ///   assert textQueue.values().toArray() == ["0", "1", "2"];
   /// }
   /// ```
   ///

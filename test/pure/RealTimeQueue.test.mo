@@ -618,7 +618,7 @@ suite(
             func n = if (n % 2 == 0) ?Nat.toText(n) else null
           );
           expect.array<Text>(
-            (mapped.values()).toArray(),
+            mapped.values().toArray(),
             func t = t,
             Text.equal
           ).equal(Array.filterMap<Nat, Text>(testElements, func n = if (n % 2 == 0) ?Nat.toText(n) else null))
@@ -737,7 +737,7 @@ suite(
           let q = Queue.fromIter(testElements.values());
           let mapped = Queue.map<Nat, Nat>(q, func n = n * 2);
           expect.array(
-            (mapped.values()).toArray(),
+            mapped.values().toArray(),
             Nat.toText,
             Nat.equal
           ).equal(Array.map<Nat, Nat>(testElements, func n = n * 2))
@@ -759,7 +759,7 @@ suite(
           let q = Queue.fromIter(testElements.values());
           let reversed = Queue.reverse(q);
           expect.array(
-            (reversed.values()).toArray(),
+            reversed.values().toArray(),
             Nat.toText,
             Nat.equal
           ).equal(Array.reverse(testElements))
@@ -866,7 +866,7 @@ suite(
         q := Queue.pushFront(q, 300);
         // Verify order is maintained
         expect.array(
-          (q.values()).toArray(),
+          q.values().toArray(),
           Nat.toText,
           Nat.equal
         ).equal([300, 4, 3, 2, 1, 0, 100, 101, 102, 103, 104, 200])
