@@ -1,4 +1,5 @@
 ## Next
+* Add `Principal.toActor` — inverse of `fromActor`, casts a Principal to a typed actor reference (#490).
 
 ## 2.4.0
 * Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
