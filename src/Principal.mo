@@ -52,6 +52,18 @@ module {
   /// ```
   public let fromActor : (a : actor {}) -> Principal = Prim.principalOfActor;
 
+  /// Cast a `Principal` to an actor reference.
+  ///
+  /// This is the inverse of `fromActor`. The returned reference is
+  /// typed with the given actor type `A`.
+  ///
+  /// Example:
+  /// ```motoko include=import no-repl
+  /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
+  /// let canister : actor {} = Principal.toActor<actor {}>(principal);
+  /// ```
+  public let toActor : <A <: actor {}>(p : Principal) -> A = Prim.actorOfPrincipal;
+
   /// Compute the Ledger account identifier of a principal. Optionally specify a sub-account.
   ///
   /// Example:
