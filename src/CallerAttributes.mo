@@ -22,9 +22,8 @@ module {
   /// when the signer is listed in the `trusted_attribute_signers`
   /// canister environment variable.
   ///
-  /// Returns `null` if the current call carries no caller attributes, if
-  /// the `trusted_attribute_signers` environment variable is not set, or
-  /// if the signer is not contained in that list.
+  /// Returns `null` if the current call carries no caller attributes.
+  /// Traps if the signer isn't trusted.
   ///
   /// `trusted_attribute_signers` is expected to be a comma-separated list
   /// of principal texts, for example:
@@ -43,14 +42,12 @@ module {
   public func getAttributes<system>() : ?Blob {
     let ?signer = getSigner<system>() else { return null };
     let ?trustedSigners = Runtime.envVar<system>("trusted_attribute_signers") else {
-      return null
+      Runtime.trap("trusted_attribute_signers environment variable is not set")
     };
-    let trustedSignerList = trustedSigners.split(#char(','));
-
-    if (trustedSignerList.any(func(t) { Principal.fromText(t) == signer })) {
+    if (trustedSigners.split(#char(',')).any(func(t) { Principal.fromText(t) == signer })) {
       return ?Prim.callerInfoData<system>()
     };
-    return null
+    Runtime.trap("untrusted attribute signer")
   };
 
   /// Returns the signer principal and the attribute data attached to the
