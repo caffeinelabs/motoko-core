@@ -102,7 +102,7 @@ module {
   /// let principal = Principal.fromBlob(blob);
   /// assert Principal.toText(principal) == "un4fu-tqaaa-aaaab-qadjq-cai";
   /// ```
-  public let fromBlob : (self : Blob) -> Principal = Prim.principalOfBlob;
+  public let fromBlob : (blob : Blob) -> Principal = Prim.principalOfBlob;
 
   /// Converts a `Principal` to its `Text` representation.
   ///
