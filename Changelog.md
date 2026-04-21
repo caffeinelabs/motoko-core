@@ -1,4 +1,6 @@
 ## Next
+
+## 2.5.0
 * Add `Principal.toActor` — inverse of `fromActor`, casts a Principal to a typed actor reference (#490).
 
 * Adds new `CallerAttributes` module for the new caller attributes IC feature (#491).
