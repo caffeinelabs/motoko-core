@@ -89,6 +89,12 @@
     ]
   },
   {
+    "name": "CallerAttributes",
+    "exports": [
+      "public func getAttributes<system>() : ?Blob"
+    ]
+  },
+  {
     "name": "CertifiedData",
     "exports": [
       "public let getCertificate : () -> ?Blob",
