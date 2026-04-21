@@ -48,30 +48,5 @@ module {
       return ?Prim.callerInfoData<system>()
     };
     Runtime.trap("untrusted attribute signer")
-  };
-
-  /// Returns the signer principal and the attribute data attached to the
-  /// current call, without verifying that the signer is trusted.
-  ///
-  /// Returns `null` if the current call does not carry any caller
-  /// attributes.
-  ///
-  /// The returned data is *not* validated by this function: the caller is
-  /// responsible for deciding whether the signer should be trusted. Prefer
-  /// `getAttributes` unless you need to implement a custom trust policy.
-  ///
-  /// ```motoko no-repl
-  /// persistent actor {
-  ///   public shared func handle() : async () {
-  ///     switch (CallerAttributes.getUntrustedAttributes()) {
-  ///       case (?(signer, data)) { /* inspect signer and data */ };
-  ///       case null { /* no attributes on this call */ };
-  ///     };
-  ///   };
-  /// }
-  /// ```
-  public func getUntrustedAttributes<system>() : ?(Principal, Blob) {
-    let ?signer = getSigner<system>() else { return null };
-    ?(signer, Prim.callerInfoData<system>())
   }
 }
