@@ -9,7 +9,9 @@
     "format": "prettier --write '**/*.mo' --ignore-path .gitignore",
     "test": "run-s test:ts test:mops",
     "test:ts": "cd test/ts && tsx .",
-    "test:mops": "mops test",
+    "generate:oracle-fixtures": "tsx test/ts/pbt/emitOracleFixtures.ts",
+    "test:mops": "run-s generate:oracle-fixtures mops:test:inner",
+    "mops:test:inner": "mops test",
     "validate": "run-s validate:changelog validate:version validate:api",
     "validate:changelog": "cd test/ts/validate && tsx changelog",
     "validate:version": "cd test/ts/validate && tsx version",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@dfinity/pic": "^0.13.1",
     "execa": "^4.1.0",
+    "fast-check": "^4.6.0",
     "fast-glob": "^3.3.2",
     "ic-mops": "^2.7.0",
     "mo-dev": "^0.13.0",

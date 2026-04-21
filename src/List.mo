@@ -195,7 +195,7 @@ module {
   /// @deprecated M0235
   public func fromPure<T>(pure : PureList.List<T>) : List<T> {
     var p = pure;
-    var list = empty<T>();
+    let list = empty<T>();
     loop {
       switch (p) {
         case (?(x, xs)) {
@@ -319,7 +319,7 @@ module {
     if (elementIndex != 0) {
       let block = newBlocks[blockIndex];
       var i = elementIndex;
-      var to = block.size();
+      let to = block.size();
       while (i < to) {
         block[i] := null;
         i += 1
