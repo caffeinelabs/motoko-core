@@ -1,5 +1,9 @@
 /// Allows accessing the Internet Computer's caller attributes.
 /// TODO: link to official documentation, once it's available.
+///
+/// ```motoko name=import
+/// import CallerAttributes "mo:core/CallerAttributes";
+/// ```
 
 import Prim "mo:⛔";
 import Text "Text";
@@ -19,9 +23,8 @@ module {
   /// of principal texts, for example:
   /// `"aaaaa-aa,un4fu-tqaaa-aaaab-qadjq-cai"`.
   ///
-  /// ```motoko no-repl
-  /// import CallerAttributes "mo:core/CallerAttributes";
-  ///
+  /// Example:
+  /// ```motoko include=import no-validate
   /// persistent actor {
   ///   public shared func handle() : async () {
   ///     switch (CallerAttributes.getAttributes()) {
