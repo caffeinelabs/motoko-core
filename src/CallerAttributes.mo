@@ -30,6 +30,8 @@ module {
   /// `"aaaaa-aa,un4fu-tqaaa-aaaab-qadjq-cai"`.
   ///
   /// ```motoko no-repl
+  /// import CallerAttributes "mo:core/CallerAttributes";
+  ///
   /// persistent actor {
   ///   public shared func handle() : async () {
   ///     switch (CallerAttributes.getAttributes()) {
