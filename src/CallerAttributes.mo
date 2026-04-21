@@ -2,22 +2,12 @@
 /// TODO: link to official documentation, once it's available.
 
 import Prim "mo:⛔";
-import Test "Text";
+import Text "Text";
 import Iter "Iter";
 import Runtime "Runtime";
 import Principal "Principal";
 
 module {
-
-  func getSigner<system>() : ?Principal {
-    let signer : Blob = Prim.callerInfoSigner<system>();
-    // An empty signer means no attributes where sent in this call.
-    if (signer.size() == 0) {
-      return null
-    };
-    ?Prim.principalOfBlob(signer)
-  };
-
   /// Returns the attribute data attached to the current call, but only
   /// when the signer is listed in the `trusted_attribute_signers`
   /// canister environment variable.
@@ -42,7 +32,12 @@ module {
   /// }
   /// ```
   public func getAttributes<system>() : ?Blob {
-    let ?signer = getSigner<system>() else { return null };
+    let signerBlob : Blob = Prim.callerInfoSigner<system>();
+    // An empty signer means no attributes where sent in this call.
+    if (signerBlob.size() == 0) {
+      return null
+    };
+    let signer = Principal.fromBlob(signerBlob);
     let ?trustedSigners = Runtime.envVar<system>("trusted_attribute_signers") else {
       Runtime.trap("trusted_attribute_signers environment variable is not set")
     };
