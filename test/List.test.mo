@@ -256,7 +256,7 @@ run(
     [
       test(
         "values",
-        list.values().toArray(),
+        list.toArray(),
         M.equals(T.array(T.natTestable, Nat.rangeInclusive(0, n).toArray()))
       ),
       test(
@@ -310,7 +310,7 @@ run(
       ),
       test(
         "init with values",
-        List.repeat<Nat>(0, n).values().toArray(),
+        List.repeat<Nat>(0, n).toArray(),
         M.equals(T.array(T.natTestable, Array.tabulate<Nat>(n, func(_) = 0)))
       ),
       test(
@@ -320,7 +320,7 @@ run(
       ),
       test(
         "add many with vals",
-        Iter.toArray(for_add_many.values()),
+        for_add_many.toArray(),
         M.equals(T.array(T.natTestable, Array.tabulate<Nat>(2 * n, func(_) = 0)))
       ),
       test(
@@ -1044,7 +1044,7 @@ run(
 // Helper function to run tests
 func runTest(name : Text, test : (Nat) -> Bool) {
   let testSizes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100];
-  for (n in testSizes.vals()) {
+  for (n in testSizes.values()) {
     if (test(n)) {
       Debug.print("✅ " # name # " passed for n = " # Nat.toText(n))
     } else {
@@ -1339,7 +1339,7 @@ func testMapInPlace(n : Nat) : Bool {
 
 func testFlatMap(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i));
-  let flatMapped = List.flatMap<Nat, Nat>(vec, func(x) = [x, x].vals());
+  let flatMapped = List.flatMap<Nat, Nat>(vec, func(x) = [x, x].values());
 
   let expected = List.fromArray<Nat>(Array.tabulate<Nat>(2 * n, func(i) = i / 2));
   List.equal(flatMapped, expected, Nat.equal)
@@ -1350,7 +1350,7 @@ func testRange(n : Nat) : Bool {
   let vec = List.tabulate<Nat>(n, func(i) = i);
   for (left in Nat.range(0, n)) {
     for (right in Nat.range(left, n + 1)) {
-      let range = Iter.toArray<Nat>(List.range<Nat>(vec, left, right));
+      let range = (List.range<Nat>(vec, left, right)).toArray<Nat>();
       let expected = Array.tabulate<Nat>(right - left, func(i) = left + i);
       if (range != expected) {
         Debug.print(
@@ -1494,7 +1494,7 @@ func testDeduplicate(n : Nat) : Bool {
     List.fromArray<Nat>([1, 1, 2, 3])
   ];
 
-  for (list in lists.vals()) {
+  for (list in lists.values()) {
     List.deduplicate(list, Nat.equal);
     if (not List.equal(list, List.fromArray<Nat>([1, 2, 3]), Nat.equal)) {
       Debug.print("Deduplicate failed for " # List.toText(list, Nat.toText));
@@ -1694,17 +1694,17 @@ func testForEach(n : Nat) : Bool {
 func testBinarySearch(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i * 2));
   if (n == 0) {
-    return List.binarySearch(vec, Nat.compare, 0) == #insertionIndex(0) and List.binarySearch(vec, Nat.compare, 1) == #insertionIndex(0)
+    return vec.binarySearch(0) == #insertionIndex(0) and vec.binarySearch(1) == #insertionIndex(0)
   };
   for (i in Nat.range(0, n)) {
     let value = i * 2;
-    let index = List.binarySearch(vec, Nat.compare, value);
+    let index = vec.binarySearch(value);
     if (index != #found i) {
       Debug.print("binarySearch failed for value = " # Nat.toText(value) # ", expected #found " # Nat.toText(i) # ", got " # debug_show (index));
       Debug.print("vec = " # debug_show (vec));
       return false
     };
-    let notFoundIndex = List.binarySearch(vec, Nat.compare, value + 1);
+    let notFoundIndex = vec.binarySearch(value + 1);
     if (notFoundIndex != #insertionIndex(i + 1)) {
       Debug.print("binarySearch should have returned null for value = " # Nat.toText(value + 1) # ", but got " # debug_show (notFoundIndex));
       return false
@@ -1712,7 +1712,7 @@ func testBinarySearch(n : Nat) : Bool {
   };
   do {
     let vec = List.repeat<Nat>(0, n);
-    switch (List.binarySearch(vec, Nat.compare, 0)) {
+    switch (vec.binarySearch(0)) {
       case (#insertionIndex index) {
         Debug.print("binarySearch on all-equal elements failed, expected #found 0, got #insertionIndex " # Nat.toText(index));
         return false
@@ -1720,7 +1720,7 @@ func testBinarySearch(n : Nat) : Bool {
       case (_) {}
     }
   };
-  List.binarySearch(vec, Nat.compare, n * 2) == #insertionIndex(n)
+  vec.binarySearch(n * 2) == #insertionIndex(n)
 };
 
 func testFlatten(n : Nat) : Bool {
@@ -1754,7 +1754,7 @@ func testJoin(n : Nat) : Bool {
   let iter = Array.tabulate<List.List<Nat>>(
     n,
     func(i) = List.fromArray<Nat>(Array.tabulate<Nat>(i + 1, func(j) = j))
-  ).vals();
+  ).values();
   let flattened = List.join<Nat>(iter);
   let expectedSize = (n * (n + 1)) / 2;
 
@@ -2074,8 +2074,8 @@ Test.suite(
     Test.test(
       "binarySearch",
       func() {
-        let result1 = List.binarySearch<Nat>(empty, Nat.compare, 0);
-        let result2 = List.binarySearch<Nat>(emptied, Nat.compare, 0);
+        let result1 = empty.binarySearch<Nat>(0);
+        let result2 = emptied.binarySearch<Nat>(0);
         Test.expect.bool(result1 == #insertionIndex(0)).equal(true);
         Test.expect.bool(result2 == #insertionIndex(0)).equal(true)
       }
@@ -2091,7 +2091,7 @@ Test.suite(
       "found",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 5);
+        let result = list.binarySearch<Nat>(5);
         Test.expect.bool(result == #found(2)).equal(true)
       }
     );
@@ -2099,7 +2099,7 @@ Test.suite(
       "not found",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 6);
+        let result = list.binarySearch<Nat>(6);
         Test.expect.bool(result == #insertionIndex(3)).equal(true)
       }
     );
@@ -2107,7 +2107,7 @@ Test.suite(
       "first element",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 1);
+        let result = list.binarySearch<Nat>(1);
         Test.expect.bool(result == #found(0)).equal(true)
       }
     );
@@ -2115,7 +2115,7 @@ Test.suite(
       "last element",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 11);
+        let result = list.binarySearch<Nat>(11);
         Test.expect.bool(result == #found(5)).equal(true)
       }
     );
@@ -2123,7 +2123,7 @@ Test.suite(
       "single element found",
       func() {
         let list = List.fromArray<Nat>([42]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 42);
+        let result = list.binarySearch<Nat>(42);
         Test.expect.bool(result == #found(0)).equal(true)
       }
     );
@@ -2131,7 +2131,7 @@ Test.suite(
       "single element not found",
       func() {
         let list = List.fromArray<Nat>([42]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 43);
+        let result = list.binarySearch<Nat>(43);
         Test.expect.bool(result == #insertionIndex(1)).equal(true)
       }
     );
@@ -2139,7 +2139,7 @@ Test.suite(
       "duplicates",
       func() {
         let list = List.fromArray<Nat>([1, 2, 2, 2, 3]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 2);
+        let result = list.binarySearch<Nat>(2);
         let ok = switch result {
           case (#found index) { index >= 1 and index <= 3 };
           case _ { false }

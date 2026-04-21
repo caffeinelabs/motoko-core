@@ -1035,7 +1035,7 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   let list = List.fromIter([0, 1, 2, 3, 4].vals());
+  ///   let list = List.fromIter([0, 1, 2, 3, 4].values());
   ///   assert list == ?(0, ?(1, ?(2, ?(3, ?(4, null)))));
   /// }
   /// ```
@@ -1057,7 +1057,7 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   transient let iter = [0, 1, 2, 3, 4].vals();
+  ///   transient let iter = [0, 1, 2, 3, 4].values();
   ///
   ///   let list = iter.toList();
   ///

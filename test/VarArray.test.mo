@@ -330,19 +330,19 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "flatMap",
-      VarArray.flatMap<Int, Int>([var 0, 1, 2], func x = [x, -x].vals()),
+      VarArray.flatMap<Int, Int>([var 0, 1, 2], func x = [x, -x].values()),
       M.equals(varArray<Int>(T.intTestable, [var 0, 0, 1, -1, 2, -2]))
     ),
     Suite.test(
       "flatMap empty",
-      VarArray.flatMap<Int, Int>([var], func x = [x, -x].vals()),
+      VarArray.flatMap<Int, Int>([var], func x = [x, -x].values()),
       M.equals(varArray<Int>(T.intTestable, [var]))
     ),
     Suite.test(
       "flatMap mix",
       VarArray.flatMap<Nat, Nat>(
         [var 1, 2, 1, 2, 3],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -350,7 +350,7 @@ let suite = Suite.suite(
       "flatMap mix empty right",
       VarArray.flatMap<Nat, Nat>(
         [var 0, 1, 2, 0, 1, 2, 3, 0],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -358,7 +358,7 @@ let suite = Suite.suite(
       "flatMap mix empties right",
       VarArray.flatMap<Nat, Nat>(
         [var 0, 1, 2, 0, 1, 2, 3, 0, 0, 0],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -366,7 +366,7 @@ let suite = Suite.suite(
       "flatMap mix empty left",
       VarArray.flatMap<Nat, Nat>(
         [var 0, 1, 2, 0, 1, 2, 3],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -374,7 +374,7 @@ let suite = Suite.suite(
       "flatMap mix empties left",
       VarArray.flatMap<Nat, Nat>(
         [var 0, 0, 0, 1, 2, 0, 1, 2, 3],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -382,7 +382,7 @@ let suite = Suite.suite(
       "flatMap mix empties middle",
       VarArray.flatMap<Nat, Nat>(
         [var 0, 1, 2, 0, 0, 0, 1, 2, 3],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
@@ -390,7 +390,7 @@ let suite = Suite.suite(
       "flatMap mix empties",
       VarArray.flatMap<Nat, Nat>(
         [var 0, 0, 0],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
@@ -398,7 +398,7 @@ let suite = Suite.suite(
       "flatMap mix empty",
       VarArray.flatMap<Nat, Nat>(
         [var],
-        func n = VarArray.tabulate<Nat>(n, func i = i).vals()
+        func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
@@ -743,53 +743,53 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "binarySearch found",
-      VarArray.binarySearch<Nat>([var 1, 3, 5, 7, 9, 11], Nat.compare, 5) == #found(2),
+      ([var 1, 3, 5, 7, 9, 11]).binarySearch<Nat>(5) == #found(2),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch not found",
-      VarArray.binarySearch<Nat>([var 1, 3, 5, 7, 9, 11], Nat.compare, 6) == #insertionIndex(3),
+      ([var 1, 3, 5, 7, 9, 11]).binarySearch<Nat>(6) == #insertionIndex(3),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch first element",
       do {
-        VarArray.binarySearch<Nat>([var 1, 3, 5, 7, 9, 11], Nat.compare, 1) == #found(0)
+        ([var 1, 3, 5, 7, 9, 11]).binarySearch<Nat>(1) == #found(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch last element",
       do {
-        VarArray.binarySearch<Nat>([var 1, 3, 5, 7, 9, 11], Nat.compare, 11) == #found(5)
+        ([var 1, 3, 5, 7, 9, 11]).binarySearch<Nat>(11) == #found(5)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch empty array",
       do {
-        VarArray.binarySearch<Nat>([var], Nat.compare, 5) == #insertionIndex(0)
+        ([var]).binarySearch<Nat>(5) == #insertionIndex(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch single element found",
       do {
-        VarArray.binarySearch<Nat>([var 42], Nat.compare, 42) == #found(0)
+        ([var 42]).binarySearch<Nat>(42) == #found(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch single element not found",
       do {
-        VarArray.binarySearch<Nat>([var 42], Nat.compare, 43) == #insertionIndex(1)
+        ([var 42]).binarySearch<Nat>(43) == #insertionIndex(1)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch duplicates",
       do {
-        let result = VarArray.binarySearch<Nat>([var 1, 2, 2, 2, 3], Nat.compare, 2);
+        let result = ([var 1, 2, 2, 2, 3]).binarySearch<Nat>(2);
         switch result {
           case (#found index) { index >= 1 and index <= 3 };
           case _ { false }
@@ -799,32 +799,32 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "isSorted empty array",
-      VarArray.isSorted<Nat>([var], Nat.compare),
+      ([var]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted single element",
-      VarArray.isSorted<Nat>([var 42], Nat.compare),
+      ([var 42]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted already sorted",
-      VarArray.isSorted<Nat>([var 1, 2, 3, 4, 5], Nat.compare),
+      ([var 1, 2, 3, 4, 5]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted with duplicates",
-      VarArray.isSorted<Nat>([var 1, 2, 2, 3, 3, 3], Nat.compare),
+      ([var 1, 2, 2, 3, 3, 3]).isSorted<Nat>(),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted not sorted",
-      VarArray.isSorted<Nat>([var 1, 3, 2, 4, 5], Nat.compare),
+      ([var 1, 3, 2, 4, 5]).isSorted<Nat>(),
       M.equals(T.bool(false))
     ),
     Suite.test(
       "isSorted reverse sorted",
-      VarArray.isSorted<Nat>([var 5, 4, 3, 2, 1], Nat.compare),
+      ([var 5, 4, 3, 2, 1]).isSorted<Nat>(),
       M.equals(T.bool(false))
     )
   ]

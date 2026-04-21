@@ -19,11 +19,11 @@ let entryTestable = T.tuple2Testable(T.natTestable, T.textTestable);
 
 class MapMatcher(expected : Map.Map<Nat, Text>) : M.Matcher<Map.Map<Nat, Text>> {
   public func describeMismatch(actual : Map.Map<Nat, Text>, _description : M.Description) {
-    Debug.print(debug_show (Iter.toArray(Map.entries(actual))) # " should be " # debug_show (Iter.toArray(Map.entries(expected))))
+    Debug.print(debug_show (actual.entries().toArray()) # " should be " # debug_show (expected.entries().toArray()))
   };
 
   public func matches(actual : Map.Map<Nat, Text>) : Bool {
-    Iter.toArray(Map.entries(actual)) == Iter.toArray(Map.entries(expected))
+    actual.entries().toArray() == expected.entries().toArray()
   }
 };
 
@@ -59,7 +59,7 @@ func mapGen(samples_number : Nat, size : Nat, range : (Nat, Nat)) : Iter.Iter<Ma
       if (n > samples_number) {
         null
       } else {
-        ?Map.fromIter(Random.nextEntries(range, size).vals(), c)
+        ?Map.fromIter(Random.nextEntries(range, size).values(), c)
       }
     }
   }
@@ -75,7 +75,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
         label stop for (map in mapGen(map_samples, size, range)) {
           if (not f(map)) {
             error_msg := "Property \"" # name # "\" failed\n";
-            error_msg #= "\n m: " # debug_show (Iter.toArray(Map.entries(map)));
+            error_msg #= "\n m: " # debug_show (map.entries().toArray());
             break stop
           }
         };
@@ -94,7 +94,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             let key = Random.nextNat(range);
             if (not f(map, key)) {
               error_msg #= "Property \"" # name # "\" failed";
-              error_msg #= "\n m: " # debug_show (Iter.toArray(Map.entries(map)));
+              error_msg #= "\n m: " # debug_show (map.entries().toArray());
               error_msg #= "\n k: " # debug_show (key);
               break stop
             }
@@ -267,21 +267,21 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "fromIter(entries(m), c) == m",
               func(m) {
-                MapMatcher(m).matches(Map.fromIter(Map.entries(m), c))
+                MapMatcher(m).matches(Map.fromIter(m.entries(), c))
               }
             ),
             prop(
               "fromIter(entriesRev(m)) == m",
               func(m) {
-                MapMatcher(m).matches(Map.fromIter(Map.reverseEntries(m), c))
+                MapMatcher(m).matches(Map.fromIter(m.reverseEntries(), c))
               }
             ),
             prop(
               "entries(m) = zip(key(m), values(m))",
               func(m) {
-                let k = Map.keys(m);
-                let v = Map.values(m);
-                for (e in Map.entries(m)) {
+                let k = m.keys();
+                let v = m.values();
+                for (e in m.entries()) {
                   if (?e.0 != k.next() or ?e.1 != v.next()) return false
                 };
                 return true
@@ -290,8 +290,8 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "Array.fromIter(entries(m)) == Array.fromIter(reverseEntries(m)).reverse()",
               func(m) {
-                let a = Iter.toArray(Map.entries(m));
-                let b = Array.reverse(Iter.toArray(Map.reverseEntries(m)));
+                let a = m.entries().toArray();
+                let b = Array.reverse(m.reverseEntries().toArray());
                 M.equals(T.array<(Nat, Text)>(entryTestable, a)).matches(b)
               }
             )
@@ -350,14 +350,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "foldLeft as entries()",
               func(m) {
-                let it = Map.entries(m);
+                let it = m.entries();
                 Map.foldLeft<Nat, Text, Bool>(m, true, func(acc, k, v) { acc and it.next() == ?(k, v) })
               }
             ),
             prop(
               "foldRight as reverseEntries()",
               func(m) {
-                let it = Map.reverseEntries(m);
+                let it = m.reverseEntries();
                 Map.foldRight<Nat, Text, Bool>(m, true, func(k, v, acc) { acc and it.next() == ?(k, v) })
               }
             )

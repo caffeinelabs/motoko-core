@@ -1663,7 +1663,7 @@ Test.suite(
   "join",
   func() {
     func t(input : [[Nat]], expected : [Nat]) : () -> () = func() {
-      let inputIter = Iter.map<[Nat], List<Nat>>(input.vals(), func x = List.fromArray(x));
+      let inputIter = Iter.map<[Nat], List<Nat>>(input.values(), func x = List.fromArray(x));
       let result = List.join(inputIter);
       Test.expect.array(List.toArray(result), Nat.toText, Nat.equal).equal(expected)
     };
@@ -1677,7 +1677,7 @@ Test.suite(
   "flatten",
   func() {
     func t(input : [[Nat]], expected : [Nat]) : () -> () = func() {
-      let inputList = List.fromIter(Iter.map<[Nat], List<Nat>>(input.vals(), func x = List.fromArray(x)));
+      let inputList = List.fromIter(Iter.map<[Nat], List<Nat>>(input.values(), func x = List.fromArray(x)));
       let result = List.flatten(inputList);
       Test.expect.array(List.toArray(result), Nat.toText, Nat.equal).equal(expected)
     };

@@ -65,7 +65,7 @@ module {
   ///
   /// Runtime: O(a.size())
   /// Space: O(a.size())
-  public func fromArray(a : [Char]) : Text = fromIter(a.vals());
+  public func fromArray(a : [Char]) : Text = fromIter(a.values());
 
   /// Converts the given `[var Char]` to a `Text` value.
   ///
@@ -76,7 +76,7 @@ module {
   ///
   /// Runtime: O(a.size())
   /// Space: O(a.size())
-  public func fromVarArray(a : [var Char]) : Text = fromIter(a.vals());
+  public func fromVarArray(a : [var Char]) : Text = fromIter(a.values());
 
   /// Iterates over each `Char` value in the given `Text`.
   ///
@@ -120,7 +120,7 @@ module {
 
   /// Creates a new `Array` containing characters of the given `Text`.
   ///
-  /// Equivalent to `Iter.toArray(t.chars())`.
+  /// Equivalent to `(t.chars()).toArray()`.
   ///
   /// ```motoko include=import
   /// assert Text.toArray("Café") == ['C', 'a', 'f', 'é'];

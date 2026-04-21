@@ -52,7 +52,7 @@ module {
   ///   Stack.push(mutableStack, 2);
   ///   Stack.push(mutableStack, 1);
   ///   let immutableList = Stack.toPure(mutableStack);
-  ///   assert Iter.toArray(PureList.values(immutableList)) == [1, 2, 3];
+  ///   assert (PureList.values(immutableList)).toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -65,11 +65,11 @@ module {
   };
 
   public func toArray<T>(self : Stack<T>) : [T] {
-    Iter.toArray(values(self))
+    self.values().toArray()
   };
 
   public func toVarArray<T>(self : Stack<T>) : [var T] {
-    Iter.toVarArray(values(self))
+    Iter.toVarArray(self.values())
   };
 
   /// Convert an immutable, purely functional list to a mutable stack.
@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
-  ///   assert Iter.toArray(Stack.values(mutableStack)) == [1, 2, 3];
+  ///   assert mutableStack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -149,7 +149,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.tabulate<Nat>(3, func(i) { 2 * i });
-  ///   assert Iter.toArray(Stack.values(stack)) == [4, 2, 0];
+  ///   assert stack.toArray() == [4, 2, 0];
   /// }
   /// ```
   ///
@@ -227,7 +227,7 @@ module {
   /// where `n` denotes the number of elements stored on the stack.
   public func clone<T>(self : Stack<T>) : Stack<T> {
     let copy = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       push(copy, element)
     };
     reverse(copy);
@@ -289,7 +289,7 @@ module {
   /// where `n` denotes the number of elements stored on the stack and assuming
   /// that `equal` has O(1) costs.
   public func contains<T>(self : Stack<T>, equal : (implicit : (T, T) -> Bool), element : T) : Bool {
-    for (existing in values(self)) {
+    for (existing in self.values()) {
       if (equal(existing, element)) {
         return true
       }
@@ -298,7 +298,7 @@ module {
   };
 
   public func reverseValues<T>(self : Stack<T>) : Iter.Iter<T> {
-    Iter.reverse(values(self))
+    Iter.reverse(self.values())
   };
 
   /// Pushes a new element onto the top of the stack.
@@ -443,7 +443,7 @@ module {
   /// where `n` denotes the number of elements stored on the stack.
   public func reverse<T>(self : Stack<T>) {
     var last : List<T> = null;
-    for (element in values(self)) {
+    for (element in self.values()) {
       last := ?(element, last)
     };
     self.top := last
@@ -462,7 +462,7 @@ module {
   ///   Stack.push(stack, 3);
   ///   Stack.push(stack, 2);
   ///   Stack.push(stack, 1);
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert stack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -502,7 +502,7 @@ module {
   /// where `n` denotes the number of elements stored on the stack and
   /// assuming that `predicate` has O(1) costs.
   public func all<T>(self : Stack<T>, predicate : T -> Bool) : Bool {
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not predicate(element)) {
         return false
       }
@@ -527,7 +527,7 @@ module {
   /// where `n` denotes the number of elements stored on the stack and
   /// assuming `predicate` has O(1) costs.
   public func any<T>(self : Stack<T>, predicate : T -> Bool) : Bool {
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (predicate(element)) {
         return true
       }
@@ -559,7 +559,7 @@ module {
   /// where `n` denotes the number of elements stored on the stack and
   /// assuming that `operation` has O(1) costs.
   public func forEach<T>(self : Stack<T>, operation : T -> ()) {
-    for (element in values(self)) {
+    for (element in self.values()) {
       operation(element)
     }
   };
@@ -591,7 +591,7 @@ module {
   /// assuming that `project` has O(1) costs.
   public func map<T, U>(self : Stack<T>, project : T -> U) : Stack<U> {
     let result = empty<U>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       push(result, project(element))
     };
     reverse(result);
@@ -624,7 +624,7 @@ module {
   /// assuming `predicate` has O(1) costs.
   public func filter<T>(self : Stack<T>, predicate : T -> Bool) : Stack<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (predicate(element)) {
         push(result, element)
       }
@@ -666,7 +666,7 @@ module {
   /// assuming that `project` has O(1) costs.
   public func filterMap<T, U>(self : Stack<T>, project : T -> ?U) : Stack<U> {
     let result = empty<U>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       switch (project(element)) {
         case null {};
         case (?newElement) {
@@ -742,8 +742,8 @@ module {
     if (size(self) != size(other)) {
       return false
     };
-    let iterator1 = values(self);
-    let iterator2 = values(other);
+    let iterator1 = self.values();
+    let iterator2 = other.values();
     loop {
       let element1 = iterator1.next();
       let element2 = iterator2.next();
@@ -772,7 +772,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert stack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -801,7 +801,7 @@ module {
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert stack.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -833,7 +833,7 @@ module {
   public func toText<T>(self : Stack<T>, format : (implicit : (toText : T -> Text))) : Text {
     var text = "Stack[";
     var sep = "";
-    for (element in values(self)) {
+    for (element in self.values()) {
       text #= sep # format(element);
       sep := ", "
     };
@@ -860,8 +860,8 @@ module {
   /// where `n` denotes the number of elements stored on the stack and
   /// assuming that `compare` has O(1) costs.
   public func compare<T>(self : Stack<T>, other : Stack<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order {
-    let iterator1 = values(self);
-    let iterator2 = values(other);
+    let iterator1 = self.values();
+    let iterator2 = other.values();
     loop {
       switch (iterator1.next(), iterator2.next()) {
         case (null, null) return #equal;

@@ -130,7 +130,7 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func find<T>(self : [var T], predicate : T -> Bool) : ?T {
-    for (element in self.vals()) {
+    for (element in self.values()) {
       if (predicate element) {
         return ?element
       }
@@ -417,7 +417,7 @@ module {
   ///
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
   public func forEach<T>(self : [var T], f : T -> ()) {
-    for (item in self.vals()) {
+    for (item in self.values()) {
       f(item)
     }
   };
@@ -671,7 +671,7 @@ module {
   /// import Int "mo:core/Int"
   ///
   /// let array = [var 1, 2, 3, 4];
-  /// let newArray = VarArray.flatMap<Nat, Int>(array, func x = [x, -x].vals());
+  /// let newArray = VarArray.flatMap<Nat, Int>(array, func x = [x, -x].values());
   /// assert VarArray.equal(newArray, [var 1, -1, 2, -2, 3, -3, 4, -4], Int.equal);
   /// ```
   /// Runtime: O(size)
@@ -731,7 +731,7 @@ module {
   /// *Runtime and space assumes that `combine` runs in O(1) time and space.
   public func foldLeft<T, A>(self : [var T], base : A, combine : (A, T) -> A) : A {
     var acc = base;
-    for (element in self.vals()) {
+    for (element in self.values()) {
       acc := combine(acc, element)
     };
     acc
@@ -774,7 +774,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let arrays : [[var Nat]] = [[var 0, 1, 2], [var 2, 3], [var], [var 4]];
-  /// let joinedArray = VarArray.join<Nat>(arrays.vals());
+  /// let joinedArray = VarArray.join<Nat>(arrays.values());
   /// assert VarArray.equal(joinedArray, [var 0, 1, 2, 2, 3, 4], Nat.equal);
   /// ```
   ///
@@ -803,7 +803,7 @@ module {
   /// Space: O(number of elements in array)
   public func flatten<T>(self : [var [var T]]) : [var T] {
     var flatSize = 0;
-    for (subArray in self.vals()) {
+    for (subArray in self.values()) {
       flatSize += subArray.size()
     };
 
@@ -937,7 +937,7 @@ module {
   /// Runtime: O(1)
   ///
   /// Space: O(1)
-  public func values<T>(self : [var T]) : Types.Iter<T> = self.vals();
+  public func values<T>(self : [var T]) : Types.Iter<T> = self.values();
 
   /// Returns an iterator that provides pairs of (index, element) in order, or `null`
   /// when out of elements to iterate over.
@@ -1110,7 +1110,7 @@ module {
   ///
   /// Space: O(1)
   public func contains<T>(self : [var T], equal : (implicit : (T, T) -> Bool), element : T) : Bool {
-    for (item in self.vals()) {
+    for (item in self.values()) {
       if (equal(item, element)) {
         return true
       }

@@ -7,9 +7,9 @@ import Iter "../../src/Iter";
 import Prim "mo:prim";
 import { suite; test; expect } "mo:test";
 
-func iterateForward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = Queue.values(queue);
+func iterateForward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = queue.values();
 
-func iterateBackward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = Queue.values(Queue.reverse(queue));
+func iterateBackward<T>(queue : Queue.Queue<T>) : Iter.Iter<T> = Queue.reverse(queue).values();
 
 func frontToText(t : (Nat, Queue.Queue<Nat>)) : Text {
   "(" # Nat.toText(t.0) # ", " # Queue.toText(t.1, Nat.toText) # ")"
@@ -64,14 +64,14 @@ suite(
     test(
       "iterate forward",
       func() {
-        expect.array<Nat>(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array<Nat>((iterateForward(queue)).toArray(), Nat.toText, Nat.equal).size(0)
       }
     );
 
     test(
       "iterate backward",
       func() {
-        expect.array(Iter.toArray(iterateBackward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array((iterateBackward(queue)).toArray(), Nat.toText, Nat.equal).size(0)
       }
     );
 
@@ -128,14 +128,14 @@ suite(
     test(
       "iterate forward",
       func() {
-        expect.array(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).equal([1])
+        expect.array((iterateForward(queue)).toArray(), Nat.toText, Nat.equal).equal([1])
       }
     );
 
     test(
       "iterate backward",
       func() {
-        expect.array(Iter.toArray(iterateBackward(queue)), Nat.toText, Nat.equal).equal([1])
+        expect.array((iterateBackward(queue)).toArray(), Nat.toText, Nat.equal).equal([1])
       }
     );
 
@@ -203,7 +203,7 @@ suite(
       "iterate forward",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          (iterateForward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -221,7 +221,7 @@ suite(
       "iterate backward",
       func() {
         expect.array(
-          Iter.toArray(iterateBackward(queue)),
+          (iterateBackward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -300,7 +300,7 @@ suite(
       "iterate forward",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          (iterateForward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -318,7 +318,7 @@ suite(
       "iterate backward",
       func() {
         expect.array(
-          Iter.toArray(iterateBackward(queue)),
+          (iterateBackward(queue)).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -384,7 +384,7 @@ suite(
   }
 );
 
-queue := Queue.filter<Nat>(Queue.fromIter([1, 2, 3, 4, 5].vals()), func n = n < 3);
+queue := Queue.filter<Nat>(Queue.fromIter([1, 2, 3, 4, 5].values()), func n = n < 3);
 
 suite(
   "filter invariants",
@@ -433,7 +433,7 @@ func randomPopulate(amount : Nat) : Queue.Queue<Nat> {
 };
 
 func isSorted(queue : Queue.Queue<Nat>) : Bool {
-  let array = Iter.toArray(iterateForward(queue));
+  let array = (iterateForward(queue)).toArray();
   let sorted = Array.sort(array, Nat.compare);
   Array.equal(array, sorted, Nat.equal)
 };
@@ -481,10 +481,10 @@ suite(
       "consistent iteration",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          (iterateForward(queue)).toArray(),
           Nat.toText,
           Nat.equal
-        ).equal(Array.reverse(Iter.toArray(iterateBackward(queue))))
+        ).equal(Array.reverse((iterateBackward(queue)).toArray()))
       }
     );
 

@@ -1,6 +1,8 @@
 ## Next
 * Add `Principal.toActor` — inverse of `fromActor`, casts a Principal to a typed actor reference (#490).
 
+* Bump the `motoko` npm package used for doc-snippet checks, fix iterator call patterns (`entries`/`values`), and correct a few documentation examples (#489).
+
 ## 2.4.0
 * Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
 * Flip x/y arg names in `arctan2` functions (#481).

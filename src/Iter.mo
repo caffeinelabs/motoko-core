@@ -124,7 +124,7 @@ module {
   /// ```motoko include=import
   /// let iter = Iter.fromArray(["A", "B", "C"]);
   /// let enumerated = Iter.enumerate(iter);
-  /// let result = Iter.toArray(enumerated);
+  /// let result = enumerated.toArray();
   /// assert result == [(0, "A"), (1, "B"), (2, "C")];
   /// ```
   public func enumerate<T>(self : Iter<T>) : Iter<(Nat, T)> {
@@ -191,7 +191,7 @@ module {
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
   /// let mappedIter = Iter.map<Nat, Nat>(iter, func (x) = x * 2);
-  /// let result = Iter.toArray(mappedIter);
+  /// let result = mappedIter.toArray();
   /// assert result == [2, 4, 6];
   /// ```
   public func map<T, R>(self : Iter<T>, f : T -> R) : Iter<R> = object {
@@ -213,7 +213,7 @@ module {
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4, 5].values();
   /// let evenNumbers = Iter.filter<Nat>(iter, func (x) = x % 2 == 0);
-  /// let result = Iter.toArray(evenNumbers);
+  /// let result = evenNumbers.toArray();
   /// assert result == [2, 4];
   /// ```
   public func filter<T>(self : Iter<T>, f : T -> Bool) : Iter<T> = object {
@@ -233,7 +233,7 @@ module {
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
   /// let evenNumbers = Iter.filterMap<Nat, Nat>(iter, func (x) = if (x % 2 == 0) ?x else null);
-  /// let result = Iter.toArray(evenNumbers);
+  /// let result = evenNumbers.toArray();
   /// assert result == [2];
   /// ```
   public func filterMap<T, R>(self : Iter<T>, f : T -> ?R) : Iter<R> = object {
@@ -253,7 +253,7 @@ module {
   /// Possible optimization: Use `flatMap` when you need to transform elements before calling `flatten`. Example: use `flatMap(...)` instead of `flatten(map(...))`.
   /// ```motoko include=import
   /// let iter = Iter.flatten([[1, 2].values(), [3].values(), [4, 5, 6].values()].values());
-  /// let result = Iter.toArray(iter);
+  /// let result = iter.toArray();
   /// assert result == [1, 2, 3, 4, 5, 6];
   /// ```
   public func flatten<T>(self : Iter<Iter<T>>) : Iter<T> = object {
@@ -274,7 +274,7 @@ module {
   /// Transforms every element of an iterator into an iterator and concatenates the results.
   /// ```motoko include=import
   /// let iter = Iter.flatMap<Nat, Nat>([1, 3, 5].values(), func (x) = [x, x + 1].values());
-  /// let result = Iter.toArray(iter);
+  /// let result = iter.toArray();
   /// assert result == [1, 2, 3, 4, 5, 6];
   /// ```
   public func flatMap<T, R>(self : Iter<T>, f : T -> Iter<R>) : Iter<R> = object {
@@ -299,14 +299,14 @@ module {
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3, 4, 5]);
   /// let first3 = Iter.take(iter, 3);
-  /// let result = Iter.toArray(first3);
+  /// let result = first3.toArray();
   /// assert result == [1, 2, 3];
   /// ```
   ///
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3]);
   /// let first5 = Iter.take(iter, 5);
-  /// let result = Iter.toArray(first5);
+  /// let result = first5.toArray();
   /// assert result == [1, 2, 3]; // only 3 elements in the original iterator
   /// ```
   public func take<T>(self : Iter<T>, n : Nat) : Iter<T> = object {
@@ -324,7 +324,7 @@ module {
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 4, 3, 2, 1]);
   /// let result = Iter.takeWhile<Nat>(iter, func (x) = x < 4);
-  /// let array = Iter.toArray(result);
+  /// let array = result.toArray();
   /// assert array == [1, 2, 3]; // note the difference between `takeWhile` and `filter`
   /// ```
   public func takeWhile<T>(self : Iter<T>, f : T -> Bool) : Iter<T> = object {
@@ -344,7 +344,7 @@ module {
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3, 4, 5]);
   /// let skipped = Iter.drop(iter, 3);
-  /// let result = Iter.toArray(skipped);
+  /// let result = skipped.toArray();
   /// assert result == [4, 5];
   /// ```
   public func drop<T>(self : Iter<T>, n : Nat) : Iter<T> = object {
@@ -364,7 +364,7 @@ module {
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 4, 3, 2, 1]);
   /// let result = Iter.dropWhile<Nat>(iter, func (x) = x < 4);
-  /// let array = Iter.toArray(result);
+  /// let array = result.toArray();
   /// assert array == [4, 5, 4, 3, 2, 1]; // notice that `takeWhile` and `dropWhile` are complementary
   /// ```
   public func dropWhile<T>(self : Iter<T>, f : T -> Bool) : Iter<T> = object {
@@ -388,7 +388,7 @@ module {
   /// let iter1 = [1, 2, 3].values();
   /// let iter2 = ["A", "B"].values();
   /// let zipped = Iter.zip(iter1, iter2);
-  /// let result = Iter.toArray(zipped);
+  /// let result = zipped.toArray();
   /// assert result == [(1, "A"), (2, "B")]; // note that the third element from iter1 is not included, because iter2 is exhausted
   /// ```
   public func zip<A, B>(self : Iter<A>, other : Iter<B>) : Iter<(A, B)> = object {
@@ -407,7 +407,7 @@ module {
   /// let iter2 = ["1", "2", "3"].values();
   /// let iter3 = ["x", "y", "z", "xd"].values();
   /// let zipped = Iter.zip3(iter1, iter2, iter3);
-  /// let result = Iter.toArray(zipped);
+  /// let result = zipped.toArray();
   /// assert result == [("A", "1", "x"), ("B", "2", "y")]; // note that the unmatched elements from iter2 and iter3 are not included
   /// ```
   public func zip3<A, B, C>(self : Iter<A>, other1 : Iter<B>, other2 : Iter<C>) : Iter<(A, B, C)> = object {
@@ -426,7 +426,7 @@ module {
   /// let iter1 = ["A", "B"].values();
   /// let iter2 = ["1", "2", "3"].values();
   /// let zipped = Iter.zipWith<Text, Text, Text>(iter1, iter2, func (a, b) = a # b);
-  /// let result = Iter.toArray(zipped);
+  /// let result = zipped.toArray();
   /// assert result == ["A1", "B2"]; // note that the third element from iter2 is not included, because iter1 is exhausted
   /// ```
   public func zipWith<A, B, R>(self : Iter<A>, other : Iter<B>, f : (A, B) -> R) : Iter<R> = object {
@@ -445,7 +445,7 @@ module {
   /// let iter2 = ["1", "2", "3"].values();
   /// let iter3 = ["x", "y", "z", "xd"].values();
   /// let zipped = Iter.zipWith3<Text, Text, Text, Text>(iter1, iter2, iter3, func (a, b, c) = a # b # c);
-  /// let result = Iter.toArray(zipped);
+  /// let result = zipped.toArray();
   /// assert result == ["A1x", "B2y"]; // note that the unmatched elements from iter2 and iter3 are not included
   /// ```
   public func zipWith3<A, B, C, R>(self : Iter<A>, other1 : Iter<B>, other2 : Iter<C>, f : (A, B, C) -> R) : Iter<R> = object {
@@ -594,7 +594,7 @@ module {
   ///
   /// let iter = [1, 2, 3].values();
   /// let scanned = Iter.scanLeft<Nat, Nat>(iter, 0, Nat.add);
-  /// let result = Iter.toArray(scanned);
+  /// let result = scanned.toArray();
   /// assert result == [0, 1, 3, 6];
   /// ```
   public func scanLeft<T, R>(self : Iter<T>, initial : R, combine : (R, T) -> R) : Iter<R> = object {
@@ -626,7 +626,7 @@ module {
   ///
   /// let iter = [1, 2, 3].values();
   /// let scanned = Iter.scanRight<Nat, Nat>(iter, 0, Nat.add);
-  /// let result = Iter.toArray(scanned);
+  /// let result = scanned.toArray();
   /// assert result == [0, 3, 5, 6];
   /// ```
   public func scanRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : Iter<R> {
@@ -638,7 +638,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = Iter.unfold<Nat, Nat>(1, func (x) = if (x <= 3) ?(x, x + 1) else null);
-  /// let result = Iter.toArray(iter);
+  /// let result = iter.toArray();
   /// assert result == [1, 2, 3];
   /// ```
   public func unfold<T, S>(initial : S, step : S -> ?(T, S)) : Iter<T> = object {
@@ -714,7 +714,7 @@ module {
   /// let iter1 = [1, 2].values();
   /// let iter2 = [5, 6, 7].values();
   /// let concatenatedIter = Iter.concat(iter1, iter2);
-  /// let result = Iter.toArray(concatenatedIter);
+  /// let result = concatenatedIter.toArray();
   /// assert result == [1, 2, 5, 6, 7];
   /// ```
   public func concat<T>(self : Iter<T>, other : Iter<T>) : Iter<T> {
@@ -744,18 +744,18 @@ module {
   /// assert null == iter.next();
   /// ```
   /// @deprecated M0235
-  public func fromArray<T>(array : [T]) : Iter<T> = array.vals();
+  public func fromArray<T>(array : [T]) : Iter<T> = array.values();
 
   /// Like `fromArray` but for Arrays with mutable elements. Captures
   /// the elements of the Array at the time the iterator is created, so
   /// further modifications won't be reflected in the iterator.
   /// @deprecated M0235
-  public func fromVarArray<T>(array : [var T]) : Iter<T> = array.vals();
+  public func fromVarArray<T>(array : [var T]) : Iter<T> = array.values();
 
   /// Consumes an iterator and collects its produced elements in an Array.
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
-  /// assert [1, 2, 3] == Iter.toArray(iter);
+  /// assert [1, 2, 3] == iter.toArray();
   /// ```
   public func toArray<T>(self : Iter<T>) : [T] {
     // TODO: Replace implementation. This is just temporay.
@@ -789,7 +789,7 @@ module {
       count,
       func(_) {
         switch (current) {
-          case null Runtime.trap("Iter.toArray(): node must not be null");
+          case null Runtime.trap("toArray(): node must not be null");
           case (?node) {
             current := node.next;
             node.value

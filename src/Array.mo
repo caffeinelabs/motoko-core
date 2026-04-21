@@ -151,7 +151,7 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func find<T>(self : [T], predicate : T -> Bool) : ?T {
-    for (element in self.vals()) {
+    for (element in self.values()) {
       if (predicate(element)) {
         return ?element
       }
@@ -262,7 +262,7 @@ module {
   ///
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
   public func forEach<T>(self : [T], f : T -> ()) {
-    for (item in self.vals()) {
+    for (item in self.values()) {
       f(item)
     }
   };
@@ -598,7 +598,7 @@ module {
   /// Space: O(number of elements in array)
   public func flatten<T>(self : [[T]]) : [T] {
     var flatSize = 0;
-    for (subArray in self.vals()) {
+    for (subArray in self.values()) {
       flatSize += subArray.size()
     };
 
@@ -891,7 +891,7 @@ module {
   ///
   /// Space: O(1)
   public func contains<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : Bool {
-    for (item in self.vals()) {
+    for (item in self.values()) {
       if (equal(item, element)) {
         return true
       }

@@ -576,7 +576,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Iter.toArray(Queue.values(queue)) == [1, 2, 3];
+  ///   assert queue.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -680,7 +680,7 @@ module {
     case (#two(x, y)) predicate x and predicate y;
     case (#three(x, y, z)) predicate x and predicate y and predicate z;
     case _ {
-      for (item in values self) if (not (predicate item)) return false;
+      for (item in self.values()) if (not (predicate item)) return false;
       return true
     }
   };
@@ -707,7 +707,7 @@ module {
     case (#two(x, y)) predicate x or predicate y;
     case (#three(x, y, z)) predicate x or predicate y or predicate z;
     case _ {
-      for (item in values self) if (predicate item) return true;
+      for (item in self.values()) if (predicate item) return true;
       return false
     }
   };
@@ -737,7 +737,7 @@ module {
     case (#three(x, y, z)) { f x; f y; f z };
     // Preserve the order when visiting the elements. Note that the #idles case would require reversing the second stack.
     case _ {
-      for (t in values self) f t
+      for (t in self.values()) f t
     }
   };
 
@@ -773,7 +773,7 @@ module {
       // No reason to rebuild the #rebal state.
       // future work: It could be further optimized by building a balanced #idles state directly since we know the sizes.
       var q = empty<T2>();
-      for (t in values self) q := pushBack(q, f t);
+      for (t in self.values()) q := pushBack(q, f t);
       q
     }
   };
@@ -799,7 +799,7 @@ module {
   /// *Runtime and space assumes that `predicate` runs in `O(1)` time and space.
   public func filter<T>(self : Queue<T>, predicate : T -> Bool) : Queue<T> {
     var q = empty<T>();
-    for (t in values self) if (predicate t) q := pushBack(q, t);
+    for (t in self.values()) if (predicate t) q := pushBack(q, t);
     q
   };
 
@@ -824,7 +824,7 @@ module {
   /// *Runtime and space assumes that f runs in `O(1)` time and space.
   public func filterMap<T, U>(self : Queue<T>, f : T -> ?U) : Queue<U> {
     var q = empty<U>();
-    for (t in values self) {
+    for (t in self.values()) {
       switch (f t) {
         case (?x) q := pushBack(q, x);
         case null ()
@@ -853,7 +853,7 @@ module {
   public func toText<T>(self : Queue<T>, f : (implicit : (toText : T -> Text))) : Text {
     var text = "RealTimeQueue[";
     var first = true;
-    for (t in values self) {
+    for (t in self.values()) {
       if (first) first := false else text #= ", ";
       text #= f(t)
     };

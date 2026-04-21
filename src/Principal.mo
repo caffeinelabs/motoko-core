@@ -1215,8 +1215,8 @@ module {
       }
     };
 
-    public func writeArray(arr : [Nat8]) : () = writeIter(arr.vals());
-    public func writeBlob(blob : Blob) : () = writeIter(blob.vals());
+    public func writeArray(arr : [Nat8]) : () = writeIter(arr.values());
+    public func writeBlob(blob : Blob) : () = writeIter(blob.values());
 
     public func sum() : Blob {
       // calculate padding

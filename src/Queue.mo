@@ -59,7 +59,7 @@ module {
   /// @deprecated M0235
   public func toPure<T>(self : Queue<T>) : PureQueue.Queue<T> {
     let pureQueue = PureQueue.empty<T>();
-    let iter = values(self);
+    let iter = self.values();
     var current = pureQueue;
     loop {
       switch (iter.next()) {
@@ -88,7 +88,7 @@ module {
   /// @deprecated M0235
   public func fromPure<T>(pureQueue : PureQueue.Queue<T>) : Queue<T> {
     let queue = empty<T>();
-    let iter = PureQueue.values(pureQueue);
+    let iter = pureQueue.values();
     loop {
       switch (iter.next()) {
         case null { return queue };
@@ -176,7 +176,7 @@ module {
   /// `n` denotes the number of elements stored in the queue.
   public func clone<T>(self : Queue<T>) : Queue<T> {
     let copy = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       pushBack(copy, element)
     };
     copy
@@ -235,7 +235,7 @@ module {
   /// Space: O(1)
   /// `n` denotes the number of elements stored in the queue.
   public func contains<T>(self : Queue<T>, equal : (implicit : (T, T) -> Bool), element : T) : Bool {
-    for (existing in values(self)) {
+    for (existing in self.values()) {
       if (equal(existing, element)) {
         return true
       }
@@ -479,7 +479,7 @@ module {
   /// `n` denotes the number of elements stored in the array.
   public func fromArray<T>(array : [T]) : Queue<T> {
     let queue = empty<T>();
-    for (element in array.vals()) {
+    for (element in array.values()) {
       pushBack(queue, element)
     };
     queue
@@ -508,7 +508,7 @@ module {
   /// Space: O(n)
   /// `n` denotes the number of elements stored in the queue.
   public func toArray<T>(self : Queue<T>) : [T] {
-    let iter = values(self);
+    let iter = self.values();
     Array.tabulate<T>(
       self.size,
       func(i) {
@@ -532,7 +532,7 @@ module {
   /// import Queue "mo:core/Queue";
   /// persistent actor {
   ///   let queue = Queue.fromIter<Text>(["A", "B", "C"].values());
-  ///   transient let iter = Queue.values(queue);
+  ///   transient let iter = queue.values();
   ///   assert iter.next() == ?"A";
   ///   assert iter.next() == ?"B";
   ///   assert iter.next() == ?"C";
@@ -559,7 +559,7 @@ module {
   };
 
   public func reverseValues<T>(self : Queue<T>) : Iter.Iter<T> {
-    Iter.reverse(values(self))
+    Iter.reverse(self.values())
   };
 
   /// Tests whether all elements in the queue satisfy the given predicate.
@@ -577,7 +577,7 @@ module {
   /// Runtime: O(n)
   /// Space: O(1)
   public func all<T>(self : Queue<T>, predicate : T -> Bool) : Bool {
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not predicate(element)) {
         return false
       }
@@ -601,7 +601,7 @@ module {
   /// Space: O(1)
   /// `n` denotes the number of elements stored in the queue.
   public func any<T>(self : Queue<T>, predicate : T -> Bool) : Bool {
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (predicate(element)) {
         return true
       }
@@ -627,7 +627,7 @@ module {
   /// Space: O(1)
   /// `n` denotes the number of elements stored in the queue.
   public func forEach<T>(self : Queue<T>, operation : T -> ()) {
-    for (element in values(self)) {
+    for (element in self.values()) {
       operation(element)
     }
   };
@@ -650,7 +650,7 @@ module {
   /// `n` denotes the number of elements stored in the queue.
   public func map<T, U>(self : Queue<T>, project : T -> U) : Queue<U> {
     let result = empty<U>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       pushBack(result, project(element))
     };
     result
@@ -674,7 +674,7 @@ module {
   /// `n` denotes the number of elements stored in the queue.
   public func filter<T>(self : Queue<T>, criterion : T -> Bool) : Queue<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (criterion(element)) {
         pushBack(result, element)
       }
@@ -706,7 +706,7 @@ module {
   /// `n` denotes the number of elements stored in the queue.
   public func filterMap<T, U>(self : Queue<T>, project : T -> ?U) : Queue<U> {
     let result = empty<U>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       switch (project(element)) {
         case null {};
         case (?newElement) pushBack(result, newElement)
@@ -736,8 +736,8 @@ module {
     if (size(self) != size(other)) {
       return false
     };
-    let iterator1 = values(self);
-    let iterator2 = values(other);
+    let iterator1 = self.values();
+    let iterator2 = other.values();
     loop {
       let element1 = iterator1.next();
       let element2 = iterator2.next();
@@ -774,7 +774,7 @@ module {
   public func toText<T>(self : Queue<T>, format : (implicit : (toText : T -> Text))) : Text {
     var text = "Queue[";
     var sep = "";
-    for (element in values(self)) {
+    for (element in self.values()) {
       text #= sep # format(element);
       sep := ", "
     };
@@ -801,8 +801,8 @@ module {
   /// Space: O(1)
   /// `n` denotes the number of elements stored in the queue.
   public func compare<T>(self : Queue<T>, other : Queue<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order {
-    let iterator1 = values(self);
-    let iterator2 = values(other);
+    let iterator1 = self.values();
+    let iterator2 = other.values();
     loop {
       switch (iterator1.next(), iterator2.next()) {
         case (null, null) return #equal;

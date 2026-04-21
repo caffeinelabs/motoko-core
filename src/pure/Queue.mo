@@ -368,7 +368,7 @@ module {
   ///
   /// Space: O(size)
   public func toArray<T>(self : Queue<T>) : [T] {
-    let iter = values(self);
+    let iter = self.values();
     Array.tabulate<T>(
       self.1,
       func(i) {
@@ -392,7 +392,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert Iter.toArray(Queue.values(queue)) == [1, 2, 3];
+  ///   assert queue.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -423,7 +423,7 @@ module {
     if (self.1 != other.1) {
       return false
     };
-    let (iter1, iter2) = (values(self), values(other));
+    let (iter1, iter2) = (self.values(), other.values());
     loop {
       switch (iter1.next(), iter2.next()) {
         case (null, null) { return true };
@@ -453,7 +453,7 @@ module {
   ///
   /// *Runtime and space assumes that the `predicate` runs in `O(1)` time and space.
   public func all<T>(self : Queue<T>, predicate : T -> Bool) : Bool {
-    for (item in values self) if (not (predicate item)) return false;
+    for (item in self.values()) if (not (predicate item)) return false;
     return true
   };
 
@@ -475,7 +475,7 @@ module {
   ///
   /// *Runtime and space assumes that the `predicate` runs in `O(1)` time and space.
   public func any<T>(self : Queue<T>, predicate : T -> Bool) : Bool {
-    for (item in values self) if (predicate item) return true;
+    for (item in self.values()) if (predicate item) return true;
     return false
   };
 
@@ -497,7 +497,7 @@ module {
   /// Space: `O(size)`
   ///
   /// *Runtime and space assumes that `f` runs in `O(1)` time and space.
-  public func forEach<T>(self : Queue<T>, f : T -> ()) = for (item in values self) f item;
+  public func forEach<T>(self : Queue<T>, f : T -> ()) = for (item in self.values()) f item;
 
   /// Call the given function `f` on each queue element and collect the results
   /// in a new queue.
@@ -512,7 +512,7 @@ module {
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2].values());
   ///   let textQueue = Queue.map<Nat, Text>(queue, Nat.toText);
-  ///   assert Iter.toArray(Queue.values(textQueue)) == ["0", "1", "2"];
+  ///   assert textQueue.toArray() == ["0", "1", "2"];
   /// }
   /// ```
   ///
@@ -627,7 +627,7 @@ module {
   ///
   /// *Runtime and space assumes that argument `compareItem` runs in `O(1)` time and space.
   public func compare<T>(self : Queue<T>, other : Queue<T>, compareItem : (implicit : (compare : (T, T) -> Order.Order))) : Order.Order {
-    let (i1, i2) = (values self, values other);
+    let (i1, i2) = (self.values(), other.values());
     loop switch (i1.next(), i2.next()) {
       case (?v1, ?v2) switch (compareItem(v1, v2)) {
         case (#equal) ();

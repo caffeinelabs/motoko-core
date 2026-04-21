@@ -8,7 +8,7 @@
 /// import Nat "mo:core/Nat";
 ///
 /// persistent actor {
-///   let set = Set.fromIter([3, 1, 2, 3].vals(), Nat.compare);
+///   let set = Set.fromIter([3, 1, 2, 3].values(), Nat.compare);
 ///   assert Set.size(set) == 3;
 ///   assert not Set.contains(set, Nat.compare, 4);
 ///   let diff = Set.difference(set, set, Nat.compare);
@@ -61,7 +61,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter<Nat>([0, 2, 1].values(), Nat.compare);
   ///   let pureSet = Set.toPure(set, Nat.compare);
-  ///   assert Iter.toArray(PureSet.values(pureSet)) == Iter.toArray(Set.values(set));
+  ///   assert pureSet.values().toArray() == set.values().toArray();
   /// }
   /// ```
   ///
@@ -73,7 +73,7 @@ module {
   /// Note: Creates `O(n * log(n))` temporary objects that will be collected as garbage.
   /// @deprecated M0235
   public func toPure<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : PureSet.Set<T> {
-    PureSet.fromIter(values(self), compare)
+    PureSet.fromIter(self.values(), compare)
   };
 
   /// Convert an immutable, purely functional set to a mutable set.
@@ -88,7 +88,7 @@ module {
   /// persistent actor {
   ///   let pureSet = PureSet.fromIter([3, 1, 2].values(), Nat.compare);
   ///   let set = Set.fromPure(pureSet, Nat.compare);
-  ///   assert Iter.toArray(Set.values(set)) == Iter.toArray(PureSet.values(pureSet));
+  ///   assert set.values().toArray() == pureSet.values().toArray();
   /// }
   /// ```
   ///
@@ -98,7 +98,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   /// @deprecated M0235
   public func fromPure<T>(set : PureSet.Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
-    fromIter(PureSet.values(set), compare)
+    fromIter(set.values(), compare)
   };
 
   public func fromArray<T>(array : [T], compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
@@ -279,8 +279,8 @@ module {
   public func equal<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Types.Order)) : Bool {
     if (self.size != other.size) return false;
     // TODO: optimize
-    let iterator1 = values(self);
-    let iterator2 = values(other);
+    let iterator1 = self.values();
+    let iterator2 = other.values();
     loop {
       let next1 = iterator1.next();
       let next2 = iterator2.next();
@@ -343,7 +343,7 @@ module {
   ///   Set.add(set, Nat.compare, 2);
   ///   Set.add(set, Nat.compare, 1);
   ///   Set.add(set, Nat.compare, 2);
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2];
+  ///   assert set.toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -369,7 +369,7 @@ module {
   ///   assert Set.insert(set, Nat.compare, 2);
   ///   assert Set.insert(set, Nat.compare, 1);
   ///   assert not Set.insert(set, Nat.compare, 2);
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2];
+  ///   assert set.toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -432,7 +432,7 @@ module {
   ///   Set.remove(set, Nat.compare, 4);
   ///   assert not Set.contains(set, Nat.compare, 4);
   ///
-  ///   assert Iter.toArray(Set.values(set)) == [1, 3];
+  ///   assert set.toArray() == [1, 3];
   /// }
   /// ```
   ///
@@ -462,7 +462,7 @@ module {
   ///
   ///   assert not Set.delete(set, Nat.compare, 4);
   ///   assert not Set.contains(set, Nat.compare, 4);
-  ///   assert Iter.toArray(Set.values(set)) == [1, 3];
+  ///   assert set.toArray() == [1, 3];
   /// }
   /// ```
   ///
@@ -565,11 +565,11 @@ module {
   /// Space: `O(1)`.
   /// where `n` denotes the number of elements stored in the set.
   public func min<T>(self : Set<T>) : ?T {
-    values(self).next()
+    self.values().next()
   };
 
   public func toArray<T>(self : Set<T>) : [T] {
-    Iter.toArray(values(self))
+    self.values().toArray()
   };
 
   /// Returns an iterator over the elements in the set,
@@ -584,7 +584,7 @@ module {
   ///   let set = Set.fromIter([0, 2, 3, 1].values(), Nat.compare);
   ///
   ///   var tmp = "";
-  ///   for (number in Set.values(set)) {
+  ///   for (number in set.values()) {
   ///      tmp #= " " # Nat.toText(number);
   ///   };
   ///   assert tmp == " 0 1 2 3";
@@ -614,8 +614,8 @@ module {
   ///
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 1].values(), Nat.compare);
-  ///   assert Iter.toArray(Set.valuesFrom(set, Nat.compare, 1)) == [1, 3];
-  ///   assert Iter.toArray(Set.valuesFrom(set, Nat.compare, 2)) == [3];
+  ///   assert (Set.valuesFrom(set, Nat.compare, 1)).toArray() == [1, 3];
+  ///   assert (Set.valuesFrom(set, Nat.compare, 2)).toArray() == [3];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -647,7 +647,7 @@ module {
   ///   let set = Set.fromIter([0, 2, 3, 1].values(), Nat.compare);
   ///
   ///   var tmp = "";
-  ///   for (number in Set.reverseValues(set)) {
+  ///   for (number in set.reverseValues()) {
   ///      tmp #= " " # Nat.toText(number);
   ///   };
   ///   assert tmp == " 3 2 1 0";
@@ -677,8 +677,8 @@ module {
   ///
   /// persistent actor {
   ///   let set = Set.fromIter([0, 1, 3].values(), Nat.compare);
-  ///   assert Iter.toArray(Set.reverseValuesFrom(set, Nat.compare, 0)) == [0];
-  ///   assert Iter.toArray(Set.reverseValuesFrom(set, Nat.compare, 2)) == [1, 0];
+  ///   assert (Set.reverseValuesFrom(set, Nat.compare, 0)).toArray() == [0];
+  ///   assert (Set.reverseValuesFrom(set, Nat.compare, 2)).toArray() == [1, 0];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -710,7 +710,7 @@ module {
   ///
   /// persistent actor {
   ///   let set = Set.fromIter<Nat>([3, 1, 2, 1].values(), Nat.compare);
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2, 3];
+  ///   assert set.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -741,7 +741,7 @@ module {
   ///
   ///   let set = iter.toSet(Nat.compare);
   ///
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2, 3];
+  ///   assert set.toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -777,7 +777,7 @@ module {
   public func isSubset<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Bool {
     if (self.size > other.size) { return false };
     // TODO: optimize
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not contains(other, compare, element)) {
         return false
       }
@@ -800,7 +800,7 @@ module {
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let union = Set.union(set1, set2, Nat.compare);
-  ///   assert Iter.toArray(Set.values(union)) == [1, 2, 3, 4, 5];
+  ///   assert union.toArray() == [1, 2, 3, 4, 5];
   /// }
   /// ```
   ///
@@ -810,7 +810,7 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func union<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = clone<T>(self);
-    for (element in values(other)) {
+    for (element in other.values()) {
       if (not contains(result, compare, element)) {
         add(result, compare, element)
       }
@@ -831,7 +831,7 @@ module {
   ///   let set1 = Set.fromIter([0, 1, 2].values(), Nat.compare);
   ///   let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let intersection = Set.intersection(set1, set2, Nat.compare);
-  ///   assert Iter.toArray(Set.values(intersection)) == [1, 2];
+  ///   assert intersection.toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -841,7 +841,7 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func intersection<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (contains(other, compare, element)) {
         add(result, compare, element)
       }
@@ -862,7 +862,7 @@ module {
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let difference = Set.difference(set1, set2, Nat.compare);
-  ///   assert Iter.toArray(Set.values(difference)) == [1, 2];
+  ///   assert difference.toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -872,7 +872,7 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func difference<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not contains(other, compare, element)) {
         add(result, compare, element)
       }
@@ -892,7 +892,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   Set.addAll(set, Nat.compare, [3, 4, 5].values());
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2, 3, 4, 5];
+  ///   assert set.toArray() == [1, 2, 3, 4, 5];
   /// }
   /// ```
   ///
@@ -919,7 +919,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 1, 2].values(), Nat.compare);
   ///   assert Set.deleteAll(set, Nat.compare, [0, 2].values());
-  ///   assert Iter.toArray(Set.values(set)) == [1];
+  ///   assert set.toArray() == [1];
   /// }
   /// ```
   ///
@@ -949,7 +949,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 1, 2].values(), Nat.compare);
   ///   assert Set.insertAll(set, Nat.compare, [0, 2, 3].values());
-  ///   assert Iter.toArray(Set.values(set)) == [0, 1, 2, 3];
+  ///   assert set.toArray() == [0, 1, 2, 3];
   ///   assert not Set.insertAll(set, Nat.compare, [0, 1, 2].values()); // no change
   /// }
   /// ```
@@ -981,16 +981,16 @@ module {
   ///   let set = Set.fromIter([3, 1, 2].values(), Nat.compare);
   ///
   ///   let sizeChanged = Set.retainAll<Nat>(set, Nat.compare, func n { n % 2 == 0 });
-  ///   assert Iter.toArray(Set.values(set)) == [2];
+  ///   assert set.toArray() == [2];
   ///   assert sizeChanged;
   /// }
   /// ```
   public func retainAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : Bool {
-    let array = Array.fromIter<T>(values(self));
+    let array = Array.fromIter<T>(self.values());
     deleteAll(
       self,
       compare,
-      Iter.filter<T>(array.vals(), func(element : T) : Bool = not predicate(element))
+      Iter.filter<T>(array.values(), func(element : T) : Bool = not predicate(element))
     )
   };
 
@@ -1019,7 +1019,7 @@ module {
   ///
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func forEach<T>(self : Set<T>, operation : T -> ()) {
-    for (element in values(self)) {
+    for (element in self.values()) {
       operation(element)
     }
   };
@@ -1040,7 +1040,7 @@ module {
   ///   let evenNumbers = Set.filter<Nat>(numbers, Nat.compare, func (number) {
   ///     number % 2 == 0
   ///   });
-  ///   assert Iter.toArray(Set.values(evenNumbers)) == [0, 2];
+  ///   assert evenNumbers.toArray() == [0, 2];
   /// }
   /// ```
   ///
@@ -1050,7 +1050,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   public func filter<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), criterion : T -> Bool) : Set<T> {
     let result = empty<T>();
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (criterion(element)) {
         add(result, compare, element)
       }
@@ -1074,7 +1074,7 @@ module {
   ///
   ///   let textNumbers =
   ///     Set.map<Nat, Text>(numbers, Text.compare, Nat.toText);
-  ///   assert Iter.toArray(Set.values(textNumbers)) == ["1", "2", "3"];
+  ///   assert textNumbers.toArray() == ["1", "2", "3"];
   /// }
   /// ```
   ///
@@ -1086,7 +1086,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func map<T1, T2>(self : Set<T1>, compare : (implicit : (T2, T2) -> Order.Order), project : T1 -> T2) : Set<T2> {
     let result = empty<T2>();
-    for (element1 in values(self)) {
+    for (element1 in self.values()) {
       let element2 = project(element1);
       add(result, compare, element2)
     };
@@ -1115,7 +1115,7 @@ module {
   ///        null // discard odd numbers
   ///     }
   ///   });
-  ///   assert Iter.toArray(Set.values(evenTextNumbers)) == ["0", "2"];
+  ///   assert evenTextNumbers.toArray() == ["0", "2"];
   /// }
   /// ```
   ///
@@ -1126,7 +1126,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func filterMap<T1, T2>(self : Set<T1>, compare : (implicit : (T2, T2) -> Order.Order), project : T1 -> ?T2) : Set<T2> {
     let result = empty<T2>();
-    for (element1 in values(self)) {
+    for (element1 in self.values()) {
       switch (project(element1)) {
         case null {};
         case (?element2) add(result, compare, element2)
@@ -1168,7 +1168,7 @@ module {
     combine : (A, T) -> A
   ) : A {
     var accumulator = base;
-    for (element in values(self)) {
+    for (element in self.values()) {
       accumulator := combine(accumulator, element)
     };
     accumulator
@@ -1231,7 +1231,7 @@ module {
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let set3 = Set.fromIter([5, 6, 7].values(), Nat.compare);
   ///   let combined = Set.join([set1, set2, set3].values(), Nat.compare);
-  ///   assert Iter.toArray(Set.values(combined)) == [1, 2, 3, 4, 5, 6, 7];
+  ///   assert combined.toArray() == [1, 2, 3, 4, 5, 6, 7];
   /// }
   /// ```
   ///
@@ -1242,7 +1242,7 @@ module {
   public func join<T>(setIterator : Types.Iter<Set<T>>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
     for (set in setIterator) {
-      for (element in values(set)) {
+      for (element in set.values()) {
         add(result, compare, element)
       }
     };
@@ -1273,7 +1273,7 @@ module {
   ///   let set3 = Set.fromIter([5, 6, 7].values(), Nat.compare);
   ///   let setOfSets = Set.fromIter([set1, set2, set3].values(), setCompare);
   ///   let flatSet = Set.flatten(setOfSets, Nat.compare);
-  ///   assert Iter.toArray(Set.values(flatSet)) == [1, 2, 3, 4, 5, 6, 7];
+  ///   assert flatSet.toArray() == [1, 2, 3, 4, 5, 6, 7];
   /// }
   /// ```
   ///
@@ -1283,8 +1283,8 @@ module {
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func flatten<T>(self : Set<Set<T>>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
     let result = empty<T>();
-    for (subSet in values(self)) {
-      for (element in values(subSet)) {
+    for (subSet in self.values()) {
+      for (element in subSet.values()) {
         add(result, compare, element)
       }
     };
@@ -1317,7 +1317,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func all<T>(self : Set<T>, predicate : T -> Bool) : Bool {
     // TODO optimize, avoiding iterator
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (not predicate(element)) {
         return false
       }
@@ -1351,7 +1351,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func any<T>(self : Set<T>, predicate : T -> Bool) : Bool {
     // TODO optimize, avoiding iterator
-    for (element in values(self)) {
+    for (element in self.values()) {
       if (predicate(element)) {
         return true
       }
@@ -1383,7 +1383,7 @@ module {
         }
       }
     };
-    checkIteration(values(self), #less);
+    checkIteration(self.values(), #less);
     checkIteration(reverseValues(self), #greater)
   };
 
@@ -1412,7 +1412,7 @@ module {
   public func toText<T>(self : Set<T>, toText : (implicit : T -> Text)) : Text {
     var text = "Set{";
     var sep = "";
-    for (element in values(self)) {
+    for (element in self.values()) {
       text #= sep # toText(element);
       sep := ", "
     };
@@ -1456,8 +1456,8 @@ module {
   ///
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func compare<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order {
-    let iterator1 = values(self);
-    let iterator2 = values(other);
+    let iterator1 = self.values();
+    let iterator2 = other.values();
     loop {
       switch (iterator1.next(), iterator2.next()) {
         case (null, null) return #equal;

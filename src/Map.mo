@@ -66,7 +66,7 @@ module {
   ///   let map = Map.fromIter<Nat, Text>(
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(), Nat.compare);
   ///   let pureMap = Map.toPure(map, Nat.compare);
-  ///   assert Iter.toArray(PureMap.entries(pureMap)) == Iter.toArray(Map.entries(map))
+  ///   assert pureMap.entries().toArray() == map.entries().toArray()
   /// }
   /// ```
   ///
@@ -78,7 +78,7 @@ module {
   /// Note: Creates `O(n * log(n))` temporary objects that will be collected as garbage.
   /// @deprecated M0235
   public func toPure<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order)) : PureMap.Map<K, V> {
-    PureMap.fromIter(entries(self), compare)
+    PureMap.fromIter(self.entries(), compare)
   };
 
   /// Convert an immutable key-value map to a mutable key-value map.
@@ -94,7 +94,7 @@ module {
   ///   let pureMap = PureMap.fromIter(
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(), Nat.compare);
   ///   let map = Map.fromPure<Nat, Text>(pureMap, Nat.compare);
-  ///   assert Iter.toArray(Map.entries(map)) == Iter.toArray(PureMap.entries(pureMap))
+  ///   assert map.entries().toArray() == pureMap.entries().toArray()
   /// }
   /// ```
   ///
@@ -104,7 +104,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   /// @deprecated M0235
   public func fromPure<K, V>(map : PureMap.Map<K, V>, compare : (implicit : (K, K) -> Order.Order)) : Map<K, V> {
-    fromIter(PureMap.entries(map), compare)
+    fromIter(map.entries(), compare)
   };
 
   /// Create a copy of the mutable key-value map.
@@ -169,7 +169,7 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.singleton<Nat, Text>(0, "Zero");
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero")];
+  ///   assert map.entries().toArray() == [(0, "Zero")];
   /// }
   /// ```
   ///
@@ -286,8 +286,8 @@ module {
     if (size(self) != size(other)) {
       return false
     };
-    let iterator1 = entries(self);
-    let iterator2 = entries(other);
+    let iterator1 = self.entries();
+    let iterator2 = other.entries();
     loop {
       let next1 = iterator1.next();
       let next2 = iterator2.next();
@@ -377,9 +377,9 @@ module {
   ///   let map = Map.empty<Nat, Text>();
   ///   assert Map.insert(map, Nat.compare, 0, "Zero");
   ///   assert Map.insert(map, Nat.compare, 1, "One");
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (1, "One")];
   ///   assert not Map.insert(map, Nat.compare, 0, "Nil");
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Nil"), (1, "One")]
+  ///   assert map.entries().toArray() == [(0, "Nil"), (1, "One")]
   /// }
   /// ```
   ///
@@ -411,7 +411,7 @@ module {
   ///   Map.add(map, Nat.compare, 1, "One");
   ///   Map.add(map, Nat.compare, 0, "Nil");
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Nil"), (1, "One")]
+  ///   assert map.entries().toArray() == [(0, "Nil"), (1, "One")]
   /// }
   /// ```
   ///
@@ -437,10 +437,10 @@ module {
   ///   let map = Map.singleton<Nat, Text>(1, "One");
   ///
   ///   assert Map.swap(map, Nat.compare, 0, "Zero") == null;
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (1, "One")];
   ///
   ///   assert Map.swap(map, Nat.compare, 0, "Nil") == ?"Zero";
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Nil"), (1, "One")];
+  ///   assert map.entries().toArray() == [(0, "Nil"), (1, "One")];
   /// }
   /// ```
   ///
@@ -538,9 +538,9 @@ module {
   ///     Nat.compare);
   ///
   ///   Map.remove(map, Nat.compare, 1);
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (2, "Two")];
   ///   Map.remove(map, Nat.compare, 42);
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -568,10 +568,10 @@ module {
   ///     Nat.compare);
   ///
   ///   assert Map.delete(map, Nat.compare, 1); // present, returns true
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (2, "Two")];
   ///
   ///   assert not Map.delete(map, Nat.compare, 42); // absent, returns false
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -603,10 +603,10 @@ module {
   ///     Nat.compare);
   ///
   ///   assert Map.take(map, Nat.compare, 0) == ?"Zero";
-  ///   assert Iter.toArray(Map.entries(map)) == [(1, "One"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(1, "One"), (2, "Two")];
   ///
   ///   assert Map.take(map, Nat.compare, 3) == null;
-  ///   assert Iter.toArray(Map.entries(map)) == [(1, "One"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(1, "One"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -663,11 +663,11 @@ module {
   };
 
   public func toArray<K, V>(self : Map<K, V>) : [(K, V)] {
-    Iter.toArray(entries(self))
+    self.entries().toArray()
   };
 
   public func toVarArray<K, V>(self : Map<K, V>) : [var (K, V)] {
-    Iter.toVarArray(entries(self))
+    Iter.toVarArray(self.entries())
   };
 
   /// Retrieves the key-value pair from the map with the maximum key.
@@ -723,7 +723,7 @@ module {
   /// Space: `O(1)`.
   /// where `n` denotes the number of key-value entries stored in the map.
   public func minEntry<K, V>(self : Map<K, V>) : ?(K, V) {
-    entries(self).next()
+    self.entries().next()
   };
 
   /// Returns an iterator over the key-value pairs in the map,
@@ -738,10 +738,10 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter<Nat, Text>([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two")];
   ///   var sum = 0;
   ///   var text = "";
-  ///   for ((k, v) in Map.entries(map)) { sum += k; text #= v };
+  ///   for ((k, v) in map.entries()) { sum += k; text #= v };
   ///   assert sum == 3;
   ///   assert text == "ZeroOneTwo"
   /// }
@@ -770,8 +770,8 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.fromIter<Nat, Text>([(0, "Zero"), (3, "Three"),  (1, "One")].values(), Nat.compare);
-  ///   assert Iter.toArray(Map.entriesFrom(map, Nat.compare, 1)) == [(1, "One"), (3, "Three")];
-  ///   assert Iter.toArray(Map.entriesFrom(map, Nat.compare, 2)) == [(3, "Three")];
+  ///   assert (Map.entriesFrom(map, Nat.compare, 1)).toArray() == [(1, "One"), (3, "Three")];
+  ///   assert (Map.entriesFrom(map, Nat.compare, 2)).toArray() == [(3, "Three")];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -803,10 +803,10 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter<Nat, Text>([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.reverseEntries(map)) == [(2, "Two"), (1, "One"), (0, "Zero")];
+  ///   assert map.reverseEntries().toArray() == [(2, "Two"), (1, "One"), (0, "Zero")];
   ///   var sum = 0;
   ///   var text = "";
-  ///   for ((k, v) in Map.reverseEntries(map)) { sum += k; text #= v };
+  ///   for ((k, v) in map.reverseEntries()) { sum += k; text #= v };
   ///   assert sum == 3;
   ///   assert text == "TwoOneZero"
   /// }
@@ -835,8 +835,8 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.fromIter<Nat, Text>([(0, "Zero"), (1, "One"), (3, "Three")].values(), Nat.compare);
-  ///   assert Iter.toArray(Map.reverseEntriesFrom(map, Nat.compare, 0)) == [(0, "Zero")];
-  ///   assert Iter.toArray(Map.reverseEntriesFrom(map, Nat.compare, 2)) == [(1, "One"), (0, "Zero")];
+  ///   assert (Map.reverseEntriesFrom(map, Nat.compare, 0)).toArray() == [(0, "Zero")];
+  ///   assert (Map.reverseEntriesFrom(map, Nat.compare, 2)).toArray() == [(1, "One"), (0, "Zero")];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -868,7 +868,7 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter<Nat, Text>([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.keys(map)) == [0, 1, 2];
+  ///   assert map.keys().toArray() == [0, 1, 2];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -876,7 +876,7 @@ module {
   /// Space: `O(1)`.
   public func keys<K, V>(self : Map<K, V>) : Types.Iter<K> {
     object {
-      let iterator = entries(self);
+      let iterator = self.entries();
 
       public func next() : ?K {
         switch (iterator.next()) {
@@ -899,7 +899,7 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter<Nat, Text>([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.values(map)) == ["Zero", "One", "Two"];
+  ///   assert map.values().toArray() == ["Zero", "One", "Two"];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -907,7 +907,7 @@ module {
   /// Space: `O(1)`.
   public func values<K, V>(self : Map<K, V>) : Types.Iter<V> {
     object {
-      let iterator = entries(self);
+      let iterator = self.entries();
 
       public func next() : ?V {
         switch (iterator.next()) {
@@ -932,7 +932,7 @@ module {
   ///
   ///   let map = Map.fromIter<Nat, Text>(iter, Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -962,7 +962,7 @@ module {
   ///
   ///   let map = iter.toMap(Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One"), (2, "Two")];
+  ///   assert map.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -1009,7 +1009,7 @@ module {
   ///
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func forEach<K, V>(self : Map<K, V>, operation : (K, V) -> ()) {
-    for (entry in entries(self)) {
+    for (entry in self.entries()) {
       operation(entry)
     }
   };
@@ -1031,7 +1031,7 @@ module {
   ///     key % 2 == 0
   ///   });
   ///
-  ///   assert Iter.toArray(Map.entries(evenNames)) == [(0, "Zero"), (2, "Two")];
+  ///   assert evenNames.entries().toArray() == [(0, "Zero"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -1041,7 +1041,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   public func filter<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), criterion : (K, V) -> Bool) : Map<K, V> {
     let result = empty<K, V>();
-    for ((key, value) in entries(self)) {
+    for ((key, value) in self.entries()) {
       if (criterion(key, value)) {
         add(result, compare, key, value)
       }
@@ -1066,7 +1066,7 @@ module {
   ///
   ///   let resMap = Map.map<Nat, Text, Nat>(map, f);
   ///
-  ///   assert Iter.toArray(Map.entries(resMap)) == [(0, 0), (1, 2), (2, 4)];
+  ///   assert resMap.entries().toArray() == [(0, 0), (1, 2), (2, 4)];
   /// }
   /// ```
   ///
@@ -1112,7 +1112,7 @@ module {
     combine : (A, K, V) -> A
   ) : A {
     var accumulator = base;
-    for ((key, value) in entries(self)) {
+    for ((key, value) in self.entries()) {
       accumulator := combine(accumulator, key, value)
     };
     accumulator
@@ -1177,7 +1177,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func all<K, V>(self : Map<K, V>, predicate : (K, V) -> Bool) : Bool {
     //TODO: optimize
-    for (entry in entries(self)) {
+    for (entry in self.entries()) {
       if (not predicate(entry)) {
         return false
       }
@@ -1207,7 +1207,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func any<K, V>(self : Map<K, V>, predicate : (K, V) -> Bool) : Bool {
     //TODO: optimize
-    for (entry in entries(self)) {
+    for (entry in self.entries()) {
       if (predicate(entry)) {
         return true
       }
@@ -1236,7 +1236,7 @@ module {
   ///
   ///   let newMap = Map.filterMap<Nat, Text, Text>(map, Nat.compare, f);
   ///
-  ///   assert Iter.toArray(Map.entries(newMap)) == [(1, "Twenty One"), (2, "Twenty Two")];
+  ///   assert newMap.entries().toArray() == [(1, "Twenty One"), (2, "Twenty Two")];
   /// }
   /// ```
   ///
@@ -1247,7 +1247,7 @@ module {
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func filterMap<K, V1, V2>(self : Map<K, V1>, compare : (implicit : (K, K) -> Order.Order), project : (K, V1) -> ?V2) : Map<K, V2> {
     let result = empty<K, V2>();
-    for ((key, value1) in entries(self)) {
+    for ((key, value1) in self.entries()) {
       switch (project(key, value1)) {
         case null {};
         case (?value2) add(result, compare, key, value2)
@@ -1280,7 +1280,7 @@ module {
         }
       }
     };
-    checkIteration(entries(self), #less);
+    checkIteration(self.entries(), #less);
     checkIteration(reverseEntries(self), #greater)
   };
 
@@ -1308,7 +1308,7 @@ module {
   public func toText<K, V>(self : Map<K, V>, keyFormat : (implicit : (toText : K -> Text)), valueFormat : (implicit : (toText : V -> Text))) : Text {
     var text = "Map{";
     var sep = "";
-    for ((key, value) in entries(self)) {
+    for ((key, value) in self.entries()) {
       text #= sep # "(" # keyFormat(key) # ", " # valueFormat(value) # ")";
       sep := ", "
     };
@@ -1357,8 +1357,8 @@ module {
   ///
   /// Note: Creates `O(log(n))` temporary objects that will be collected as garbage.
   public func compare<K, V>(self : Map<K, V>, other : Map<K, V>, compareKey : (implicit : (compare : (K, K) -> Order.Order)), compareValue : (implicit : (compare : (V, V) -> Order.Order))) : Order.Order {
-    let iterator1 = entries(self);
-    let iterator2 = entries(other);
+    let iterator1 = self.entries();
+    let iterator2 = other.entries();
     loop {
       switch (iterator1.next(), iterator2.next()) {
         case (null, null) return #equal;

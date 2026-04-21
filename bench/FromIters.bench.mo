@@ -42,9 +42,9 @@ module {
           case _ Runtime.unreachable()
         };
         switch row {
-          case "List.fromIter" ignore List.fromIter(array.vals());
-          case "List.fromIter . Iter.reverse" ignore List.fromIter(Iter.reverse(array.vals()));
-          case "Array.fromIter" ignore Array.fromIter(array.vals());
+          case "List.fromIter" ignore List.fromIter(array.values());
+          case "List.fromIter . Iter.reverse" ignore List.fromIter(Iter.reverse(array.values()));
+          case "Array.fromIter" ignore Array.fromIter(array.values());
           case _ Runtime.unreachable()
         }
       }
