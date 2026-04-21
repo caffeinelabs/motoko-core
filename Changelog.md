@@ -1,5 +1,7 @@
 ## Next
 
+* Adds new `CallerAttributes` module for the new caller attributes IC feature (#491).
+
 ## 2.4.0
 * Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
 * Flip x/y arg names in `arctan2` functions (#481).
