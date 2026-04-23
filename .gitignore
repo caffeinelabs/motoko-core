@@ -17,6 +17,7 @@ node_modules
 
 # Mops
 .mops
+mops.lock
 
 # `mo-doc`
 /docs
