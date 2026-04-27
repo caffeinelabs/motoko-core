@@ -89,6 +89,12 @@
     ]
   },
   {
+    "name": "CallerAttributes",
+    "exports": [
+      "public func getAttributes<system>() : ?Blob"
+    ]
+  },
+  {
     "name": "CertifiedData",
     "exports": [
       "public let getCertificate : () -> ?Blob",
@@ -1031,6 +1037,7 @@
       "public func lessOrEqual(self : Principal, other : Principal) : Bool",
       "public func notEqual(self : Principal, other : Principal) : Bool",
       "public type Principal",
+      "public let toActor : <A <: actor",
       "public let toBlob : (self : Principal) -> Blob",
       "public func toLedgerAccount(self : Principal, subAccount : ?Blob) : Blob",
       "public func toText(self : Principal) : Text"

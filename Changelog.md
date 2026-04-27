@@ -1,7 +1,10 @@
 ## Next
-
 * Remove wrong `self` parameter from `Principal.fromBlob`. 
   Change `blob.fromBlob()` to `Principal.fromBlob(blob)` if this causes a compile error in your code (#492).
+
+## 2.5.0
+* Add `Principal.toActor` — inverse of `fromActor`, casts a Principal to a typed actor reference (#490).
+* Adds new `CallerAttributes` module for the new caller attributes IC feature (#491).
 
 ## 2.4.0
 * Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
