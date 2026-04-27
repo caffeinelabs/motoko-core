@@ -1023,7 +1023,7 @@
       "public func compare(self : Principal, other : Principal) : { #less; #equal; #greater }",
       "public func equal(self : Principal, other : Principal) : Bool",
       "public let fromActor : (a : actor",
-      "public let fromBlob : (self : Blob) -> Principal",
+      "public let fromBlob : (blob : Blob) -> Principal",
       "public func fromText(t : Text) : Principal",
       "public func greater(self : Principal, other : Principal) : Bool",
       "public func greaterOrEqual(self : Principal, other : Principal) : Bool",
