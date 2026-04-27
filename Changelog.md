@@ -1,5 +1,8 @@
 ## Next
 
+* Remove wrong `self` parameter from `Principal.fromBlob`. 
+  Change `blob.fromBlob()` to `Principal.fromBlob(blob)` if this causes a compile error in your code (#492).
+
 ## 2.4.0
 * Fix `Float32.rem` to use native `%` operator instead of round-tripping through `Float` (#482).
 * Flip x/y arg names in `arctan2` functions (#481).
