@@ -1,6 +1,6 @@
 /// Module for working with Blobs (immutable sequences of bytes).
 ///
-/// Blobs represent sequences of bytes. They are immutable, iterable, but not indexable and can be empty.
+/// Blobs represent sequences of bytes. They are immutable, iterable, indexable and can be empty.
 ///
 /// Byte sequences are also often represented as `[Nat8]`, i.e. an array of bytes, but this representation is currently much less compact than `Blob`, taking 4 physical bytes to represent each logical byte in the sequence.
 /// If you would like to manipulate Blobs, it is recommended that you convert
