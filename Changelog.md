@@ -1,4 +1,5 @@
 ## Next
+* Add `Array.toBlob` and `VarArray.toBlob` so `[Nat8]` and `[var Nat8]` arrays can be converted to `Blob` via dot notation, e.g. `bytes.toBlob()`. Deprecate `Blob.fromArray`, `Blob.fromVarArray`, and `VarArray.fromIter` in favour of the corresponding self-callable forms (`bytes.toBlob()`, `iter.toVarArray()`) (#497).
 * Remove wrong `self` parameter from `Principal.fromBlob` (#492). 
   Change `blob.fromBlob()` to `Principal.fromBlob(blob)` if this causes a compile error in your code.
 

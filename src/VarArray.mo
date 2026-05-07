@@ -858,6 +858,7 @@ module {
   public func fromArray<T>(array : [T]) : [var T] = Prim.Array_tabulateVar<T>(array.size(), func i = array[i]);
 
   /// Converts an iterator to a mutable array.
+  /// @deprecated M0235
   public func fromIter<T>(iter : Types.Iter<T>) : [var T] {
     var list : Types.Pure.List<T> = null;
     var size = 0;
@@ -1270,6 +1271,20 @@ module {
   ///
   /// Space: O(1)
   public func toArray<T>(self : [var T]) : [T] = Prim.Array_tabulate<T>(self.size(), func i = self[i]);
+
+  /// Creates a `Blob` from a mutable array of bytes (`[var Nat8]`), by copying each element.
+  ///
+  /// ```motoko include=import
+  /// let bytes : [var Nat8] = [var 0, 255, 0];
+  /// let blob = VarArray.toBlob(bytes);
+  /// assert blob == "\00\FF\00";
+  /// assert bytes.toBlob() == "\00\FF\00";
+  /// ```
+  ///
+  /// Runtime: O(size)
+  ///
+  /// Space: O(size)
+  public let toBlob : (self : [var Nat8]) -> Blob = Prim.arrayMutToBlob;
 
   /// Converts the mutable array to its textual representation using `f` to convert each element to `Text`.
   ///

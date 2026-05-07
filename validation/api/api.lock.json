@@ -42,6 +42,7 @@
       "public func sliceToVarArray<T>(self : [T], fromInclusive : Int, toExclusive : Int) : [var T]",
       "public func sort<T>(self : [T], compare : (implicit : (T, T) -> Order.Order)) : [T]",
       "public let tabulate : <T>(size : Nat, generator : Nat -> T) -> [T]",
+      "public let toBlob : (self : [Nat8]) -> Blob",
       "public func toText<T>(self : [T], f : (implicit : (toText : T -> Text))) : Text",
       "public func toVarArray<T>(self : [T]) : [var T]",
       "public func values<T>(self : [T]) : Types.Iter<T>"
@@ -1427,6 +1428,7 @@
       "public func sortInPlace<T>(self : [var T], compare : (implicit : (T, T) -> Order.Order)) : ()",
       "public let tabulate : <T>(size : Nat, generator : Nat -> T) -> [var T]",
       "public func toArray<T>(self : [var T]) : [T]",
+      "public let toBlob : (self : [var Nat8]) -> Blob",
       "public func toText<T>(self : [var T], f : (implicit : (toText : T -> Text))) : Text",
       "public func values<T>(self : [var T]) : Types.Iter<T>"
     ]

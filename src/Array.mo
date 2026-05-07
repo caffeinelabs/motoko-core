@@ -104,6 +104,20 @@ module {
     newArray
   };
 
+  /// Creates a `Blob` from an array of bytes (`[Nat8]`), by copying each element.
+  ///
+  /// ```motoko include=import
+  /// let bytes : [Nat8] = [0, 255, 0];
+  /// let blob = Array.toBlob(bytes);
+  /// assert blob == "\00\FF\00";
+  /// assert bytes.toBlob() == "\00\FF\00";
+  /// ```
+  ///
+  /// Runtime: O(size)
+  ///
+  /// Space: O(size)
+  public let toBlob : (self : [Nat8]) -> Blob = Prim.arrayToBlob;
+
   /// Tests if two arrays contain equal values (i.e. they represent the same
   /// list of elements). Uses `equal` to compare elements in the arrays.
   ///
