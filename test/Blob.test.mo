@@ -1,5 +1,7 @@
+import Array "../src/Array";
 import Blob "../src/Blob";
 import Nat8 "../src/Nat8";
+import VarArray "../src/VarArray";
 import { suite; test; expect } "mo:test";
 
 suite(
@@ -69,6 +71,26 @@ suite(
         let blob = "\00\FF\AA" : Blob;
         let bytes = Blob.toVarArray(blob);
         expect.array([bytes[0], bytes[1], bytes[2]], Nat8.toText, Nat8.equal).equal([0, 255, 170])
+      }
+    );
+
+    test(
+      "Array.toBlob converts byte array to blob",
+      func() {
+        let bytes : [Nat8] = [0, 255, 170];
+        expect.blob(Array.toBlob(bytes)).equal("\00\FF\AA");
+        expect.blob(bytes.toBlob()).equal("\00\FF\AA");
+        expect.blob(([] : [Nat8]).toBlob()).equal("")
+      }
+    );
+
+    test(
+      "VarArray.toBlob converts mutable byte array to blob",
+      func() {
+        let bytes : [var Nat8] = [var 0, 255, 170];
+        expect.blob(VarArray.toBlob(bytes)).equal("\00\FF\AA");
+        expect.blob(bytes.toBlob()).equal("\00\FF\AA");
+        expect.blob(([var] : [var Nat8]).toBlob()).equal("")
       }
     )
   }
