@@ -190,7 +190,7 @@ module {
   /// the function to every element produced by the argument iterator.
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
-  /// let mappedIter = Iter.map<Nat, Nat>(iter, func (x) = x * 2);
+  /// let mappedIter = Iter.map(iter, func (x) = x * 2);
   /// let result = Iter.toArray(mappedIter);
   /// assert result == [2, 4, 6];
   /// ```
@@ -212,7 +212,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4, 5].values();
-  /// let evenNumbers = Iter.filter<Nat>(iter, func (x) = x % 2 == 0);
+  /// let evenNumbers = Iter.filter(iter, func (x) = x % 2 == 0);
   /// let result = Iter.toArray(evenNumbers);
   /// assert result == [2, 4];
   /// ```
@@ -232,7 +232,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
-  /// let evenNumbers = Iter.filterMap<Nat, Nat>(iter, func (x) = if (x % 2 == 0) ?x else null);
+  /// let evenNumbers = Iter.filterMap(iter, func (x) = if (x % 2 == 0) ?x else null);
   /// let result = Iter.toArray(evenNumbers);
   /// assert result == [2];
   /// ```
@@ -273,7 +273,7 @@ module {
 
   /// Transforms every element of an iterator into an iterator and concatenates the results.
   /// ```motoko include=import
-  /// let iter = Iter.flatMap<Nat, Nat>([1, 3, 5].values(), func (x) = [x, x + 1].values());
+  /// let iter = Iter.flatMap([1, 3, 5].values(), func (x) = [x, x + 1].values());
   /// let result = Iter.toArray(iter);
   /// assert result == [1, 2, 3, 4, 5, 6];
   /// ```
@@ -323,7 +323,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 4, 3, 2, 1]);
-  /// let result = Iter.takeWhile<Nat>(iter, func (x) = x < 4);
+  /// let result = Iter.takeWhile(iter, func (x) = x < 4);
   /// let array = Iter.toArray(result);
   /// assert array == [1, 2, 3]; // note the difference between `takeWhile` and `filter`
   /// ```
@@ -363,7 +363,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 4, 3, 2, 1]);
-  /// let result = Iter.dropWhile<Nat>(iter, func (x) = x < 4);
+  /// let result = Iter.dropWhile(iter, func (x) = x < 4);
   /// let array = Iter.toArray(result);
   /// assert array == [4, 5, 4, 3, 2, 1]; // notice that `takeWhile` and `dropWhile` are complementary
   /// ```
@@ -425,7 +425,7 @@ module {
   /// ```motoko include=import
   /// let iter1 = ["A", "B"].values();
   /// let iter2 = ["1", "2", "3"].values();
-  /// let zipped = Iter.zipWith<Text, Text, Text>(iter1, iter2, func (a, b) = a # b);
+  /// let zipped = Iter.zipWith(iter1, iter2, func (a, b) = a # b);
   /// let result = Iter.toArray(zipped);
   /// assert result == ["A1", "B2"]; // note that the third element from iter2 is not included, because iter1 is exhausted
   /// ```
@@ -444,7 +444,7 @@ module {
   /// let iter1 = ["A", "B"].values();
   /// let iter2 = ["1", "2", "3"].values();
   /// let iter3 = ["x", "y", "z", "xd"].values();
-  /// let zipped = Iter.zipWith3<Text, Text, Text, Text>(iter1, iter2, iter3, func (a, b, c) = a # b # c);
+  /// let zipped = Iter.zipWith3(iter1, iter2, iter3, func (a, b, c) = a # b # c);
   /// let result = Iter.toArray(zipped);
   /// assert result == ["A1x", "B2y"]; // note that the unmatched elements from iter2 and iter3 are not included
   /// ```
@@ -505,7 +505,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = ['A', 'B', 'C', 'D'].values();
-  /// let found = Iter.findIndex<Char>(iter, func(x) { x == 'C' });
+  /// let found = Iter.findIndex(iter, func(x) { x == 'C' });
   /// assert found == ?2;
   /// ```
   /// Runtime: O(size)
@@ -544,7 +544,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = ["A", "B", "C"].values();
-  /// let result = Iter.foldLeft<Text, Text>(iter, "S", func (acc, x) = "(" # acc # x # ")");
+  /// let result = Iter.foldLeft(iter, "S", func (acc, x) = "(" # acc # x # ")");
   /// assert result == "(((SA)B)C)";
   /// ```
   public func foldLeft<T, R>(self : Iter<T>, initial : R, combine : (R, T) -> R) : R {
@@ -565,7 +565,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = ["A", "B", "C"].values();
-  /// let result = Iter.foldRight<Text, Text>(iter, "S", func (x, acc) = "(" # x # acc # ")");
+  /// let result = Iter.foldRight(iter, "S", func (x, acc) = "(" # x # acc # ")");
   /// assert result == "(A(B(CS)))";
   /// ```
   public func foldRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : R {
@@ -593,7 +593,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// let scanned = Iter.scanLeft<Nat, Nat>(iter, 0, Nat.add);
+  /// let scanned = Iter.scanLeft(iter, 0, Nat.add);
   /// let result = Iter.toArray(scanned);
   /// assert result == [0, 1, 3, 6];
   /// ```
@@ -625,7 +625,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// let scanned = Iter.scanRight<Nat, Nat>(iter, 0, Nat.add);
+  /// let scanned = Iter.scanRight(iter, 0, Nat.add);
   /// let result = Iter.toArray(scanned);
   /// assert result == [0, 3, 5, 6];
   /// ```
@@ -637,7 +637,7 @@ module {
   /// The `step` function takes the current state and returns the next element and the next state, or `null` if the iteration is finished.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.unfold<Nat, Nat>(1, func (x) = if (x <= 3) ?(x, x + 1) else null);
+  /// let iter = Iter.unfold(1, func (x) = if (x <= 3) ?(x, x + 1) else null);
   /// let result = Iter.toArray(iter);
   /// assert result == [1, 2, 3];
   /// ```
@@ -806,14 +806,14 @@ module {
 
   /// Sorted iterator.  Will iterate over *all* elements to sort them, necessarily.
   public func sort<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Iter<T> {
-    let array = toVarArray<T>(self);
+    let array = toVarArray(self);
     VarArray.sortInPlace<T>(array, compare);
     fromVarArray<T>(array)
   };
 
   /// Creates an iterator that produces a given item a specified number of times.
   /// ```motoko include=import
-  /// let iter = Iter.repeat<Nat>(3, 2);
+  /// let iter = Iter.repeat(3, 2);
   /// assert ?3 == iter.next();
   /// assert ?3 == iter.next();
   /// assert null == iter.next();

@@ -321,7 +321,7 @@ module {
   ///
   /// persistent actor {
   ///   let map0 =
-  ///     Map.fromIter<Nat, Text>([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
+  ///     Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   let map1 = Map.remove(map0, Nat.compare, 1);
   ///   assert Iter.toArray(Map.entries(map1)) == [(0, "Zero"), (2, "Two")];
@@ -357,7 +357,7 @@ module {
   ///
   /// persistent actor {
   ///   let map0 =
-  ///     Map.fromIter<Nat, Text>([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
+  ///     Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   do {
   ///     let (map1, pres1) = Map.delete(map0, Nat.compare, 1);
@@ -761,7 +761,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let map = Map.singleton<Nat, Text>(0, "Zero");
+  ///   let map = Map.singleton(0, "Zero");
   ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero")];
   /// }
   /// ```
@@ -814,7 +814,7 @@ module {
   /// persistent actor {
   ///   let numberNames = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   let evenNames = Map.filter<Nat, Text>(numberNames, Nat.compare, func (key, value) {
+  ///   let evenNames = Map.filter(numberNames, Nat.compare, func (key, value) {
   ///     key % 2 == 0
   ///   });
   ///
@@ -904,7 +904,7 @@ module {
   ///
   /// persistent actor {
   ///   let map1 = Map.fromIter([(0, "Zero"), (1, "One"), (2, "Two")].values(), Nat.compare);
-  ///   let map2 = Map.fromIter<Nat, Text>([(2, "Two"), (1, "One"), (0, "Zero")].values(), Nat.compare);
+  ///   let map2 = Map.fromIter([(2, "Two"), (1, "One"), (0, "Zero")].values(), Nat.compare);
   ///   assert(Map.equal(map1, map2, Nat.compare, Text.equal));
   /// }
   /// ```

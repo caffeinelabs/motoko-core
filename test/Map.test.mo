@@ -207,7 +207,7 @@ run(
         "filter",
         do {
           let input = Map.empty<Nat, Text>();
-          let output = input.filter<Nat, Text>(
+          let output = input.filter(
             func(_, _) {
               Runtime.trap("test failed")
             }
@@ -586,7 +586,7 @@ run(
       test(
         "from iterator",
         do {
-          let map = Map.fromIter<Nat, Text>(Iter.fromArray<(Nat, Text)>([(0, "0")]), Nat.compare);
+          let map = Map.fromIter(Iter.fromArray([(0, "0")]), Nat.compare);
           assert (Map.get(map, Nat.compare, 0) == ?"0");
           assert (Map.equal(map, Map.singleton<Nat, Text>(0, "0"), Nat.compare, Text.equal));
           Map.size(map)
@@ -612,7 +612,7 @@ run(
         "filter",
         do {
           let input = Map.singleton<Nat, Text>(0, "0");
-          let output = Map.filter<Nat, Text>(
+          let output = Map.filter(
             input,
             Nat.compare,
             func(key, value) {
@@ -630,7 +630,7 @@ run(
         "map",
         do {
           let input = Map.singleton<Nat, Text>(0, "0");
-          let output = Map.map<Nat, Text, Int>(
+          let output = Map.map(
             input,
             func(key, value) {
               assert (key == 0);
@@ -647,7 +647,7 @@ run(
         "filter map",
         do {
           let input = Map.singleton<Nat, Text>(0, "0");
-          let output = Map.filterMap<Nat, Text, Int>(
+          let output = Map.filterMap(
             input,
             Nat.compare,
             func(key, value) {
@@ -1014,8 +1014,8 @@ run(
       test(
         "from iterator",
         do {
-          let array = Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) });
-          let map = Map.fromIter<Nat, Text>(Iter.fromArray(array), Nat.compare);
+          let array = Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) });
+          let map = Map.fromIter(Iter.fromArray(array), Nat.compare);
           for (index in Nat.range(0, smallSize)) {
             assert (Map.get(map, Nat.compare, index) == ?Nat.toText(index))
           };
@@ -1045,7 +1045,7 @@ run(
         "filter",
         do {
           let input = smallMap();
-          let output = Map.filter<Nat, Text>(
+          let output = Map.filter(
             input,
             Nat.compare,
             func(key, value) {
@@ -1070,7 +1070,7 @@ run(
         "map",
         do {
           let input = smallMap();
-          let output = Map.map<Nat, Text, Int>(
+          let output = Map.map(
             input,
             func(key, value) {
               +key
@@ -1087,7 +1087,7 @@ run(
         "filter map",
         do {
           let input = smallMap();
-          let output = Map.filterMap<Nat, Text, Int>(
+          let output = Map.filterMap(
             input,
             Nat.compare,
             func(key, value) {
@@ -1532,7 +1532,7 @@ run(
           for (index in Nat.range(0, numberOfEntries)) {
             pureMap := PureMap.add(pureMap, Nat.compare, index, Nat.toText(index))
           };
-          let map = Map.fromPure<Nat, Text>(pureMap, Nat.compare);
+          let map = Map.fromPure(pureMap, Nat.compare);
           for (index in Nat.range(0, numberOfEntries)) {
             assert (Map.get(map, Nat.compare, index) == ?Nat.toText(index))
           };
@@ -1576,7 +1576,7 @@ Test.suite(
           Map.add(map, Nat.compare, i, Nat.toText(i));
           for (j in Nat.range(0, i + 2)) {
             let actual = Iter.toArray(Map.entriesFrom(map, Nat.compare, j));
-            let expected = Iter.toArray(Iter.dropWhile<(Nat, Text)>(Map.entries(map), func(k, v) = k < j));
+            let expected = Iter.toArray(Iter.dropWhile(Map.entries(map), func(k, v) = k < j));
             Test.expect.array(actual, Tuple2.makeToText(Nat.toText, Text.toText), Tuple2.makeEqual(Nat.equal, Text.equal)).equal(expected)
           }
         }
@@ -1616,7 +1616,7 @@ Test.suite(
           Map.add(map, Nat.compare, i, Nat.toText(i));
           for (j in Nat.range(0, i + 2)) {
             let actual = Iter.toArray(Map.reverseEntriesFrom(map, Nat.compare, j));
-            let expected = Iter.toArray(Iter.dropWhile<(Nat, Text)>(Map.reverseEntries(map), func(k, v) = k > j));
+            let expected = Iter.toArray(Iter.dropWhile(Map.reverseEntries(map), func(k, v) = k > j));
             Test.expect.array(actual, Tuple2.makeToText(Nat.toText, Text.toText), Tuple2.makeEqual(Nat.equal, Text.equal)).equal(expected)
           }
         }

@@ -613,7 +613,7 @@ suite(
       func() {
         let testFilterMap = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.vals());
-          let mapped = Queue.filterMap<Nat, Text>(
+          let mapped = Queue.filterMap(
             q,
             func n = if (n % 2 == 0) ?Nat.toText(n) else null
           );
@@ -735,7 +735,7 @@ suite(
       func() {
         let testMap = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.vals());
-          let mapped = Queue.map<Nat, Nat>(q, func n = n * 2);
+          let mapped = Queue.map(q, func n = n * 2);
           expect.array(
             Iter.toArray(Queue.values(mapped)),
             Nat.toText,

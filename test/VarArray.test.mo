@@ -32,7 +32,7 @@ func varArrayTestable<A>(testableA : T.Testable<A>) : T.Testable<[var A]> {
 };
 
 func varArray<A>(testableA : T.Testable<A>, xs : [var A]) : T.TestableItem<[var A]> {
-  let testableAs = varArrayTestable<A>(testableA);
+  let testableAs = varArrayTestable(testableA);
   {
     item = xs;
     display = testableAs.display;
@@ -789,7 +789,7 @@ let suite = Suite.suite(
     Suite.test(
       "binarySearch duplicates",
       do {
-        let result = VarArray.binarySearch<Nat>([var 1, 2, 2, 2, 3], Nat.compare, 2);
+        let result = VarArray.binarySearch([var 1, 2, 2, 2, 3], Nat.compare, 2);
         switch result {
           case (#found index) { index >= 1 and index <= 3 };
           case _ { false }

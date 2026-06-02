@@ -99,7 +99,7 @@ module {
   ///
   /// let text = "Mississippi";
   /// let count =
-  ///   Text.foldLeft<Nat>(
+  ///   Text.foldLeft(
   ///     text,
   ///     0, // start the sum at 0
   ///     func(ss, c) = if (c == 's') ss + 1 else ss
@@ -161,7 +161,7 @@ module {
     if (n == 0) {
       return [var]
     };
-    let array = Prim.Array_init<Char>(n, ' ');
+    let array = Prim.Array_init(n, ' ');
     var i = 0;
     for (c in self.chars()) {
       array[i] := c;

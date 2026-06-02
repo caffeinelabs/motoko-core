@@ -82,7 +82,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let immutableList = PureList.fromIter<Nat>([1, 2, 3].values());
+  ///   let immutableList = PureList.fromIter([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
   ///   assert Iter.toArray(Stack.values(mutableStack)) == [1, 2, 3];
   /// }
@@ -175,7 +175,7 @@ module {
   /// import Stack "mo:core/Stack";
   ///
   /// persistent actor {
-  ///   let stack = Stack.singleton<Text>("motoko");
+  ///   let stack = Stack.singleton("motoko");
   ///   assert Stack.peek(stack) == ?"motoko";
   /// }
   /// ```
@@ -611,7 +611,7 @@ module {
   ///   Stack.push(stack, 3);
   ///   Stack.push(stack, 2);
   ///   Stack.push(stack, 1);
-  ///   let evens = Stack.filter<Nat>(stack, func(n) { n % 2 == 0 });
+  ///   let evens = Stack.filter(stack, func(n) { n % 2 == 0 });
   ///   assert Stack.pop(evens) == ?2;
   ///   assert Stack.pop(evens) == ?4;
   ///   assert Stack.pop(evens) == null;
@@ -708,7 +708,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromPure(?('A', ?('B', ?('C', ?('D', null)))));
-  ///   let found = Stack.findIndex<Char>(stack, func x = x == 'C');
+  ///   let found = Stack.findIndex(stack, func x = x == 'C');
   ///   assert found == ?2;
   /// }
   /// ```

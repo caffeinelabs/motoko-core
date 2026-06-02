@@ -590,7 +590,7 @@ suite(
     test(
       "single element",
       func() {
-        let queue = Queue.fromArray<Nat>([42]);
+        let queue = Queue.fromArray([42]);
         assert Queue.size(queue) == 1;
         assert Queue.peekFront(queue) == ?42;
         assert Queue.peekBack(queue) == ?42
@@ -600,7 +600,7 @@ suite(
     test(
       "multiple elements",
       func() {
-        let queue = Queue.fromArray<Nat>([1, 2, 3]);
+        let queue = Queue.fromArray([1, 2, 3]);
         assert Queue.size(queue) == 3;
         assert Queue.peekFront(queue) == ?1;
         assert Queue.peekBack(queue) == ?3;
@@ -642,7 +642,7 @@ suite(
     test(
       "single element",
       func() {
-        let queue = Queue.singleton<Nat>(42);
+        let queue = Queue.singleton(42);
         let array = Queue.toArray(queue);
         assert array == [42]
       }
@@ -651,7 +651,7 @@ suite(
     test(
       "multiple elements",
       func() {
-        let queue = Queue.fromArray<Nat>([1, 2, 3]);
+        let queue = Queue.fromArray([1, 2, 3]);
         let array = Queue.toArray(queue);
         assert array == [1, 2, 3]
       }
@@ -661,7 +661,7 @@ suite(
       "round trip",
       func() {
         let original = [1, 2, 3, 4, 5];
-        let queue = Queue.fromArray<Nat>(original);
+        let queue = Queue.fromArray(original);
         let result = Queue.toArray(queue);
         assert result == original
       }

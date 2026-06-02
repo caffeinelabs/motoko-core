@@ -50,8 +50,8 @@ func opnatEq(a : ?Nat, b : ?Nat) : Bool {
 
 // ## Construction
 let l1 = List.empty<X>();
-let l2 = List.pushFront<X>(l1, 2);
-let l3 = List.pushFront<X>(l2, 3);
+let l2 = List.pushFront(l1, 2);
+let l3 = List.pushFront(l2, 3);
 
 // ## Projection -- use nth
 assert (opnatEq(List.get<X>(l3, 0), ?3));
@@ -72,11 +72,11 @@ assert (opnatEq(List.get<X>(l3, 2), null));
    */
 
 // ## Deconstruction
-let (a1, _t1) = List.popFront<X>(l3);
+let (a1, _t1) = List.popFront(l3);
 assert (opnatEq(a1, ?3));
-let (a2, _t2) = List.popFront<X>(l2);
+let (a2, _t2) = List.popFront(l2);
 assert (opnatEq(a2, ?2));
-let (a3, t3) = List.popFront<X>(l1);
+let (a3, t3) = List.popFront(l1);
 assert (opnatEq(a3, null));
 assert (List.isEmpty<X>(t3));
 
@@ -91,7 +91,7 @@ do {
   let expected : List.List<Nat> = ?(1, ?(2, ?(3, null)));
   // [[1, 2], [3]]
   let nested : List.List<List.List<Nat>> = ?(?(1, ?(2, null)), ?(?(3, null), null));
-  let actual = List.flatten<Nat>(nested);
+  let actual = List.flatten(nested);
 
   assert List.equal<Nat>(expected, actual, func(x1, x2) = x1 == x2);
 
@@ -102,7 +102,7 @@ do {
 
   let expected : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
   let array = [1, 2, 3];
-  let actual = List.fromArray<Nat>(array);
+  let actual = List.fromArray(array);
 
   assert List.equal<Nat>(expected, actual, func(x1, x2) = x1 == x2)
 };
@@ -112,7 +112,7 @@ do {
 
   let expected : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
   let array = [var 1, 2, 3];
-  let actual = List.fromVarArray<Nat>(array);
+  let actual = List.fromVarArray(array);
 
   assert List.equal<Nat>(expected, actual, func(x1, x2) = x1 == x2)
 };
@@ -122,7 +122,7 @@ do {
 
   let expected = [1, 2, 3];
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let actual = List.toArray<Nat>(list);
+  let actual = List.toArray(list);
 
   assert (actual.size() == expected.size());
 
@@ -149,7 +149,7 @@ do {
   Debug.print("  values");
 
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let vals = List.values<Nat>(list);
+  let vals = List.values(list);
   let actual = [var 0, 0, 0];
   let expected = [1, 2, 3];
 
@@ -168,7 +168,7 @@ do {
   Debug.print("  enumerate");
 
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let items = List.enumerate<Nat>(list);
+  let items = List.enumerate(list);
   let actual = [var 0, 0, 0];
   let expected = [1, 2, 3];
 
@@ -1595,7 +1595,7 @@ let fromIter = suite(
     ),
     test(
       "large",
-      List.fromIter<Nat>(Nat.range(0, 100_000)) |> List.size _,
+      List.fromIter(Nat.range(0, 100_000)) |> List.size _,
       M.equals(T.nat 100_000)
     )
   ]
@@ -1663,7 +1663,7 @@ Test.suite(
   "join",
   func() {
     func t(input : [[Nat]], expected : [Nat]) : () -> () = func() {
-      let inputIter = Iter.map<[Nat], List<Nat>>(input.vals(), func x = List.fromArray(x));
+      let inputIter = Iter.map(input.vals(), func x = List.fromArray(x));
       let result = List.join(inputIter);
       Test.expect.array(List.toArray(result), Nat.toText, Nat.equal).equal(expected)
     };
@@ -1677,7 +1677,7 @@ Test.suite(
   "flatten",
   func() {
     func t(input : [[Nat]], expected : [Nat]) : () -> () = func() {
-      let inputList = List.fromIter(Iter.map<[Nat], List<Nat>>(input.vals(), func x = List.fromArray(x)));
+      let inputList = List.fromIter(Iter.map(input.vals(), func x = List.fromArray(x)));
       let result = List.flatten(inputList);
       Test.expect.array(List.toArray(result), Nat.toText, Nat.equal).equal(expected)
     };

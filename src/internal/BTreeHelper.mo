@@ -60,7 +60,7 @@ module {
     if (splitIndex > array.size()) { assert false };
 
     let leftSplit = if (insertIndex < splitIndex) {
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         array.size(),
         func(i) {
           // if below the split index
@@ -77,7 +77,7 @@ module {
     }
     // index >= splitIndex
     else {
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         array.size(),
         func(i) {
           // right biased splitting
@@ -89,7 +89,7 @@ module {
     let (rightSplit, middleElement) : ([var ?T], ?T) =
     // if insert > split index, inserted element will be inserted into the right split
     if (insertIndex > splitIndex) {
-      let right = VarArray.tabulate<?T>(
+      let right = VarArray.tabulate(
         array.size(),
         func(i) {
           let adjIndex = i + splitIndex + 1; // + 1 accounts for the fact that the split element was part of the original array
@@ -104,7 +104,7 @@ module {
     }
     // if inserted element was placed in the left split
     else if (insertIndex < splitIndex) {
-      let right = VarArray.tabulate<?T>(
+      let right = VarArray.tabulate(
         array.size(),
         func(i) {
           let adjIndex = i + splitIndex;
@@ -115,7 +115,7 @@ module {
     }
     // insertIndex == splitIndex
     else {
-      let right = VarArray.tabulate<?T>(
+      let right = VarArray.tabulate(
         array.size(),
         func(i) {
           let adjIndex = i + splitIndex;
@@ -153,7 +153,7 @@ module {
   public func splitArrayAndInsertTwo<T>(children : [var ?T], rebalancedChildIndex : Nat, leftChildInsert : T, rightChildInsert : T) : ([var ?T], [var ?T]) {
     let splitIndex = children.size() / 2;
 
-    let leftRebalancedChildren = VarArray.tabulate<?T>(
+    let leftRebalancedChildren = VarArray.tabulate(
       children.size(),
       func(i) {
         // only insert elements up to the split index and fill the rest of the children with nulls

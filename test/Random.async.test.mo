@@ -288,7 +288,7 @@ await suite(
       func() : async () {
         let state = Random.emptyState();
         func sequentialGenerator() : async* Blob {
-          let bytes = Array.tabulate<Nat8>(16, func(i) { Nat8.fromNat(i) });
+          let bytes = Array.tabulate(16, func(i) { Nat8.fromNat(i) });
           Blob.fromArray(bytes)
         };
         let random = Random.AsyncRandom(state, sequentialGenerator);

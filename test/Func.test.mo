@@ -4,7 +4,7 @@ import { suite; test; expect } "mo:test";
 
 func isEven(x : Int) : Bool { x % 2 == 0 };
 func not_(x : Bool) : Bool { not x };
-let isOdd = Function.compose<Int, Bool, Bool>(not_, isEven);
+let isOdd = Function.compose(not_, isEven);
 
 suite(
   "compose",

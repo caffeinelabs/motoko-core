@@ -125,7 +125,7 @@ run(
         "filter",
         do {
           let input = Set.empty<Nat>();
-          let output = Set.filter<Nat>(
+          let output = Set.filter(
             input,
             Nat.compare,
             func(_) {
@@ -174,7 +174,7 @@ run(
       test(
         "join",
         do {
-          let set1 = Set.fromIter<Nat>(Iter.fromArray<Nat>([]), Nat.compare);
+          let set1 = Set.fromIter(Iter.fromArray<Nat>([]), Nat.compare);
           let set2 = set1;
           let set3 = set2;
           let combined = Set.join(Iter.fromArray([set1, set2, set3]), Nat.compare);
@@ -189,7 +189,7 @@ run(
           let subSet2 = subSet1;
           let subSet3 = subSet2;
           let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
-          let setOfSets = Set.fromIter<Set.Set<Nat>>(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
+          let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
           let combined = Set.flatten(setOfSets, Nat.compare);
           Set.size(combined)
         },
@@ -259,7 +259,7 @@ run(
         "filter",
         do {
           let input = buildTestSet();
-          let output = Set.filter<Nat>(
+          let output = Set.filter(
             input,
             Nat.compare,
             func(number) {
@@ -325,8 +325,8 @@ run(
       test(
         "compare less",
         do {
-          let set1 = Set.singleton<Nat>(0);
-          let set2 = Set.singleton<Nat>(1);
+          let set1 = Set.singleton(0);
+          let set2 = Set.singleton(1);
           assert (Set.compare(set1, set2, Nat.compare) == #less);
           true
         },
@@ -335,8 +335,8 @@ run(
       test(
         "compare equal",
         do {
-          let set1 = Set.singleton<Nat>(0);
-          let set2 = Set.singleton<Nat>(0);
+          let set1 = Set.singleton(0);
+          let set2 = Set.singleton(0);
           assert (Set.compare(set1, set2, Nat.compare) == #equal);
           true
         },
@@ -345,8 +345,8 @@ run(
       test(
         "compare greater key",
         do {
-          let set1 = Set.singleton<Nat>(1);
-          let set2 = Set.singleton<Nat>(0);
+          let set1 = Set.singleton(1);
+          let set2 = Set.singleton(0);
           assert (Set.compare(set1, set2, Nat.compare) == #greater);
           true
         },
@@ -355,9 +355,9 @@ run(
       test(
         "join",
         do {
-          let set1 = Set.singleton<Nat>(0);
-          let set2 = Set.singleton<Nat>(1);
-          let set3 = Set.singleton<Nat>(2);
+          let set1 = Set.singleton(0);
+          let set2 = Set.singleton(1);
+          let set3 = Set.singleton(2);
           let combined = Set.join(Iter.fromArray([set1, set2, set3]), Nat.compare);
           Iter.toArray(Set.values(combined))
         },
@@ -371,11 +371,11 @@ run(
       test(
         "flatten",
         do {
-          let subSet1 = Set.singleton<Nat>(0);
-          let subSet2 = Set.singleton<Nat>(1);
-          let subSet3 = Set.singleton<Nat>(2);
+          let subSet1 = Set.singleton(0);
+          let subSet2 = Set.singleton(1);
+          let subSet3 = Set.singleton(2);
           let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
-          let setOfSets = Set.fromIter<Set.Set<Nat>>(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
+          let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
           let combined = Set.flatten(setOfSets, Nat.compare);
           Iter.toArray(Set.values(combined))
         },
@@ -474,7 +474,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     "filter",
     do {
       let input = buildTestSet();
-      let output = Set.filter<Nat>(
+      let output = Set.filter(
         input,
         Nat.compare,
         func(number) {
@@ -577,9 +577,9 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   test(
     "join",
     do {
-      let set1 = Set.map<Nat, Int>(buildTestSet(), Int.compare, func(number) { +number });
-      let set2 = Set.map<Nat, Int>(buildTestSet(), Int.compare, func(number) { -number });
-      let set3 = Set.fromIter(Iter.fromArray<Int>([-1, 1]), Int.compare);
+      let set1 = Set.map(buildTestSet(), Int.compare, func(number) { +number });
+      let set2 = Set.map(buildTestSet(), Int.compare, func(number) { -number });
+      let set3 = Set.fromIter(Iter.fromArray([-1, 1]), Int.compare);
       let combined = Set.join(Iter.fromArray([set1, set2, set3]), Int.compare);
       Iter.toArray(Set.values(combined))
     },
@@ -601,11 +601,11 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   test(
     "flatten",
     do {
-      let subSet1 = Set.map<Nat, Int>(buildTestSet(), Int.compare, func(number) { +number });
-      let subSet2 = Set.map<Nat, Int>(buildTestSet(), Int.compare, func(number) { -number });
-      let subSet3 = Set.fromIter(Iter.fromArray<Int>([-1, 1]), Int.compare);
+      let subSet1 = Set.map(buildTestSet(), Int.compare, func(number) { +number });
+      let subSet2 = Set.map(buildTestSet(), Int.compare, func(number) { -number });
+      let subSet3 = Set.fromIter(Iter.fromArray([-1, 1]), Int.compare);
       let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
-      let setOfSets = Set.fromIter<Set.Set<Int>>(iterator, func(first, second) { Set.compare(first, second, Int.compare) });
+      let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Int.compare) });
       let combined = Set.flatten(setOfSets, Int.compare);
       Iter.toArray(Set.values(combined))
     },

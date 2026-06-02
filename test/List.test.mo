@@ -1350,8 +1350,8 @@ func testRange(n : Nat) : Bool {
   let vec = List.tabulate<Nat>(n, func(i) = i);
   for (left in Nat.range(0, n)) {
     for (right in Nat.range(left, n + 1)) {
-      let range = Iter.toArray<Nat>(List.range<Nat>(vec, left, right));
-      let expected = Array.tabulate<Nat>(right - left, func(i) = left + i);
+      let range = Iter.toArray(List.range(vec, left, right));
+      let expected = Array.tabulate(right - left, func(i) = left + i);
       if (range != expected) {
         Debug.print(
           "Range mismatch for left = " # Nat.toText(left) # ", right = " # Nat.toText(right) # ": expected " # debug_show (expected) # ", got " # debug_show (range)
@@ -1368,9 +1368,9 @@ func testSliceToArray(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i));
   for (left in Nat.range(0, n)) {
     for (right in Nat.range(left, n + 1)) {
-      let slice = List.sliceToArray<Nat>(vec, left, right);
-      let sliceVar = List.sliceToVarArray<Nat>(vec, left, right);
-      let expected = Array.tabulate<Nat>(right - left, func(i) = left + i);
+      let slice = List.sliceToArray(vec, left, right);
+      let sliceVar = List.sliceToVarArray(vec, left, right);
+      let expected = Array.tabulate(right - left, func(i) = left + i);
       let expectedVar = VarArray.tabulate<Nat>(right - left, func(i) = left + i);
       if (slice != expected or not VarArray.equal<Nat>(sliceVar, expectedVar, Nat.equal)) {
         Debug.print(
@@ -1446,7 +1446,7 @@ func testContains(n : Nat) : Bool {
 func testReverse(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i));
   assertValid(vec);
-  let reversed = List.reverse<Nat>(vec);
+  let reversed = List.reverse(vec);
   assertValid(reversed);
   List.reverseInPlace(vec);
   assertValid(vec);
@@ -1459,12 +1459,12 @@ func testReverse(n : Nat) : Bool {
 
 func testSort(n : Nat) : Bool {
   let array = Array.tabulate<Int>(n, func(i) = (i * 123) % 100 - 50);
-  let vec = List.fromArray<Int>(array);
+  let vec = List.fromArray(array);
 
   let sorted = List.sort(vec, Int.compare);
   List.sortInPlace(vec, Int.compare);
 
-  let expected = List.fromArray<Int>(Array.sort(array, Int.compare));
+  let expected = List.fromArray(Array.sort(array, Int.compare));
 
   List.equal(vec, expected, Int.equal) and List.equal(sorted, expected, Int.equal)
 };
@@ -1506,7 +1506,7 @@ func testDeduplicate(n : Nat) : Bool {
 };
 
 func testToArray(n : Nat) : Bool {
-  let array = Array.tabulate<Nat>(n, func(i) = i);
+  let array = Array.tabulate(n, func(i) = i);
   let vec = List.fromArray<Nat>(array);
   assertValid(vec);
   Array.equal(List.toArray(vec), array, Nat.equal)
@@ -1520,12 +1520,12 @@ func testToVarArray(n : Nat) : Bool {
 
 func testFromVarArray(n : Nat) : Bool {
   let array = VarArray.tabulate<Nat>(n, func(i) = i);
-  let vec = List.fromVarArray<Nat>(array);
+  let vec = List.fromVarArray(array);
   List.equal(vec, List.fromArray<Nat>(Array.fromVarArray(array)), Nat.equal)
 };
 
 func testFromArray(n : Nat) : Bool {
-  let array = Array.tabulate<Nat>(n, func(i) = i);
+  let array = Array.tabulate(n, func(i) = i);
   let vec = List.fromArray<Nat>(array);
   List.equal(vec, List.fromArray<Nat>(array), Nat.equal)
 };
@@ -1570,7 +1570,7 @@ func testFoldRight(n : Nat) : Bool {
 func testFilter(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i));
 
-  let evens = List.filter<Nat>(vec, func x = x % 2 == 0);
+  let evens = List.filter(vec, func x = x % 2 == 0);
   assertValid(evens);
 
   let expectedEvens = List.fromArray<Nat>(Array.tabulate<Nat>((n + 1) / 2, func(i) = i * 2));
@@ -1579,14 +1579,14 @@ func testFilter(n : Nat) : Bool {
     return false
   };
 
-  let none = List.filter<Nat>(vec, func _ = false);
+  let none = List.filter(vec, func _ = false);
   assertValid(none);
   if (not List.isEmpty(none)) {
     Debug.print("Filter none failed");
     return false
   };
 
-  let all = List.filter<Nat>(vec, func _ = true);
+  let all = List.filter(vec, func _ = true);
   assertValid(all);
   if (not List.equal<Nat>(all, vec, Nat.equal)) {
     Debug.print("Filter all failed");
@@ -1603,7 +1603,7 @@ func testRetain(n : Nat) : Bool {
     for (rem in Nat.range(0, mod + 1)) {
       let f : Nat -> Bool = func x = x % mod == rem;
       let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i));
-      let expected = List.filter<Nat>(vec, f);
+      let expected = List.filter(vec, f);
       List.retain<Nat>(vec, f);
       if (not List.equal<Nat>(vec, expected, Nat.equal)) {
         Debug.print("Retain failed for mod " # Nat.toText(mod) # " and rem " # Nat.toText(rem) # "");
@@ -1645,9 +1645,9 @@ func testFilterMap(n : Nat) : Bool {
 };
 
 func testPure(n : Nat) : Bool {
-  let idArray = Array.tabulate<Nat>(n, func(i) = i);
+  let idArray = Array.tabulate(n, func(i) = i);
   let vec = List.fromArray<Nat>(idArray);
-  let pureList = List.toPure<Nat>(vec);
+  let pureList = List.toPure(vec);
   let newVec = List.fromPure<Nat>(pureList);
   assertValid(newVec);
 
@@ -1730,7 +1730,7 @@ func testFlatten(n : Nat) : Bool {
       func(i) = List.fromArray<Nat>(Array.tabulate<Nat>(i + 1, func(j) = j))
     )
   );
-  let flattened = List.flatten<Nat>(vec);
+  let flattened = List.flatten(vec);
   let expectedSize = (n * (n + 1)) / 2;
 
   if (List.size(flattened) != expectedSize) {
@@ -1751,11 +1751,11 @@ func testFlatten(n : Nat) : Bool {
 };
 
 func testJoin(n : Nat) : Bool {
-  let iter = Array.tabulate<List.List<Nat>>(
+  let iter = Array.tabulate(
     n,
     func(i) = List.fromArray<Nat>(Array.tabulate<Nat>(i + 1, func(j) = j))
   ).vals();
-  let flattened = List.join<Nat>(iter);
+  let flattened = List.join(iter);
   let expectedSize = (n * (n + 1)) / 2;
 
   if (List.size(flattened) != expectedSize) {
@@ -1808,7 +1808,7 @@ func testNextIndexOf(n : Nat) : Bool {
   let vec = List.tabulate<Nat>(n, func(i) = i);
   for (from in Nat.range(0, n)) {
     for (element in Nat.range(0, n + 1)) {
-      let actual = List.nextIndexOf<Nat>(vec, Nat.equal, element, from);
+      let actual = List.nextIndexOf(vec, Nat.equal, element, from);
       let expected = nextIndexOf(vec, element, from);
       if (expected != actual) {
         Debug.print(
@@ -1838,7 +1838,7 @@ func testPrevIndexOf(n : Nat) : Bool {
   let vec = List.tabulate<Nat>(n, func(i) = i);
   for (from in Nat.range(0, n + 1)) {
     for (element in Nat.range(0, n + 1)) {
-      let actual = List.prevIndexOf<Nat>(vec, Nat.equal, element, from);
+      let actual = List.prevIndexOf(vec, Nat.equal, element, from);
       let expected = prevIndexOf(vec, element, from);
       if (expected != actual) {
         Debug.print(
@@ -1864,7 +1864,7 @@ func testMin(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i + 1));
   for (i in Nat.range(0, n)) {
     List.put(vec, i, 0);
-    let min = List.min<Nat>(vec, Nat.compare);
+    let min = List.min(vec, Nat.compare);
     if (min != ?0) {
       Debug.print("Min failed: expected ?0, got " # debug_show (min));
       return false
@@ -1887,7 +1887,7 @@ func testMax(n : Nat) : Bool {
   let vec = List.fromArray<Nat>(Array.tabulate<Nat>(n, func(i) = i + 1));
   for (i in Nat.range(0, n)) {
     List.put(vec, i, n + 1);
-    let max = List.max<Nat>(vec, Nat.compare);
+    let max = List.max(vec, Nat.compare);
     if (max != ?(n + 1)) {
       Debug.print("Max failed: expected ?" # Nat.toText(n + 1) # ", got " # debug_show (max));
       return false
@@ -2074,8 +2074,8 @@ Test.suite(
     Test.test(
       "binarySearch",
       func() {
-        let result1 = List.binarySearch<Nat>(empty, Nat.compare, 0);
-        let result2 = List.binarySearch<Nat>(emptied, Nat.compare, 0);
+        let result1 = List.binarySearch(empty, Nat.compare, 0);
+        let result2 = List.binarySearch(emptied, Nat.compare, 0);
         Test.expect.bool(result1 == #insertionIndex(0)).equal(true);
         Test.expect.bool(result2 == #insertionIndex(0)).equal(true)
       }
@@ -2091,7 +2091,7 @@ Test.suite(
       "found",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 5);
+        let result = List.binarySearch(list, Nat.compare, 5);
         Test.expect.bool(result == #found(2)).equal(true)
       }
     );
@@ -2099,7 +2099,7 @@ Test.suite(
       "not found",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 6);
+        let result = List.binarySearch(list, Nat.compare, 6);
         Test.expect.bool(result == #insertionIndex(3)).equal(true)
       }
     );
@@ -2107,7 +2107,7 @@ Test.suite(
       "first element",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 1);
+        let result = List.binarySearch(list, Nat.compare, 1);
         Test.expect.bool(result == #found(0)).equal(true)
       }
     );
@@ -2115,7 +2115,7 @@ Test.suite(
       "last element",
       func() {
         let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 11);
+        let result = List.binarySearch(list, Nat.compare, 11);
         Test.expect.bool(result == #found(5)).equal(true)
       }
     );
@@ -2123,7 +2123,7 @@ Test.suite(
       "single element found",
       func() {
         let list = List.fromArray<Nat>([42]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 42);
+        let result = List.binarySearch(list, Nat.compare, 42);
         Test.expect.bool(result == #found(0)).equal(true)
       }
     );
@@ -2131,7 +2131,7 @@ Test.suite(
       "single element not found",
       func() {
         let list = List.fromArray<Nat>([42]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 43);
+        let result = List.binarySearch(list, Nat.compare, 43);
         Test.expect.bool(result == #insertionIndex(1)).equal(true)
       }
     );
@@ -2139,7 +2139,7 @@ Test.suite(
       "duplicates",
       func() {
         let list = List.fromArray<Nat>([1, 2, 2, 2, 3]);
-        let result = List.binarySearch<Nat>(list, Nat.compare, 2);
+        let result = List.binarySearch(list, Nat.compare, 2);
         let ok = switch result {
           case (#found index) { index >= 1 and index <= 3 };
           case _ { false }

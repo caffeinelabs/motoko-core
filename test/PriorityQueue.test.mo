@@ -179,7 +179,7 @@ func testPushAndPeekThenPopArray<T>(
   };
 
   expect.array<T>(
-    VarArray.map<?T, T>(
+    VarArray.map(
       extractedValues,
       func(optTop) {
         switch (optTop) {
@@ -241,7 +241,7 @@ suite(
           PriorityQueue.push(priorityQueue, compareValue, (tag, v))
         };
 
-        let extractedTags = Array.tabulate<Nat>(
+        let extractedTags = Array.tabulate(
           values.size(),
           func _ {
             let ?(tag, v) = PriorityQueue.pop(priorityQueue, compareValue) else Runtime.trap("priorityQueue unexpectedly empty");
@@ -277,14 +277,14 @@ func opToText<T>(op : PriorityQueueUpdateOperation<T>, toText : T -> Text) : Tex
 func opsToText<T>(ops : [PriorityQueueUpdateOperation<T>], toText : T -> Text) : Text {
   let cap : Nat = 10;
   let n = ops.size();
-  let shown = Array.tabulate<Text>(
+  let shown = Array.tabulate(
     Nat.min(ops.size(), cap),
     func i {
-      opToText<T>(ops[i], toText)
+      opToText(ops[i], toText)
     }
   );
 
-  let body = Array.toText<Text>(shown, func x = x); // join with ", "
+  let body = Array.toText(shown, func x = x); // join with ", "
 
   let ?stripped = Text.stripEnd(body, #char ']');
   stripped # (if (n > cap) "...]" else "]")
@@ -528,7 +528,7 @@ suite(
     test(
       "empty iterator",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>(Iter.empty<Nat>(), Nat.compare);
+        let pq = PriorityQueue.fromIter(Iter.empty<Nat>(), Nat.compare);
         expect.bool(PriorityQueue.isEmpty(pq)).equal(true);
         expect.nat(PriorityQueue.size(pq)).equal(0)
       }
@@ -537,7 +537,7 @@ suite(
     test(
       "single element",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([42].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([42].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(1);
         expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?42)
       }
@@ -546,7 +546,7 @@ suite(
     test(
       "multiple elements",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(3);
         expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
       }
@@ -555,7 +555,7 @@ suite(
     test(
       "preserves all elements in priority order",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([3, 1, 4, 1, 5, 9, 2, 6].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([3, 1, 4, 1, 5, 9, 2, 6].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(8);
         expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?9);
         expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?6);
@@ -572,7 +572,7 @@ suite(
     test(
       "duplicates",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([5, 5, 5].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([5, 5, 5].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(3);
         expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
         expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
@@ -598,7 +598,7 @@ suite(
     test(
       "deep copy preserves elements",
       func() {
-        let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let original = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         let copy = PriorityQueue.clone(original);
         expect.nat(PriorityQueue.size(copy)).equal(3);
         expect.option<Nat>(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
@@ -608,7 +608,7 @@ suite(
     test(
       "mutating the copy does not affect the original",
       func() {
-        let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let original = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         let copy = PriorityQueue.clone(original);
         ignore PriorityQueue.pop(copy, Nat.compare);
         ignore PriorityQueue.pop(copy, Nat.compare);
@@ -621,7 +621,7 @@ suite(
     test(
       "mutating the original does not affect the copy",
       func() {
-        let original = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let original = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         let copy = PriorityQueue.clone(original);
         PriorityQueue.clear(original);
         expect.bool(PriorityQueue.isEmpty(original)).equal(true);
@@ -656,7 +656,7 @@ suite(
     test(
       "yields elements in descending priority order",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([10, 5, 3])
       }
@@ -665,7 +665,7 @@ suite(
     test(
       "does not modify the original queue",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([5, 10, 3].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         ignore Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         expect.nat(PriorityQueue.size(pq)).equal(3);
         expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
@@ -675,7 +675,7 @@ suite(
     test(
       "with duplicates",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([3, 1, 4, 1, 5].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([3, 1, 4, 1, 5].values(), Nat.compare);
         let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([5, 4, 3, 1, 1])
       }
@@ -684,7 +684,7 @@ suite(
     test(
       "can be called multiple times",
       func() {
-        let pq = PriorityQueue.fromIter<Nat>([2, 7, 1].values(), Nat.compare);
+        let pq = PriorityQueue.fromIter([2, 7, 1].values(), Nat.compare);
         let vals1 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         let vals2 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         expect.array<Nat>(vals1, Nat.toText, Nat.equal).equal([7, 2, 1]);
