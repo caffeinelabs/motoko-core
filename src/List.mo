@@ -2116,7 +2116,7 @@ module {
   public func toVarArray<T>(self : List<T>) : [var T] {
     let ?fs = first(self) else return [var];
 
-    let array = VarArray.repeat<T>(fs, size(self));
+    let array = VarArray.repeat(fs, size(self));
 
     var index = 0;
 

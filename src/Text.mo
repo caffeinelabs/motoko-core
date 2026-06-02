@@ -161,7 +161,7 @@ module {
     if (n == 0) {
       return [var]
     };
-    let array = Prim.Array_init<Char>(n, ' ');
+    let array = Prim.Array_init(n, ' ');
     var i = 0;
     for (c in self.chars()) {
       array[i] := c;

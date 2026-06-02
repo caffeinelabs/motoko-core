@@ -95,7 +95,7 @@ module {
     if (size == 0) {
       return [var]
     };
-    let newArray = Prim.Array_init<T>(size, self[0]);
+    let newArray = Prim.Array_init(size, self[0]);
     var i = 0;
     while (i < size) {
       newArray[i] := self[i];
@@ -312,7 +312,7 @@ module {
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func filter<T>(self : [T], f : T -> Bool) : [T] {
     var count = 0;
-    let keep = Prim.Array_tabulate<Bool>(
+    let keep = Prim.Array_tabulate(
       self.size(),
       func i {
         if (f(self[i])) {
@@ -356,7 +356,7 @@ module {
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
   public func filterMap<T, R>(self : [T], f : T -> ?R) : [R] {
     var count = 0;
-    let options = Prim.Array_tabulate<?R>(
+    let options = Prim.Array_tabulate(
       self.size(),
       func i {
         let result = f(self[i]);
@@ -417,7 +417,7 @@ module {
     let size = self.size();
 
     var error : ?Types.Result<[R], E> = null;
-    let results = Prim.Array_tabulate<?R>(
+    let results = Prim.Array_tabulate(
       size,
       func i {
         switch (f(self[i])) {
@@ -493,10 +493,10 @@ module {
   /// *Runtime and space assumes that `k` runs in O(1) time and space.
   public func flatMap<T, R>(self : [T], k : T -> Types.Iter<R>) : [R] {
     var flatSize = 0;
-    let arrays = Prim.Array_tabulate<[R]>(
+    let arrays = Prim.Array_tabulate(
       self.size(),
       func i {
-        let subArray = fromIter<R>(k(self[i]));
+        let subArray = fromIter(k(self[i]));
         flatSize += subArray.size();
         subArray
       }
@@ -665,7 +665,7 @@ module {
       }
     };
     if (size == 0) { return [] };
-    let array = Prim.Array_init<T>(
+    let array = Prim.Array_init(
       size,
       switch list {
         case (?(h, _)) h;

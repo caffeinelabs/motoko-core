@@ -409,7 +409,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "max through fold",
               func(m) {
-                let expected = Map.foldLeft<Nat, Text, ?(Nat, Text)>(m, null : ?(Nat, Text), func(_, k, v) = ?(k, v));
+                let expected = Map.foldLeft(m, null : ?(Nat, Text), func(_, k, v) = ?(k, v));
                 M.equals(T.optional(entryTestable, expected)).matches(Map.maxEntry(m))
               }
             ),
@@ -417,7 +417,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "min through fold",
               func(m) {
-                let expected = Map.foldRight<Nat, Text, ?(Nat, Text)>(m, null : ?(Nat, Text), func(k, v, _) = ?(k, v));
+                let expected = Map.foldRight(m, null : ?(Nat, Text), func(k, v, _) = ?(k, v));
                 M.equals(T.optional(entryTestable, expected)).matches(Map.minEntry(m))
               }
             )

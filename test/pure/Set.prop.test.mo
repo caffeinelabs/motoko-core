@@ -219,14 +219,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
             prop(
               "max through fold",
               func(s) {
-                let expected = Set.foldLeft<Nat, ?Nat>(s, null : ?Nat, func(_, v) = ?v);
+                let expected = Set.foldLeft(s, null : ?Nat, func(_, v) = ?v);
                 M.equals(T.optional(T.natTestable, expected)).matches(Set.max(s))
               }
             ),
             prop(
               "min through fold",
               func(s) {
-                let expected = Set.foldRight<Nat, ?Nat>(s, null : ?Nat, func(v, _) = ?v);
+                let expected = Set.foldRight(s, null : ?Nat, func(v, _) = ?v);
                 M.equals(T.optional(T.natTestable, expected)).matches(Set.min(s))
               }
             )

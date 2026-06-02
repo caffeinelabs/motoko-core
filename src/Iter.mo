@@ -806,7 +806,7 @@ module {
 
   /// Sorted iterator.  Will iterate over *all* elements to sort them, necessarily.
   public func sort<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Iter<T> {
-    let array = toVarArray<T>(self);
+    let array = toVarArray(self);
     VarArray.sortInPlace<T>(array, compare);
     fromVarArray<T>(array)
   };

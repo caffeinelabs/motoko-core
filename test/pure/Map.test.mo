@@ -220,7 +220,7 @@ run(
         "filter",
         do {
           let input = Map.empty<Nat, Text>();
-          let output = Map.filter<Nat, Text>(
+          let output = Map.filter(
             input,
             Nat.compare,
             func(_, _) {
@@ -408,7 +408,7 @@ run(
       test(
         "for each",
         do {
-          let map = Map.singleton<Nat, Text>(0, "0");
+          let map = Map.singleton(0, "0");
           Map.forEach<Nat, Text>(
             map,
             func(key, value) {
@@ -423,8 +423,8 @@ run(
       test(
         "filter",
         do {
-          let input = Map.singleton<Nat, Text>(0, "0");
-          let output = Map.filter<Nat, Text>(
+          let input = Map.singleton(0, "0");
+          let output = Map.filter(
             input,
             Nat.compare,
             func(key, value) {
@@ -451,8 +451,8 @@ run(
       test(
         "compare less key",
         do {
-          let map1 = Map.singleton<Nat, Text>(0, "0");
-          let map2 = Map.singleton<Nat, Text>(1, "1");
+          let map1 = Map.singleton(0, "0");
+          let map2 = Map.singleton(1, "1");
           assert (Map.compare(map1, map2, Nat.compare, Text.compare) == #less);
           true
         },
@@ -461,8 +461,8 @@ run(
       test(
         "compare less value",
         do {
-          let map1 = Map.singleton<Nat, Text>(0, "0");
-          let map2 = Map.singleton<Nat, Text>(0, "Zero");
+          let map1 = Map.singleton(0, "0");
+          let map2 = Map.singleton(0, "Zero");
           assert (Map.compare(map1, map2, Nat.compare, Text.compare) == #less);
           true
         },
@@ -471,8 +471,8 @@ run(
       test(
         "compare equal",
         do {
-          let map1 = Map.singleton<Nat, Text>(0, "0");
-          let map2 = Map.singleton<Nat, Text>(0, "0");
+          let map1 = Map.singleton(0, "0");
+          let map2 = Map.singleton(0, "0");
           assert (Map.compare(map1, map2, Nat.compare, Text.compare) == #equal);
           true
         },
@@ -481,8 +481,8 @@ run(
       test(
         "compare greater key",
         do {
-          let map1 = Map.singleton<Nat, Text>(1, "1");
-          let map2 = Map.singleton<Nat, Text>(0, "0");
+          let map1 = Map.singleton(1, "1");
+          let map2 = Map.singleton(0, "0");
           assert (Map.compare(map1, map2, Nat.compare, Text.compare) == #greater);
           true
         },
@@ -491,8 +491,8 @@ run(
       test(
         "compare greater value",
         do {
-          let map1 = Map.singleton<Nat, Text>(0, "Zero");
-          let map2 = Map.singleton<Nat, Text>(0, "0");
+          let map1 = Map.singleton(0, "Zero");
+          let map2 = Map.singleton(0, "0");
           assert (Map.compare(map1, map2, Nat.compare, Text.compare) == #greater);
           true
         },
@@ -656,7 +656,7 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
     "filter",
     do {
       let input = buildTestMap();
-      let output = Map.filter<Nat, Text>(
+      let output = Map.filter(
         input,
         Nat.compare,
         func(key, value) {
@@ -956,8 +956,8 @@ run(
       test(
         "from iterator",
         do {
-          let array = Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) });
-          let map = Map.fromIter<Nat, Text>(Iter.fromArray(array), Nat.compare);
+          let array = Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) });
+          let map = Map.fromIter(Iter.fromArray(array), Nat.compare);
           for (index in Nat.range(0, smallSize)) {
             assert (Map.get(map, Nat.compare, index) == ?Nat.toText(index))
           };
@@ -987,7 +987,7 @@ run(
         "filter",
         do {
           let input = smallMap();
-          let output = Map.filter<Nat, Text>(
+          let output = Map.filter(
             input,
             Nat.compare,
             func(key, value) {
@@ -1012,7 +1012,7 @@ run(
         "map",
         do {
           let input = smallMap();
-          let output = Map.map<Nat, Text, Int>(
+          let output = Map.map(
             input,
             func(key, value) {
               +key
@@ -1029,7 +1029,7 @@ run(
         "filter map",
         do {
           let input = smallMap();
-          let output = Map.filterMap<Nat, Text, Int>(
+          let output = Map.filterMap(
             input,
             Nat.compare,
             func(key, value) {

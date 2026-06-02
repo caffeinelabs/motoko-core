@@ -341,7 +341,7 @@ suite(
       "map",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].vals());
-        let mapped = Queue.map<Nat, Text>(queue, Nat.toText);
+        let mapped = Queue.map(queue, Nat.toText);
         assert Iter.toArray(Queue.values(mapped)) == ["1", "2", "3"]
       }
     );
@@ -350,7 +350,7 @@ suite(
       "filter",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
-        let filtered = Queue.filter<Nat>(queue, func n = n % 2 == 0);
+        let filtered = Queue.filter(queue, func n = n % 2 == 0);
         assert Iter.toArray(Queue.values(filtered)) == [2, 4]
       }
     );
@@ -359,7 +359,7 @@ suite(
       "filter map",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3, 4].vals());
-        let result = Queue.filterMap<Nat, Text>(
+        let result = Queue.filterMap(
           queue,
           func n = if (n % 2 == 0) ?Nat.toText(n) else null
         );

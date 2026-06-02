@@ -452,10 +452,10 @@ module {
   public func swap<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K, value : V) : ?V {
     let insertResult = switch (self.root) {
       case (#leaf(leafNode)) {
-        leafInsertHelper<K, V>(leafNode, btreeOrder, compare, key, value)
+        leafInsertHelper(leafNode, btreeOrder, compare, key, value)
       };
       case (#internal(internalNode)) {
-        internalInsertHelper<K, V>(internalNode, btreeOrder, compare, key, value)
+        internalInsertHelper(internalNode, btreeOrder, compare, key, value)
       }
     };
 
@@ -621,10 +621,10 @@ module {
     let deletedValue = switch (self.root) {
       case (#leaf(leafNode)) {
         // TODO: think about how this can be optimized so don't have to do two steps (search and then insert)?
-        switch (NodeUtil.getKeyIndex<K, V>(leafNode.data, compare, key)) {
+        switch (NodeUtil.getKeyIndex(leafNode.data, compare, key)) {
           case (#keyFound(deleteIndex)) {
             leafNode.data.count -= 1;
-            let (_, deletedValue) = BTreeHelper.deleteAndShift<(K, V)>(leafNode.data.kvs, deleteIndex);
+            let (_, deletedValue) = BTreeHelper.deleteAndShift(leafNode.data.kvs, deleteIndex);
             self.size -= 1;
             ?deletedValue
           };
@@ -1394,7 +1394,7 @@ module {
   };
 
   func leafEntriesFrom<K, V>({ data } : Leaf<K, V>, compare : (K, K) -> Order.Order, key : K) : Types.Iter<(K, V)> {
-    var i = switch (BinarySearch.binarySearchNode<K, V>(data.kvs, compare, key, data.count)) {
+    var i = switch (BinarySearch.binarySearchNode(data.kvs, compare, key, data.count)) {
       case (#keyFound(i)) i;
       case (#notFound(i)) i
     };
@@ -1427,7 +1427,7 @@ module {
   };
 
   func reverseLeafEntriesFrom<K, V>({ data } : Leaf<K, V>, compare : (K, K) -> Order.Order, key : K) : Types.Iter<(K, V)> {
-    var i = switch (BinarySearch.binarySearchNode<K, V>(data.kvs, compare, key, data.count)) {
+    var i = switch (BinarySearch.binarySearchNode(data.kvs, compare, key, data.count)) {
       case (#keyFound(i)) i + 1; // +1 to include this key
       case (#notFound(i)) i // i is the index of the first key greater than the search key, or count if all keys are less than the search key
     };
@@ -1710,7 +1710,7 @@ module {
         case (#leaf(leafNode)) (leafNode, null);
         case (#internal(internalNode)) (internalNode, ?internalNode.children)
       };
-      let (i, isFound) = switch (NodeUtil.getKeyIndex<K, V>(node.data, compare, key)) {
+      let (i, isFound) = switch (NodeUtil.getKeyIndex(node.data, compare, key)) {
         case (#keyFound(i)) (i, true);
         case (#notFound(i)) (i, false)
       };
@@ -1778,7 +1778,7 @@ module {
         case (#leaf(leafNode)) (leafNode, null);
         case (#internal(internalNode)) (internalNode, ?internalNode.children)
       };
-      let (i, isFound) = switch (NodeUtil.getKeyIndex<K, V>(node.data, compare, key)) {
+      let (i, isFound) = switch (NodeUtil.getKeyIndex(node.data, compare, key)) {
         case (#keyFound(i)) (i + 1, true); // +1 to include this key
         case (#notFound(i)) (i, false) // i is the index of the first key less than the search key, or 0 if all keys are greater than the search key
       };
@@ -1812,7 +1812,7 @@ module {
 
   func internalDeleteHelper<K, V>(internalNode : Internal<K, V>, order : Nat, compare : (K, K) -> Order.Order, deleteKey : K, skipNode : Bool) : IntermediateInternalDeleteResult<K, V> {
     let minKeys = NodeUtil.minKeysFromOrder(order);
-    let keyIndex = NodeUtil.getKeyIndex<K, V>(internalNode.data, compare, deleteKey);
+    let keyIndex = NodeUtil.getKeyIndex(internalNode.data, compare, deleteKey);
 
     // match on both the result of the node binary search, and if this node level should be skipped even if the key is found (internal kv replacement case)
     switch (keyIndex, skipNode) {
@@ -1873,7 +1873,7 @@ module {
                     let kvPairToBePushedToChild = ?BTreeHelper.deleteAndShift(internalNode.data.kvs, 0);
                     internalNode.data.count -= 1;
                     // merge the children and push down the parent
-                    let newChild = NodeUtil.mergeChildrenAndPushDownParent<K, V>(internalChild, kvPairToBePushedToChild, sibling);
+                    let newChild = NodeUtil.mergeChildrenAndPushDownParent(internalChild, kvPairToBePushedToChild, sibling);
                     // update children of the parent
                     internalNode.children[0] := ?#internal(newChild);
                     ignore ?BTreeHelper.deleteAndShift(internalNode.children, 1);
@@ -1954,7 +1954,7 @@ module {
                     let kvPairToBePushedToChild = internalNode.data.kvs[childIndex];
                     internalNode.data.kvs[childIndex] := ?borrowedKVPair;
 
-                    let deletedKV = BTreeHelper.insertAtPostionAndDeleteAtPosition<(K, V)>(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
+                    let deletedKV = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
                     #delete(?deletedKV.1)
                   };
 
@@ -1998,7 +1998,7 @@ module {
                   case (?borrowedKVPair) {
                     let kvPairToBePushedToChild = internalNode.data.kvs[childIndex - 1];
                     internalNode.data.kvs[childIndex - 1] := ?borrowedKVPair;
-                    let kvDelete = BTreeHelper.insertAtPostionAndDeleteAtPosition<(K, V)>(leafChild.data.kvs, kvPairToBePushedToChild, 0, leafDeleteIndex);
+                    let kvDelete = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, 0, leafDeleteIndex);
                     #delete(?kvDelete.1)
                   };
                   case null {
@@ -2010,7 +2010,7 @@ module {
                           let kvPairToBePushedToChild = internalNode.data.kvs[childIndex];
                           internalNode.data.kvs[childIndex] := ?borrowedKVPair;
                           // insert the successor at the very last element
-                          let kvDelete = BTreeHelper.insertAtPostionAndDeleteAtPosition<(K, V)>(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
+                          let kvDelete = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
                           return #delete(?kvDelete.1)
                         };
                         // if cannot borrow, from left or right, merge (see below)
@@ -2136,7 +2136,7 @@ module {
     deletionSide : DeletionSide
   ) : (Leaf<K, V>, (K, V)) {
     let count = leftChild.data.count * 2;
-    let (kvs, deletedKV) = BTreeHelper.mergeParentWithChildrenAndDelete<(K, V)>(
+    let (kvs, deletedKV) = BTreeHelper.mergeParentWithChildrenAndDelete(
       parentKV,
       leftChild.data.count,
       leftChild.data.kvs,
@@ -2255,7 +2255,7 @@ module {
               };
 
               // split internal children
-              let (leftChildren, rightChildren) = NodeUtil.splitChildrenInTwoWithRebalances<K, V>(
+              let (leftChildren, rightChildren) = NodeUtil.splitChildrenInTwoWithRebalances(
                 internalNode.children,
                 insertIndex,
                 leftChild,
@@ -2319,7 +2319,7 @@ module {
         #leaf { data = mapData(data, project) }
       };
       case (#internal { data; children }) {
-        let mappedData = mapData<K, V1, V2>(data, project);
+        let mappedData = mapData(data, project);
         let mappedChildren = VarArray.map<?Node<K, V1>, ?Node<K, V2>>(
           children,
           func child {

@@ -381,10 +381,10 @@ module {
   public func insert<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), element : T) : Bool {
     let insertResult = switch (self.root) {
       case (#leaf(leafNode)) {
-        leafInsertHelper<T>(leafNode, btreeOrder, compare, element)
+        leafInsertHelper(leafNode, btreeOrder, compare, element)
       };
       case (#internal(internalNode)) {
-        internalInsertHelper<T>(internalNode, btreeOrder, compare, element)
+        internalInsertHelper(internalNode, btreeOrder, compare, element)
       }
     };
 
@@ -477,7 +477,7 @@ module {
     let deleted = switch (self.root) {
       case (#leaf(leafNode)) {
         // TODO: think about how this can be optimized so don't have to do two steps (search and then insert)?
-        switch (NodeUtil.getElementIndex<T>(leafNode.data, compare, element)) {
+        switch (NodeUtil.getElementIndex(leafNode.data, compare, element)) {
           case (#elementFound(deleteIndex)) {
             leafNode.data.count -= 1;
             ignore BTreeHelper.deleteAndShift<T>(leafNode.data.elements, deleteIndex);
@@ -809,7 +809,7 @@ module {
   /// where `m` and `n` denote the number of elements stored in the sets `set1` and `set2`, respectively,
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func union<T>(self : Set<T>, other : Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
-    let result = clone<T>(self);
+    let result = clone(self);
     for (element in values(other)) {
       if (not contains(result, compare, element)) {
         add(result, compare, element)
@@ -986,7 +986,7 @@ module {
   /// }
   /// ```
   public func retainAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : Bool {
-    let array = Array.fromIter<T>(values(self));
+    let array = Array.fromIter(values(self));
     deleteAll(
       self,
       compare,
@@ -1489,7 +1489,7 @@ module {
   };
 
   func leafElementsFrom<T>({ data } : Leaf<T>, compare : (T, T) -> Order.Order, element : T) : Types.Iter<T> {
-    var i = switch (BinarySearch.binarySearchNode<T>(data.elements, compare, element, data.count)) {
+    var i = switch (BinarySearch.binarySearchNode(data.elements, compare, element, data.count)) {
       case (#elementFound(i)) i;
       case (#notFound(i)) i
     };
@@ -1522,7 +1522,7 @@ module {
   };
 
   func reverseLeafElementsFrom<T>({ data } : Leaf<T>, compare : (T, T) -> Order.Order, element : T) : Types.Iter<T> {
-    var i = switch (BinarySearch.binarySearchNode<T>(data.elements, compare, element, data.count)) {
+    var i = switch (BinarySearch.binarySearchNode(data.elements, compare, element, data.count)) {
       case (#elementFound(i)) i + 1; // +1 to include this element
       case (#notFound(i)) i // i is the index of the first element greater than the search element, or count if all elements are less than the search element
     };
@@ -1804,7 +1804,7 @@ module {
         case (#leaf(leafNode)) (leafNode, null);
         case (#internal(internalNode)) (internalNode, ?internalNode.children)
       };
-      let (i, isFound) = switch (NodeUtil.getElementIndex<T>(node.data, compare, element)) {
+      let (i, isFound) = switch (NodeUtil.getElementIndex(node.data, compare, element)) {
         case (#elementFound(i)) (i, true);
         case (#notFound(i)) (i, false)
       };
@@ -1872,7 +1872,7 @@ module {
         case (#leaf(leafNode)) (leafNode, null);
         case (#internal(internalNode)) (internalNode, ?internalNode.children)
       };
-      let (i, isFound) = switch (NodeUtil.getElementIndex<T>(node.data, compare, element)) {
+      let (i, isFound) = switch (NodeUtil.getElementIndex(node.data, compare, element)) {
         case (#elementFound(i)) (i + 1, true); // +1 to include this element
         case (#notFound(i)) (i, false) // i is the index of the first element less than the search element, or 0 if all elements are greater than the search element
       };
@@ -1907,7 +1907,7 @@ module {
 
   func internalDeleteHelper<T>(internalNode : Internal<T>, order : Nat, compare : (T, T) -> Order.Order, deleteElement : T, skipNode : Bool) : IntermediateInternalDeleteResult<T> {
     let minElements = NodeUtil.minElementsFromOrder(order);
-    let elementIndex = NodeUtil.getElementIndex<T>(internalNode.data, compare, deleteElement);
+    let elementIndex = NodeUtil.getElementIndex(internalNode.data, compare, deleteElement);
 
     // match on both the result of the node binary search, and if this node level should be skipped even if the element is found (internal element replacement case)
     switch (elementIndex, skipNode) {
@@ -1971,7 +1971,7 @@ module {
                     let elementsToBePushedToChild = ?BTreeHelper.deleteAndShift(internalNode.data.elements, 0);
                     internalNode.data.count -= 1;
                     // merge the children and push down the parent
-                    let newChild = NodeUtil.mergeChildrenAndPushDownParent<T>(internalChild, elementsToBePushedToChild, sibling);
+                    let newChild = NodeUtil.mergeChildrenAndPushDownParent(internalChild, elementsToBePushedToChild, sibling);
                     // update children of the parent
                     internalNode.children[0] := ?#internal(newChild);
                     ignore ?BTreeHelper.deleteAndShift(internalNode.children, 1);
@@ -2225,7 +2225,7 @@ module {
     deletionSide : DeletionSide
   ) : Leaf<T> {
     let count = leftChild.data.count * 2;
-    let (elements, _) = BTreeHelper.mergeParentWithChildrenAndDelete<T>(
+    let (elements, _) = BTreeHelper.mergeParentWithChildrenAndDelete(
       parentElement,
       leftChild.data.count,
       leftChild.data.elements,
@@ -2348,7 +2348,7 @@ module {
               };
 
               // split internal children
-              let (leftChildren, rightChildren) = NodeUtil.splitChildrenInTwoWithRebalances<T>(
+              let (leftChildren, rightChildren) = NodeUtil.splitChildrenInTwoWithRebalances(
                 internalNode.children,
                 insertIndex,
                 leftChild,

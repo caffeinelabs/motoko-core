@@ -177,7 +177,7 @@ suite(
       "filter keeps matching elements",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3, 4].vals());
-        let evens = Stack.filter<Nat>(s, func(x) { x % 2 == 0 });
+        let evens = Stack.filter(s, func(x) { x % 2 == 0 });
         expect.array(Iter.toArray(Stack.values(evens)), Nat.toText, Nat.equal).equal([4, 2])
       }
     );
@@ -356,7 +356,7 @@ suite(
       func() {
         let original = Stack.tabulate<Nat>(largeSize, func(i) { i });
         let doubled = Stack.map<Nat, Nat>(original, func(x) { x * 2 });
-        let filtered = Stack.filter<Nat>(doubled, func(x) { x % 4 == 0 });
+        let filtered = Stack.filter(doubled, func(x) { x % 4 == 0 });
         let mapped = Stack.filterMap<Nat, Nat>(
           filtered,
           func(x) {
