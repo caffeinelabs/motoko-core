@@ -49,7 +49,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let pureQueue = Queue.toPure<Nat>(queue);
+  ///   let pureQueue = Queue.toPure(queue);
   /// }
   /// ```
   ///
@@ -77,7 +77,7 @@ module {
   /// import PureQueue "mo:core/pure/Queue";
   ///
   /// persistent actor {
-  ///   let pureQueue = PureQueue.fromIter<Nat>([1, 2, 3].values());
+  ///   let pureQueue = PureQueue.fromIter([1, 2, 3].values());
   ///   let queue = Queue.fromPure<Nat>(pureQueue);
   /// }
   /// ```
@@ -189,7 +189,7 @@ module {
   /// import Queue "mo:core/Queue";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Text>(["A", "B", "C"].values());
+  ///   let queue = Queue.fromIter(["A", "B", "C"].values());
   ///   assert Queue.size(queue) == 3;
   /// }
   /// ```
@@ -422,7 +422,7 @@ module {
   /// import Queue "mo:core/Queue";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Text>(["A", "B", "C"].values());
+  ///   let queue = Queue.fromIter(["A", "B", "C"].values());
   ///   assert Queue.size(queue) == 3;
   /// }
   /// ```
@@ -447,7 +447,7 @@ module {
   /// persistent actor {
   ///   transient let iter = ["A", "B", "C"].values();
   ///
-  ///   let queue = iter.toQueue<Text>();
+  ///   let queue = iter.toQueue();
   ///
   ///   assert Queue.size(queue) == 3;
   /// }
@@ -468,7 +468,7 @@ module {
   /// import Queue "mo:core/Queue";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromArray<Text>(["A", "B", "C"]);
+  ///   let queue = Queue.fromArray(["A", "B", "C"]);
   ///   assert Queue.size(queue) == 3;
   ///   assert Queue.peekFront(queue) == ?"A";
   /// }
@@ -498,7 +498,7 @@ module {
   /// import Array "mo:core/Array";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromArray<Text>(["A", "B", "C"]);
+  ///   let queue = Queue.fromArray(["A", "B", "C"]);
   ///   let array = Queue.toArray(queue);
   ///   assert array == ["A", "B", "C"];
   /// }
@@ -531,7 +531,7 @@ module {
   /// ```motoko
   /// import Queue "mo:core/Queue";
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Text>(["A", "B", "C"].values());
+  ///   let queue = Queue.fromIter(["A", "B", "C"].values());
   ///   transient let iter = Queue.values(queue);
   ///   assert iter.next() == ?"A";
   ///   assert iter.next() == ?"B";
@@ -664,7 +664,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
-  ///   let evens = Queue.filter<Nat>(queue, func(x) { x % 2 == 0 });
+  ///   let evens = Queue.filter(queue, func(x) { x % 2 == 0 });
   ///   assert Queue.size(evens) == 2;
   /// }
   /// ```

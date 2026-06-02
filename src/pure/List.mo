@@ -571,7 +571,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = List.fromArray(['A', 'B', 'C', 'D']);
-  ///   let found = List.findIndex<Char>(list, func(x) { x == 'C' });
+  ///   let found = List.findIndex(list, func(x) { x == 'C' });
   ///   assert found == ?2;
   /// }
   /// ```
@@ -729,7 +729,7 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   let list = List.tabulate<Nat>(3, func n = n * 2);
+  ///   let list = List.tabulate(3, func n = n * 2);
   ///   assert list == ?(0, ?(2, ?(4, null)));
   /// }
   /// ```

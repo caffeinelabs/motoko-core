@@ -271,7 +271,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter<Nat>([0, 2, 1].values(), Nat.compare);
+  ///   let set1 = Set.fromIter([0, 2, 1].values(), Nat.compare);
   ///   let set2 = Set.empty<Nat>();
   ///   assert Set.max(set1) == ?2;
   ///   assert Set.max(set2) == null;
@@ -292,7 +292,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set1 = Set.fromIter<Nat>([2, 0, 1].values(), Nat.compare);
+  ///   let set1 = Set.fromIter([2, 0, 1].values(), Nat.compare);
   ///   let set2 = Set.empty<Nat>();
   ///   assert Set.min(set1) == ?0;
   ///   assert Set.min(set2) == null;
@@ -447,7 +447,7 @@ module {
   ///   let numbers = Set.fromIter([3, 1, 2].values(), Nat.compare);
   ///
   ///   let textNumbers =
-  ///     Set.map<Nat, Text>(numbers, Text.compare, Nat.toText);
+  ///     Set.map(numbers, Text.compare, Nat.toText);
   ///   assert Iter.toArray(Set.values(textNumbers)) == ["1", "2", "3"];
   /// }
   /// ```
@@ -500,7 +500,7 @@ module {
   /// persistent actor {
   ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let evenNumbers = Set.filter<Nat>(numbers, Nat.compare, func (number) {
+  ///   let evenNumbers = Set.filter(numbers, Nat.compare, func (number) {
   ///     number % 2 == 0
   ///   });
   ///   assert Iter.toArray(Set.values(evenNumbers)) == [0, 2];
@@ -536,7 +536,7 @@ module {
   /// persistent actor {
   ///   let numbers = Set.fromIter([3, 0, 2, 1].values(), Nat.compare);
   ///
-  ///   let evenTextNumbers = Set.filterMap<Nat, Text>(numbers, Text.compare, func (number) {
+  ///   let evenTextNumbers = Set.filterMap(numbers, Text.compare, func (number) {
   ///     if (number % 2 == 0) {
   ///        ?Nat.toText(number)
   ///     } else {
@@ -821,7 +821,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
-  ///   let text = Set.foldLeft<Nat, Text>(
+  ///   let text = Set.foldLeft(
   ///      set,
   ///      "",
   ///      func (accumulator, element) {
@@ -852,7 +852,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
-  ///   let text = Set.foldRight<Nat, Text>(
+  ///   let text = Set.foldRight(
   ///      set,
   ///      "",
   ///      func (element, accumulator) {
@@ -881,7 +881,7 @@ module {
   ///
   /// persistent actor {
   ///   let set1 = Set.empty<Nat>();
-  ///   let set2 = Set.singleton<Nat>(1);
+  ///   let set2 = Set.singleton(1);
   ///
   ///   assert Set.isEmpty(set1);
   ///   assert not Set.isEmpty(set2);
@@ -907,9 +907,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].values(), Nat.compare);
+  ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let belowTen = Set.all<Nat>(set, func (number) {
+  ///   let belowTen = Set.all(set, func (number) {
   ///     number < 10
   ///   });
   ///   assert belowTen;
@@ -931,9 +931,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].values(), Nat.compare);
+  ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let aboveTen = Set.any<Nat>(set, func (number) {
+  ///   let aboveTen = Set.any(set, func (number) {
   ///     number > 10
   ///   });
   ///   assert not aboveTen;
@@ -961,7 +961,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let set = Set.fromIter<Nat>([0, 3, 1, 2].values(), Nat.compare);
+  ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   assert Set.toText(set, Nat.toText) == "PureSet{0, 1, 2, 3}";
   /// }

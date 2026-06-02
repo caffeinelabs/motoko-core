@@ -40,6 +40,7 @@ async function main() {
 
   const virtualBaseDirectory = "motoko-base";
   motoko.usePackage("core", join(virtualBaseDirectory, "src")); // Register `mo:core`
+  motoko.setExtraFlags(["-E=M0223"]); // Treat redundant type instantiations as errors in doc snippets
 
   let skippable = true;
   const snippets: Snippet[] = (

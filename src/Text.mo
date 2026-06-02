@@ -99,7 +99,7 @@ module {
   ///
   /// let text = "Mississippi";
   /// let count =
-  ///   Text.foldLeft<Nat>(
+  ///   Text.foldLeft(
   ///     text,
   ///     0, // start the sum at 0
   ///     func(ss, c) = if (c == 's') ss + 1 else ss

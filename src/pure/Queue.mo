@@ -336,7 +336,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.fromArray<Text>(["A", "B", "C"]);
+  ///   let queue = Queue.fromArray(["A", "B", "C"]);
   ///   assert Queue.size(queue) == 3;
   ///   assert Queue.peekFront(queue) == ?"A";
   /// }
@@ -358,7 +358,7 @@ module {
   /// import Array "mo:core/Array";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromArray<Text>(["A", "B", "C"]);
+  ///   let queue = Queue.fromArray(["A", "B", "C"]);
   ///   let array = Queue.toArray(queue);
   ///   assert array == ["A", "B", "C"];
   /// }
@@ -442,7 +442,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let allGreaterThanOne = Queue.all<Nat>(queue, func n = n > 1);
+  ///   let allGreaterThanOne = Queue.all(queue, func n = n > 1);
   ///   assert not allGreaterThanOne; // false because 1 is not > 1
   /// }
   /// ```
@@ -464,7 +464,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let hasGreaterThanOne = Queue.any<Nat>(queue, func n = n > 1);
+  ///   let hasGreaterThanOne = Queue.any(queue, func n = n > 1);
   ///   assert hasGreaterThanOne; // true because 2 and 3 are > 1
   /// }
   /// ```
@@ -511,7 +511,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2].values());
-  ///   let textQueue = Queue.map<Nat, Text>(queue, Nat.toText);
+  ///   let textQueue = Queue.map(queue, Nat.toText);
   ///   assert Iter.toArray(Queue.values(textQueue)) == ["0", "1", "2"];
   /// }
   /// ```
@@ -535,7 +535,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2, 1].values());
-  ///   let filtered = Queue.filter<Nat>(queue, func n = n != 1);
+  ///   let filtered = Queue.filter(queue, func n = n != 1);
   ///   assert Queue.size(filtered) == 2;
   /// }
   /// ```
@@ -561,7 +561,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let doubled = Queue.filterMap<Nat, Nat>(
+  ///   let doubled = Queue.filterMap(
   ///     queue,
   ///     func n = if (n > 1) ?(n * 2) else null
   ///   );
