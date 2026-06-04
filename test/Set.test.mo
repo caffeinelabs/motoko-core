@@ -291,7 +291,7 @@ run(
           let set1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
           let set2 = Set.clone(set1);
           let set3 = Set.clone(set2);
-          let combined = Set.join(Array.values([set1, set2, set3]));
+          let combined = Set.join([set1, set2, set3].values());
           Set.size(combined)
         },
         M.equals(T.nat(0))
@@ -302,7 +302,7 @@ run(
           let subSet1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
           let subSet2 = Set.clone(subSet1);
           let subSet3 = Set.clone(subSet2);
-          let iterator = Array.values([subSet1, subSet2, subSet3]);
+          let iterator = [subSet1, subSet2, subSet3].values();
           let setOfSets = Set.fromIter<Set.Set<Nat>>(iterator, func(first, second) { first.compare(second) });
           let combined = Set.flatten(setOfSets);
           Set.size(combined)
@@ -525,7 +525,7 @@ run(
       test(
         "from iterator",
         do {
-          let set = Set.fromIter(Array.values([0]), Nat.compare);
+          let set = Set.fromIter([0].values(), Nat.compare);
           assert (Set.contains(set, Nat.compare, 0));
           assert (Set.equal(set, Set.singleton<Nat>(0), Nat.compare));
           Set.size(set)
@@ -737,7 +737,7 @@ run(
         "is strict sub-set",
         do {
           let set1 = Set.singleton<Nat>(1);
-          let set2 = Set.fromIter(Array.values([0, 1, 2]), Nat.compare);
+          let set2 = Set.fromIter([0, 1, 2].values(), Nat.compare);
           Set.isSubset(set1, set2, Nat.compare)
         },
         M.equals(T.bool(true))
@@ -838,7 +838,7 @@ run(
           let set1 = Set.singleton<Nat>(0);
           let set2 = Set.singleton<Nat>(1);
           let set3 = Set.singleton<Nat>(2);
-          let combined = Set.join(Array.values([set1, set2, set3]), Nat.compare);
+          let combined = Set.join([set1, set2, set3].values(), Nat.compare);
           Iter.toArray(Set.values(combined))
         },
         M.equals(
@@ -854,7 +854,7 @@ run(
           let subSet1 = Set.singleton<Nat>(0);
           let subSet2 = Set.singleton<Nat>(1);
           let subSet3 = Set.singleton<Nat>(2);
-          let iterator = Array.values([subSet1, subSet2, subSet3]);
+          let iterator = [subSet1, subSet2, subSet3].values();
           let setOfSets = Set.fromIter<Set.Set<Nat>>(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
           let combined = Set.flatten(setOfSets, Nat.compare);
           Iter.toArray(Set.values(combined))
@@ -1058,7 +1058,7 @@ run(
         "from iterator",
         do {
           let array = Array.tabulate(smallSize, func(index) { index });
-          let set = Set.fromIter(Array.values(array), Nat.compare);
+          let set = Set.fromIter(array.values(), Nat.compare);
           for (index in Nat.range(0, smallSize)) {
             assert (Set.contains(set, Nat.compare, index))
           };
@@ -1315,8 +1315,8 @@ run(
         do {
           let set1 = Set.map(smallSet(), Int.compare, func(number) { +number });
           let set2 = Set.map(smallSet(), Int.compare, func(number) { -number });
-          let set3 = Set.fromIter(Array.values([-1, 1]), Int.compare);
-          let combined = Set.join(Array.values([set1, set2, set3]), Int.compare);
+          let set3 = Set.fromIter([-1, 1].values(), Int.compare);
+          let combined = Set.join([set1, set2, set3].values(), Int.compare);
           Iter.toArray(Set.values(combined))
         },
         M.equals(
@@ -1336,8 +1336,8 @@ run(
         do {
           let subSet1 = Set.map(smallSet(), Int.compare, func(number) { +number });
           let subSet2 = Set.map(smallSet(), Int.compare, func(number) { -number });
-          let subSet3 = Set.fromIter(Array.values([-1, 1]), Int.compare);
-          let iterator = Array.values([subSet1, subSet2, subSet3]);
+          let subSet3 = Set.fromIter([-1, 1].values(), Int.compare);
+          let iterator = [subSet1, subSet2, subSet3].values();
           let setOfSets = Set.fromIter<Set.Set<Int>>(iterator, func(first, second) { Set.compare(first, second, Int.compare) });
           let combined = Set.flatten(setOfSets, Int.compare);
           Iter.toArray(Set.values(combined))
@@ -1558,7 +1558,7 @@ run(
         "union first non-empty",
         do {
           let set1 = Set.empty<Nat>();
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let union = Set.union(set1, set2, Nat.compare);
           Iter.toArray(Set.values(union))
         },
@@ -1567,7 +1567,7 @@ run(
       test(
         "union first non-empty",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let set2 = Set.empty<Nat>();
           let union = Set.union(set1, set2, Nat.compare);
           Iter.toArray(Set.values(union))
@@ -1577,8 +1577,8 @@ run(
       test(
         "union both non-empty disjoint",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([4, 5, 6]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([4, 5, 6].values(), Nat.compare);
           let union = Set.union(set1, set2, Nat.compare);
           Set.size(union)
         },
@@ -1587,8 +1587,8 @@ run(
       test(
         "union both non-empty overlapping",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([2, 3, 4]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([2, 3, 4].values(), Nat.compare);
           let union = Set.union(set1, set2, Nat.compare);
           Set.size(union)
         },
@@ -1607,7 +1607,7 @@ run(
       test(
         "intersect first non-empty",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let set2 = Set.empty<Nat>();
           let intersection = Set.intersection(set1, set2, Nat.compare);
           Set.size(intersection)
@@ -1618,7 +1618,7 @@ run(
         "intersect second non-empty",
         do {
           let set1 = Set.empty<Nat>();
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let intersection = Set.intersection(set1, set2, Nat.compare);
           Set.size(intersection)
         },
@@ -1627,8 +1627,8 @@ run(
       test(
         "intersect both non-empty disjoint",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([4, 5, 6]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([4, 5, 6].values(), Nat.compare);
           let intersection = Set.intersection(set1, set2, Nat.compare);
           Set.size(intersection)
         },
@@ -1637,8 +1637,8 @@ run(
       test(
         "intersect both non-empty overlapping",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([2, 3, 4]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([2, 3, 4].values(), Nat.compare);
           let intersection = Set.intersection(set1, set2, Nat.compare);
           Iter.toArray(Set.values(intersection))
         },
@@ -1657,7 +1657,7 @@ run(
       test(
         "diff first non-empty",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let set2 = Set.empty<Nat>();
           let difference = Set.difference(set1, set2, Nat.compare);
           Iter.toArray(Set.values(difference))
@@ -1668,7 +1668,7 @@ run(
         "diff second non-empty",
         do {
           let set1 = Set.empty<Nat>();
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let difference = Set.difference(set1, set2, Nat.compare);
           Set.size(difference)
         },
@@ -1677,8 +1677,8 @@ run(
       test(
         "diff both non-empty disjoint",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([4, 5, 6]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([4, 5, 6].values(), Nat.compare);
           let difference = Set.difference(set1, set2, Nat.compare);
           Iter.toArray(Set.values(difference))
         },
@@ -1687,8 +1687,8 @@ run(
       test(
         "diff both non-empty overlapping",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([2, 3, 4]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([2, 3, 4].values(), Nat.compare);
           let difference = Set.difference(set1, set2, Nat.compare);
           Iter.toArray(Set.values(difference))
         },
@@ -1707,7 +1707,7 @@ run(
       test(
         "addAll first non-empty",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let set2 = Set.empty<Nat>();
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
@@ -1718,7 +1718,7 @@ run(
         "addAll second non-empty",
         do {
           let set1 = Set.empty<Nat>();
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
@@ -1727,8 +1727,8 @@ run(
       test(
         "addAll both non-empty disjoint",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([4, 5, 6]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([4, 5, 6].values(), Nat.compare);
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
@@ -1737,8 +1737,8 @@ run(
       test(
         "addAll both non-empty overlapping",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([2, 3, 4]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([2, 3, 4].values(), Nat.compare);
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
@@ -1756,7 +1756,7 @@ run(
       test(
         "retainAll all",
         do {
-          let set = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
           assert (not Set.retainAll<Nat>(set, Nat.compare, func(n) { true }));
           Iter.toArray(Set.values(set))
         },
@@ -1765,7 +1765,7 @@ run(
       test(
         "retainAll none",
         do {
-          let set = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
           assert (Set.retainAll<Nat>(set, Nat.compare, func(n) { false }));
           Set.size(set)
         },
@@ -1774,7 +1774,7 @@ run(
       test(
         "retainAll even",
         do {
-          let set = Set.fromIter(Array.values([1, 2, 3, 4]), Nat.compare);
+          let set = Set.fromIter([1, 2, 3, 4].values(), Nat.compare);
           assert (Set.retainAll<Nat>(set, Nat.compare, func(n) { n % 2 == 0 }));
           Iter.toArray(Set.values(set))
         },
@@ -1783,7 +1783,7 @@ run(
       test(
         "retainAll predicate",
         do {
-          let set = Set.fromIter(Array.values([1, 2, 3, 4, 5]), Nat.compare);
+          let set = Set.fromIter([1, 2, 3, 4, 5].values(), Nat.compare);
           assert (Set.retainAll<Nat>(set, Nat.compare, func(n) { n > 2 and n < 5 }));
           Iter.toArray(Set.values(set))
         },
@@ -1802,7 +1802,7 @@ run(
       test(
         "deleteAll first non-empty",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let set2 = Set.empty<Nat>();
           assert (not Set.deleteAll(set1, Nat.compare, Set.values(set2)));
           Iter.toArray(Set.values(set1))
@@ -1812,8 +1812,8 @@ run(
       test(
         "deleteAll both non-empty equal",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           assert (Set.deleteAll(set1, Nat.compare, Set.values(set2)));
           Set.size(set1)
         },
@@ -1823,7 +1823,7 @@ run(
         "deleteAll second non-empty",
         do {
           let set1 = Set.empty<Nat>();
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           assert (not (Set.deleteAll(set1, Nat.compare, Set.values(set2))));
           Set.size(set1)
         },
@@ -1832,8 +1832,8 @@ run(
       test(
         "deleteAll both non-empty disjoint",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([4, 5, 6]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([4, 5, 6].values(), Nat.compare);
           assert (not (Set.deleteAll(set1, Nat.compare, Set.values(set2))));
           Iter.toArray(Set.values(set1))
         },
@@ -1842,8 +1842,8 @@ run(
       test(
         "deleteAll both non-empty overlapping",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([2, 3, 4]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([2, 3, 4].values(), Nat.compare);
           assert Set.deleteAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
@@ -1853,7 +1853,7 @@ run(
       test(
         "insertAll first non-empty",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           let set2 = Set.empty<Nat>();
           assert (not Set.insertAll(set1, Nat.compare, Set.values(set2)));
           Iter.toArray(Set.values(set1))
@@ -1863,8 +1863,8 @@ run(
       test(
         "insertAll both non-empty equal",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           assert (not Set.insertAll(set1, Nat.compare, Set.values(set2)));
           Set.size(set1)
         },
@@ -1874,7 +1874,7 @@ run(
         "insertAll second non-empty",
         do {
           let set1 = Set.empty<Nat>();
-          let set2 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
+          let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
           assert (Set.insertAll(set1, Nat.compare, Set.values(set2)));
           Set.size(set1)
         },
@@ -1883,8 +1883,8 @@ run(
       test(
         "insertAll both non-empty disjoint",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([4, 5, 6]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([4, 5, 6].values(), Nat.compare);
           assert (Set.insertAll(set1, Nat.compare, Set.values(set2)));
           Iter.toArray(Set.values(set1))
         },
@@ -1893,8 +1893,8 @@ run(
       test(
         "insertAll both non-empty overlapping",
         do {
-          let set1 = Set.fromIter(Array.values([1, 2, 3]), Nat.compare);
-          let set2 = Set.fromIter(Array.values([2, 3, 4]), Nat.compare);
+          let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
+          let set2 = Set.fromIter([2, 3, 4].values(), Nat.compare);
           assert Set.insertAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
