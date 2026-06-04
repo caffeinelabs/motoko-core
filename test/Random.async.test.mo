@@ -11,7 +11,7 @@ await suite(
   func() : async () {
     func mockAsyncGenerator(bytes : [Nat8]) : () -> async* Blob {
       func() : async* Blob {
-        Blob.fromArray(bytes)
+        Array.toBlob(bytes)
       }
     };
 
@@ -198,11 +198,11 @@ await suite(
         let bytes : [Nat8] = Array.tabulate<Nat8>(
           16,
           func(i) {
-            counter := Nat8.fromNat((Nat8.toNat(counter) + 1) % 256);
+            counter := Nat.toNat8((Nat8.toNat(counter) + 1) % 256);
             counter
           }
         );
-        Blob.fromArray(bytes)
+        Array.toBlob(bytes)
       }
     };
 
@@ -254,7 +254,7 @@ await suite(
       func() : async () {
         let state = Random.emptyState();
         func predictableGenerator() : async* Blob {
-          Blob.fromArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+          Array.toBlob([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
         };
         let random = Random.AsyncRandom(state, predictableGenerator);
 
@@ -288,8 +288,8 @@ await suite(
       func() : async () {
         let state = Random.emptyState();
         func sequentialGenerator() : async* Blob {
-          let bytes = Array.tabulate(16, func(i) { Nat8.fromNat(i) });
-          Blob.fromArray(bytes)
+          let bytes = Array.tabulate(16, func(i) { Nat.toNat8(i) });
+          Array.toBlob(bytes)
         };
         let random = Random.AsyncRandom(state, sequentialGenerator);
 
@@ -331,9 +331,9 @@ await suite(
         func smallChunkGenerator() : async* Blob {
           generatorCallCount += 1;
           if (generatorCallCount == 1) {
-            Blob.fromArray([100, 101])
+            Array.toBlob([100, 101])
           } else {
-            Blob.fromArray([200, 201, 202, 203])
+            Array.toBlob([200, 201, 202, 203])
           }
         };
 

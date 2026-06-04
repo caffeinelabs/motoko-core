@@ -65,13 +65,13 @@ let suite = Suite.suite(
       M.equals(T.array<Int>(T.intTestable, []))
     ),
     Suite.test(
-      "fromVarArray",
-      Array.fromVarArray<Int>([var 1, 2, 3]),
+      "VarArray.toArray",
+      VarArray.toArray<Int>([var 1, 2, 3]),
       M.equals(T.array<Int>(T.intTestable, [1, 2, 3]))
     ),
     Suite.test(
-      "fromVarArray empty",
-      Array.fromVarArray<Int>([var]),
+      "VarArray.toArray empty",
+      VarArray.toArray<Int>([var]),
       M.equals(T.array<Int>(T.intTestable, []))
     ),
     Suite.test(

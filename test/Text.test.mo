@@ -7,6 +7,7 @@ import Char "../src/Char";
 import Order "../src/Order";
 import Array "../src/Array";
 import Nat32 "../src/Nat32";
+import VarArray "../src/VarArray";
 
 import Suite "mo:matchers/Suite";
 import M "mo:matchers/Matchers";
@@ -140,7 +141,7 @@ run(
         M.equals(iterT(['a', 'b', 'c']))
       ),
       do {
-        let a = Array.tabulate(1000, func i = Char.fromNat32(65 +% Nat32.fromIntWrap(i % 26)));
+        let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "fromIter-2",
           Text.toIter(Text.join(Array.map(a, Char.toText).vals(), "")),
@@ -171,7 +172,7 @@ run(
         M.equals(T.text "abc")
       ),
       do {
-        let a = Array.tabulate(1000, func i = Char.fromNat32(65 +% Nat32.fromIntWrap(i % 26)));
+        let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "fromIter-3",
           Text.fromIter(a.vals()),
@@ -278,7 +279,7 @@ run(
         M.equals(T.text "abbcccdddd")
       ),
       do {
-        let a = Array.tabulate(1000, func i = Char.fromNat32(65 +% Nat32.fromIntWrap(i % 26)));
+        let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "join-3",
           Text.join(Array.map(a, Char.toText).vals(), ""),
@@ -319,7 +320,7 @@ run(
         M.equals(T.text "a,bb,ccc,dddd")
       ),
       do {
-        let a = Array.tabulate(1000, func i = Char.fromNat32(65 +% Nat32.fromIntWrap(i % 26)));
+        let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "join-3",
           Text.join(Array.map(a, Char.toText).vals(), ""),
@@ -1112,7 +1113,7 @@ run(
       ),
       test(
         "toArray-example",
-        Array.fromVarArray(Text.toVarArray("Café")),
+        VarArray.toArray(Text.toVarArray("Café")),
         M.equals(T.array<Char>(T.charTestable, ['C', 'a', 'f', 'é']))
       ),
       test(

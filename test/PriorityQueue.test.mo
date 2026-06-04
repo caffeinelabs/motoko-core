@@ -187,7 +187,7 @@ func testPushAndPeekThenPopArray<T>(
           case _ Runtime.trap("priorityQueue unexpectedly empty")
         }
       }
-    ) |> Array.fromVarArray(_),
+    ) |> VarArray.toArray(_),
     toText,
     equal
   ).equal(

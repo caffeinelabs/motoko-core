@@ -119,7 +119,7 @@ run(
       ),
       test(
         "empty from iter",
-        Map.fromIter(Iter.fromArray([]), Nat.compare),
+        Map.fromIter(([] : [(Nat, Text)]).values(), Nat.compare),
         MapMatcher([])
       ),
       test(
@@ -304,7 +304,7 @@ run(
       ),
       test(
         "from iter",
-        Map.fromIter(Iter.fromArray(expected), Nat.compare),
+        Map.fromIter(expected.values(), Nat.compare),
         MapMatcher(expected)
       ),
       test(
@@ -538,7 +538,7 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   ),
   test(
     "from iter",
-    Map.fromIter(Iter.fromArray(expected), Nat.compare),
+    Map.fromIter(expected.values(), Nat.compare),
     MapMatcher(expected)
   ),
   test(
@@ -957,7 +957,7 @@ run(
         "from iterator",
         do {
           let array = Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) });
-          let map = Map.fromIter(Iter.fromArray(array), Nat.compare);
+          let map = Map.fromIter(array.values(), Nat.compare);
           for (index in Nat.range(0, smallSize)) {
             assert (Map.get(map, Nat.compare, index) == ?Nat.toText(index))
           };

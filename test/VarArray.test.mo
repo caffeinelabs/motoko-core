@@ -1,5 +1,6 @@
 import VarArray "../src/VarArray";
 import Int "../src/Int";
+import Iter "../src/Iter";
 import Char "../src/Char";
 import Nat "../src/Nat";
 import Text "../src/Text";
@@ -689,12 +690,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "Iter conversions",
-      VarArray.fromIter<Nat>(VarArray.values([var 1, 2, 3])),
+      Iter.toVarArray<Nat>(VarArray.values([var 1, 2, 3])),
       M.equals(varArray<Nat>(T.natTestable, [var 1, 2, 3]))
     ),
     Suite.test(
       "Iter conversions empty",
-      VarArray.fromIter<Nat>(VarArray.values([var])),
+      Iter.toVarArray<Nat>(VarArray.values([var])),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
     Suite.test(

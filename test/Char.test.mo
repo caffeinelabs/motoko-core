@@ -1,4 +1,5 @@
 import Char "../src/Char";
+import Nat32 "../src/Nat32";
 import Prim "mo:⛔";
 import { suite; test; expect } "mo:test";
 
@@ -56,8 +57,8 @@ suite(
     test(
       "fromNat32 converts valid Unicode values to characters",
       func() {
-        expect.char(Char.fromNat32(65)).equal('A');
-        expect.char(Char.fromNat32(20140)).equal('京')
+        expect.char(Nat32.toChar(65)).equal('A');
+        expect.char(Nat32.toChar(20140)).equal('京')
       }
     );
 
