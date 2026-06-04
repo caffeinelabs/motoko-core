@@ -927,7 +927,6 @@ module {
   /// Space: `O(1)` retained memory plus garbage, see the note below.
   /// where `m` and `n` denote the number of elements in `set` and `iter`, respectively,
   /// and assuming that the `compare` function implements an `O(1)` comparison.
-  /// @deprecated M0235
   public func deleteAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), iter : Types.Iter<T>) : Bool {
     var deleted = false;
     for (element in iter) {
@@ -958,7 +957,6 @@ module {
   /// Space: `O(1)` retained memory plus garbage, see the note below.
   /// where `m` and `n` denote the number of elements in `set` and `iter`, respectively,
   /// and assuming that the `compare` function implements an `O(1)` comparison.
-  /// @deprecated M0235
   public func insertAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), iter : Types.Iter<T>) : Bool {
     var inserted = false;
     for (element in iter) {

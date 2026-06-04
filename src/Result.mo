@@ -43,7 +43,6 @@ module {
   /// assert validateEmail("@domain.com") == #err("Username cannot be empty");
   /// assert validateEmail("user@invalid") == #err("Invalid domain format");
   /// ```
-  /// @deprecated M0235
   public type Result<Ok, Err> = Types.Result<Ok, Err>;
 
   /// Compares two Results for equality.

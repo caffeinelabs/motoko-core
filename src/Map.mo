@@ -448,7 +448,6 @@ module {
   /// Space: `O(log(n))`.
   /// where `n` denotes the number of key-value entries stored in the map and
   /// assuming that the `compare` function implements an `O(1)` comparison.
-  /// @deprecated M0235
   public func swap<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K, value : V) : ?V {
     let insertResult = switch (self.root) {
       case (#leaf(leafNode)) {
@@ -514,7 +513,6 @@ module {
   /// Space: `O(log(n))`.
   /// where `n` denotes the number of key-value entries stored in the map and
   /// assuming that the `compare` function implements an `O(1)` comparison.
-  /// @deprecated M0235
   public func replace<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K, value : V) : ?V {
     // TODO: Could be optimized in future
     if (containsKey(self, compare, key)) {
@@ -616,7 +614,6 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   ///
   /// Note: Creates `O(log(n))` objects that will be collected as garbage.
-  /// @deprecated M0235
   public func take<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K) : ?V {
     let deletedValue = switch (self.root) {
       case (#leaf(leafNode)) {

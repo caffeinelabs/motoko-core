@@ -1099,7 +1099,6 @@ module {
   /// Runtime: `O(1)`
   ///
   /// Space: `O(1)`
-  /// @deprecated M0235
   public func get<T>(self : List<T>, index : Nat) : ?T {
     // inlined version of locate
     let (a, b) = do {
