@@ -117,14 +117,12 @@ module {
       let n = (b1.toNat16().toNat32() << 16) | (b2.toNat16().toNat32() << 8) | b3.toNat16().toNat32();
 
       //  Note: Value 61 is the UTF8 encoding of the `=` character
-      let bytes = (
-        [
-          alphabet[((n >> 18) & 0x3F).toNat()],
-          alphabet[((n >> 12) & 0x3F).toNat()],
-          if (i +% 1 < sz) alphabet[((n >> 6) & 0x3F).toNat()] else 61,
-          if (i +% 2 < sz) alphabet[(n & 0x3F).toNat()] else 61
-        ] : [Nat8]
-      ).toBlob();
+      let bytes = Array.toBlob([
+        alphabet[((n >> 18) & 0x3F).toNat()],
+        alphabet[((n >> 12) & 0x3F).toNat()],
+        if (i +% 1 < sz) alphabet[((n >> 6) & 0x3F).toNat()] else 61,
+        if (i +% 2 < sz) alphabet[(n & 0x3F).toNat()] else 61
+      ]);
 
       switch (Text.decodeUtf8(bytes)) {
         case (?t) result := result # t;

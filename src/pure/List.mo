@@ -396,7 +396,7 @@ module {
   /// persistent actor {
   ///   let lists = [ ?(0, ?(1, ?(2, null))),
   ///                 ?(3, ?(4, ?(5, null))) ];
-  ///   assert List.join(lists |> _.values()) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
+  ///   assert List.join(lists.values()) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```
   ///
