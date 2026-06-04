@@ -1153,27 +1153,27 @@ run(
     [
       test(
         "positive number",
-        Int8.toInt(123 : Int8),
+        Int8.toInt(123),
         M.equals(T.int(123))
       ),
       test(
         "negative number",
-        Int8.toInt(-123 : Int8),
+        Int8.toInt(-123),
         M.equals(T.int(-123))
       ),
       test(
         "zero",
-        Int8.toInt(0 : Int8),
+        Int8.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int8.toInt(127 : Int8),
+        Int8.toInt(127),
         M.equals(T.int(127))
       ),
       test(
         "minimum value",
-        Int8.toInt(-128 : Int8),
+        Int8.toInt(-128),
         M.equals(T.int(-128))
       )
     ]
@@ -1219,27 +1219,27 @@ run(
     [
       test(
         "positive number",
-        Int16.toInt(12_345 : Int16),
+        Int16.toInt(12_345),
         M.equals(T.int(12_345))
       ),
       test(
         "negative number",
-        Int16.toInt(-12_345 : Int16),
+        Int16.toInt(-12_345),
         M.equals(T.int(-12_345))
       ),
       test(
         "zero",
-        Int16.toInt(0 : Int16),
+        Int16.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int16.toInt(32_767 : Int16),
+        Int16.toInt(32_767),
         M.equals(T.int(32_767))
       ),
       test(
         "minimum value",
-        Int16.toInt(-32_768 : Int16),
+        Int16.toInt(-32_768),
         M.equals(T.int(-32_768))
       )
     ]
@@ -1285,27 +1285,27 @@ run(
     [
       test(
         "positive number",
-        Int32.toInt(123_456 : Int32),
+        Int32.toInt(123_456),
         M.equals(T.int(123_456))
       ),
       test(
         "negative number",
-        Int32.toInt(-123_456 : Int32),
+        Int32.toInt(-123_456),
         M.equals(T.int(-123_456))
       ),
       test(
         "zero",
-        Int32.toInt(0 : Int32),
+        Int32.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int32.toInt(2_147_483_647 : Int32),
+        Int32.toInt(2_147_483_647),
         M.equals(T.int(2_147_483_647))
       ),
       test(
         "minimum value",
-        Int32.toInt(-2_147_483_648 : Int32),
+        Int32.toInt(-2_147_483_648),
         M.equals(T.int(-2_147_483_648))
       )
     ]
@@ -1351,27 +1351,27 @@ run(
     [
       test(
         "positive number",
-        Int64.toInt(123_456_789 : Int64),
+        Int64.toInt(123_456_789),
         M.equals(T.int(123_456_789))
       ),
       test(
         "negative number",
-        Int64.toInt(-123_456_789 : Int64),
+        Int64.toInt(-123_456_789),
         M.equals(T.int(-123_456_789))
       ),
       test(
         "zero",
-        Int64.toInt(0 : Int64),
+        Int64.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int64.toInt(9_223_372_036_854_775_807 : Int64),
+        Int64.toInt(9_223_372_036_854_775_807),
         M.equals(T.int(9_223_372_036_854_775_807))
       ),
       test(
         "minimum value",
-        Int64.toInt(-9_223_372_036_854_775_808 : Int64),
+        Int64.toInt(-9_223_372_036_854_775_808),
         M.equals(T.int(-9_223_372_036_854_775_808))
       )
     ]

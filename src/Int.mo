@@ -124,7 +124,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Debug "mo:core/Debug";
-  /// assert Int.toNat(1234 : Int) == (1234 : Nat);
+  /// assert Int.toNat(1234) == (1234 : Nat);
   /// ```
   public func toNat(self : Int) : Nat {
     if (self < 0) {

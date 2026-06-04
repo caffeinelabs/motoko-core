@@ -90,7 +90,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Nat16.fromIntWrap(123 : Int) == (123 : Nat16);
+  /// assert Nat16.fromIntWrap(123) == (123 : Nat16);
   /// ```
   public let fromIntWrap : Int -> Nat16 = Prim.intToNat16Wrap;
 
