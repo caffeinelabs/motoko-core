@@ -77,8 +77,12 @@ async function pMap<T, R>(
 }
 
 // PocketIC returns 409/202 under load; the pic client surfaces these as
-// transient string errors. Retry with backoff so concurrent installs across
-// worker canisters don't spuriously fail validation.
+// transient string errors. Retry with backoff so concurrent operations across
+// worker canisters don't spuriously fail validation. `Server busy` is always
+// pre-accept (safe to retry); the other two can fire after the request was
+// accepted but the client gave up polling — re-submission is acceptable here
+// because doc snippets are stateless (reinstall wipes state, and re-running
+// `main()` produces the same result).
 const transientPicErrors = [
   "Server busy",
   "Server started processing",
@@ -99,7 +103,9 @@ async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
       ) {
         throw err;
       }
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      // Jitter so concurrent retriers don't wake in lockstep.
+      const jitter = delayMs * (0.5 + Math.random() * 0.5);
+      await new Promise((resolve) => setTimeout(resolve, jitter));
       delayMs = Math.min(delayMs * 2, 1000);
     }
   }
@@ -252,11 +258,13 @@ async function main() {
     console.log(`Creating ${poolSize} canister${poolSize === 1 ? "" : "s"}...`);
     const principals: Principal[] = await Promise.all(
       Array.from({ length: poolSize }, async () => {
-        const principal = await ic.createCanister();
-        await ic.updateCanisterSettings({
-          canisterId: principal,
-          controllers: [Principal.anonymous()],
-        });
+        const principal = await withRetry(() => ic.createCanister());
+        await withRetry(() =>
+          ic.updateCanisterSettings({
+            canisterId: principal,
+            controllers: [Principal.anonymous()],
+          })
+        );
         return principal;
       })
     );

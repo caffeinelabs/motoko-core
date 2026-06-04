@@ -65,10 +65,14 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Validate docs for changed src/*.mo files
         if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false' && needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'false'
+        shell: bash
         run: |
-          echo "${{ needs.check-motoko-changes.outputs.src_mo_changed_files }}" | while read -r file; do
-            npm run validate:docs "$file"
-          done
+          set -euo pipefail
+          files=()
+          while IFS= read -r file; do
+            [[ -n "$file" ]] && files+=("$file")
+          done <<< "${{ needs.check-motoko-changes.outputs.src_mo_changed_files }}"
+          npm run validate:docs -- "${files[@]}"
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
       - name: Validate all docs on version or script change
