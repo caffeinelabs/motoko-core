@@ -57,16 +57,19 @@ async function resolveMocPath(): Promise<string> {
 async function pMap<T, R>(
   items: T[],
   limit: number,
-  fn: (item: T, idx: number) => Promise<R>
+  fn: (item: T, idx: number, workerIdx: number) => Promise<R>
 ): Promise<R[]> {
   const results: R[] = new Array(items.length);
   let next = 0;
+  // `workerIdx` is bound to the JS loop, not the item index. This is what
+  // callers rely on to claim per-worker resources (temp files, canisters)
+  // without collisions when items finish out of order.
   await Promise.all(
-    Array.from({ length: Math.min(limit, items.length) }, async () => {
+    Array.from({ length: Math.min(limit, items.length) }, async (_, workerIdx) => {
       while (true) {
         const idx = next++;
         if (idx >= items.length) return;
-        results[idx] = await fn(items[idx], idx);
+        results[idx] = await fn(items[idx], idx, workerIdx);
       }
     })
   );
@@ -76,16 +79,10 @@ async function pMap<T, R>(
 // PocketIC returns 409/202 under load; the pic client surfaces these as
 // transient string errors. Retry with backoff so concurrent installs across
 // worker canisters don't spuriously fail validation.
-//
-// `CanisterMethodNotFound` is included because under high concurrency a call
-// occasionally races a fresh `reinstallCode` and the certified state hasn't
-// caught up yet. Real missing-method errors still surface after retries
-// exhaust.
 const transientPicErrors = [
   "Server busy",
   "Server started processing",
   "Unknown state",
-  "CanisterMethodNotFound",
 ];
 
 async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
@@ -111,12 +108,12 @@ async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
 async function main() {
   const testFilters = process.argv.slice(2);
 
+  const sourcePaths = (await glob(join(rootDirectory, "src/**/*.mo"))).sort();
+
   let skippable = true;
   const snippets: Snippet[] = (
     await Promise.all(
-      (await glob(join(rootDirectory, "src/**/*.mo")))
-        .sort()
-        .map(async (path) => {
+      sourcePaths.map(async (path) => {
           const virtualPath = relative(rootDirectory, path);
 
           // Require matching at least one test filter
@@ -227,7 +224,7 @@ async function main() {
   // it via `--package core`, replacing the in-memory virtual FS used previously.
   const workDir = await mkdtemp(join(tmpdir(), "validate-docs-"));
   const corePackageDir = join(workDir, "core");
-  for (const path of await glob(join(rootDirectory, "src/**/*.mo"))) {
+  for (const path of sourcePaths) {
     const target = join(corePackageDir, relative(join(rootDirectory, "src"), path));
     await mkdir(dirname(target), { recursive: true });
     await writeFile(target, await readFile(path));
@@ -239,103 +236,113 @@ async function main() {
   // installs and calls can run in parallel (different canisters do not block
   // each other on the PocketIC server).
   const poolSize = Math.max(1, Math.min(snippets.length, cpus().length));
-  const pocketIcServer = await PocketIcServer.start({
-    showRuntimeLogs: false,
-    showCanisterLogs: false, // TODO: enable with --verbose flag?
-  });
-  const pocketIc = await PocketIc.create(pocketIcServer.getUrl());
 
-  console.log(`Creating ${poolSize} canister${poolSize === 1 ? "" : "s"}...`);
-  const principals: Principal[] = await Promise.all(
-    Array.from({ length: poolSize }, async () => {
-      const principal = await pocketIc.createCanister();
-      await pocketIc.updateCanisterSettings({
-        canisterId: principal,
-        controllers: [Principal.anonymous()],
-      });
-      return principal;
-    })
-  );
-
-  console.log(`Running snippets...`);
   const results: (TestResult | undefined)[] = new Array(snippets.length);
   const testResults: TestResult[] = [];
-  // Print results live as snippets finish, but always in the original snippet
-  // order so per-file headers and the summary stay coherent.
-  let nextToPrint = 0;
-  let previousSnippet: Snippet | undefined;
-  const flush = () => {
-    while (nextToPrint < snippets.length) {
-      const snippet = snippets[nextToPrint];
-      const result = results[nextToPrint];
-      const isSkipped =
-        snippet.language !== "motoko" || snippet.tags.includes("no-validate");
-      if (!isSkipped && !result) break;
-      if (snippet.path !== previousSnippet?.path) {
-        console.log(chalk.gray(snippet.path));
-      }
-      if (result) {
-        testResults.push(result);
-        if (testFilters.length || result.status !== "passed") {
+  let pocketIcServer: PocketIcServer | undefined;
+  let pocketIc: PocketIc | undefined;
+  try {
+    pocketIcServer = await PocketIcServer.start({
+      showRuntimeLogs: false,
+      showCanisterLogs: false, // TODO: enable with --verbose flag?
+    });
+    pocketIc = await PocketIc.create(pocketIcServer.getUrl());
+    const ic = pocketIc;
+
+    console.log(`Creating ${poolSize} canister${poolSize === 1 ? "" : "s"}...`);
+    const principals: Principal[] = await Promise.all(
+      Array.from({ length: poolSize }, async () => {
+        const principal = await ic.createCanister();
+        await ic.updateCanisterSettings({
+          canisterId: principal,
+          controllers: [Principal.anonymous()],
+        });
+        return principal;
+      })
+    );
+
+    console.log(`Running snippets...`);
+
+    // Print results live as snippets finish, but always in the original snippet
+    // order so per-file headers and the summary stay coherent.
+    let nextToPrint = 0;
+    let previousSnippet: Snippet | undefined;
+    const flush = () => {
+      while (nextToPrint < snippets.length) {
+        const snippet = snippets[nextToPrint];
+        const result = results[nextToPrint];
+        const isSkipped =
+          snippet.language !== "motoko" || snippet.tags.includes("no-validate");
+        if (!isSkipped && !result) break;
+        if (snippet.path !== previousSnippet?.path) {
+          console.log(chalk.gray(snippet.path));
+        }
+        if (result) {
+          testResults.push(result);
+          if (testFilters.length || result.status !== "passed") {
+            console.log(
+              testStatusEmojis[result.status],
+              `${snippet.path}:${snippet.line}`.padEnd(30),
+              chalk.grey(`${(result.time / 1000).toFixed(1)}s`)
+            );
+          }
+          if (result.error) {
+            console.log(chalk.grey(displaySnippet(snippet)));
+            console.error(chalk.red(result.error));
+          }
+        } else {
           console.log(
-            testStatusEmojis[result.status],
-            `${snippet.path}:${snippet.line}`.padEnd(30),
-            chalk.grey(`${(result.time / 1000).toFixed(1)}s`)
+            testStatusEmojis["skipped"],
+            `${snippet.path}:${snippet.line}`,
+            chalk.grey("skipped")
           );
-        }
-        if (result.error) {
           console.log(chalk.grey(displaySnippet(snippet)));
-          console.error(chalk.red(result.error));
         }
-      } else {
-        console.log(
-          testStatusEmojis["skipped"],
-          `${snippet.path}:${snippet.line}`,
-          chalk.grey("skipped")
-        );
-        console.log(chalk.grey(displaySnippet(snippet)));
+        previousSnippet = snippet;
+        nextToPrint++;
       }
-      previousSnippet = snippet;
-      nextToPrint++;
-    }
-  };
-
-  await pMap(snippets, poolSize, async (snippet, idx) => {
-    if (snippet.language !== "motoko" || snippet.tags.includes("no-validate")) {
-      flush();
-      return;
-    }
-    const startTime = Date.now();
-    let status: TestResult["status"];
-    let error;
-    try {
-      const workerIdx = idx % poolSize;
-      await runSnippet(snippet, {
-        mocPath,
-        corePackageDir,
-        workDir,
-        workerIdx,
-        principal: principals[workerIdx],
-        pocketIc,
-      });
-      status = "passed";
-    } catch (err) {
-      error = err;
-      status = "failed";
-    }
-    results[idx] = {
-      snippet,
-      status,
-      error,
-      time: Date.now() - startTime,
     };
-    flush();
-  });
-  flush();
 
-  await pocketIc.tearDown();
-  await pocketIcServer.stop();
-  await rm(workDir, { recursive: true, force: true });
+    await pMap(snippets, poolSize, async (snippet, idx, workerIdx) => {
+      if (snippet.language !== "motoko" || snippet.tags.includes("no-validate")) {
+        flush();
+        return;
+      }
+      const startTime = Date.now();
+      let status: TestResult["status"];
+      let error;
+      try {
+        await runSnippet(snippet, {
+          mocPath,
+          corePackageDir,
+          workDir,
+          workerIdx,
+          principal: principals[workerIdx],
+          pocketIc: ic,
+        });
+        status = "passed";
+      } catch (err) {
+        error = err;
+        status = "failed";
+      }
+      results[idx] = {
+        snippet,
+        status,
+        error,
+        time: Date.now() - startTime,
+      };
+      flush();
+    });
+    flush();
+  } finally {
+    // Best-effort cleanup; warn rather than throw so we don't mask a primary
+    // error from the `try` body.
+    const warn = (label: string) => (err: unknown) =>
+      console.warn(`Cleanup of ${label} failed:`, err);
+    await pocketIc?.tearDown().catch(warn("PocketIC instance"));
+    await pocketIcServer?.stop().catch(warn("PocketIC server"));
+    await rm(workDir, { recursive: true, force: true }).catch(warn(workDir));
+  }
 
   const paths = new Set(snippets.map((snippet) => snippet.path));
   const failedPaths = new Set(
@@ -490,8 +497,9 @@ const runSnippet = async (snippet: Snippet, ctx: RunContext) => {
     })
   );
 
-  // Call `main()` if present
-  const hasMain = /\bfunc\s+main\b/.test(actorSource);
+  // Call `main()` if present. Strip line/block comments so the heuristic
+  // doesn't match `func main` mentioned in prose comments.
+  const hasMain = /\bfunc\s+main\b/.test(stripComments(actorSource));
   const actor: ExampleActor = ctx.pocketIc.createActor(({ IDL }) => {
     return IDL.Service(
       hasMain
@@ -506,10 +514,10 @@ const runSnippet = async (snippet: Snippet, ctx: RunContext) => {
   }
 };
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Strips line and block comments. Doesn't handle string literals; acceptable
+// for the heuristic uses below.
+const stripComments = (source: string): string =>
+  source.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
 
 const displaySnippet = (snippet: Snippet) => {
   const tripleBacktick = "```";
@@ -517,3 +525,8 @@ const displaySnippet = (snippet: Snippet) => {
     snippet.tags.length ? ` ${snippet.tags.join(" ")}` : ""
   }\n${snippet.sourceCode}\n${tripleBacktick}`;
 };
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
