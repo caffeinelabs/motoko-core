@@ -114,99 +114,99 @@ async function main() {
   const snippets: Snippet[] = (
     await Promise.all(
       sourcePaths.map(async (path) => {
-          const virtualPath = relative(rootDirectory, path);
+        const virtualPath = relative(rootDirectory, path);
 
-          // Require matching at least one test filter
-          if (
-            testFilters.length &&
-            testFilters.every((testFilter) => !virtualPath.includes(testFilter))
-          ) {
-            return [];
+        // Require matching at least one test filter
+        if (
+          testFilters.length &&
+          testFilters.every((testFilter) => !virtualPath.includes(testFilter))
+        ) {
+          return [];
+        }
+
+        // Skip internal modules
+        if (skippable && !virtualPath.startsWith("src/internal/")) {
+          skippable = false;
+        }
+
+        const content = await readFile(path, "utf8");
+
+        // Empty non-doc-comment lines to preserve line numbers
+        const docComments = content.replace(/^[ \t]*\/\/\/ ?/gm, "");
+
+        const codeBlocks: {
+          line: number;
+          language: string | undefined;
+          sourceCode: string;
+          tags: string[];
+        }[] = [];
+
+        const getLineNumber = (text: string, charIndex: number): number => {
+          if (!text || charIndex < 0 || charIndex >= text.length) {
+            return -1;
           }
-
-          // Skip internal modules
-          if (skippable && !virtualPath.startsWith("src/internal/")) {
-            skippable = false;
+          let line = 1;
+          for (let i = 0; i < charIndex; i++) {
+            if (text[i] === "\n") {
+              line++;
+            }
           }
+          return line;
+        };
 
-          const content = await readFile(path, "utf8");
+        for (const match of docComments.matchAll(
+          /```(\S*)?(?:[ \t]+([^\n]+)?)?\n([\s\S]*?)\n[ \t]*```/g
+        )) {
+          const [_, language, tags, sourceCode] = match;
+          codeBlocks.push({
+            line: getLineNumber(docComments, match.index),
+            language,
+            tags: tags?.trim() ? tags.trim().split(/\s+/) : [],
+            sourceCode: sourceCode.trim(),
+          });
+        }
 
-          // Empty non-doc-comment lines to preserve line numbers
-          const docComments = content.replace(/^[ \t]*\/\/\/ ?/gm, "");
-
-          const codeBlocks: {
-            line: number;
-            language: string | undefined;
-            sourceCode: string;
-            tags: string[];
-          }[] = [];
-
-          const getLineNumber = (text: string, charIndex: number): number => {
-            if (!text || charIndex < 0 || charIndex >= text.length) {
-              return -1;
-            }
-            let line = 1;
-            for (let i = 0; i < charIndex; i++) {
-              if (text[i] === "\n") {
-                line++;
-              }
-            }
-            return line;
+        const snippets: Snippet[] = [];
+        const snippetMap = new Map<string, Snippet>();
+        for (const { line, language, tags, sourceCode } of codeBlocks) {
+          const snippet: Snippet = {
+            path: virtualPath,
+            line,
+            language,
+            tags,
+            name: tags
+              .find((attr) => attr.startsWith("name="))
+              ?.substring("name=".length),
+            includes: [],
+            sourceCode,
           };
-
-          for (const match of docComments.matchAll(
-            /```(\S*)?(?:[ \t]+([^\n]+)?)?\n([\s\S]*?)\n[ \t]*```/g
-          )) {
-            const [_, language, tags, sourceCode] = match;
-            codeBlocks.push({
-              line: getLineNumber(docComments, match.index),
-              language,
-              tags: tags?.trim() ? tags.trim().split(/\s+/) : [],
-              sourceCode: sourceCode.trim(),
-            });
+          snippets.push(snippet);
+          if (snippet.name) {
+            if (snippetMap.has(snippet.name)) {
+              throw new Error(
+                `${snippet.path}:${snippet.line} Duplicate snippet name: ${snippet.name}`
+              );
+            }
+            snippetMap.set(snippet.name, snippet);
           }
-
-          const snippets: Snippet[] = [];
-          const snippetMap = new Map<string, Snippet>();
-          for (const { line, language, tags, sourceCode } of codeBlocks) {
-            const snippet: Snippet = {
-              path: virtualPath,
-              line,
-              language,
-              tags,
-              name: tags
-                .find((attr) => attr.startsWith("name="))
-                ?.substring("name=".length),
-              includes: [],
-              sourceCode,
-            };
-            snippets.push(snippet);
-            if (snippet.name) {
-              if (snippetMap.has(snippet.name)) {
+        }
+        // Resolve "include=..." references
+        for (const snippet of snippets) {
+          for (const attr of snippet.tags) {
+            if (attr.startsWith("include=")) {
+              const name = attr.substring("include=".length);
+              const include = snippetMap.get(name);
+              if (!include) {
                 throw new Error(
-                  `${snippet.path}:${snippet.line} Duplicate snippet name: ${snippet.name}`
+                  `${snippet.path}:${snippet.line} Unresolved snippet attribute: ${attr}`
                 );
               }
-              snippetMap.set(snippet.name, snippet);
+              snippet.includes.push(include);
             }
           }
-          // Resolve "include=..." references
-          for (const snippet of snippets) {
-            for (const attr of snippet.tags) {
-              if (attr.startsWith("include=")) {
-                const name = attr.substring("include=".length);
-                const include = snippetMap.get(name);
-                if (!include) {
-                  throw new Error(
-                    `${snippet.path}:${snippet.line} Unresolved snippet attribute: ${attr}`
-                  );
-                }
-                snippet.includes.push(include);
-              }
-            }
-          }
-          return snippets;
-        })
+        }
+        return snippets;
+      })
     )
   ).flatMap((snippets) => snippets);
 
@@ -514,6 +514,11 @@ const runSnippet = async (snippet: Snippet, ctx: RunContext) => {
   }
 };
 
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+
 // Strips line and block comments. Doesn't handle string literals; acceptable
 // for the heuristic uses below.
 const stripComments = (source: string): string =>
@@ -525,8 +530,3 @@ const displaySnippet = (snippet: Snippet) => {
     snippet.tags.length ? ` ${snippet.tags.join(" ")}` : ""
   }\n${snippet.sourceCode}\n${tripleBacktick}`;
 };
-
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
