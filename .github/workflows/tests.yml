@@ -72,6 +72,10 @@ jobs:
           while IFS= read -r file; do
             [[ -n "$file" ]] && files+=("$file")
           done <<< "${{ needs.check-motoko-changes.outputs.src_mo_changed_files }}"
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No changed src/*.mo files."
+            exit 0
+          fi
           npm run validate:docs -- "${files[@]}"
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
