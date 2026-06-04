@@ -1,10 +1,11 @@
 import { Principal } from "@dfinity/principal";
 import { PocketIc, PocketIcServer } from "@dfinity/pic";
 import chalk from "chalk";
-import { readFile } from "fs/promises";
+import execa from "execa";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "fs/promises";
 import { glob } from "glob";
-import motoko from "motoko";
-import { join, relative } from "path";
+import { cpus, tmpdir } from "os";
+import { dirname, join, relative } from "path";
 
 interface TestResult {
   snippet: Snippet;
@@ -35,12 +36,80 @@ const testStatusEmojis: Record<TestResult["status"], string> = {
 
 const rootDirectory = join(__dirname, "../../..");
 
+// Treat redundant type instantiations (M0223) and `@deprecated` usages (M0154)
+// as errors in doc snippets — examples must never use deprecated APIs.
+const mocExtraFlags = ["-E=M0223,M0154"];
+
+async function resolveMocPath(): Promise<string> {
+  if (process.env.DFX_MOC_PATH) return process.env.DFX_MOC_PATH;
+  const { stdout } = await execa("npx", ["mops", "toolchain", "bin", "moc"], {
+    cwd: rootDirectory,
+  });
+  const path = stdout.trim();
+  if (!path) {
+    throw new Error(
+      "Could not resolve `moc` binary. Set DFX_MOC_PATH or run `mops toolchain init`."
+    );
+  }
+  return path;
+}
+
+async function pMap<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, idx: number) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, async () => {
+      while (true) {
+        const idx = next++;
+        if (idx >= items.length) return;
+        results[idx] = await fn(items[idx], idx);
+      }
+    })
+  );
+  return results;
+}
+
+// PocketIC returns 409/202 under load; the pic client surfaces these as
+// transient string errors. Retry with backoff so concurrent installs across
+// worker canisters don't spuriously fail validation.
+//
+// `CanisterMethodNotFound` is included because under high concurrency a call
+// occasionally races a fresh `reinstallCode` and the certified state hasn't
+// caught up yet. Real missing-method errors still surface after retries
+// exhaust.
+const transientPicErrors = [
+  "Server busy",
+  "Server started processing",
+  "Unknown state",
+  "CanisterMethodNotFound",
+];
+
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  const maxAttempts = 8;
+  let delayMs = 50;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      const msg = String(err?.message ?? err);
+      if (
+        attempt >= maxAttempts ||
+        !transientPicErrors.some((m) => msg.includes(m))
+      ) {
+        throw err;
+      }
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      delayMs = Math.min(delayMs * 2, 1000);
+    }
+  }
+}
+
 async function main() {
   const testFilters = process.argv.slice(2);
-
-  const virtualBaseDirectory = "motoko-base";
-  motoko.usePackage("core", join(virtualBaseDirectory, "src")); // Register `mo:core`
-  motoko.setExtraFlags(["-E=M0223,M0154"]); // Treat redundant type instantiations and `@deprecated` usages as errors in doc snippets — examples must never use deprecated APIs
 
   let skippable = true;
   const snippets: Snippet[] = (
@@ -49,10 +118,6 @@ async function main() {
         .sort()
         .map(async (path) => {
           const virtualPath = relative(rootDirectory, path);
-
-          // Write to virtual file system
-          const content = await readFile(path, "utf8");
-          motoko.write(join(virtualBaseDirectory, virtualPath), content);
 
           // Require matching at least one test filter
           if (
@@ -66,6 +131,8 @@ async function main() {
           if (skippable && !virtualPath.startsWith("src/internal/")) {
             skippable = false;
           }
+
+          const content = await readFile(path, "utf8");
 
           // Empty non-doc-comment lines to preserve line numbers
           const docComments = content.replace(/^[ \t]*\/\/\/ ?/gm, "");
@@ -156,72 +223,119 @@ async function main() {
     process.exit(1);
   }
 
-  // Start PocketIC
+  // Mirror `mo:core` source files to a temp directory once. Each compile passes
+  // it via `--package core`, replacing the in-memory virtual FS used previously.
+  const workDir = await mkdtemp(join(tmpdir(), "validate-docs-"));
+  const corePackageDir = join(workDir, "core");
+  for (const path of await glob(join(rootDirectory, "src/**/*.mo"))) {
+    const target = join(corePackageDir, relative(join(rootDirectory, "src"), path));
+    await mkdir(dirname(target), { recursive: true });
+    await writeFile(target, await readFile(path));
+  }
+
+  const mocPath = await resolveMocPath();
+
+  // Start PocketIC with a pool of canisters. Each worker owns one canister so
+  // installs and calls can run in parallel (different canisters do not block
+  // each other on the PocketIC server).
+  const poolSize = Math.max(1, Math.min(snippets.length, cpus().length));
   const pocketIcServer = await PocketIcServer.start({
     showRuntimeLogs: false,
     showCanisterLogs: false, // TODO: enable with --verbose flag?
   });
   const pocketIc = await PocketIc.create(pocketIcServer.getUrl());
 
-  console.log("Creating canisters...");
-  const sourcePrincipal = await pocketIc.createCanister();
-  //   const testPrincipal = await pocketIc.createCanister();
-  await pocketIc.updateCanisterSettings({
-    canisterId: sourcePrincipal,
-    controllers: [Principal.anonymous() /* , testPrincipal */],
-  });
+  console.log(`Creating ${poolSize} canister${poolSize === 1 ? "" : "s"}...`);
+  const principals: Principal[] = await Promise.all(
+    Array.from({ length: poolSize }, async () => {
+      const principal = await pocketIc.createCanister();
+      await pocketIc.updateCanisterSettings({
+        canisterId: principal,
+        controllers: [Principal.anonymous()],
+      });
+      return principal;
+    })
+  );
 
   console.log(`Running snippets...`);
+  const results: (TestResult | undefined)[] = new Array(snippets.length);
   const testResults: TestResult[] = [];
+  // Print results live as snippets finish, but always in the original snippet
+  // order so per-file headers and the summary stay coherent.
+  let nextToPrint = 0;
   let previousSnippet: Snippet | undefined;
-  for (const snippet of snippets) {
-    if (snippet.path !== previousSnippet?.path) {
-      console.log(chalk.gray(snippet.path));
-    }
-    if (
-      snippet.language === "motoko" &&
-      !snippet.tags.includes("no-validate")
-    ) {
-      const startTime = Date.now();
-      let status: TestResult["status"];
-      let error;
-      try {
-        await runSnippet(snippet, pocketIc, sourcePrincipal);
-        status = "passed";
-      } catch (err) {
-        error = err;
-        status = "failed";
+  const flush = () => {
+    while (nextToPrint < snippets.length) {
+      const snippet = snippets[nextToPrint];
+      const result = results[nextToPrint];
+      const isSkipped =
+        snippet.language !== "motoko" || snippet.tags.includes("no-validate");
+      if (!isSkipped && !result) break;
+      if (snippet.path !== previousSnippet?.path) {
+        console.log(chalk.gray(snippet.path));
       }
-      const result: TestResult = {
-        snippet,
-        status,
-        error,
-        time: Date.now() - startTime,
-      };
-      testResults.push(result);
-      if (testFilters.length || status !== "passed") {
+      if (result) {
+        testResults.push(result);
+        if (testFilters.length || result.status !== "passed") {
+          console.log(
+            testStatusEmojis[result.status],
+            `${snippet.path}:${snippet.line}`.padEnd(30),
+            chalk.grey(`${(result.time / 1000).toFixed(1)}s`)
+          );
+        }
+        if (result.error) {
+          console.log(chalk.grey(displaySnippet(snippet)));
+          console.error(chalk.red(result.error));
+        }
+      } else {
         console.log(
-          testStatusEmojis[status],
-          `${snippet.path}:${snippet.line}`.padEnd(30),
-          chalk.grey(`${(result.time / 1000).toFixed(1)}s`)
+          testStatusEmojis["skipped"],
+          `${snippet.path}:${snippet.line}`,
+          chalk.grey("skipped")
         );
-      }
-      if (result.error) {
         console.log(chalk.grey(displaySnippet(snippet)));
-        console.error(chalk.red(result.error));
       }
-    } else {
-      console.log(
-        testStatusEmojis["skipped"],
-        `${snippet.path}:${snippet.line}`,
-        chalk.grey("skipped")
-      );
-      console.log(chalk.grey(displaySnippet(snippet)));
+      previousSnippet = snippet;
+      nextToPrint++;
     }
-    previousSnippet = snippet;
-  }
+  };
+
+  await pMap(snippets, poolSize, async (snippet, idx) => {
+    if (snippet.language !== "motoko" || snippet.tags.includes("no-validate")) {
+      flush();
+      return;
+    }
+    const startTime = Date.now();
+    let status: TestResult["status"];
+    let error;
+    try {
+      const workerIdx = idx % poolSize;
+      await runSnippet(snippet, {
+        mocPath,
+        corePackageDir,
+        workDir,
+        workerIdx,
+        principal: principals[workerIdx],
+        pocketIc,
+      });
+      status = "passed";
+    } catch (err) {
+      error = err;
+      status = "failed";
+    }
+    results[idx] = {
+      snippet,
+      status,
+      error,
+      time: Date.now() - startTime,
+    };
+    flush();
+  });
+  flush();
+
   await pocketIc.tearDown();
   await pocketIcServer.stop();
+  await rm(workDir, { recursive: true, force: true });
 
   const paths = new Set(snippets.map((snippet) => snippet.path));
   const failedPaths = new Set(
@@ -260,15 +374,16 @@ async function main() {
   process.exit(hasError ? 1 : 0);
 }
 
-const runSnippet = async (
-  snippet: Snippet,
-  pocketIc: PocketIc,
-  sourcePrincipal: Principal
-) => {
-  // Set canister alias
-  const sourceCanisterName = "snippet";
-  motoko.setAliases(".", { [sourceCanisterName]: sourcePrincipal.toText() });
+interface RunContext {
+  mocPath: string;
+  corePackageDir: string;
+  workDir: string;
+  workerIdx: number;
+  principal: Principal;
+  pocketIc: PocketIc;
+}
 
+const runSnippet = async (snippet: Snippet, ctx: RunContext) => {
   const extractImports = (source: string) => {
     const importLines = [];
     const nonImportLines = [];
@@ -334,26 +449,50 @@ const runSnippet = async (
     );
   }
 
-  // Write to virtual file system
-  const virtualPath = join(
-    "snippet",
-    `${snippet.path.replace(/\.mo$/, "")}_${snippet.line}.mo`
+  // Write source to a worker-scoped temp file. Reusing the same path per worker
+  // keeps the temp directory bounded and avoids cross-worker collisions.
+  const sourcePath = join(ctx.workDir, `worker-${ctx.workerIdx}.mo`);
+  const wasmPath = join(ctx.workDir, `worker-${ctx.workerIdx}.wasm`);
+  await writeFile(sourcePath, actorSource);
+
+  try {
+    await execa(
+      ctx.mocPath,
+      [
+        "--package",
+        "core",
+        ctx.corePackageDir,
+        "--actor-alias",
+        "snippet",
+        ctx.principal.toText(),
+        ...mocExtraFlags,
+        "-o",
+        wasmPath,
+        sourcePath,
+      ],
+      { stdio: "pipe" }
+    );
+  } catch (err: any) {
+    const stderr = (err.stderr ?? "").toString().trim();
+    throw new Error(stderr || err.message || String(err));
+  }
+
+  const wasmBuffer = await readFile(wasmPath);
+  const wasm = wasmBuffer.buffer.slice(
+    wasmBuffer.byteOffset,
+    wasmBuffer.byteOffset + wasmBuffer.byteLength
+  ) as ArrayBuffer;
+
+  await withRetry(() =>
+    ctx.pocketIc.reinstallCode({
+      canisterId: ctx.principal,
+      wasm,
+    })
   );
-  motoko.write(virtualPath, actorSource);
 
-  // Compile source Wasm
-  const sourceResult = motoko.wasm(virtualPath, "ic");
-  motoko.write(`${sourcePrincipal.toText()}.did`, sourceResult.candid);
-
-  // Install Wasm files
-  await pocketIc.reinstallCode({
-    canisterId: sourcePrincipal,
-    wasm: sourceResult.wasm,
-  });
-
-  // Call `example()` method
-  const hasMain = actorSource.includes("func main"); // TODO: more robust?
-  const actor: ExampleActor = pocketIc.createActor(({ IDL }) => {
+  // Call `main()` if present
+  const hasMain = /\bfunc\s+main\b/.test(actorSource);
+  const actor: ExampleActor = ctx.pocketIc.createActor(({ IDL }) => {
     return IDL.Service(
       hasMain
         ? {
@@ -361,8 +500,10 @@ const runSnippet = async (
           }
         : {}
     );
-  }, sourcePrincipal);
-  await actor.main?.();
+  }, ctx.principal);
+  if (hasMain) {
+    await withRetry(() => actor.main!());
+  }
 };
 
 main().catch((err) => {
