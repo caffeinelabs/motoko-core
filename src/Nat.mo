@@ -68,11 +68,6 @@ module {
   public let toNat : (self : Text) -> ?Nat = fromText;
 
   /// Converts an integer to a natural number. Traps if the integer is negative.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat.fromInt(1234) == (1234 : Nat);
-  /// ```
   /// @deprecated Use `Int.toNat` instead.
   public func fromInt(int : Int) : Nat {
     if (int < 0) {
@@ -144,38 +139,18 @@ module {
   public let toNat64 : (self : Nat) -> Nat64 = Prim.natToNat64;
 
   /// Converts an 8-bit unsigned integer to an unsigned integer with infinite precision.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat.fromNat8(123) == (123 : Nat);
-  /// ```
   /// @deprecated Use `Nat8.toNat` instead.
   public let fromNat8 : Nat8 -> Nat = Prim.nat8ToNat;
 
   /// Converts a 16-bit unsigned integer to an unsigned integer with infinite precision.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat.fromNat16(123) == (123 : Nat);
-  /// ```
   /// @deprecated Use `Nat16.toNat` instead.
   public let fromNat16 : Nat16 -> Nat = Prim.nat16ToNat;
 
   /// Converts a 32-bit unsigned integer to an unsigned integer with infinite precision.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat.fromNat32(123) == (123 : Nat);
-  /// ```
   /// @deprecated Use `Nat32.toNat` instead.
   public let fromNat32 : Nat32 -> Nat = Prim.nat32ToNat;
 
   /// Converts a 64-bit unsigned integer to an unsigned integer with infinite precision.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat.fromNat64(123) == (123 : Nat);
-  /// ```
   /// @deprecated Use `Nat64.toNat` instead.
   public let fromNat64 : Nat64 -> Nat = Prim.nat64ToNat;
 

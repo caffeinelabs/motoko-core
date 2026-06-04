@@ -35,11 +35,6 @@ module {
   /// Converts an unsigned integer with infinite precision to an 8-bit unsigned integer.
   ///
   /// Traps on overflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat8.fromNat(123) == (123 : Nat8);
-  /// ```
   /// @deprecated Use `Nat.toNat8` instead.
   public let fromNat : Nat -> Nat8 = Prim.natToNat8;
 

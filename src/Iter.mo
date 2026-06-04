@@ -122,7 +122,7 @@ module {
   /// The index starts at 0 and increments by 1 for each element.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray(["A", "B", "C"]);
+  /// let iter = ["A", "B", "C"].values();
   /// let enumerated = Iter.enumerate(iter);
   /// let result = Iter.toArray(enumerated);
   /// assert result == [(0, "A"), (1, "B"), (2, "C")];
@@ -148,7 +148,7 @@ module {
   /// For any other positive interval, returns an iterator that skips `interval - 1` elements after each yielded element.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 6]);
+  /// let iter = [1, 2, 3, 4, 5, 6].values();
   /// let steppedIter = Iter.step(iter, 2); // Take every 2nd element
   /// assert ?1 == steppedIter.next();
   /// assert ?3 == steppedIter.next();
@@ -297,14 +297,14 @@ module {
   /// subsequent calls to `next()` will return `null`.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3, 4, 5]);
+  /// let iter = [1, 2, 3, 4, 5].values();
   /// let first3 = Iter.take(iter, 3);
   /// let result = Iter.toArray(first3);
   /// assert result == [1, 2, 3];
   /// ```
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3]);
+  /// let iter = [1, 2, 3].values();
   /// let first5 = Iter.take(iter, 5);
   /// let result = Iter.toArray(first5);
   /// assert result == [1, 2, 3]; // only 3 elements in the original iterator
@@ -322,7 +322,7 @@ module {
   /// The first element for which the predicate returns false is not included in the result.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 4, 3, 2, 1]);
+  /// let iter = [1, 2, 3, 4, 5, 4, 3, 2, 1].values();
   /// let result = Iter.takeWhile(iter, func (x) = x < 4);
   /// let array = Iter.toArray(result);
   /// assert array == [1, 2, 3]; // note the difference between `takeWhile` and `filter`
@@ -342,7 +342,7 @@ module {
   /// If the original iterator has fewer than `n` elements, the result will be an empty iterator.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3, 4, 5]);
+  /// let iter = [1, 2, 3, 4, 5].values();
   /// let skipped = Iter.drop(iter, 3);
   /// let result = Iter.toArray(skipped);
   /// assert result == [4, 5];
@@ -362,7 +362,7 @@ module {
   /// The first element for which the predicate returns false is the first element produced by the new iterator.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3, 4, 5, 4, 3, 2, 1]);
+  /// let iter = [1, 2, 3, 4, 5, 4, 3, 2, 1].values();
   /// let result = Iter.dropWhile(iter, func (x) = x < 4);
   /// let array = Iter.toArray(result);
   /// assert array == [4, 5, 4, 3, 2, 1]; // notice that `takeWhile` and `dropWhile` are complementary
@@ -736,13 +736,6 @@ module {
   };
 
   /// Creates an iterator that produces the elements of an Array in ascending index order.
-  /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3]);
-  /// assert ?1 == iter.next();
-  /// assert ?2 == iter.next();
-  /// assert ?3 == iter.next();
-  /// assert null == iter.next();
-  /// ```
   /// @deprecated Use `Array.values` instead.
   public func fromArray<T>(array : [T]) : Iter<T> = array.vals();
 
@@ -837,7 +830,7 @@ module {
   /// Creates a new iterator that produces elements from the original iterator in reverse order.
   /// Note: This function needs to consume the entire iterator to reverse it.
   /// ```motoko include=import
-  /// let iter = Iter.fromArray([1, 2, 3]);
+  /// let iter = [1, 2, 3].values();
   /// let reversed = Iter.reverse(iter);
   /// assert ?3 == reversed.next();
   /// assert ?2 == reversed.next();

@@ -62,13 +62,6 @@ module {
 
   /// Transforms a mutable array into an immutable array.
   ///
-  /// ```motoko include=import
-  /// let varArray = [var 0, 1, 2];
-  /// varArray[2] := 3;
-  /// let array = Array.fromVarArray(varArray);
-  /// assert array == [0, 1, 3];
-  /// ```
-  ///
   /// Runtime: O(size)
   ///
   /// Space: O(1)

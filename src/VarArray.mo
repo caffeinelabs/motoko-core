@@ -845,12 +845,6 @@ module {
 
   /// Transforms an immutable array into a mutable array.
   ///
-  /// ```motoko include=import
-  /// let array = [0, 1, 2];
-  /// let varArray = VarArray.fromArray<Nat>(array);
-  /// assert varArray.size() == 3;
-  /// ```
-  ///
   /// Runtime: O(size)
   ///
   /// Space: O(1)

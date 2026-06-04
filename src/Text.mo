@@ -49,11 +49,6 @@ module {
   public type Text = Prim.Types.Text;
 
   /// Converts the given `Char` to a `Text` value.
-  ///
-  /// ```motoko include=import
-  /// let text = Text.fromChar('A');
-  /// assert text == "A";
-  /// ```
   /// @deprecated Use `Char.toText` instead.
   public let fromChar : (c : Char) -> Text = Prim.charToText;
 
@@ -381,10 +376,12 @@ module {
   /// Returns the result of applying `f` to each character in `ts`, concatenating the intermediate text values.
   ///
   /// ```motoko include=import
+  /// import Char "mo:core/Char";
+  ///
   /// // Replace all occurrences of '?' with "!!"
   /// let result = Text.flatMap("Motoko?", func(c) {
   ///   if (c == '?') "!!"
-  ///   else Text.fromChar(c)
+  ///   else Char.toText(c)
   /// });
   /// assert result == "Motoko!!";
   /// ```

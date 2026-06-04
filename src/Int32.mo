@@ -43,11 +43,7 @@ module {
   /// Converts a signed integer with infinite precision to a 32-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int32.fromInt(123_456) == (+123_456 : Int32);
-  /// ```
+  /// @deprecated Use `Int.toInt32` instead.
   public let fromInt : Int -> Int32 = Prim.intToInt32;
 
   /// Converts a signed integer with infinite precision to a 32-bit signed integer.
@@ -61,19 +57,11 @@ module {
   public let fromIntWrap : Int -> Int32 = Prim.intToInt32Wrap;
 
   /// Converts a 16-bit signed integer to a 32-bit signed integer.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int32.fromInt16(-123) == (-123 : Int32);
-  /// ```
+  /// @deprecated Use `Int16.toInt32` instead.
   public let fromInt16 : Int16 -> Int32 = Prim.int16ToInt32;
 
   /// Converts an 8-bit signed integer to a 32-bit signed integer.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int32.fromInt8(-123) == (-123 : Int32);
-  /// ```
+  /// @deprecated Use `Int8.toInt32` instead.
   public func fromInt8(x : Int8) : Int32 {
     Prim.int16ToInt32(Prim.int8ToInt16(x))
   };
@@ -105,11 +93,7 @@ module {
   /// Converts a 64-bit signed integer to a 32-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int32.fromInt64(-123_456) == (-123_456 : Int32);
-  /// ```
+  /// @deprecated Use `Int64.toInt32` instead.
   public let fromInt64 : Int64 -> Int32 = Prim.int64ToInt32;
 
   /// Converts a 32-bit signed integer to a 64-bit signed integer.

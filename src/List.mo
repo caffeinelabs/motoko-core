@@ -2103,12 +2103,12 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// import Array "mo:core/Array";
+  /// import VarArray "mo:core/VarArray";
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
   /// let varArray = List.toVarArray(list);
-  /// assert Array.fromVarArray(varArray) == [1, 2, 3];
+  /// assert VarArray.toArray(varArray) == [1, 2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`

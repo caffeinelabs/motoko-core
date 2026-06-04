@@ -64,11 +64,6 @@ module {
   /// Conversion from Float (64-bit double precision) to Float32.
   ///
   /// Note: This may lose precision for values that are not exactly representable in 32-bit.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Float32.fromFloat(1.5) == 1.5;
-  /// ```
   /// @deprecated Use `Float.toFloat32` instead.
   public let fromFloat : (x : Float) -> Float32 = Prim.floatToFloat32;
 

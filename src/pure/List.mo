@@ -392,12 +392,11 @@ module {
   /// Example:
   /// ```motoko
   /// import List "mo:core/pure/List";
-  /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
   ///   let lists = [ ?(0, ?(1, ?(2, null))),
   ///                 ?(3, ?(4, ?(5, null))) ];
-  ///   assert List.join(lists |> Iter.fromArray(_)) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
+  ///   assert List.join(lists |> _.values()) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```
   ///
@@ -1016,12 +1015,12 @@ module {
   /// Example:
   /// ```motoko
   /// import List "mo:core/pure/List";
-  /// import Array "mo:core/Array";
+  /// import VarArray "mo:core/VarArray";
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
   ///   let array = List.toVarArray<Nat>(?(0, ?(1, ?(2, ?(3, ?(4, null))))));
-  ///   assert Array.equal(Array.fromVarArray(array), [0, 1, 2, 3, 4], Nat.equal);
+  ///   assert VarArray.equal(array, [var 0, 1, 2, 3, 4], Nat.equal);
   /// }
   /// ```
   ///
