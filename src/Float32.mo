@@ -69,6 +69,7 @@ module {
   /// ```motoko include=import
   /// assert Float32.fromFloat(1.5) == 1.5;
   /// ```
+  /// @deprecated Use `Float.toFloat32` instead.
   public let fromFloat : (x : Float) -> Float32 = Prim.floatToFloat32;
 
   /// Ratio of the circumference of a circle to its diameter.

@@ -854,11 +854,11 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(1)
-  /// @deprecated M0235
+  /// @deprecated Use `Array.toVarArray` instead.
   public func fromArray<T>(array : [T]) : [var T] = Prim.Array_tabulateVar<T>(array.size(), func i = array[i]);
 
   /// Converts an iterator to a mutable array.
-  /// @deprecated M0235
+  /// @deprecated Use `Iter.toVarArray` instead.
   public func fromIter<T>(iter : Types.Iter<T>) : [var T] {
     var list : Types.Pure.List<T> = null;
     var size = 0;

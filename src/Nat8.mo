@@ -40,6 +40,7 @@ module {
   /// ```motoko include=import
   /// assert Nat8.fromNat(123) == (123 : Nat8);
   /// ```
+  /// @deprecated Use `Nat.toNat8` instead.
   public let fromNat : Nat -> Nat8 = Prim.natToNat8;
 
   /// Converts a 16-bit unsigned integer to a 8-bit unsigned integer.

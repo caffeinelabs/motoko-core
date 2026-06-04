@@ -32,7 +32,6 @@
 import PureSet "pure/Set";
 import Types "Types";
 import Order "Order";
-import Array "Array";
 import VarArray "VarArray";
 import Runtime "Runtime";
 import Stack "Stack";
@@ -927,7 +926,6 @@ module {
   /// Space: `O(1)` retained memory plus garbage, see the note below.
   /// where `m` and `n` denote the number of elements in `set` and `iter`, respectively,
   /// and assuming that the `compare` function implements an `O(1)` comparison.
-  /// @deprecated M0235
   public func deleteAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), iter : Types.Iter<T>) : Bool {
     var deleted = false;
     for (element in iter) {
@@ -958,7 +956,6 @@ module {
   /// Space: `O(1)` retained memory plus garbage, see the note below.
   /// where `m` and `n` denote the number of elements in `set` and `iter`, respectively,
   /// and assuming that the `compare` function implements an `O(1)` comparison.
-  /// @deprecated M0235
   public func insertAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), iter : Types.Iter<T>) : Bool {
     var inserted = false;
     for (element in iter) {
@@ -986,7 +983,7 @@ module {
   /// }
   /// ```
   public func retainAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : Bool {
-    let array = Array.fromIter(values(self));
+    let array = Iter.toArray(values(self));
     deleteAll(
       self,
       compare,

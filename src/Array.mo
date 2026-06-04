@@ -72,7 +72,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(1)
-  /// @deprecated M0235
+  /// @deprecated Use `VarArray.toArray` instead.
   public func fromVarArray<T>(varArray : [var T]) : [T] = Prim.Array_tabulate<T>(varArray.size(), func i = varArray[i]);
 
   /// Transforms an immutable array into a mutable array.
@@ -651,7 +651,7 @@ module {
   public func isEmpty<T>(self : [T]) : Bool = self.size() == 0;
 
   /// Converts an iterator to an array.
-  /// @deprecated M0235
+  /// @deprecated Use `Iter.toArray` instead.
   public func fromIter<T>(iter : Types.Iter<T>) : [T] {
     var list : Types.Pure.List<T> = null;
     var size = 0;

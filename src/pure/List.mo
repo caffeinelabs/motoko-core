@@ -11,6 +11,7 @@
 
 import { Array_tabulate } "mo:⛔";
 import Array "../Array";
+import VarArray "../VarArray";
 import Iter "../Iter";
 import Order "../Order";
 import Result "../Result";
@@ -988,7 +989,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray<T>(Array.fromVarArray<T>(array));
+  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray<T>(VarArray.toArray<T>(array));
 
   /// Create an array from a list.
   /// Example:

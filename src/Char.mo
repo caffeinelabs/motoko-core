@@ -51,6 +51,7 @@ module {
   /// let char = Char.fromNat32(unicode);
   /// assert char == 'A';
   /// ```
+  /// @deprecated Use `Nat32.toChar` instead.
   public let fromNat32 : (nat32 : Nat32) -> Char = Prim.nat32ToChar;
 
   /// Convert character `char` to single character text.

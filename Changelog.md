@@ -1,5 +1,7 @@
 ## Next
-* Add `Array.toBlob` and `VarArray.toBlob` so `[Nat8]` and `[var Nat8]` arrays can be converted to `Blob` via dot notation, e.g. `bytes.toBlob()`. Deprecate `Blob.fromArray`, `Blob.fromVarArray`, and `VarArray.fromIter` in favour of the corresponding self-callable forms (`bytes.toBlob()`, `iter.toVarArray()`) (#497).
+* Deprecate every `Module.fromX` conversion that has a `Module.toX` counterpart (e.g. `Nat32.fromNat8` → `Nat8.toNat32`, `Float.fromInt` → `Int.toFloat`, `Text.fromChar` → `Char.toText`, `Blob.fromArray` → `Array.toBlob`). The compiler now emits a regular deprecation warning naming the replacement, instead of the caffeine-only `M0235` lint. Adds deprecations to several previously-unannotated conversions (`Nat.fromNat8/16/32/64`, `NatN.fromNat`, `Float.fromFloat32`, `Float32.fromFloat`, `Text.fromChar`, `Char.fromNat32`).
+* Un-deprecate `List.get`, `Map.swap`, `Map.replace`, `Map.take`, `Set.deleteAll`, `Set.insertAll`, and the `Result.Result` type alias. These had no equivalent replacement (e.g. `List.get` returns `?T`, distinct from the trapping `List.at`).
+* Add `Array.toBlob` and `VarArray.toBlob` so `[Nat8]` and `[var Nat8]` arrays can be converted to `Blob` via dot notation, e.g. `bytes.toBlob()` (#497).
 * Remove wrong `self` parameter from `Principal.fromBlob` (#492). 
   Change `blob.fromBlob()` to `Principal.fromBlob(blob)` if this causes a compile error in your code.
 

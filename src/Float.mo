@@ -463,7 +463,7 @@ module {
   /// ```motoko include=import
   /// assert Float.fromInt(-123) == -123.0;
   /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `Int.toFloat` instead.
   public let fromInt : (x : Int) -> Float = Prim.intToFloat;
 
   /// Conversion to Float32 (32-bit single precision).
@@ -484,6 +484,7 @@ module {
   /// ```motoko include=import
   /// assert Float.fromFloat32(1.5) == 1.5;
   /// ```
+  /// @deprecated Use `Float32.toFloat` instead.
   public let fromFloat32 : (x : Prim.Types.Float32) -> Float = Prim.float32ToFloat;
 
   /// Determines whether `x` is equal to `y` within the defined tolerance of `epsilon`.

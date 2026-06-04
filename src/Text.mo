@@ -54,6 +54,7 @@ module {
   /// let text = Text.fromChar('A');
   /// assert text == "A";
   /// ```
+  /// @deprecated Use `Char.toText` instead.
   public let fromChar : (c : Char) -> Text = Prim.charToText;
 
   /// Converts the given `[Char]` to a `Text` value.

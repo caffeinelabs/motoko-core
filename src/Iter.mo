@@ -743,13 +743,13 @@ module {
   /// assert ?3 == iter.next();
   /// assert null == iter.next();
   /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `Array.values` instead.
   public func fromArray<T>(array : [T]) : Iter<T> = array.vals();
 
   /// Like `fromArray` but for Arrays with mutable elements. Captures
   /// the elements of the Array at the time the iterator is created, so
   /// further modifications won't be reflected in the iterator.
-  /// @deprecated M0235
+  /// @deprecated Use `VarArray.values` instead.
   public func fromVarArray<T>(array : [var T]) : Iter<T> = array.vals();
 
   /// Consumes an iterator and collects its produced elements in an Array.
