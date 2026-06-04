@@ -184,7 +184,7 @@ run(
       test(
         "from iterator",
         do {
-          let map = Map.fromIter<Nat, Text>(([] : [(Nat, Text)]).values());
+          let map = Map.fromIter<Nat, Text>(Iter.empty<(Nat, Text)>());
           Map.size(map)
         },
         M.equals(T.nat(0))

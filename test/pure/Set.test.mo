@@ -89,7 +89,7 @@ run(
       ),
       test(
         "empty from iter",
-        Set.fromIter(([] : [Nat]).values(), Nat.compare),
+        Set.fromIter(Iter.empty<Nat>(), Nat.compare),
         SetMatcher([])
       ),
       test(
@@ -174,7 +174,7 @@ run(
       test(
         "join",
         do {
-          let set1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
+          let set1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let set2 = set1;
           let set3 = set2;
           let combined = Set.join([set1, set2, set3].values(), Nat.compare);
@@ -185,7 +185,7 @@ run(
       test(
         "flatten",
         do {
-          let subSet1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
+          let subSet1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let subSet2 = subSet1;
           let subSet3 = subSet2;
           let iterator = [subSet1, subSet2, subSet3].values();

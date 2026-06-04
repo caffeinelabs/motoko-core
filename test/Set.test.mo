@@ -146,7 +146,7 @@ run(
       test(
         "from iterator",
         do {
-          let set = Set.fromIter<Nat>(([] : [Nat]).values());
+          let set = Set.fromIter<Nat>(Iter.empty<Nat>());
           Set.size(set)
         },
         M.equals(T.nat(0))
@@ -279,7 +279,7 @@ run(
       test(
         "is sub-set",
         do {
-          let set1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
+          let set1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let set2 = Set.clone(set1);
           set1.isSubset(set2)
         },
@@ -288,7 +288,7 @@ run(
       test(
         "join",
         do {
-          let set1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
+          let set1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let set2 = Set.clone(set1);
           let set3 = Set.clone(set2);
           let combined = Set.join([set1, set2, set3].values());
@@ -299,7 +299,7 @@ run(
       test(
         "flatten",
         do {
-          let subSet1 = Set.fromIter(([] : [Nat]).values(), Nat.compare);
+          let subSet1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let subSet2 = Set.clone(subSet1);
           let subSet3 = Set.clone(subSet2);
           let iterator = [subSet1, subSet2, subSet3].values();

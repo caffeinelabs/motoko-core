@@ -119,7 +119,7 @@ run(
       ),
       test(
         "empty from iter",
-        Map.fromIter(([] : [(Nat, Text)]).values(), Nat.compare),
+        Map.fromIter(Iter.empty<(Nat, Text)>(), Nat.compare),
         MapMatcher([])
       ),
       test(
