@@ -443,12 +443,16 @@ module {
   /// ```
   public let fromInt64 : (x : Int64) -> Float = Prim.int64ToFloat;
 
-  /// Conversion to Int.
+  /// Conversion to `Int` by truncating the decimal places of the float,
+  /// equivalent to `Float.toInt(Float.trunc(self))`.
+  /// Truncation rounds toward zero: the fractional part is dropped regardless of sign.
   ///
   /// Traps for `inf`, `-inf`, and `NaN`.
   ///
   /// Example:
   /// ```motoko include=import
+  /// assert Float.toInt(1.9) == +1;    // truncates, does not round up
+  /// assert Float.toInt(-1.9) == -1;   // truncates toward zero, not toward -inf
   /// assert Float.toInt(1.2e6) == +1_200_000;
   /// ```
   public let toInt : (self : Float) -> Int = Prim.floatToInt;
