@@ -16,6 +16,7 @@
 /// import Base64 "mo:core/Base64";
 /// ```
 
+import Array "Array";
 import Blob "Blob";
 import Nat8 "Nat8";
 import Nat16 "Nat16";
@@ -85,7 +86,7 @@ module {
       let n = (b1.toNat16().toNat32() << 16) | (b2.toNat16().toNat32() << 8) | b3.toNat16().toNat32();
       let m = (b4.toNat16().toNat32() << 16) | (b5.toNat16().toNat32() << 8) | b6.toNat16().toNat32();
 
-      let bytes = Blob.fromArray([
+      let bytes = [
         alphabet[((n >> 18) & 0x3F).toNat()],
         alphabet[((n >> 12) & 0x3F).toNat()],
         alphabet[((n >> 6) & 0x3F).toNat()],
@@ -94,7 +95,7 @@ module {
         alphabet[((m >> 12) & 0x3F).toNat()],
         alphabet[((m >> 6) & 0x3F).toNat()],
         alphabet[(m & 0x3F).toNat()]
-      ]);
+      ].toBlob();
 
       switch (Text.decodeUtf8(bytes)) {
         case (?t) result := result # t;
@@ -116,7 +117,7 @@ module {
       let n = (b1.toNat16().toNat32() << 16) | (b2.toNat16().toNat32() << 8) | b3.toNat16().toNat32();
 
       //  Note: Value 61 is the UTF8 encoding of the `=` character
-      let bytes = Blob.fromArray([
+      let bytes = Array.toBlob([
         alphabet[((n >> 18) & 0x3F).toNat()],
         alphabet[((n >> 12) & 0x3F).toNat()],
         if (i +% 1 < sz) alphabet[((n >> 6) & 0x3F).toNat()] else 61,

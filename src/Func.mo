@@ -15,11 +15,11 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// import Text "mo:core/Text";
   /// import Char "mo:core/Char";
+  /// import Nat32 "mo:core/Nat32";
   ///
-  /// let textFromNat32 = Func.compose(Text.fromChar, Char.fromNat32);
-  /// assert textFromNat32(65) == "A";
+  /// let nat32ToText = Func.compose(Char.toText, Nat32.toChar);
+  /// assert nat32ToText(65) == "A";
   /// ```
   public func compose<A, B, C>(f : B -> C, g : A -> B) : A -> C {
     func(x : A) : C {

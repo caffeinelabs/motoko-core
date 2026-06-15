@@ -5,6 +5,7 @@ import Int "../src/Int";
 import Iter "../src/Iter";
 import Nat "../src/Nat";
 import Text "../src/Text";
+import VarArray "../src/VarArray";
 import { Tuple2; Tuple3 } "../src/Tuples";
 
 suite(
@@ -68,7 +69,7 @@ suite(
           Iter.enumerate(_actual),
           func(i, x) { actual[i] := x }
         );
-        expect.array<Nat>(Array.fromVarArray(actual), Nat.toText, Nat.equal).equal([1, 3])
+        expect.array<Nat>(VarArray.toArray(actual), Nat.toText, Nat.equal).equal([1, 3])
       }
     )
   }
@@ -91,7 +92,7 @@ suite(
   "flatten",
   func() {
     func mk(inputs : [[Nat]], expected : [Nat]) {
-      let actual = Iter.flatten(Iter.map(inputs.vals(), func(x) = Iter.fromArray(x)));
+      let actual = Iter.flatten(Iter.map(inputs.vals(), func(x) = x.values()));
       expect.array<Nat>(Iter.toArray(actual), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk([[1, 2], [3], [4, 5, 6]], [1, 2, 3, 4, 5, 6]));
@@ -268,13 +269,13 @@ suite(
 );
 
 suite(
-  "fromArray",
+  "Array.values",
   func() {
     test(
       "creates iterator from array",
       func() {
         let expected = [1, 2, 3];
-        let _actual = Iter.fromArray(expected);
+        let _actual = expected.values();
         let actual = [var 0, 0, 0];
 
         Iter.forEach<(Nat, Nat)>(
@@ -291,13 +292,13 @@ suite(
 );
 
 suite(
-  "fromVarArray",
+  "VarArray.values",
   func() {
     test(
       "creates iterator from var array",
       func() {
         let expected = [var 1, 2, 3];
-        let _actual = Iter.fromVarArray(expected);
+        let _actual = expected.values();
         let actual = [var 0, 0, 0];
 
         Iter.forEach<(Nat, Nat)>(

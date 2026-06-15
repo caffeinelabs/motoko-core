@@ -925,7 +925,7 @@ module {
   ///
   /// persistent actor {
   ///   transient let iter =
-  ///     Iter.fromArray([(0, "Zero"), (2, "Two"), (1, "One")]);
+  ///     [(0, "Zero"), (2, "Two"), (1, "One")].values();
   ///
   ///   let map = Map.fromIter(iter, Nat.compare);
   ///
@@ -955,7 +955,7 @@ module {
   ///
   /// persistent actor {
   ///   transient let iter =
-  ///     Iter.fromArray([(0, "Zero"), (2, "Two"), (1, "One")]);
+  ///     [(0, "Zero"), (2, "Two"), (1, "One")].values();
   ///
   ///   let map = iter.toMap(Nat.compare);
   ///

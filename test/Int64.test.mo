@@ -1,5 +1,9 @@
 // @testmode wasi
 
+import Int "../src/Int";
+import Int8 "../src/Int8";
+import Int16 "../src/Int16";
+import Int32 "../src/Int32";
 import Int64 "../src/Int64";
 import Order "../src/Order";
 import Nat "../src/Nat";
@@ -36,12 +40,12 @@ run(
       test(
         "minimum value",
         Int64.minValue,
-        M.equals(Int64Testable(Int64.fromInt(-2 ** 63)))
+        M.equals(Int64Testable(Int.toInt64(-2 ** 63)))
       ),
       test(
         "maximum value",
         Int64.maxValue,
-        M.equals(Int64Testable(Int64.fromInt(+2 ** 63 - 1)))
+        M.equals(Int64Testable(Int.toInt64(+2 ** 63 - 1)))
       )
     ]
   )
@@ -90,27 +94,27 @@ run(
     [
       test(
         "maximum number",
-        Int64.fromInt(maximumInt64asInt),
+        Int.toInt64(maximumInt64asInt),
         M.equals(Int64Testable(Int64.maxValue))
       ),
       test(
         "minimum number",
-        Int64.fromInt(minimumInt64asInt),
+        Int.toInt64(minimumInt64asInt),
         M.equals(Int64Testable(Int64.minValue))
       ),
       test(
         "one",
-        Int64.fromInt(1),
+        Int.toInt64(1),
         M.equals(Int64Testable(1))
       ),
       test(
         "minus one",
-        Int64.fromInt(-1),
+        Int.toInt64(-1),
         M.equals(Int64Testable(-1))
       ),
       test(
         "zero",
-        Int64.fromInt(0),
+        Int.toInt64(0),
         M.equals(Int64Testable(0))
       )
     ]
@@ -2289,27 +2293,27 @@ run(
     [
       test(
         "maximum number",
-        Int64.fromInt8(127),
+        Int8.toInt64(127),
         M.equals(Int64Testable(127))
       ),
       test(
         "minimum number",
-        Int64.fromInt8(-128),
+        Int8.toInt64(-128),
         M.equals(Int64Testable(-128))
       ),
       test(
         "zero",
-        Int64.fromInt8(0),
+        Int8.toInt64(0),
         M.equals(Int64Testable(0))
       ),
       test(
         "positive number",
-        Int64.fromInt8(42),
+        Int8.toInt64(42),
         M.equals(Int64Testable(42))
       ),
       test(
         "negative number",
-        Int64.fromInt8(-42),
+        Int8.toInt64(-42),
         M.equals(Int64Testable(-42))
       )
     ]
@@ -2355,27 +2359,27 @@ run(
     [
       test(
         "maximum number",
-        Int64.fromInt16(32_767),
+        Int16.toInt64(32_767),
         M.equals(Int64Testable(32_767))
       ),
       test(
         "minimum number",
-        Int64.fromInt16(-32_768),
+        Int16.toInt64(-32_768),
         M.equals(Int64Testable(-32_768))
       ),
       test(
         "zero",
-        Int64.fromInt16(0),
+        Int16.toInt64(0),
         M.equals(Int64Testable(0))
       ),
       test(
         "positive number",
-        Int64.fromInt16(12_345),
+        Int16.toInt64(12_345),
         M.equals(Int64Testable(12_345))
       ),
       test(
         "negative number",
-        Int64.fromInt16(-12_345),
+        Int16.toInt64(-12_345),
         M.equals(Int64Testable(-12_345))
       )
     ]
@@ -2423,27 +2427,27 @@ run(
     [
       test(
         "maximum number",
-        Int64.fromInt32(2_147_483_647),
+        Int32.toInt64(2_147_483_647),
         M.equals(Int64Testable(2_147_483_647))
       ),
       test(
         "minimum number",
-        Int64.fromInt32(-2_147_483_648),
+        Int32.toInt64(-2_147_483_648),
         M.equals(Int64Testable(-2_147_483_648))
       ),
       test(
         "zero",
-        Int64.fromInt32(0),
+        Int32.toInt64(0),
         M.equals(Int64Testable(0))
       ),
       test(
         "positive number",
-        Int64.fromInt32(123_456),
+        Int32.toInt64(123_456),
         M.equals(Int64Testable(123_456))
       ),
       test(
         "negative number",
-        Int64.fromInt32(-123_456),
+        Int32.toInt64(-123_456),
         M.equals(Int64Testable(-123_456))
       )
     ]

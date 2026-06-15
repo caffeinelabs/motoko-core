@@ -1,5 +1,6 @@
 import Array "../src/Array";
 import VarArray "../src/VarArray";
+import Iter "../src/Iter";
 import Int "../src/Int";
 import Char "../src/Char";
 import Nat "../src/Nat";
@@ -64,23 +65,23 @@ let suite = Suite.suite(
       M.equals(T.array<Int>(T.intTestable, []))
     ),
     Suite.test(
-      "fromVarArray",
-      Array.fromVarArray<Int>([var 1, 2, 3]),
+      "VarArray.toArray",
+      VarArray.toArray<Int>([var 1, 2, 3]),
       M.equals(T.array<Int>(T.intTestable, [1, 2, 3]))
     ),
     Suite.test(
-      "fromVarArray empty",
-      Array.fromVarArray<Int>([var]),
+      "VarArray.toArray empty",
+      VarArray.toArray<Int>([var]),
       M.equals(T.array<Int>(T.intTestable, []))
     ),
     Suite.test(
       "toVarArray round trip",
-      Array.fromVarArray(Array.toVarArray<Int>([1, 2, 3])),
+      VarArray.toArray(Array.toVarArray<Int>([1, 2, 3])),
       M.equals(T.array<Int>(T.intTestable, [1, 2, 3]))
     ),
     Suite.test(
       "toVarArray round trip empty",
-      Array.fromVarArray(Array.toVarArray<Int>([])),
+      VarArray.toArray(Array.toVarArray<Int>([])),
       M.equals(T.array<Int>(T.intTestable, []))
     ),
     Suite.test(
@@ -661,12 +662,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "Iter conversions",
-      Array.fromIter<Nat>(Array.values([1, 2, 3])),
+      Iter.toArray(Array.values([1, 2, 3])),
       M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
     ),
     Suite.test(
       "Iter conversions empty",
-      Array.fromIter<Nat>(Array.values([])),
+      Iter.toArray(Array.values([])),
       M.equals(T.array<Nat>(T.natTestable, []))
     ),
     Suite.test(

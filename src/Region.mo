@@ -447,13 +447,14 @@ module {
   ///
   /// Example:
   /// ```motoko no-repl include=import
+  /// import Array "mo:core/Array";
   /// import Blob "mo:core/Blob";
   ///
   /// persistent actor {
   ///   public func example() : async () {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
-  ///     let value = Blob.fromArray([1, 2, 3]);
+  ///     let value = Array.toBlob([1, 2, 3]);
   ///     let size = value.size();
   ///     Region.storeBlob(region, offset, value);
   ///     assert Blob.toArray(Region.loadBlob(region, offset, size)) == [1, 2, 3];
@@ -467,13 +468,14 @@ module {
   ///
   /// Example:
   /// ```motoko no-repl include=import
+  /// import Array "mo:core/Array";
   /// import Blob "mo:core/Blob";
   ///
   /// persistent actor {
   ///   public func example() : async () {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
-  ///     let value = Blob.fromArray([1, 2, 3]);
+  ///     let value = Array.toBlob([1, 2, 3]);
   ///     let size = value.size();
   ///     Region.storeBlob(region, offset, value);
   ///     assert Blob.toArray(Region.loadBlob(region, offset, size)) == [1, 2, 3];

@@ -4,6 +4,7 @@ import Blob "../src/Blob";
 import Nat8 "../src/Nat8";
 import Text "../src/Text";
 import { suite; test; expect } "mo:test";
+import Nat "../src/Nat";
 
 suite(
   "Base64.encode",
@@ -38,15 +39,15 @@ suite(
       func() {
         // 3 bytes — no padding
         let b3 : [Nat8] = [0, 255, 170]; // 0x00 0xFF 0xAA
-        expect.text(Base64.encode(Blob.fromArray(b3))).equal("AP+q");
+        expect.text(Base64.encode(Array.toBlob(b3))).equal("AP+q");
 
         // 2 bytes — one '=' padding
         let b2 : [Nat8] = [1, 2]; // 0x01 0x02
-        expect.text(Base64.encode(Blob.fromArray(b2))).equal("AQI=");
+        expect.text(Base64.encode(Array.toBlob(b2))).equal("AQI=");
 
         // 1 byte — two '=' padding
         let b1 : [Nat8] = [255]; // 0xFF
-        expect.text(Base64.encode(Blob.fromArray(b1))).equal("/w==")
+        expect.text(Base64.encode(Array.toBlob(b1))).equal("/w==")
       }
     );
 
@@ -54,8 +55,8 @@ suite(
     test(
       "encodes 256 sequential bytes (0..255)",
       func() {
-        let bytes : [Nat8] = Array.tabulate<Nat8>(256, func i = Nat8.fromNat(i));
-        let encoded = Base64.encode(Blob.fromArray(bytes));
+        let bytes : [Nat8] = Array.tabulate<Nat8>(256, func i = Nat.toNat8(i));
+        let encoded = Base64.encode(Array.toBlob(bytes));
 
         // Output length should be ceil(256/3)*4 = 344
         expect.nat(Text.size(encoded)).equal(344);

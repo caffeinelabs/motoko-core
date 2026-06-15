@@ -35,11 +35,7 @@ module {
   /// Converts an unsigned integer with infinite precision to a 64-bit unsigned integer.
   ///
   /// Traps on overflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat64.fromNat(123) == (123 : Nat64);
-  /// ```
+  /// @deprecated Use `Nat.toNat64` instead.
   public let fromNat : Nat -> Nat64 = Prim.natToNat64;
 
   /// Converts a 64-bit unsigned integer to an 8-bit unsigned integer.
@@ -55,12 +51,7 @@ module {
   };
 
   /// Converts a 16-bit unsigned integer to a 64-bit unsigned integer.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat64.fromNat16(123) == (123 : Nat64);
-  /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `Nat16.toNat64` instead.
   public func fromNat16(x : Nat16) : Nat64 {
     Prim.nat32ToNat64(Prim.nat16ToNat32(x))
   };
@@ -78,23 +69,13 @@ module {
   };
 
   /// Converts an 8-bit unsigned integer to a 64-bit unsigned integer.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat64.fromNat8(123) == (123 : Nat64);
-  /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `Nat8.toNat64` instead.
   public func fromNat8(x : Nat8) : Nat64 {
     Prim.nat32ToNat64(Prim.nat16ToNat32(Prim.nat8ToNat16(x)))
   };
 
   /// Converts a 32-bit unsigned integer to a 64-bit unsigned integer.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Nat64.fromNat32(123) == (123 : Nat64);
-  /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `Nat32.toNat64` instead.
   public let fromNat32 : (x : Nat32) -> Nat64 = Prim.nat32ToNat64;
 
   /// Converts a 64-bit unsigned integer to a 32-bit unsigned integer.

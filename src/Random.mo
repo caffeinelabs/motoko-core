@@ -5,6 +5,7 @@
 /// import Random "mo:core/Random";
 /// ```
 
+import Array "Array";
 import Nat8 "Nat8";
 import Nat64 "Nat64";
 import Int "Int";
@@ -136,7 +137,7 @@ module {
         // Generate 8 bytes directly from a single 64-bit number
         let n = PRNG.next(state.prng);
         let (b7, b6, b5, b4, b3, b2, b1, b0) = Nat64.explode(n);
-        Blob.fromArray([b0, b1, b2, b3, b4, b5, b6, b7])
+        [b0, b1, b2, b3, b4, b5, b6, b7].toBlob()
       }
     )
   };
@@ -254,7 +255,7 @@ module {
       // 2^64 - (2^64 % toExclusive) = (2^64-1) - (2^64-1 % toExclusive):
       let cutoff = Nat64.maxValue - (Nat64.maxValue % toExclusive);
       // 2^64 / toExclusive, with toExclusive > 1:
-      let multiple = Nat64.fromNat(/* 2^64 */ 0x10000000000000000 / Nat64.toNat(toExclusive));
+      let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / Nat64.toNat(toExclusive));
       loop {
         // Build up a random Nat64 from bytes
         var number = nat64();
@@ -276,7 +277,7 @@ module {
     /// ```
     /// @deprecated M0235
     public func nat64() : Nat64 {
-      (Nat64.fromNat(Nat8.toNat(nat8())) << 56) | (Nat64.fromNat(Nat8.toNat(nat8())) << 48) | (Nat64.fromNat(Nat8.toNat(nat8())) << 40) | (Nat64.fromNat(Nat8.toNat(nat8())) << 32) | (Nat64.fromNat(Nat8.toNat(nat8())) << 24) | (Nat64.fromNat(Nat8.toNat(nat8())) << 16) | (Nat64.fromNat(Nat8.toNat(nat8())) << 8) | Nat64.fromNat(Nat8.toNat(nat8()))
+      (Nat.toNat64(Nat8.toNat(nat8())) << 56) | (Nat.toNat64(Nat8.toNat(nat8())) << 48) | (Nat.toNat64(Nat8.toNat(nat8())) << 40) | (Nat.toNat64(Nat8.toNat(nat8())) << 32) | (Nat.toNat64(Nat8.toNat(nat8())) << 24) | (Nat.toNat64(Nat8.toNat(nat8())) << 16) | (Nat.toNat64(Nat8.toNat(nat8())) << 8) | Nat.toNat64(Nat8.toNat(nat8()))
     };
 
     /// Random `Nat64` value in the range [fromInclusive, toExclusive).
@@ -306,13 +307,13 @@ module {
       if (fromInclusive >= toExclusive) {
         Runtime.trap("Random.natRange(): fromInclusive >= toExclusive")
       };
-      Nat64.toNat(uniform64(Nat64.fromNat(toExclusive - fromInclusive - 1))) + fromInclusive
+      Nat64.toNat(uniform64(Nat.toNat64(toExclusive - fromInclusive - 1))) + fromInclusive
     };
 
     /// @deprecated M0235
     public func intRange(fromInclusive : Int, toExclusive : Int) : Int {
-      let range = Nat.fromInt(toExclusive - fromInclusive - 1);
-      Nat64.toNat(uniform64(Nat64.fromNat(range))) + fromInclusive
+      let range = Int.toNat(toExclusive - fromInclusive - 1);
+      Nat64.toNat(uniform64(Nat.toNat64(range))) + fromInclusive
     };
 
   };
@@ -369,7 +370,7 @@ module {
       // 2^64 - (2^64 % toExclusive) = (2^64-1) - (2^64-1 % toExclusive):
       let cutoff = Nat64.maxValue - (Nat64.maxValue % toExclusive);
       // 2^64 / toExclusive, with toExclusive > 1:
-      let multiple = Nat64.fromNat(/* 2^64 */ 0x10000000000000000 / Nat64.toNat(toExclusive));
+      let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / Nat64.toNat(toExclusive));
       loop {
         // Build up a random Nat64 from bytes
         var number = await* nat64();
@@ -385,7 +386,7 @@ module {
     /// Random `Nat64` value in the range [0, 2^64).
     /// @deprecated M0235
     public func nat64() : async* Nat64 {
-      (Nat64.fromNat(Nat8.toNat(await* nat8())) << 56) | (Nat64.fromNat(Nat8.toNat(await* nat8())) << 48) | (Nat64.fromNat(Nat8.toNat(await* nat8())) << 40) | (Nat64.fromNat(Nat8.toNat(await* nat8())) << 32) | (Nat64.fromNat(Nat8.toNat(await* nat8())) << 24) | (Nat64.fromNat(Nat8.toNat(await* nat8())) << 16) | (Nat64.fromNat(Nat8.toNat(await* nat8())) << 8) | Nat64.fromNat(Nat8.toNat(await* nat8()))
+      (Nat.toNat64(Nat8.toNat(await* nat8())) << 56) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 48) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 40) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 32) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 24) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 16) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 8) | Nat.toNat64(Nat8.toNat(await* nat8()))
     };
 
     /// Random `Nat64` value in the range [fromInclusive, toExclusive).
@@ -403,14 +404,14 @@ module {
       if (fromInclusive >= toExclusive) {
         Runtime.trap("AsyncRandom.natRange(): fromInclusive >= toExclusive")
       };
-      Nat64.toNat(await* uniform64(Nat64.fromNat(toExclusive - fromInclusive - 1))) + fromInclusive
+      Nat64.toNat(await* uniform64(Nat.toNat64(toExclusive - fromInclusive - 1))) + fromInclusive
     };
 
     /// Random `Int` value in the range [fromInclusive, toExclusive).
     /// @deprecated M0235
     public func intRange(fromInclusive : Int, toExclusive : Int) : async* Int {
-      let range = Nat.fromInt(toExclusive - fromInclusive - 1);
-      Nat64.toNat(await* uniform64(Nat64.fromNat(range))) + fromInclusive
+      let range = Int.toNat(toExclusive - fromInclusive - 1);
+      Nat64.toNat(await* uniform64(Nat.toNat64(range))) + fromInclusive
     };
 
   };

@@ -89,7 +89,7 @@ run(
       ),
       test(
         "empty from iter",
-        Set.fromIter(Iter.fromArray([]), Nat.compare),
+        Set.fromIter(Iter.empty<Nat>(), Nat.compare),
         SetMatcher([])
       ),
       test(
@@ -174,10 +174,10 @@ run(
       test(
         "join",
         do {
-          let set1 = Set.fromIter(Iter.fromArray<Nat>([]), Nat.compare);
+          let set1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let set2 = set1;
           let set3 = set2;
-          let combined = Set.join(Iter.fromArray([set1, set2, set3]), Nat.compare);
+          let combined = Set.join([set1, set2, set3].values(), Nat.compare);
           Set.size(combined)
         },
         M.equals(T.nat(0))
@@ -185,10 +185,10 @@ run(
       test(
         "flatten",
         do {
-          let subSet1 = Set.fromIter(Iter.fromArray<Nat>([]), Nat.compare);
+          let subSet1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let subSet2 = subSet1;
           let subSet3 = subSet2;
-          let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
+          let iterator = [subSet1, subSet2, subSet3].values();
           let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
           let combined = Set.flatten(setOfSets, Nat.compare);
           Set.size(combined)
@@ -228,7 +228,7 @@ run(
       ),
       test(
         "from iter",
-        Set.fromIter(Iter.fromArray(expected), Nat.compare),
+        Set.fromIter(expected.values(), Nat.compare),
         SetMatcher(expected)
       ),
       test(
@@ -358,7 +358,7 @@ run(
           let set1 = Set.singleton(0);
           let set2 = Set.singleton(1);
           let set3 = Set.singleton(2);
-          let combined = Set.join(Iter.fromArray([set1, set2, set3]), Nat.compare);
+          let combined = Set.join([set1, set2, set3].values(), Nat.compare);
           Iter.toArray(Set.values(combined))
         },
         M.equals(
@@ -374,7 +374,7 @@ run(
           let subSet1 = Set.singleton(0);
           let subSet2 = Set.singleton(1);
           let subSet3 = Set.singleton(2);
-          let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
+          let iterator = [subSet1, subSet2, subSet3].values();
           let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
           let combined = Set.flatten(setOfSets, Nat.compare);
           Iter.toArray(Set.values(combined))
@@ -417,7 +417,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   ),
   test(
     "from iter",
-    Set.fromIter(Iter.fromArray(expected), Nat.compare),
+    Set.fromIter(expected.values(), Nat.compare),
     SetMatcher(expected)
   ),
   test(
@@ -579,8 +579,8 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let set1 = Set.map(buildTestSet(), Int.compare, func(number) { +number });
       let set2 = Set.map(buildTestSet(), Int.compare, func(number) { -number });
-      let set3 = Set.fromIter(Iter.fromArray([-1, 1]), Int.compare);
-      let combined = Set.join(Iter.fromArray([set1, set2, set3]), Int.compare);
+      let set3 = Set.fromIter([-1, 1].values(), Int.compare);
+      let combined = Set.join([set1, set2, set3].values(), Int.compare);
       Iter.toArray(Set.values(combined))
     },
     do {
@@ -603,8 +603,8 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let subSet1 = Set.map(buildTestSet(), Int.compare, func(number) { +number });
       let subSet2 = Set.map(buildTestSet(), Int.compare, func(number) { -number });
-      let subSet3 = Set.fromIter(Iter.fromArray([-1, 1]), Int.compare);
-      let iterator = Iter.fromArray([subSet1, subSet2, subSet3]);
+      let subSet3 = Set.fromIter([-1, 1].values(), Int.compare);
+      let iterator = [subSet1, subSet2, subSet3].values();
       let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Int.compare) });
       let combined = Set.flatten(setOfSets, Int.compare);
       Iter.toArray(Set.values(combined))

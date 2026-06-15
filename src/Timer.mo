@@ -25,7 +25,7 @@
 /// For further usage information for timers on the IC, please consult
 /// [the documentation](https://internetcomputer.org/docs/building-apps/network-features/periodic-tasks-timers#timers-library-limitations).
 import { setTimer = setTimerNano; cancelTimer = cancel } = "mo:⛔";
-import Nat64 = "Nat64";
+import Nat "Nat";
 import Time "Time";
 
 module {
@@ -44,7 +44,7 @@ module {
   /// let timerId = Timer.setTimer<system>(#minutes 30, runIn30Minutes);
   /// ```
   public func setTimer<system>(duration : Time.Duration, job : () -> async ()) : TimerId {
-    setTimerNano<system>(Nat64.fromNat(Time.toNanoseconds duration), false, job)
+    setTimerNano<system>(Nat.toNat64(Time.toNanoseconds duration), false, job)
   };
 
   /// Installs a recurring timer that upon expiration after given duration `d`
@@ -59,7 +59,7 @@ module {
   /// let timerId = Timer.recurringTimer<system>(#minutes 30, runEvery30Minutes);
   /// ```
   public func recurringTimer<system>(duration : Time.Duration, job : () -> async ()) : TimerId {
-    setTimerNano<system>(Nat64.fromNat(Time.toNanoseconds duration), true, job)
+    setTimerNano<system>(Nat.toNat64(Time.toNanoseconds duration), true, job)
   };
 
   /// Cancels a still active timer with `(id : TimerId)`. For expired timers
