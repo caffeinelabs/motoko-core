@@ -40,15 +40,16 @@ const rootDirectory = join(__dirname, "../../..");
 // as errors in doc snippets — examples must never use deprecated APIs.
 const mocExtraFlags = ["-E=M0223,M0154"];
 
+// Always use the mops-pinned `moc` so snippets compile against the exact
+// toolchain version the project targets. Never fall back to a dfx-provided moc.
 async function resolveMocPath(): Promise<string> {
-  if (process.env.DFX_MOC_PATH) return process.env.DFX_MOC_PATH;
   const { stdout } = await execa("npx", ["mops", "toolchain", "bin", "moc"], {
     cwd: rootDirectory,
   });
   const path = stdout.trim();
   if (!path) {
     throw new Error(
-      "Could not resolve `moc` binary. Set DFX_MOC_PATH or run `mops toolchain init`."
+      "Could not resolve `moc` binary. Run `mops toolchain init`."
     );
   }
   return path;
