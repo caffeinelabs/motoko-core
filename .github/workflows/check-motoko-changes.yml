@@ -21,6 +21,9 @@ on:
       has_mops_package_version_changes:
         description: "Whether the version field in mops.toml was changed"
         value: ${{ jobs.check.outputs.has_mops_package_version_changes }}
+      has_validate_docs_script_changes:
+        description: "Whether the validate:docs script was changed"
+        value: ${{ jobs.check.outputs.has_validate_docs_script_changes }}
 
 jobs:
   check:
@@ -32,6 +35,7 @@ jobs:
       has_changelog_changes: ${{ steps.check_mo_changes.outputs.has_changelog_changes }}
       has_mops_dependency_changes: ${{ steps.check_mo_changes.outputs.has_mops_dependency_changes }}
       has_mops_package_version_changes: ${{ steps.check_mo_changes.outputs.has_mops_package_version_changes }}
+      has_validate_docs_script_changes: ${{ steps.check_mo_changes.outputs.has_validate_docs_script_changes }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -85,5 +89,13 @@ jobs:
             echo "No mops package version changes detected"
           else
             echo "has_mops_package_version_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Check for validate:docs script changes
+          if [ -z "$(git diff --name-only $BASE_SHA $HEAD_SHA -- test/ts/validate/docs.ts)" ]; then
+            echo "has_validate_docs_script_changes=false" >> $GITHUB_OUTPUT
+            echo "No validate:docs script changes detected"
+          else
+            echo "has_validate_docs_script_changes=true" >> $GITHUB_OUTPUT
           fi
           
