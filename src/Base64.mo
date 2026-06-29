@@ -19,6 +19,7 @@
 import Array "Array";
 import Blob "Blob";
 import List "List";
+import Nat "Nat";
 import Nat8 "Nat8";
 import Nat16 "Nat16";
 import Nat32 "Nat32";
@@ -186,7 +187,7 @@ module {
         nbits += 6;
         if (nbits >= 8) {
           nbits -= 8;
-          List.add(out, Nat8.fromNat(Nat32.toNat((acc >> nbits) & 0xFF)))
+          List.add(out, Nat.toNat8(Nat32.toNat((acc >> nbits) & 0xFF)))
         }
       }
     };

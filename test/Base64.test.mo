@@ -146,7 +146,7 @@ suite(
         expect.option<Blob>(Base64.decode("not!base64"), blobToText, Blob.equal).equal(null);
         expect.option<Blob>(Base64.decode("Zm9v Ym Fy"), blobToText, Blob.equal).equal(null); // spaces
         expect.option<Blob>(Base64.decode("Zm9v\nYmFy"), blobToText, Blob.equal).equal(null); // newline
-        expect.option<Blob>(Base64.decode("Zm9\FF"), blobToText, Blob.equal).equal(null); // non-ASCII
+        expect.option<Blob>(Base64.decode("Zm9vé"), blobToText, Blob.equal).equal(null); // non-ASCII Unicode (U+00E9)
         expect.option<Blob>(Base64.decode("===="), blobToText, Blob.equal).equal(?("" : Blob)) // only padding is valid (empty)
       }
     );
