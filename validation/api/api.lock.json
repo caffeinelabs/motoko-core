@@ -51,6 +51,7 @@
   {
     "name": "Base64",
     "exports": [
+      "public func decode(text : Text) : ?Blob",
       "public func encode(data : Blob) : Text"
     ]
   },

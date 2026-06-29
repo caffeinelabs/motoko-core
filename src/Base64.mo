@@ -1,6 +1,6 @@
-/// Module for Base64 encoding of byte sequences.
+/// Module for Base64 encoding and decoding of byte sequences.
 ///
-/// Base64 encoding converts binary data to an ASCII string using 64 printable
+/// Base64 converts binary data to and from an ASCII string using 64 printable
 /// characters, as specified in [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648).
 /// It is widely used for HTTP Basic Authentication, encoding binary data in
 /// JSON payloads, and data URIs.
@@ -18,6 +18,8 @@
 
 import Array "Array";
 import Blob "Blob";
+import List "List";
+import Nat "Nat";
 import Nat8 "Nat8";
 import Nat16 "Nat16";
 import Nat32 "Nat32";
@@ -134,6 +136,62 @@ module {
       i +%= 3
     };
     result
+  };
+
+  // Reverse lookup table for the standard Base64 alphabet (RFC 4648 §4).
+  // Index is the ASCII code point (0–127); value is the 6-bit decoded value (0–63),
+  // or 0xFF to signal an invalid character.
+  // prettier-ignore
+  private let decodeTable : [Nat8] = [
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0-15
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 16-31
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,   62, 0xFF, 0xFF, 0xFF,   63, // 32-47  '+' = 62, '/' = 63
+      52,   53,   54,   55,   56,   57,   58,   59,   60,   61, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 48-63  '0'-'9' = 52-61
+    0xFF,    0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14, // 64-79  'A'-'O' = 0-14
+      15,   16,   17,   18,   19,   20,   21,   22,   23,   24,   25, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 80-95  'P'-'Z' = 15-25
+    0xFF,   26,   27,   28,   29,   30,   31,   32,   33,   34,   35,   36,   37,   38,   39,   40, // 96-111 'a'-'o' = 26-40
+      41,   42,   43,   44,   45,   46,   47,   48,   49,   50,   51, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF  // 112-127 'p'-'z' = 41-51
+  ];
+
+  /// Decodes a Base64-encoded `Text` string to a `Blob` (RFC 4648 §4).
+  ///
+  /// Returns `?blob` on success, or `null` if the input contains any character
+  /// outside the standard Base64 alphabet (`A–Z`, `a–z`, `0–9`, `+`, `/`).
+  /// Padding characters (`=`) are accepted and ignored.
+  /// An empty `Text` decodes to `?("" : Blob)`.
+  ///
+  /// This function is the exact inverse of `encode`:
+  /// for every `Blob b`, `decode(encode(b)) == ?b`.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// assert Base64.decode("") == ?("" : Blob);
+  /// assert Base64.decode("Zg==") == ?("f" : Blob);
+  /// assert Base64.decode("Zm8=") == ?("fo" : Blob);
+  /// assert Base64.decode("Zm9v") == ?("foo" : Blob);
+  /// assert Base64.decode("Zm9vYmFy") == ?("foobar" : Blob);
+  /// assert Base64.decode("not!base64") == null;
+  /// ```
+  public func decode(text : Text) : ?Blob {
+    var acc : Nat32 = 0;
+    var nbits : Nat32 = 0;
+    let out = List.empty<Nat8>();
+    for (ch in text.chars()) {
+      if (ch != '=') {
+        let n = Prim.charToNat32(ch);
+        // Characters outside 0..127 are always invalid for Base64
+        if (n >= 128) return null;
+        let v = decodeTable[n.toNat()].toNat32();
+        if (v == 0xFF) return null;
+        acc := (acc << 6) | v;
+        nbits += 6;
+        if (nbits >= 8) {
+          nbits -= 8;
+          List.add(out, Nat.toNat8(Nat32.toNat((acc >> nbits) & 0xFF)))
+        }
+      }
+    };
+    ?Array.toBlob(List.toArray(out))
   };
 
 }
