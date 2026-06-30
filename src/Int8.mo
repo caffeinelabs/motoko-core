@@ -43,11 +43,7 @@ module {
   /// Converts a signed integer with infinite precision to an 8-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int8.fromInt(123) == (+123 : Int8);
-  /// ```
+  /// @deprecated Use `Int.toInt8` instead.
   public let fromInt : Int -> Int8 = Prim.intToInt8;
 
   /// Converts a signed integer with infinite precision to an 8-bit signed integer.
@@ -63,11 +59,7 @@ module {
   /// Converts a 16-bit signed integer to an 8-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int8.fromInt16(123) == (+123 : Int8);
-  /// ```
+  /// @deprecated Use `Int16.toInt8` instead.
   public let fromInt16 : Int16 -> Int8 = Prim.int16ToInt8;
 
   /// Converts an 8-bit signed integer to a 16-bit signed integer.
@@ -81,11 +73,7 @@ module {
   /// Converts a 32-bit signed integer to an 8-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int8.fromInt32(123) == (+123 : Int8);
-  /// ```
+  /// @deprecated Use `Int32.toInt8` instead.
   public func fromInt32(x : Int32) : Int8 {
     Prim.int16ToInt8(Prim.int32ToInt16(x))
   };
@@ -103,11 +91,7 @@ module {
   /// Converts a 64-bit signed integer to an 8-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int8.fromInt64(123) == (+123 : Int8);
-  /// ```
+  /// @deprecated Use `Int64.toInt8` instead.
   public func fromInt64(x : Int64) : Int8 {
     Prim.int16ToInt8(Prim.int32ToInt16(Prim.int64ToInt32(x)))
   };

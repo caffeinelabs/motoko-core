@@ -184,7 +184,7 @@ run(
       test(
         "from iterator",
         do {
-          let map = Map.fromIter<Nat, Text>(Iter.fromArray<(Nat, Text)>([]));
+          let map = Map.fromIter<Nat, Text>(Iter.empty<(Nat, Text)>());
           Map.size(map)
         },
         M.equals(T.nat(0))
@@ -586,7 +586,7 @@ run(
       test(
         "from iterator",
         do {
-          let map = Map.fromIter(Iter.fromArray([(0, "0")]), Nat.compare);
+          let map = Map.fromIter([(0, "0")].values(), Nat.compare);
           assert (Map.get(map, Nat.compare, 0) == ?"0");
           assert (Map.equal(map, Map.singleton<Nat, Text>(0, "0"), Nat.compare, Text.equal));
           Map.size(map)
@@ -1015,7 +1015,7 @@ run(
         "from iterator",
         do {
           let array = Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) });
-          let map = Map.fromIter(Iter.fromArray(array), Nat.compare);
+          let map = Map.fromIter(array.values(), Nat.compare);
           for (index in Nat.range(0, smallSize)) {
             assert (Map.get(map, Nat.compare, index) == ?Nat.toText(index))
           };

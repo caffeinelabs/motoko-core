@@ -44,11 +44,7 @@ module {
   /// Converts a signed integer with infinite precision to a 16-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int16.fromInt(12_345) == (+12_345 : Int16);
-  /// ```
+  /// @deprecated Use `Int.toInt16` instead.
   public let fromInt : Int -> Int16 = Prim.intToInt16;
 
   /// Converts a signed integer with infinite precision to a 16-bit signed integer.
@@ -62,11 +58,7 @@ module {
   public let fromIntWrap : Int -> Int16 = Prim.intToInt16Wrap;
 
   /// Converts a 8-bit signed integer to a 16-bit signed integer.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int16.fromInt8(-123) == (-123 : Int16);
-  /// ```
+  /// @deprecated Use `Int8.toInt16` instead.
   public let fromInt8 : Int8 -> Int16 = Prim.int8ToInt16;
 
   /// Converts a 16-bit signed integer to a 8-bit signed integer.
@@ -82,11 +74,7 @@ module {
   /// Converts a 32-bit signed integer to a 16-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int16.fromInt32(-12_345) == (-12_345 : Int16);
-  /// ```
+  /// @deprecated Use `Int32.toInt16` instead.
   public let fromInt32 : Int32 -> Int16 = Prim.int32ToInt16;
 
   /// Converts a 16-bit signed integer to a 32-bit signed integer.
@@ -100,11 +88,7 @@ module {
   /// Converts a 64-bit signed integer to a 16-bit signed integer.
   ///
   /// Traps on overflow/underflow.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// assert Int16.fromInt64(-12_345) == (-12_345 : Int16);
-  /// ```
+  /// @deprecated Use `Int64.toInt16` instead.
   public func fromInt64(x : Int64) : Int16 {
     Prim.int32ToInt16(Prim.int64ToInt32(x))
   };

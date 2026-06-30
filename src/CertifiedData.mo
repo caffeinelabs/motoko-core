@@ -21,12 +21,12 @@ module {
   /// Example:
   /// ```motoko no-repl
   /// import CertifiedData "mo:core/CertifiedData";
-  /// import Blob "mo:core/Blob";
+  /// import Array "mo:core/Array";
   ///
   /// // Must be in an update call
   ///
   /// let array : [Nat8] = [1, 2, 3];
-  /// let blob = Blob.fromArray(array);
+  /// let blob = Array.toBlob(array);
   /// CertifiedData.set(blob);
   /// ```
   ///

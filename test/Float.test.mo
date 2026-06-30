@@ -2,6 +2,7 @@
 
 import Debug "../src/Debug";
 import Float "../src/Float";
+import Int "../src/Int";
 import Order "../src/Order";
 import Text "../src/Text";
 
@@ -1817,37 +1818,37 @@ run(
     [
       test(
         "positive",
-        Float.fromInt(20),
+        Int.toFloat(20),
         M.equals(FloatTestable(20.0, noEpsilon))
       ),
       test(
         "negative",
-        Float.fromInt(-20),
+        Int.toFloat(-20),
         M.equals(FloatTestable(-20.0, noEpsilon))
       ),
       test(
         "zero",
-        Float.fromInt(0),
+        Int.toFloat(0),
         PositiveZeroMatcher()
       ),
       test(
         "positive big integer",
-        Float.fromInt(arbitraryBigInt),
+        Int.toFloat(arbitraryBigInt),
         M.equals(FloatTestable(arbitraryBigIntAsFloat, noEpsilon))
       ),
       test(
         "negative big integer",
-        Float.fromInt(-arbitraryBigInt),
+        Int.toFloat(-arbitraryBigInt),
         M.equals(FloatTestable(-arbitraryBigIntAsFloat, noEpsilon))
       ),
       test(
         "positive infinity",
-        Float.fromInt(3 ** 7777),
+        Int.toFloat(3 ** 7777),
         M.equals(FloatTestable(positiveInfinity, noEpsilon))
       ),
       test(
         "negative infinity",
-        Float.fromInt(-3 ** 7777),
+        Int.toFloat(-3 ** 7777),
         M.equals(FloatTestable(negativeInfinity, noEpsilon))
       )
     ]

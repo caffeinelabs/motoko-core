@@ -36,7 +36,7 @@ suite(
         for (_ in Nat.range(0, trials)) {
           if (random.bool()) trueCount += 1
         };
-        let ratio = Float.fromInt(trueCount) / Float.fromInt(trials);
+        let ratio = Int.toFloat(trueCount) / Int.toFloat(trials);
         assert ratio > 0.49 and ratio < 0.51
       }
     );
@@ -172,7 +172,7 @@ suite(
         let random = Random.seed(0);
 
         let rangeFunctions : [(Nat, Nat) -> Int] = [
-          func(a, b) = Nat64.toNat(random.nat64Range(Nat64.fromNat(a), Nat64.fromNat(b))),
+          func(a, b) = Nat64.toNat(random.nat64Range(Nat.toNat64(a), Nat.toNat64(b))),
           func(a, b) = Nat.toInt(random.natRange(a, b)),
           random.intRange
         ];

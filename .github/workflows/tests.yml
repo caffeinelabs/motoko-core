@@ -58,21 +58,29 @@ jobs:
 
   validate-docs:
     needs: check-motoko-changes
-    if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true' || needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true'
+    if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true' || needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Validate docs for changed src/*.mo files
-        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false'
+        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false' && needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'false'
+        shell: bash
         run: |
-          echo "${{ needs.check-motoko-changes.outputs.src_mo_changed_files }}" | while read -r file; do
-            npm run validate:docs "$file"
-          done
+          set -euo pipefail
+          files=()
+          while IFS= read -r file; do
+            [[ -n "$file" ]] && files+=("$file")
+          done <<< "${{ needs.check-motoko-changes.outputs.src_mo_changed_files }}"
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No changed src/*.mo files."
+            exit 0
+          fi
+          npm run validate:docs -- "${files[@]}"
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
-      - name: Validate all docs on version change
-        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true'
+      - name: Validate all docs on version or script change
+        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true'
         run: npm run validate:docs
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106

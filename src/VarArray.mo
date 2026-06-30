@@ -845,20 +845,14 @@ module {
 
   /// Transforms an immutable array into a mutable array.
   ///
-  /// ```motoko include=import
-  /// let array = [0, 1, 2];
-  /// let varArray = VarArray.fromArray<Nat>(array);
-  /// assert varArray.size() == 3;
-  /// ```
-  ///
   /// Runtime: O(size)
   ///
   /// Space: O(1)
-  /// @deprecated M0235
+  /// @deprecated Use `Array.toVarArray` instead.
   public func fromArray<T>(array : [T]) : [var T] = Prim.Array_tabulateVar<T>(array.size(), func i = array[i]);
 
   /// Converts an iterator to a mutable array.
-  /// @deprecated M0235
+  /// @deprecated Use `Iter.toVarArray` instead.
   public func fromIter<T>(iter : Types.Iter<T>) : [var T] {
     var list : Types.Pure.List<T> = null;
     var size = 0;

@@ -11,6 +11,7 @@
 
 import { Array_tabulate } "mo:⛔";
 import Array "../Array";
+import VarArray "../VarArray";
 import Iter "../Iter";
 import Order "../Order";
 import Result "../Result";
@@ -391,12 +392,11 @@ module {
   /// Example:
   /// ```motoko
   /// import List "mo:core/pure/List";
-  /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
   ///   let lists = [ ?(0, ?(1, ?(2, null))),
   ///                 ?(3, ?(4, ?(5, null))) ];
-  ///   assert List.join(lists |> Iter.fromArray(_)) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
+  ///   assert List.join(lists.values()) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```
   ///
@@ -988,7 +988,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray<T>(Array.fromVarArray<T>(array));
+  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray<T>(VarArray.toArray<T>(array));
 
   /// Create an array from a list.
   /// Example:
@@ -1015,12 +1015,12 @@ module {
   /// Example:
   /// ```motoko
   /// import List "mo:core/pure/List";
-  /// import Array "mo:core/Array";
+  /// import VarArray "mo:core/VarArray";
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
   ///   let array = List.toVarArray<Nat>(?(0, ?(1, ?(2, ?(3, ?(4, null))))));
-  ///   assert Array.equal(Array.fromVarArray(array), [0, 1, 2, 3, 4], Nat.equal);
+  ///   assert VarArray.equal(array, [var 0, 1, 2, 3, 4], Nat.equal);
   /// }
   /// ```
   ///

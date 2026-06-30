@@ -30,6 +30,7 @@ import Prim "mo:⛔";
 import Blob "Blob";
 import Array "Array";
 import VarArray "VarArray";
+import Nat "Nat";
 import Nat8 "Nat8";
 import Nat32 "Nat32";
 import Nat64 "Nat64";
@@ -94,7 +95,7 @@ module {
     // hashBlob is a CRC32 implementation
     let crc32Bytes = nat32ToByteArray(Prim.hashBlob hashSum);
 
-    Blob.fromArray(Array.concat(crc32Bytes, Blob.toArray(hashSum)))
+    Array.concat(crc32Bytes, Blob.toArray(hashSum)).toBlob()
   };
 
   /// Convert a `Principal` to its `Blob` (bytes) representation.
@@ -1277,13 +1278,13 @@ module {
       digest[26] := Nat8.fromIntWrap(Nat32.toNat((s6 >> 8) & 0xff));
       digest[27] := Nat8.fromIntWrap(Nat32.toNat(s6 & 0xff));
 
-      return Blob.fromVarArray(digest)
+      return digest.toBlob()
     }
   }; // class SHA224
 
   func nat32ToByteArray(n : Nat32) : [Nat8] {
     func byte(n : Nat32) : Nat8 {
-      Nat8.fromNat(Nat32.toNat(n & 0xff))
+      Nat.toNat8(Nat32.toNat(n & 0xff))
     };
     [byte(n >> 24), byte(n >> 16), byte(n >> 8), byte(n)]
   };

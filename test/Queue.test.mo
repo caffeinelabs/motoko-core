@@ -76,7 +76,7 @@ suite(
     test(
       "from iter",
       func() {
-        assert Queue.size(Queue.fromIter<Nat>(Iter.fromArray([]))) == 0
+        assert Queue.size(Queue.fromIter<Nat>(Iter.empty<Nat>())) == 0
       }
     );
 

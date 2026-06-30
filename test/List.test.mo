@@ -45,7 +45,7 @@ import Option "../src/Option";
 func locate_readable<X>(index : Nat) : (Nat, Nat) {
   // index is any Nat32 except for
   // blocks before super block s == 2 ** s
-  let i = Nat32.fromNat(index);
+  let i = Nat.toNat32(index);
   // element with index 0 located in data block with index 1
   if (i == 0) {
     return (1, 0)
@@ -76,7 +76,7 @@ func locate_readable<X>(index : Nat) : (Nat, Nat) {
 func locate_optimal<X>(index : Nat) : (Nat, Nat) {
   // super block s = bit length - 1 = (32 - leading zeros) - 1
   // blocks before super block s == 2 ** s
-  let i = Nat32.fromNat(index);
+  let i = Nat.toNat32(index);
   let lz = Nat32.bitcountLeadingZero(i);
   let lz2 = lz >> 1;
   // we split into cases to apply different optimizations in each one
@@ -141,7 +141,7 @@ func assertValid(list : List.List<Nat>) {
   while (i < blockCount) {
     let db = blocks[i];
     let sz = db.size();
-    assert i >= list.blockIndex or sz == Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat32.fromNat(i) / 3));
+    assert i >= list.blockIndex or sz == Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat.toNat32(i) / 3));
     if (sz == 0) assert index >= List.size(list);
 
     var j = 0;
@@ -1521,7 +1521,7 @@ func testToVarArray(n : Nat) : Bool {
 func testFromVarArray(n : Nat) : Bool {
   let array = VarArray.tabulate<Nat>(n, func(i) = i);
   let vec = List.fromVarArray(array);
-  List.equal(vec, List.fromArray<Nat>(Array.fromVarArray(array)), Nat.equal)
+  List.equal(vec, List.fromArray<Nat>(VarArray.toArray(array)), Nat.equal)
 };
 
 func testFromArray(n : Nat) : Bool {
@@ -1546,7 +1546,7 @@ func testforEachInRange(n : Nat) : Bool {
       let expected = VarArray.tabulate<Nat>(right - left, func(i) = left + i);
       let result = VarArray.repeat<Nat>(0, right - left);
       List.forEachInRange<Nat>(vec, func(i) = result[i - left] := i, left, right);
-      if (Array.fromVarArray(result) != Array.fromVarArray(expected)) {
+      if (VarArray.toArray(result) != VarArray.toArray(expected)) {
         Debug.print(
           "forEachInRange mismatch for left = " # Nat.toText(left) # ", right = " # Nat.toText(right) # ": expected " # debug_show (expected) # ", got " # debug_show (result)
         );

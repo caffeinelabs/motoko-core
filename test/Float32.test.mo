@@ -1,5 +1,6 @@
 // @testmode wasi
 
+import Float "../src/Float";
 import Float32 "../src/Float32";
 import Order "../src/Order";
 
@@ -350,7 +351,7 @@ run(
           ),
           test(
             "fromFloat 1.5",
-            Float32.fromFloat(1.5),
+            Float.toFloat32(1.5),
             M.equals(Float32Testable(1.5, noEpsilon))
           )
         ]

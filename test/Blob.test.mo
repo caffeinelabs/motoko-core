@@ -37,20 +37,20 @@ suite(
   "conversion",
   func() {
     test(
-      "fromArray creates blob from byte array",
+      "Array.toBlob creates blob from byte array",
       func() {
         let bytes : [Nat8] = [0, 255, 170];
-        let blob = Blob.fromArray(bytes);
+        let blob = Array.toBlob(bytes);
         expect.nat(blob.size()).equal(3);
         expect.array(Blob.toArray(blob), Nat8.toText, Nat8.equal).equal(bytes)
       }
     );
 
     test(
-      "fromVarArray creates blob from mutable byte array",
+      "VarArray.toBlob creates blob from mutable byte array",
       func() {
         let bytes : [var Nat8] = [var 0, 255, 170];
-        let blob = Blob.fromVarArray(bytes);
+        let blob = VarArray.toBlob(bytes);
         expect.nat(blob.size()).equal(3);
         expect.array(Blob.toArray(blob), Nat8.toText, Nat8.equal).equal([0, 255, 170])
       }

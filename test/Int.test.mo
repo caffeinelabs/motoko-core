@@ -1,8 +1,12 @@
 // @testmode wasi
 
 import Int "../src/Int";
+import Int8 "../src/Int8";
+import Int16 "../src/Int16";
+import Int32 "../src/Int32";
+import Int64 "../src/Int64";
 import Order "../src/Order";
-import Array "../src/Array";
+import Iter "../src/Iter";
 import Debug "../src/Debug";
 import {
   Int8Testable;
@@ -960,62 +964,62 @@ run(
 do {
   Debug.print("range()");
 
-  assert Array.fromIter(Int.range(0, 3)) == [0, 1, 2];
-  assert Array.fromIter(Int.range(1, 3)) == [1, 2];
-  assert Array.fromIter(Int.range(1, 2)) == [1];
-  assert Array.fromIter(Int.range(3, 0)) == [];
-  assert Array.fromIter(Int.range(1, 0)) == [];
-  assert Array.fromIter(Int.range(0, 0)) == []
+  assert Iter.toArray(Int.range(0, 3)) == [0, 1, 2];
+  assert Iter.toArray(Int.range(1, 3)) == [1, 2];
+  assert Iter.toArray(Int.range(1, 2)) == [1];
+  assert Iter.toArray(Int.range(3, 0)) == [];
+  assert Iter.toArray(Int.range(1, 0)) == [];
+  assert Iter.toArray(Int.range(0, 0)) == []
 };
 
 do {
   Debug.print("rangeBy()");
 
-  assert Array.fromIter(Int.rangeBy(0, 3, 1)) == [0, 1, 2];
-  assert Array.fromIter(Int.rangeBy(0, 3, 2)) == [0, 2];
-  assert Array.fromIter(Int.rangeBy(0, 3, 3)) == [0];
-  assert Array.fromIter(Int.rangeBy(1, 4, 2)) == [1, 3];
-  assert Array.fromIter(Int.rangeBy(1, 3, 2)) == [1];
-  assert Array.fromIter(Int.rangeBy(3, 0, -1)) == [3, 2, 1];
-  assert Array.fromIter(Int.rangeBy(3, 1, -1)) == [3, 2];
-  assert Array.fromIter(Int.rangeBy(3, 0, -2)) == [3, 1];
-  assert Array.fromIter(Int.rangeBy(3, 1, -2)) == [3];
-  assert Array.fromIter(Int.rangeBy(1, 3, -1)) == [];
-  assert Array.fromIter(Int.rangeBy(0, 1, 0)) == [];
-  assert Array.fromIter(Int.rangeBy(1, 0, 0)) == []
+  assert Iter.toArray(Int.rangeBy(0, 3, 1)) == [0, 1, 2];
+  assert Iter.toArray(Int.rangeBy(0, 3, 2)) == [0, 2];
+  assert Iter.toArray(Int.rangeBy(0, 3, 3)) == [0];
+  assert Iter.toArray(Int.rangeBy(1, 4, 2)) == [1, 3];
+  assert Iter.toArray(Int.rangeBy(1, 3, 2)) == [1];
+  assert Iter.toArray(Int.rangeBy(3, 0, -1)) == [3, 2, 1];
+  assert Iter.toArray(Int.rangeBy(3, 1, -1)) == [3, 2];
+  assert Iter.toArray(Int.rangeBy(3, 0, -2)) == [3, 1];
+  assert Iter.toArray(Int.rangeBy(3, 1, -2)) == [3];
+  assert Iter.toArray(Int.rangeBy(1, 3, -1)) == [];
+  assert Iter.toArray(Int.rangeBy(0, 1, 0)) == [];
+  assert Iter.toArray(Int.rangeBy(1, 0, 0)) == []
 };
 
 do {
   Debug.print("rangeInclusive()");
 
-  assert Array.fromIter(Int.rangeInclusive(0, 2)) == [0, 1, 2];
-  assert Array.fromIter(Int.rangeInclusive(-2, 2)) == [-2, -1, 0, 1, 2];
-  assert Array.fromIter(Int.rangeInclusive(1, 1)) == [1];
-  assert Array.fromIter(Int.rangeInclusive(1, 0)) == [];
-  assert Array.fromIter(Int.rangeInclusive(1, -1)) == []
+  assert Iter.toArray(Int.rangeInclusive(0, 2)) == [0, 1, 2];
+  assert Iter.toArray(Int.rangeInclusive(-2, 2)) == [-2, -1, 0, 1, 2];
+  assert Iter.toArray(Int.rangeInclusive(1, 1)) == [1];
+  assert Iter.toArray(Int.rangeInclusive(1, 0)) == [];
+  assert Iter.toArray(Int.rangeInclusive(1, -1)) == []
 };
 
 do {
   Debug.print("rangeByInclusive()");
 
-  assert Array.fromIter(Int.rangeByInclusive(1, 7, 2)) == [1, 3, 5, 7];
-  assert Array.fromIter(Int.rangeByInclusive(1, 6, 2)) == [1, 3, 5];
-  assert Array.fromIter(Int.rangeByInclusive(1, 3, 1)) == [1, 2, 3];
+  assert Iter.toArray(Int.rangeByInclusive(1, 7, 2)) == [1, 3, 5, 7];
+  assert Iter.toArray(Int.rangeByInclusive(1, 6, 2)) == [1, 3, 5];
+  assert Iter.toArray(Int.rangeByInclusive(1, 3, 1)) == [1, 2, 3];
 
-  assert Array.fromIter(Int.rangeByInclusive(7, 1, -2)) == [7, 5, 3, 1];
-  assert Array.fromIter(Int.rangeByInclusive(6, 1, -2)) == [6, 4, 2];
-  assert Array.fromIter(Int.rangeByInclusive(3, 1, -1)) == [3, 2, 1];
+  assert Iter.toArray(Int.rangeByInclusive(7, 1, -2)) == [7, 5, 3, 1];
+  assert Iter.toArray(Int.rangeByInclusive(6, 1, -2)) == [6, 4, 2];
+  assert Iter.toArray(Int.rangeByInclusive(3, 1, -1)) == [3, 2, 1];
 
-  assert Array.fromIter(Int.rangeByInclusive(-3, 3, 2)) == [-3, -1, 1, 3];
-  assert Array.fromIter(Int.rangeByInclusive(3, -3, -2)) == [3, 1, -1, -3];
-  assert Array.fromIter(Int.rangeByInclusive(-7, -1, 2)) == [-7, -5, -3, -1];
+  assert Iter.toArray(Int.rangeByInclusive(-3, 3, 2)) == [-3, -1, 1, 3];
+  assert Iter.toArray(Int.rangeByInclusive(3, -3, -2)) == [3, 1, -1, -3];
+  assert Iter.toArray(Int.rangeByInclusive(-7, -1, 2)) == [-7, -5, -3, -1];
 
-  assert Array.fromIter(Int.rangeByInclusive(1, 1, 1)) == [1];
-  assert Array.fromIter(Int.rangeByInclusive(1, 1, -1)) == [1];
-  assert Array.fromIter(Int.rangeByInclusive(-1, -1, 1)) == [-1];
-  assert Array.fromIter(Int.rangeByInclusive(1, 2, 0)) == [];
-  assert Array.fromIter(Int.rangeByInclusive(2, 1, 1)) == [];
-  assert Array.fromIter(Int.rangeByInclusive(1, 2, -1)) == []
+  assert Iter.toArray(Int.rangeByInclusive(1, 1, 1)) == [1];
+  assert Iter.toArray(Int.rangeByInclusive(1, 1, -1)) == [1];
+  assert Iter.toArray(Int.rangeByInclusive(-1, -1, 1)) == [-1];
+  assert Iter.toArray(Int.rangeByInclusive(1, 2, 0)) == [];
+  assert Iter.toArray(Int.rangeByInclusive(2, 1, 1)) == [];
+  assert Iter.toArray(Int.rangeByInclusive(1, 2, -1)) == []
 };
 
 /* --------------------------------------- */
@@ -1149,27 +1153,27 @@ run(
     [
       test(
         "positive number",
-        Int.fromInt8(123 : Int8),
+        Int8.toInt(123),
         M.equals(T.int(123))
       ),
       test(
         "negative number",
-        Int.fromInt8(-123 : Int8),
+        Int8.toInt(-123),
         M.equals(T.int(-123))
       ),
       test(
         "zero",
-        Int.fromInt8(0 : Int8),
+        Int8.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int.fromInt8(127 : Int8),
+        Int8.toInt(127),
         M.equals(T.int(127))
       ),
       test(
         "minimum value",
-        Int.fromInt8(-128 : Int8),
+        Int8.toInt(-128),
         M.equals(T.int(-128))
       )
     ]
@@ -1215,27 +1219,27 @@ run(
     [
       test(
         "positive number",
-        Int.fromInt16(12_345 : Int16),
+        Int16.toInt(12_345),
         M.equals(T.int(12_345))
       ),
       test(
         "negative number",
-        Int.fromInt16(-12_345 : Int16),
+        Int16.toInt(-12_345),
         M.equals(T.int(-12_345))
       ),
       test(
         "zero",
-        Int.fromInt16(0 : Int16),
+        Int16.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int.fromInt16(32_767 : Int16),
+        Int16.toInt(32_767),
         M.equals(T.int(32_767))
       ),
       test(
         "minimum value",
-        Int.fromInt16(-32_768 : Int16),
+        Int16.toInt(-32_768),
         M.equals(T.int(-32_768))
       )
     ]
@@ -1281,27 +1285,27 @@ run(
     [
       test(
         "positive number",
-        Int.fromInt32(123_456 : Int32),
+        Int32.toInt(123_456),
         M.equals(T.int(123_456))
       ),
       test(
         "negative number",
-        Int.fromInt32(-123_456 : Int32),
+        Int32.toInt(-123_456),
         M.equals(T.int(-123_456))
       ),
       test(
         "zero",
-        Int.fromInt32(0 : Int32),
+        Int32.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int.fromInt32(2_147_483_647 : Int32),
+        Int32.toInt(2_147_483_647),
         M.equals(T.int(2_147_483_647))
       ),
       test(
         "minimum value",
-        Int.fromInt32(-2_147_483_648 : Int32),
+        Int32.toInt(-2_147_483_648),
         M.equals(T.int(-2_147_483_648))
       )
     ]
@@ -1347,27 +1351,27 @@ run(
     [
       test(
         "positive number",
-        Int.fromInt64(123_456_789 : Int64),
+        Int64.toInt(123_456_789),
         M.equals(T.int(123_456_789))
       ),
       test(
         "negative number",
-        Int.fromInt64(-123_456_789 : Int64),
+        Int64.toInt(-123_456_789),
         M.equals(T.int(-123_456_789))
       ),
       test(
         "zero",
-        Int.fromInt64(0 : Int64),
+        Int64.toInt(0),
         M.equals(T.int(0))
       ),
       test(
         "maximum value",
-        Int.fromInt64(9_223_372_036_854_775_807 : Int64),
+        Int64.toInt(9_223_372_036_854_775_807),
         M.equals(T.int(9_223_372_036_854_775_807))
       ),
       test(
         "minimum value",
-        Int.fromInt64(-9_223_372_036_854_775_808 : Int64),
+        Int64.toInt(-9_223_372_036_854_775_808),
         M.equals(T.int(-9_223_372_036_854_775_808))
       )
     ]

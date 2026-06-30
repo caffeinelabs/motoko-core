@@ -70,25 +70,11 @@ module {
   public func size(self : Blob) : Nat = self.size();
 
   /// Creates a `Blob` from an array of bytes (`[Nat8]`), by copying each element.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// let bytes : [Nat8] = [0, 255, 0];
-  /// let blob = Blob.fromArray(bytes);
-  /// assert blob == "\00\FF\00";
-  /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `Array.toBlob` instead.
   public let fromArray : (bytes : [Nat8]) -> Blob = Prim.arrayToBlob;
 
   /// Creates a `Blob` from a mutable array of bytes (`[var Nat8]`), by copying each element.
-  ///
-  /// Example:
-  /// ```motoko include=import
-  /// let bytes : [var Nat8] = [var 0, 255, 0];
-  /// let blob = Blob.fromVarArray(bytes);
-  /// assert blob == "\00\FF\00";
-  /// ```
-  /// @deprecated M0235
+  /// @deprecated Use `VarArray.toBlob` instead.
   public let fromVarArray : (bytes : [var Nat8]) -> Blob = Prim.arrayMutToBlob;
 
   /// Converts a `Blob` to an array of bytes (`[Nat8]`), by copying each element.
