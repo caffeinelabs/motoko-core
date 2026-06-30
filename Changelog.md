@@ -1,4 +1,5 @@
 ## Next
+* Clarify `Float.toInt` docs: it truncates toward zero rather than rounding (#504).
 * Un-deprecate `List.get`, `Map.swap`, `Map.replace`, `Map.take`, `Set.deleteAll`, `Set.insertAll`, and the `Result.Result` type alias. These had no equivalent replacement (e.g. `List.get` returns `?T`, distinct from the trapping `List.at`) (#502).
 * Add `Array.toBlob` and `VarArray.toBlob` so `[Nat8]` and `[var Nat8]` arrays can be converted to `Blob` via dot notation, e.g. `bytes.toBlob()`. Deprecate `Blob.fromArray`, `Blob.fromVarArray`, and `VarArray.fromIter` in favour of the corresponding self-callable forms (`bytes.toBlob()`, `iter.toVarArray()`) (#497).
 * Remove wrong `self` parameter from `Principal.fromBlob` (#492). 
