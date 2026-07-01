@@ -113,7 +113,7 @@ jobs:
       - uses: ./.github/actions/setup
       - run: npm test
 
-  check-bench:
+  bench:
     needs: check-motoko-changes
     if: |
       needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
@@ -122,5 +122,5 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      - name: Type-check benchmarks (same flags as mops publish)
-        run: npm run check:bench
+      - name: Run benchmarks (same replica path as mops publish)
+        run: npm run bench

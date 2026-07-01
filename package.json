@@ -12,7 +12,7 @@
     "test:mops": "mops test",
     "check:bench": "mops check bench/*.bench.mo",
     "check:orphans": "mops check src/CallerAttributes.mo src/CertifiedData.mo src/Cycles.mo src/InternetComputer.mo src/Region.mo src/Timer.mo",
-    "check:mo": "run-s test:mops check:bench check:orphans",
+    "check:mo": "run-s test:mops bench check:orphans",
     "validate": "run-s validate:changelog validate:version validate:api",
     "validate:changelog": "cd test/ts/validate && tsx changelog",
     "validate:version": "cd test/ts/validate && tsx version",
