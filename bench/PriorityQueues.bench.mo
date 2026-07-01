@@ -7,6 +7,7 @@ import PriorityQueueSet "utils/PriorityQueueSet";
 import Random "../src/Random";
 import Runtime "../src/Runtime";
 import Map "../src/Map";
+import Iter "../src/Iter";
 import Text "../src/Text";
 
 module {
@@ -175,7 +176,7 @@ module {
       ].values(),
       Text.compare
     );
-    bench.rows(Map.keys<Text, [PriorityQueueUpdateOperation<Nat>]>(testInstances) |> Array.fromIter(_));
+    bench.rows(Iter.toArray(Map.keys(testInstances)));
 
     let testRunners : Map.Map<Text, [PriorityQueueUpdateOperation<Nat>] -> ()> = Map.fromIter(
       [
@@ -208,7 +209,7 @@ module {
       ].values(),
       Text.compare
     );
-    bench.cols(Map.keys<Text, [PriorityQueueUpdateOperation<Nat>] -> ()>(testRunners) |> Array.fromIter(_));
+    bench.cols(Iter.toArray(Map.keys(testRunners)));
 
     bench.runner(
       func(row, col) {

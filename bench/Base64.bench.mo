@@ -1,5 +1,4 @@
 import Array "../src/Array";
-import Blob "../src/Blob";
 import Base64 "../src/Base64";
 import _Nat "../src/Nat";
 import Bench "mo:bench-helper";
@@ -8,13 +7,11 @@ module {
 
   // Generate a Blob of zero bytes of given length
   func zeros(len : Nat) : Blob {
-    Array.tabulate<Nat8>(len, func _ = 0)
-    |> Blob.fromArray(_)
+    Array.tabulate(len, func _ = 0 : Nat8).toBlob()
   };
   // Generate a Blob of mixed bytes of given length
   func mixed(len : Nat) : Blob {
-    Array.tabulate<Nat8>(len, func i = (i % 256).toNat8())
-    |> Blob.fromArray(_)
+    Array.tabulate(len, func i = (i % 256).toNat8()).toBlob()
   };
 
   public func init() : Bench.V1 {
