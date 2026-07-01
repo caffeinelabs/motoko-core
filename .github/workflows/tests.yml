@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check-motoko-changes:
     uses: ./.github/workflows/check-motoko-changes.yml
