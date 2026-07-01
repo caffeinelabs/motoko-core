@@ -15,7 +15,7 @@ module {
     if (size == 0) {
       return
     };
-    let scratchSpace = Prim.Array_init<T>(size, self[0]);
+    let scratchSpace = Prim.Array_init(size, self[0]);
 
     var currSize = 1; // current size of the subarrays being merged
     var oddIteration = false;
@@ -114,12 +114,12 @@ module {
 
         switch (row) {
           case (0) {
-            let varSource = Array.toVarArray<Nat32>(sourceArrays[col]);
-            func() = sortInPlace<Nat32>(varSource, Nat32.compare)
+            let varSource = Array.toVarArray(sourceArrays[col]);
+            func() = sortInPlace(varSource, Nat32.compare)
           };
           case (1) {
-            let varSource = Array.toVarArray<Nat32>(sourceArrays[col]);
-            func() = VarArray.sortInPlace<Nat32>(varSource, Nat32.compare)
+            let varSource = Array.toVarArray(sourceArrays[col]);
+            func() = VarArray.sortInPlace(varSource, Nat32.compare)
           };
           case (_) Prim.trap("Row not implemented")
         }
@@ -128,8 +128,8 @@ module {
 
     bench.runner(
       func(row, col) {
-        let ?ri = Array.indexOf<Text>(rows, Text.equal, row) else Prim.trap("Unknown row");
-        let ?ci = Array.indexOf<Text>(cols, Text.equal, col) else Prim.trap("Unknown column");
+        let ?ri = Array.indexOf(rows, Text.equal, row) else Prim.trap("Unknown row");
+        let ?ci = Array.indexOf(cols, Text.equal, col) else Prim.trap("Unknown column");
         routines[ci * rows.size() + ri]()
       }
     );

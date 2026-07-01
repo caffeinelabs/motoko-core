@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check-motoko-changes:
     uses: ./.github/workflows/check-motoko-changes.yml
@@ -37,6 +40,13 @@ jobs:
         with:
           setup-mops: false
       - run: npm run validate:version
+
+  check-orphans:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: npm run check:orphans
 
   validate-api:
     runs-on: ubuntu-24.04
@@ -94,18 +104,23 @@ jobs:
 
   test:
     needs: check-motoko-changes
-    if: needs.check-motoko-changes.outputs.has_mo_changes == 'true'
+    if: |
+      needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
+      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: "0"
-      - name: Check for Motoko file changes in 'src' directory
-        id: check_mo_changes
-        run: |
-          if ! git diff --name-only ${{ github.event.pull_request.base.sha || 'origin/main' }} HEAD | grep -q '\.mo$'; then
-            echo "No Motoko file changes in src directory detected, skipping tests"
-            exit 0
-          fi
       - uses: ./.github/actions/setup
       - run: npm test
+
+  bench:
+    needs: check-motoko-changes
+    if: |
+      needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
+      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Run benchmarks (same replica path as mops publish)
+        run: npm run bench

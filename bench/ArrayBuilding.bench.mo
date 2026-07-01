@@ -82,7 +82,7 @@ module {
               array[i] := i;
               i += 1
             };
-            ignore Array.fromVarArray(array)
+            ignore array.toArray()
           };
           case "Array (baseline)" {
             ignore Array.tabulate<Nat>(size, func n = n)

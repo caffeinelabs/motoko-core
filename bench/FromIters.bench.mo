@@ -15,7 +15,7 @@ module {
     bench.description("Columns describe the number of elements in the input iter.");
 
     bench.rows([
-      "Array.fromIter",
+      "Iter.toArray",
       "List.fromIter",
       "List.fromIter . Iter.reverse"
     ]);
@@ -44,7 +44,7 @@ module {
         switch row {
           case "List.fromIter" ignore List.fromIter(array.vals());
           case "List.fromIter . Iter.reverse" ignore List.fromIter(Iter.reverse(array.vals()));
-          case "Array.fromIter" ignore Array.fromIter(array.vals());
+          case "Iter.toArray" ignore array.vals().toArray();
           case _ Runtime.unreachable()
         }
       }
