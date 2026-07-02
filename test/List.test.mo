@@ -1899,7 +1899,7 @@ func testMax(n : Nat) : Bool {
 
 func testReader(n : Nat) : Bool {
   let vec = List.tabulate<Nat>(2 * n, func i = i);
-  let reader = List.reader(vec, n);
+  let reader = if (n == 0) List.reader(vec) else List.reader(vec, n);
   for (i in Nat.range(0, n)) {
     let x = reader();
     if (x != i + n) {
