@@ -1100,6 +1100,7 @@ module {
   ///
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
+    if (index >= 0x1_0000_0000) return null;
     // inlined version of locate
     let (a, b) = do {
       let i = Nat.toNat32(index);
@@ -2330,7 +2331,7 @@ module {
     } else {
       if (toExclusive > size) { size } else { toExclusive }
     };
-    (Prim.abs(startInt), Prim.abs(endInt))
+    (Prim.abs(startInt), Prim.abs(if (endInt < startInt) startInt else endInt))
   };
 
   /// Returns an iterator over a slice of `list` starting at `fromInclusive` up to (but not including) `toExclusive`.
@@ -2370,7 +2371,7 @@ module {
     };
     var db : [var ?T] = self.blocks[blockIndex];
     var dbSize = db.size();
-    var index = fromInclusive;
+    var index = start;
 
     public func next() : ?T {
       if (index >= end) return null;

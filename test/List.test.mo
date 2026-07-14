@@ -2020,6 +2020,42 @@ Test.suite(
 );
 
 Test.suite(
+  "Out-of-bounds and inverted index handling",
+  func() {
+    let vec = List.fromArray<Nat>([0, 1, 2, 3, 4]);
+
+    Test.test(
+      "range clamps negative fromInclusive without over-reading",
+      func() {
+        Test.expect.array<Nat>(Iter.toArray(List.range(vec, -3, 3)), Nat.toText, Nat.equal).equal([2]);
+        Test.expect.array<Nat>(Iter.toArray(List.range(vec, -100, 2)), Nat.toText, Nat.equal).equal([0, 1]);
+        Test.expect.array<Nat>(Iter.toArray(List.range(vec, -1, 4)), Nat.toText, Nat.equal).equal([]);
+        Test.expect.array<Nat>(Iter.toArray(List.range(vec, -1, 2)), Nat.toText, Nat.equal).equal([])
+      }
+    );
+
+    Test.test(
+      "sliceToArray returns empty for inverted range",
+      func() {
+        Test.expect.array<Nat>(List.sliceToArray(vec, 3, 1), Nat.toText, Nat.equal).equal([]);
+        Test.expect.array<Nat>(List.sliceToArray(vec, -1, -3), Nat.toText, Nat.equal).equal([]);
+        Test.expect.bool(VarArray.equal<Nat>(List.sliceToVarArray(vec, 3, 1), [var], Nat.equal)).equal(true);
+        Test.expect.bool(VarArray.equal<Nat>(List.sliceToVarArray(vec, -1, -3), [var], Nat.equal)).equal(true)
+      }
+    );
+
+    Test.test(
+      "get returns null for index >= 2^32",
+      func() {
+        Test.expect.bool(List.get<Nat>(vec, 4294967296) == null).equal(true);
+        Test.expect.bool(List.get<Nat>(vec, 100) == null).equal(true);
+        Test.expect.bool(List.get<Nat>(vec, 1) == ?1).equal(true)
+      }
+    )
+  }
+);
+
+Test.suite(
   "Null on empty",
   func() {
     Test.test(
