@@ -1,4 +1,5 @@
 ## Next
+* Fix: correct List range/slice/get bounds handling (#512).
 * Fix `Queue` and `pure/Queue` for certain sequences of push + peek (#513).
 
 ## 2.6.0
