@@ -1,4 +1,5 @@
 ## Next
+* Fix `pure/Queue.peekFront`, `peekBack`, and `contains` returning wrong results (and trapping in debug builds) after a `popFront`/`popBack` empties one of the internal access lists. `popFront`/`popBack` now rebalance their result so the queue invariant is always restored.
 
 ## 2.6.0
 * Add `Base64.decode : Text -> ?Blob`, the inverse of `Base64.encode` (RFC 4648 standard alphabet) (#507).
