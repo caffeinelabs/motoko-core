@@ -667,4 +667,45 @@ suite(
       }
     )
   }
+);
+
+suite(
+  "pop restores the queue invariant",
+  func() {
+    test(
+      "popFront that empties the front list keeps accessors correct",
+      func() {
+        // Build a back-loaded queue: the front list stays a singleton while
+        // the back list grows, so the following popFront empties the front.
+        var queue = Queue.empty<Nat>();
+        for (n in Nat.range(1, 5)) queue := Queue.pushBack(queue, n);
+        // logical queue: [1, 2, 3, 4]
+        let ?(x, rest) = Queue.popFront(queue) else Prim.trap("unexpected empty");
+        expect.nat(x).equal(1);
+        expect.nat(Queue.size(rest)).equal(3);
+        expect.option(Queue.peekFront(rest), Nat.toText, Nat.equal).equal(?2);
+        expect.option(Queue.peekBack(rest), Nat.toText, Nat.equal).equal(?4);
+        expect.bool(Queue.contains(rest, Nat.equal, 2)).isTrue();
+        expect.array(Queue.toArray(rest), Nat.toText, Nat.equal).equal([2, 3, 4])
+      }
+    );
+
+    test(
+      "popBack that empties the back list keeps accessors correct",
+      func() {
+        // Front-loaded queue: the back list stays a singleton while the front
+        // list grows, so the following popBack empties the back.
+        var queue = Queue.empty<Nat>();
+        for (n in Nat.rangeBy(4, 0, -1)) queue := Queue.pushFront(queue, n);
+        // logical queue: [1, 2, 3, 4]
+        let ?(rest, x) = Queue.popBack(queue) else Prim.trap("unexpected empty");
+        expect.nat(x).equal(4);
+        expect.nat(Queue.size(rest)).equal(3);
+        expect.option(Queue.peekBack(rest), Nat.toText, Nat.equal).equal(?3);
+        expect.option(Queue.peekFront(rest), Nat.toText, Nat.equal).equal(?1);
+        expect.bool(Queue.contains(rest, Nat.equal, 3)).isTrue();
+        expect.array(Queue.toArray(rest), Nat.toText, Nat.equal).equal([1, 2, 3])
+      }
+    )
+  }
 )
