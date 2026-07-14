@@ -252,7 +252,7 @@ module {
   ///
   /// `n` denotes the number of elements stored in the queue.
   public func popFront<T>(self : Queue<T>) : ?(T, Queue<T>) = if (self.1 == 0) null else switch self {
-    case (?(i, f), n, b) ?(i, (f, n - 1, b));
+    case (?(i, f), n, b) ?(i, check(f, n - 1 : Nat, b));
     case (null, _, ?(i, null)) ?(i, (null, 0, null));
     case _ popFront(check self)
   };
@@ -290,7 +290,7 @@ module {
   ///
   /// `n` denotes the number of elements stored in the queue.
   public func popBack<T>(self : Queue<T>) : ?(Queue<T>, T) = if (self.1 == 0) null else switch self {
-    case (f, n, ?(i, b)) ?((f, n - 1, b), i);
+    case (f, n, ?(i, b)) ?((check(f, n - 1 : Nat, b), i));
     case (?(i, null), _, null) ?((null, 0, null), i);
     case _ popBack(check self)
   };
