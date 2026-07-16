@@ -1,6 +1,8 @@
 ## Next
-* Fix: correct List range/slice/get bounds handling (#512).
+
+## 2.6.1
 * Fix `Queue` and `pure/Queue` for certain sequences of push + peek (#513).
+* Fix: correct List range/slice/get bounds handling (#512).
 
 ## 2.6.0
 * Add `Base64.decode : Text -> ?Blob`, the inverse of `Base64.encode` (RFC 4648 standard alphabet) (#507).
