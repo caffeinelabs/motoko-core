@@ -15,7 +15,6 @@
 import PureList "pure/List";
 import Prim "mo:⛔";
 import Nat32 "Nat32";
-import Nat64 "Nat64";
 import Array "Array";
 import Nat "Nat";
 import Option "Option";
@@ -1101,7 +1100,7 @@ module {
   ///
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
-    if (Nat64.fromIntWrap(index) >> 32 != 0) return null;
+    if (Prim.shiftRight(index, 32) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
       let i = Nat32.fromIntWrap(index);
