@@ -113,6 +113,12 @@ jobs:
       - uses: ./.github/actions/setup
       - run: npm test
 
+      # Rewrite the [moc] args line in place
+      - name: Tests under legacy persistence
+        run: | 
+          perl -pi -e 's/^args = .*/args = ["--legacy-persistence"]/' mops.toml
+          npx ic-mops test List.allocation
+
   bench:
     needs: check-motoko-changes
     if: |
