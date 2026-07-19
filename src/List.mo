@@ -1112,8 +1112,10 @@ module {
         (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
       }
     };
-    if (a < self.blockIndex or self.elementIndex != 0 and a == self.blockIndex) {
-      self.blocks[a][b]
+    let blocks = self.blocks;
+    if (a < blocks.size()) {
+      let db = blocks[a];
+      if (b < db.size()) db[b] else null
     } else null
   };
 
