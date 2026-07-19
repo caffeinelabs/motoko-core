@@ -1104,7 +1104,7 @@ module {
     if (Nat64.fromIntWrap(index) >> 32 != 0) return null;
     // inlined version of locate
     let (a, b) = do {
-      let i = Nat.toNat32(index);
+      let i = Nat32.fromIntWrap(index);
       let lz = Nat32.bitcountLeadingZero(i);
       let lz2 = lz >> 1;
       if (lz & 1 == 0) {
