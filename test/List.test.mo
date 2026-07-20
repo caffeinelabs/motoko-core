@@ -2184,4 +2184,41 @@ Test.suite(
       }
     )
   }
+);
+
+// The maximum size 2^32 cannot be reached by actually adding elements
+// (32 GB of data blocks), so these tests craft the List's internal state
+// directly. size() derives the size purely from the (blockIndex,
+// elementIndex) insertion position, so the data blocks can remain empty.
+// The crafted states follow the pattern of real full lists, checked
+// against reachable sizes: a full list of size 2^(2m) has
+// blockIndex = 2^(m+1) and elementIndex = 0 (e.g. size 2^24 has
+// blockIndex = 8192); the state one element earlier is
+// blockIndex = 2^(m+1) - 1, elementIndex = lastBlockSize - 1.
+Test.suite(
+  "size at the 2^32 capacity boundary",
+  func() {
+    Test.test(
+      "size 2^32 - 1",
+      func() {
+        let almostFull : List.List<Nat> = {
+          var blocks = [var] : [var [var ?Nat]];
+          var blockIndex = 131_071;
+          var elementIndex = 65_535
+        };
+        Test.expect.nat(List.size(almostFull)).equal(4_294_967_295)
+      }
+    );
+    Test.test(
+      "size 2^32 (completely full list)",
+      func() {
+        let full : List.List<Nat> = {
+          var blocks = [var] : [var [var ?Nat]];
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+        Test.expect.nat(List.size(full)).equal(4_294_967_296)
+      }
+    )
+  }
 )
