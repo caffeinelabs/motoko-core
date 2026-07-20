@@ -1464,7 +1464,10 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func find<T>(self : List<T>, predicate : T -> Bool) : ?T {
-    Option.map<Nat, T>(findIndex<T>(self, predicate), func(i) = at(self, i))
+    switch (findIndex<T>(self, predicate)) {
+      case (?i) ?at(self, i);
+      case null null
+    }
   };
 
   /// Finds the index of the first element in `list` for which `predicate` is true.

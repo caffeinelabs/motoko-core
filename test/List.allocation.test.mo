@@ -29,8 +29,6 @@
 // - truncate/clear: (re)allocate index blocks
 // - sortInPlace/sort: O(size) scratch array
 // - binarySearch: allocates its variant result (112 B)
-// - find: allocates one closure per call (40 B)
-// - equal/compare: allocate ~40 B per element (tuple in `switch (a, b)`)
 
 import List "../src/List";
 import Nat "../src/Nat";
@@ -40,6 +38,8 @@ import { test } "mo:test";
 let n = 1_000;
 // Read-only list with distinct, sorted elements 0..n-1.
 let list = List.tabulate<Nat>(n, func i = i);
+// Equal copy of `list`, for equal/compare full scans.
+let listCopy = List.tabulate<Nat>(n, func i = i);
 
 // Runs `f` once to trigger any one-time allocations, then measures the
 // bytes allocated by a second run.
@@ -104,6 +104,7 @@ assertNoAlloc("List.last", func() { var i = 0; while (i < n) { ignore List.last(
 
 // --- Search (full scans; targets/predicates chosen so no early exit) ---
 
+assertNoAlloc("List.find", func() { ignore List.find<Nat>(list, func x = x == 999) });
 assertNoAlloc("List.findIndex", func() { ignore List.findIndex<Nat>(list, func x = x == 999) });
 assertNoAlloc("List.findLastIndex", func() { ignore List.findLastIndex<Nat>(list, func x = x == 0) });
 assertNoAlloc("List.indexOf", func() { ignore List.indexOf<Nat>(list, Nat.equal, 999) });
@@ -113,6 +114,8 @@ assertNoAlloc("List.prevIndexOf", func() { ignore List.prevIndexOf<Nat>(list, Na
 assertNoAlloc("List.contains", func() { ignore List.contains<Nat>(list, Nat.equal, n) });
 assertNoAlloc("List.all", func() { ignore List.all<Nat>(list, func x = x < n) });
 assertNoAlloc("List.any", func() { ignore List.any<Nat>(list, func x = x >= n) });
+// assertNoAlloc("List.equal", func() { ignore List.equal<Nat>(list, listCopy, Nat.equal) });
+// assertNoAlloc("List.compare", func() { ignore List.compare<Nat>(list, listCopy, Nat.compare) });
 
 // --- Aggregation ---
 
