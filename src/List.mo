@@ -2827,13 +2827,17 @@ module {
 
       var j = 0;
       while (j < sz) {
-        switch (db1[j], db2[j]) {
-          case (?x, ?y) switch (compare(x, y)) {
-            case (#less) return #less;
-            case (#greater) return #greater;
-            case _ {}
+        // nested switches only to avoid allocating a tuple for a pair switch
+        switch (db1[j]) {
+          case (?x) switch (db2[j]) {
+            case (?y) switch (compare(x, y)) {
+              case (#less) return #less;
+              case (#greater) return #greater;
+              case _ {}
+            };
+            case null break l
           };
-          case (_, _) break l
+          case null break l
         };
         j += 1
       };

@@ -115,7 +115,7 @@ assertNoAlloc("List.contains", func() { ignore List.contains<Nat>(list, Nat.equa
 assertNoAlloc("List.all", func() { ignore List.all<Nat>(list, func x = x < n) });
 assertNoAlloc("List.any", func() { ignore List.any<Nat>(list, func x = x >= n) });
 assertNoAlloc("List.equal", func() { ignore List.equal<Nat>(list, listCopy, Nat.equal) });
-// assertNoAlloc("List.compare", func() { ignore List.compare<Nat>(list, listCopy, Nat.compare) });
+assertNoAlloc("List.compare", func() { ignore List.compare<Nat>(list, listCopy, Nat.compare) });
 
 // --- Aggregation ---
 
