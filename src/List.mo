@@ -15,6 +15,7 @@
 import PureList "pure/List";
 import Prim "mo:⛔";
 import Nat32 "Nat32";
+import Nat64 "Nat64";
 import Array "Array";
 import Nat "Nat";
 import Option "Option";
@@ -888,9 +889,9 @@ module {
     // due to the design of List (blockIndex, elementIndex) pair points
     // exactly to the place where size-th element should be added
     // so, it's the inlined version of indexByBlockElement
-    let d = Nat.toNat32(self.blockIndex);
-    let lz = Nat32.bitcountLeadingZero(d / 3);
-    Nat32.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat32(self.elementIndex))
+    let d = Nat.toNat64(self.blockIndex);
+    let lz = Nat64.bitcountLeadingZero(d / 3);
+    Nat64.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat64(self.elementIndex))
   };
 
   func dataBlockSize(blockIndex : Nat) : Nat {
