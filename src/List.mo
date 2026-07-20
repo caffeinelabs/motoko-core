@@ -2776,9 +2776,13 @@ module {
 
       var j = 0;
       while (j < sz) {
-        switch (db1[j], db2[j]) {
-          case (?x, ?y) if (not equal(x, y)) return false;
-          case (_, _) return true
+        // nested switches only to avoid allocating a tuple for a pair switch
+        switch (db1[j]) {
+          case (?x) switch (db2[j]) {
+            case (?y) if (not equal(x, y)) return false;
+            case null return true
+          };
+          case null return true
         };
         j += 1
       };
