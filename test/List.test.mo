@@ -2221,4 +2221,116 @@ Test.suite(
       }
     )
   }
+);
+
+// binarySearch on a faked completely full list of size 2^32 (see the size
+// tests above for the crafted blockIndex/elementIndex values). A real list
+// of this size would need ~32 GB, but binarySearch only reads O(log n)
+// slots, so only the data blocks actually hit by the search are
+// instantiated, and only as long as needed:
+// - phase 1 (epoch scan) probes blocks[3 * 2^(epoch-1)][0]; searching for
+//   the maximum it stops at the first probe: blocks[98_304][0]
+//   (b = 131_071, epoch = 32 - lz32(b/3) = 16, lessOrEqual = 2^16/2)
+// - phase 2 bisects block indices in [98_304, 131_072) reading only
+//   slot 0 of each probed block, so those blocks have length 1; every
+//   probe compares #less because the target is the maximum
+// - phase 3 bisects inside block 131_071; its `right` bound is the
+//   block's PHYSICAL size, so this one block must be full-length (65_536)
+// The probed slots hold ?0 (any value < target keeps the outcomes #less);
+// the target sits in the very last slot. Every slot NOT instantiated
+// traps when read (empty block or unwrap of null), so this test also
+// asserts the exact probe set of the search.
+Test.suite(
+  "binarySearch on a faked full 2^32 list",
+  func() {
+    Test.test(
+      "finds the last element",
+      func() {
+        let target = 4_294_967_295; // == the last index; all other probed slots hold 0
+        let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+
+        // phase 1 probe
+        dataBlocks[98_304] := [var ?0];
+
+        // phase 2 probes: replicate the bisection index arithmetic,
+        // outcome is #less (left := mid) at every step
+        var left = 98_304;
+        var right = 131_072;
+        while (right - left : Nat > 1) {
+          let mid = (left + right) / 2;
+          dataBlocks[mid] := [var ?0];
+          left := mid
+        };
+        // left is now 131_071, the block holding the last element
+
+        // phase 3 probes inside the (full-length) last block,
+        // outcome is #less (left := mid + 1) until the final probe
+        let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
+        lastBlock[0] := ?0; // probed by phase 2 (its final mid is 131_071)
+        var l = 0;
+        var r = 65_536;
+        label sim while (l != r) {
+          let mid = (l + r) / 2;
+          if (mid == 65_535) break sim;
+          lastBlock[mid] := ?0;
+          l := mid + 1
+        };
+        lastBlock[65_535] := ?target;
+        dataBlocks[131_071] := lastBlock;
+
+        let fake : List.List<Nat> = {
+          var blocks = dataBlocks;
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+
+        let result = List.binarySearch(fake, Nat.compare, target);
+        Test.expect.bool(result == #found(4_294_967_295)).equal(true)
+      }
+    );
+    Test.test(
+      "insertion point past the last element",
+      func() {
+        // Same fake and probe set as above, but every probed slot (including
+        // the very last one) holds 0 and we search for 1, which is greater
+        // than everything: the search must report insertion index 2^32.
+        // This is the one case where indexByBlockElement's Nat32 arithmetic
+        // overflows: blockStart(131_071) + 65_536 = 2^32 wraps to 0, so a
+        // caller would be told to insert the LARGEST element at the FRONT.
+        // (Any list shorter than the full 2^32 yields insertion indices
+        // < 2^32, which fit Nat32 — only the completely full list is
+        // affected.)
+        let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+        dataBlocks[98_304] := [var ?0];
+        var left = 98_304;
+        let right = 131_072;
+        while (right - left : Nat > 1) {
+          let mid = (left + right) / 2;
+          dataBlocks[mid] := [var ?0];
+          left := mid
+        };
+        let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
+        lastBlock[0] := ?0;
+        var l = 0;
+        let r = 65_536;
+        while (l != r) {
+          let mid = (l + r) / 2;
+          lastBlock[mid] := ?0;
+          l := mid + 1
+        };
+        dataBlocks[131_071] := lastBlock;
+
+        let fake : List.List<Nat> = {
+          var blocks = dataBlocks;
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+
+        switch (List.binarySearch(fake, Nat.compare, 1)) {
+          case (#insertionIndex i) Test.expect.nat(i).equal(4_294_967_296);
+          case (#found i) Test.expect.nat(i).equal(4_294_967_296) // unreachable; fails informatively
+        }
+      }
+    )
+  }
 )
