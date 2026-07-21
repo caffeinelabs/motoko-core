@@ -113,11 +113,9 @@ jobs:
       - uses: ./.github/actions/setup
       - run: npm test
 
-      # Rewrite the [moc] args line in place
+      # Requires mops >= 2.17.0 for the `-- <moc flags>` passthrough
       - name: Tests under legacy persistence
-        run: | 
-          perl -pi -e 's/^args = .*/args = ["--legacy-persistence"]/' mops.toml
-          npx ic-mops test List.allocation
+        run: npx ic-mops test List.allocation -- --legacy-persistence
 
   bench:
     needs: check-motoko-changes
