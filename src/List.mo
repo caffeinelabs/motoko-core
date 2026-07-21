@@ -851,7 +851,7 @@ module {
   };
 
   func indexByBlockElement<T>(blockIndex : Nat, elementIndex : Nat) : Nat {
-    let d = Nat.toNat32(blockIndex);
+    let d = blockIndex.toNat64();
 
     // We call all data blocks of the same capacity an "epoch". We number the epochs 0,1,2,...
     // A data block is in epoch e iff the data block has capacity 2 ** e.
@@ -859,8 +859,8 @@ module {
     // Super block s falls in epoch ceil(s/2).
 
     // epoch of last data block
-    // e = 32 - lz
-    let lz = Nat32.bitcountLeadingZero(d / 3);
+    // e = 64 - lz
+    let lz = Nat64.bitcountLeadingZero(d / 3);
 
     // capacity of all prior epochs combined
     // capacity_before_e = 2 * 4 ** (e - 1) - 1
@@ -871,9 +871,18 @@ module {
     // then size = d * 2 ** e + i - c
     // where c = blocks_before_e * 2 ** e - capacity_before_e
 
-    // there can be overflows, but the result is without overflows, so use addWrap and subWrap
-    // we don't erase bits by >>, so to use <>> is ok
-    Nat32.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat32(elementIndex))
+    // The formula is based on Nat64 arithmetic (one epoch further up than
+    // the Nat32-based one would be), like in size(): no intermediate result
+    // overflows for blockIndex <= 2^17. In particular the one-past-the-end
+    // insertion position (131_071, 65_536) of a completely full list maps
+    // correctly to 2^32, which would overflow Nat32.
+    //
+    // Intermediate values may exceed 2^64; that is harmless because every
+    // operation used (-%, +%, <>>) is a bijection mod 2^64, so the final
+    // value is exact whenever the true result fits in 64 bits. A plain >>
+    // would erase the shifted-out bits and break this argument, which is
+    // why the rotation <>> is used.
+    ((d -% (1 <>> lz)) <>> lz +% elementIndex.toNat64()).toNat()
   };
 
   /// Returns the current number of elements in the list.
