@@ -2333,8 +2333,7 @@ Test.suite(
       }
     )
   }
-)
-;
+);
 
 // Operations whose argument is a SIZE (not an index) must accept the value
 // 2^32 — the size of a completely full list. Internally they pass it to
