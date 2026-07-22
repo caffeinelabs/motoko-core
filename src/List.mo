@@ -910,6 +910,17 @@ module {
   };
 
   func newIndexBlockLength(blockIndex : Nat32) : Nat {
+    // The maximum List capacity is 2^32 elements, stored in data blocks
+    // 1..131_071; asking to accommodate a block index beyond that means
+    // the capacity would be exceeded. This is the single chokepoint that
+    // all index block growth goes through (add, repeat, tabulate,
+    // addRepeat, ...), and it only executes when the index block actually
+    // grows, so this guard costs one comparison on a path that runs
+    // O(log capacity) times over a list's lifetime — never on ordinary
+    // adds. Without the guard the element would be written successfully
+    // but get() would deny its existence (guarded at index < 2^32),
+    // silently breaking the API's consistency.
+    if (blockIndex > 131_071) Prim.trap "List capacity of 2^32 elements exceeded";
     if (blockIndex <= 1) 2 else {
       let s = 30 - Nat32.bitcountLeadingZero(blockIndex);
       Nat32.toNat(((blockIndex >> s) +% 1) << s)
@@ -959,7 +970,8 @@ module {
   /// assert List.toArray(list) == [0, 1, 2, 3];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The maximum number of elements in a `List` is 2^32; adding beyond
+  /// that traps.
   ///
   /// Amortized Runtime: `O(1)`, Worst Case Runtime: `O(sqrt(n))`
   public func add<T>(self : List<T>, element : T) {

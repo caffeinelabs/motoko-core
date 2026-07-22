@@ -1,4 +1,7 @@
 ## Next
+* Enforce the maximum `List` size of 2^32: `add` (and every other growth path) now traps with "List capacity of 2^32 elements exceeded" instead of silently creating elements that `get` denies. The out-of-bounds trap message of `List.at`/`put` changed as a side effect of the Nat64 conversion.
+* Fix `List` functions at the maximum size 2^32: `size` returned a wrapped value, `binarySearch` returned insertion index 0 instead of 2^32, and `lastIndexOf`/`prevIndexOf`, `truncate` and `addRepeat` trapped on size-valued arguments equal to 2^32. All internal index arithmetic (`locate`, `size`, `indexByBlockElement` and the inlined copies in `at`/`get`/`put`) is now Nat64-based, which also makes `at`/`get`/`put` 42/38/42 instructions cheaper per call.
+* Make `List.get`, `find`, `equal` and `compare` allocation-free (`get` also under legacy persistence), and add a wasi-mode regression test asserting zero allocation for all allocation-free `List` functions.
 * Fix `Queue` and `pure/Queue` for certain sequences of push + peek (#513).
 * Fix: correct List range/slice/get bounds handling (#512).
 
