@@ -2334,3 +2334,64 @@ Test.suite(
     )
   }
 )
+;
+
+// Operations whose argument is a SIZE (not an index) must accept the value
+// 2^32 — the size of a completely full list. Internally they pass it to
+// locate(), whose Nat32 conversion can only express indices (<= 2^32 - 1),
+// so today all three trap with "losing precision". locate(2^32) must
+// return the normalized one-past-the-end position (131_072, 0), like it
+// already does at every smaller data-block boundary (e.g. locate(8) is
+// the start of the next block).
+// The same defect makes repeat/tabulate/addRepeat trap when constructing
+// a list of size exactly 2^32; that case has no value-asserting test
+// because a successful construction needs ~32 GB of data blocks.
+Test.suite(
+  "size-valued arguments at the 2^32 capacity boundary",
+  func() {
+    Test.test(
+      "lastIndexOf scans from the very end",
+      func() {
+        // fake full list; only the last slot holds a (matching) element,
+        // so the backward scan succeeds on its first probe
+        let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+        let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
+        lastBlock[65_535] := ?7;
+        dataBlocks[131_071] := lastBlock;
+        let fake : List.List<Nat> = {
+          var blocks = dataBlocks;
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+        switch (List.lastIndexOf<Nat>(fake, Nat.equal, 7)) {
+          case (?i) Test.expect.nat(i).equal(4_294_967_295);
+          case null Test.expect.nat(0).equal(4_294_967_295) // fails informatively
+        }
+      }
+    );
+    Test.test(
+      "truncate to the current size 2^32 is a no-op",
+      func() {
+        let fake : List.List<Nat> = {
+          var blocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+        List.truncate(fake, 4_294_967_296);
+        Test.expect.nat(List.size(fake)).equal(4_294_967_296)
+      }
+    );
+    Test.test(
+      "addRepeat of zero elements at full capacity is a no-op",
+      func() {
+        let fake : List.List<Nat> = {
+          var blocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+        List.addRepeat(fake, 7, 0);
+        Test.expect.nat(List.size(fake)).equal(4_294_967_296)
+      }
+    )
+  }
+)
