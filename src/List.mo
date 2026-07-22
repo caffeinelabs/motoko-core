@@ -1089,14 +1089,17 @@ module {
     //     case (?element) element;
     //     case (null) Prim.trap "";
     //   };
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // Nat64-based like locate; for index >= 2^32 the computed block index
+    // is >= 2^17, past any possible index block, so the array access traps
+    // as required (the message just differs from the Nat32 version's).
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     switch (
       if (lz & 1 == 0) {
-        self.blocks[Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2))][Nat32.toNat(i & (0xFFFF >> lz2))]
+        self.blocks[(((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat()][(i & (0xFFFF_FFFF >> lz2)).toNat()]
       } else {
-        self.blocks[Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2))][Nat32.toNat(i & (0x7FFF >> lz2))]
+        self.blocks[(((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat()][(i & (0x7FFF_FFFF >> lz2)).toNat()]
       }
     ) {
       case (?result) return result;
@@ -1123,13 +1126,14 @@ module {
     if (Prim.shiftRight(index, 32) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
-      let i = Nat32.fromIntWrap(index);
-      let lz = Nat32.bitcountLeadingZero(i);
+      // the guard above ensures index < 2^32, so the wrap cannot trigger
+      let i = Nat64.fromIntWrap(index);
+      let lz = Nat64.bitcountLeadingZero(i);
       let lz2 = lz >> 1;
       if (lz & 1 == 0) {
-        (Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2)), Nat32.toNat(i & (0xFFFF >> lz2)))
+        ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
       } else {
-        (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
+        ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
       }
     };
     let blocks = self.blocks;
@@ -1152,13 +1156,16 @@ module {
   ///
   /// Runtime: `O(1)`
   public func put<T>(self : List<T>, index : Nat, value : T) {
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // Nat64-based like locate; for index >= 2^32 the computed block index
+    // is >= 2^17, past any possible index block, so the array access traps
+    // as required (the message just differs from the Nat32 version's).
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     let (block, element) = if (lz & 1 == 0) {
-      (self.blocks[Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2))], Nat32.toNat(i & (0xFFFF >> lz2)))
+      (self.blocks[(((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat()], (i & (0xFFFF_FFFF >> lz2)).toNat())
     } else {
-      (self.blocks[Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2))], Nat32.toNat(i & (0x7FFF >> lz2)))
+      (self.blocks[(((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat()], (i & (0x7FFF_FFFF >> lz2)).toNat())
     };
 
     switch (block[element]) {
