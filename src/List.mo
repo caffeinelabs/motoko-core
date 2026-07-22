@@ -1050,13 +1050,23 @@ module {
 
   func locate(index : Nat) : (Nat, Nat) {
     // see comments in tests
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    //
+    // Based on Nat64 arithmetic: the halves of the index are 32 bits wide
+    // instead of 16, hence all constants and shift amounts are doubled
+    // compared to the Nat32-based version. The branch parities are
+    // unchanged because 64 - 32 is even.
+    // Unlike the Nat32-based version this also accepts size-valued
+    // arguments, which reach 2^32 for a completely full list (from
+    // prevIndexOf, truncate, repeat/tabulate/addRepeat): locate(2^32)
+    // returns the normalized one-past-the-end position (131_072, 0),
+    // consistent with locate at every smaller data-block boundary.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     if (lz & 1 == 0) {
-      (Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2)), Nat32.toNat(i & (0xFFFF >> lz2)))
+      ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
     } else {
-      (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
+      ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
     }
   };
 
