@@ -2,6 +2,18 @@
 /// `List` provides O(1) access time and O(sqrt(n)) memory overhead. In contrast, `pure/List` is a purely functional linked list.
 /// Can be declared `stable` for orthogonal persistence.
 ///
+/// Performance note: on a 64-bit build (enhanced orthogonal persistence, the
+/// compiler default) all index and size arithmetic in this module operates on
+/// unboxed values over the entire supported size range (up to 2^32 elements),
+/// so there are no boxing-related performance cliffs or hidden allocations.
+/// On a 32-bit build (deprecated legacy persistence) `Nat` values >= 2^30 are
+/// boxed, so an operation receiving such an index, or internally computing
+/// such a size, would take slower bignum code paths and allocate a few dozen
+/// bytes per call. This is theoretical only: a 32-bit heap is limited to
+/// 4 GB and a list occupies at least 4 bytes per element, so a list can
+/// never actually grow to 2^30 elements there, and indices >= 2^30 can only
+/// occur as out-of-range arguments.
+///
 /// This implementation is adapted with permission from the `vector` Mops package created by Research AG.
 ///
 /// Copyright: 2023 MR Research AG
