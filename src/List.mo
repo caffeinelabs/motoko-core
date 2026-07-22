@@ -1135,10 +1135,15 @@ module {
   ///
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
-    if (Prim.shiftRight(index, 32) != 0) return null;
+    // The guard only rejects index >= 2^64, where the wrap conversion
+    // below would alias a small index. Indices in [2^32, 2^64) fall
+    // through to the physical bounds checks: they yield a data block
+    // index >= 2^17, past any possible index block (the List capacity
+    // is 2^32), so `a < blocks.size()` fails and null is returned.
+    if (Prim.shiftRight(index, 64) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
-      // the guard above ensures index < 2^32, so the wrap cannot trigger
+      // the guard above ensures index < 2^64, so the wrap cannot trigger
       let i = Nat64.fromIntWrap(index);
       let lz = Nat64.bitcountLeadingZero(i);
       let lz2 = lz >> 1;
