@@ -105,8 +105,11 @@ assertNoAlloc("List.last", func() { var i = 0; while (i < n) { ignore List.last(
 // --- Search (full scans; targets/predicates chosen so no early exit) ---
 
 assertNoAlloc("List.find", func() { ignore List.find<Nat>(list, func x = x == 999) });
+assertNoAlloc("List.find (no hit)", func() { ignore List.find<Nat>(list, func x = x >= n) });
 assertNoAlloc("List.findIndex", func() { ignore List.findIndex<Nat>(list, func x = x == 999) });
+assertNoAlloc("List.findIndex (no hit)", func() { ignore List.findIndex<Nat>(list, func x = x >= n) });
 assertNoAlloc("List.findLastIndex", func() { ignore List.findLastIndex<Nat>(list, func x = x == 0) });
+assertNoAlloc("List.findLastIndex (no hit)", func() { ignore List.findLastIndex<Nat>(list, func x = x >= n) });
 assertNoAlloc("List.indexOf", func() { ignore List.indexOf<Nat>(list, Nat.equal, 999) });
 assertNoAlloc("List.nextIndexOf", func() { ignore List.nextIndexOf<Nat>(list, Nat.equal, 999, 0) });
 assertNoAlloc("List.lastIndexOf", func() { ignore List.lastIndexOf<Nat>(list, Nat.equal, 0) });
