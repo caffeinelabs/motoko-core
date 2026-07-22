@@ -1388,6 +1388,8 @@ module {
 
   /// Returns the index of the next occurence of `element` in the `list` starting from the `from` index (inclusive).
   ///
+  /// Traps if `fromInclusive >= size(list)`.
+  ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let list = List.fromArray(['c', 'o', 'f', 'f', 'e', 'e']);
@@ -1454,6 +1456,9 @@ module {
   );
 
   /// Returns the index of the previous occurence of `element` in the `list` starting from the `from` index (exclusive).
+  ///
+  /// Traps if `fromExclusive > size(list)`. Note that `fromExclusive = size(list)`
+  /// is valid and starts the search from the end of the list.
   ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
