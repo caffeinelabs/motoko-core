@@ -113,7 +113,6 @@ jobs:
       - uses: ./.github/actions/setup
       - run: npm test
 
-      # Requires mops >= 2.17.0 for the `-- <moc flags>` passthrough
       - name: Tests under legacy persistence
         run: npx ic-mops test List.allocation -- --legacy-persistence
 
