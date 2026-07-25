@@ -49,6 +49,12 @@ func growIndexBlockIfNeeded<T>(list : List.List<T>) {
 
 func shrinkIndexBlockIfNeeded<T>(list : List.List<T>) {
   let blockIndex = Nat.toNat32(list.blockIndex);
+  // At the completely full list the insertion state sits one past the
+  // maximal data block. No shrink is possible there (the index block is
+  // at its exactly-full ladder length, and newIndexBlockLength of the
+  // one-past index could only round up to the next rung), but that query
+  // would trap on newIndexBlockLength's capacity guard, so return early.
+  if (blockIndex > 47) return;
   // kind of index of the first block in the super block
   if ((blockIndex << Nat32.bitcountLeadingZero(blockIndex)) << 2 == 0) {
     let newLength = newIndexBlockLength(blockIndex);
