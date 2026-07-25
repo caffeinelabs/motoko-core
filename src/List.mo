@@ -4,8 +4,10 @@
 ///
 /// Performance note: on a 64-bit build (enhanced orthogonal persistence, the
 /// compiler default) all index and size arithmetic in this module operates on
-/// unboxed values over the entire supported size range (up to 2^32 elements),
-/// so there are no boxing-related performance cliffs or hidden allocations.
+/// unboxed values over the entire supported size range (the capacity of 2^61
+/// elements is unreachable in practice anyway: at 8 bytes per element memory
+/// is exhausted long before), so there are no boxing-related performance
+/// cliffs or hidden allocations.
 /// On a 32-bit build (deprecated legacy persistence) `Nat` values >= 2^30 are
 /// boxed, so an operation receiving such an index, or internally computing
 /// such a size, would take slower bignum code paths and allocate a few dozen
@@ -41,7 +43,7 @@ module {
   /// will naturally be 2x slower than Buffer and Array. However, Array is not resizable and Buffer
   /// has `O(size)` memory waste.
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The maximum number of elements in a `List` is 2^61.
   public type List<T> = Types.List<T>;
 
   let INTERNAL_ERROR = "List: internal error";
@@ -290,7 +292,7 @@ module {
   /// List.addRepeat(list, 2, 1); // [2, 2, 2, 2, 1, 1]
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The maximum number of elements in a `List` is 2^61.
   ///
   /// Runtime: `O(count)`
   public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal<T>(self, ?initValue, count);
@@ -884,10 +886,9 @@ module {
     // where c = blocks_before_e * 2 ** e - capacity_before_e
 
     // The formula is based on Nat64 arithmetic (one epoch further up than
-    // the Nat32-based one would be), like in size(): no intermediate result
-    // overflows for blockIndex <= 2^17. In particular the one-past-the-end
-    // insertion position (131_071, 65_536) of a completely full list maps
-    // correctly to 2^32, which would overflow Nat32.
+    // the Nat32-based one would be), like in size(). In particular the
+    // one-past-the-end insertion position (3 * 2^30 - 1, 2^30) of a
+    // completely full list maps correctly to the maximum size 2^61.
     //
     // Intermediate values may exceed 2^64; that is harmless because every
     // operation used (-%, +%, <>>) is a bijection mod 2^64, so the final
@@ -922,17 +923,23 @@ module {
   };
 
   func newIndexBlockLength(blockIndex : Nat32) : Nat {
-    // The maximum List capacity is 2^32 elements, stored in data blocks
-    // 1..131_071; asking to accommodate a block index beyond that means
-    // the capacity would be exceeded. This is the single chokepoint that
-    // all index block growth goes through (add, repeat, tabulate,
+    // The maximum List capacity is 2^61 elements, stored in data blocks
+    // 1..(3 * 2^30 - 1); asking to accommodate a block index beyond that
+    // means the capacity would be exceeded. This is the single chokepoint
+    // that all index block growth goes through (add, repeat, tabulate,
     // addRepeat, ...), and it only executes when the index block actually
     // grows, so this guard costs one comparison on a path that runs
     // O(log capacity) times over a list's lifetime — never on ordinary
-    // adds. Without the guard the element would be written successfully
-    // but get() would deny its existence (guarded at index < 2^32),
-    // silently breaking the API's consistency.
-    if (blockIndex > 131_071) Prim.trap "List capacity of 2^32 elements exceeded";
+    // adds. 2^61 is the largest full-epoch capacity for which the Nat32
+    // arithmetic below stays exact: the rounded-up index block length
+    // 3 * 2^30 is the largest representable ladder value (the next one,
+    // 2^32, would overflow). Requests so large that even the block index
+    // exceeds 32 bits trap earlier, at the Nat.toNat32 conversions at the
+    // call sites.
+    // The shift tests blockIndex >= 3 * 2^30, i.e. the top two bits both
+    // set. This covers arbitrary jump targets from the constructors, not
+    // just the incrementally growing add path.
+    if (blockIndex >> 30 == 3) Prim.trap "List capacity of 2^61 elements exceeded";
     if (blockIndex <= 1) 2 else {
       let s = 30 - Nat32.bitcountLeadingZero(blockIndex);
       Nat32.toNat(((blockIndex >> s) +% 1) << s)
@@ -982,7 +989,7 @@ module {
   /// assert List.toArray(list) == [0, 1, 2, 3];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32; adding beyond
+  /// The maximum number of elements in a `List` is 2^61; adding beyond
   /// that traps.
   ///
   /// Amortized Runtime: `O(1)`, Worst Case Runtime: `O(sqrt(n))`
@@ -1080,9 +1087,9 @@ module {
     // compared to the Nat32-based version. The branch parities are
     // unchanged because 64 - 32 is even.
     // Unlike the Nat32-based version this also accepts size-valued
-    // arguments, which reach 2^32 for a completely full list (from
-    // prevIndexOf, truncate, repeat/tabulate/addRepeat): locate(2^32)
-    // returns the normalized one-past-the-end position (131_072, 0),
+    // arguments, which reach 2^61 for a completely full list (from
+    // prevIndexOf, truncate, repeat/tabulate/addRepeat): locate(2^61)
+    // returns the normalized one-past-the-end position (3 * 2^30, 0),
     // consistent with locate at every smaller data-block boundary.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
@@ -1113,9 +1120,9 @@ module {
     //     case (?element) element;
     //     case (null) Prim.trap "";
     //   };
-    // Nat64-based like locate; for index >= 2^32 the computed block index
-    // is >= 2^17, past any possible index block, so the array access traps
-    // as required (the message just differs from the Nat32 version's).
+    // Nat64-based like locate; for index >= 2^61 the computed block index
+    // is >= 3 * 2^30, past any possible index block (the List capacity is
+    // 2^61), so the array access traps as required.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
@@ -1148,10 +1155,10 @@ module {
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
     // The guard only rejects index >= 2^64, where the wrap conversion
-    // below would alias a small index. Indices in [2^32, 2^64) fall
+    // below would alias a small index. Indices in [2^61, 2^64) fall
     // through to the physical bounds checks: they yield a data block
-    // index >= 2^17, past any possible index block (the List capacity
-    // is 2^32), so `a < blocks.size()` fails and null is returned.
+    // index >= 3 * 2^30, past any possible index block (the List capacity
+    // is 2^61), so `a < blocks.size()` fails and null is returned.
     if (Prim.shiftRight(index, 64) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
@@ -1185,9 +1192,9 @@ module {
   ///
   /// Runtime: `O(1)`
   public func put<T>(self : List<T>, index : Nat, value : T) {
-    // Nat64-based like locate; for index >= 2^32 the computed block index
-    // is >= 2^17, past any possible index block, so the array access traps
-    // as required (the message just differs from the Nat32 version's).
+    // Nat64-based like locate; for index >= 2^61 the computed block index
+    // is >= 3 * 2^30, past any possible index block (the List capacity is
+    // 2^61), so the array access traps as required.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
@@ -2080,7 +2087,7 @@ module {
   /// assert Iter.toArray(List.values(list)) == [2, 1, 1, 1];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The maximum number of elements in a `List` is 2^61.
   ///
   /// Runtime: `O(size)`, where n is the size of iter.
   public func addAll<T>(self : List<T>, iter : Types.Iter<T>) {

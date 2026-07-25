@@ -2045,7 +2045,7 @@ Test.suite(
     );
 
     Test.test(
-      "get returns null for index >= 2^32",
+      "get returns null for out-of-range indices, however large",
       func() {
         Test.expect.bool(List.get<Nat>(vec, 4294967296) == null).equal(true);
         Test.expect.bool(List.get<Nat>(vec, 100) == null).equal(true);
@@ -2186,7 +2186,7 @@ Test.suite(
   }
 );
 
-// The maximum size 2^32 cannot be reached by actually adding elements
+// A size of 2^32 cannot be reached by actually adding elements
 // (32 GB of data blocks), so these tests craft the List's internal state
 // directly. size() derives the size purely from the (blockIndex,
 // elementIndex) insertion position, so the data blocks can remain empty.
@@ -2196,7 +2196,7 @@ Test.suite(
 // blockIndex = 8192); the state one element earlier is
 // blockIndex = 2^(m+1) - 1, elementIndex = lastBlockSize - 1.
 Test.suite(
-  "size at the 2^32 capacity boundary",
+  "size at 2^32 (the former capacity boundary)",
   func() {
     Test.test(
       "size 2^32 - 1",
@@ -2335,18 +2335,13 @@ Test.suite(
   }
 );
 
-// Operations whose argument is a SIZE (not an index) must accept the value
-// 2^32 — the size of a completely full list. Internally they pass it to
-// locate(), whose Nat32 conversion can only express indices (<= 2^32 - 1),
-// so today all three trap with "losing precision". locate(2^32) must
-// return the normalized one-past-the-end position (131_072, 0), like it
-// already does at every smaller data-block boundary (e.g. locate(8) is
-// the start of the next block).
-// The same defect makes repeat/tabulate/addRepeat trap when constructing
-// a list of size exactly 2^32; that case has no value-asserting test
-// because a successful construction needs ~32 GB of data blocks.
+// Operations whose argument is a SIZE (not an index) must accept sizes at
+// data-block boundaries, where locate() returns the normalized
+// one-past-the-end position — locate(2^32) is (131_072, 0), like locate(8)
+// is the start of the next block. These states, once the capacity
+// boundary, are ordinary interior points now and must keep working.
 Test.suite(
-  "size-valued arguments at the 2^32 capacity boundary",
+  "size-valued arguments at 2^32 (the former capacity boundary)",
   func() {
     Test.test(
       "lastIndexOf scans from the very end",
@@ -2390,6 +2385,106 @@ Test.suite(
         };
         List.addRepeat(fake, 7, 0);
         Test.expect.nat(List.size(fake)).equal(4_294_967_296)
+      }
+    )
+  }
+);
+
+// Sizes beyond the former 2^32 capacity are ordinary now. The states are
+// crafted (see the comments above); memory only permits structural tests
+// (ones that touch data blocks) up to mid-range sizes.
+Test.suite(
+  "sizes beyond the former 2^32 capacity",
+  func() {
+    Test.test(
+      "the 2^32+1-th add succeeds and all accessors agree",
+      func() {
+        let fake : List.List<Nat> = {
+          var blocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+          var blockIndex = 131_072;
+          var elementIndex = 0
+        };
+        List.add(fake, 7);
+        Test.expect.nat(List.size(fake)).equal(4_294_967_297);
+        Test.expect.nat(List.at(fake, 4_294_967_296)).equal(7);
+        Test.expect.bool(List.get(fake, 4_294_967_296) == ?7).equal(true);
+        List.put(fake, 4_294_967_296, 9);
+        Test.expect.bool(List.last(fake) == ?9).equal(true)
+      }
+    );
+    Test.test(
+      "structural operations on a faked full 2^40 list",
+      func() {
+        let fake : List.List<Nat> = {
+          var blocks = VarArray.repeat<[var ?Nat]>([var], 2_097_152);
+          var blockIndex = 2_097_152;
+          var elementIndex = 0
+        };
+        Test.expect.nat(List.size(fake)).equal(1_099_511_627_776);
+        List.add(fake, 9);
+        Test.expect.nat(List.size(fake)).equal(1_099_511_627_777);
+        Test.expect.nat(List.at(fake, 1_099_511_627_776)).equal(9);
+        Test.expect.bool(List.get(fake, 1_099_511_627_776) == ?9).equal(true);
+        ignore List.removeLast(fake);
+        Test.expect.nat(List.size(fake)).equal(1_099_511_627_776)
+      }
+    )
+  }
+);
+
+// The capacity is 2^61: the largest full-epoch capacity whose index block
+// arithmetic stays within Nat32 (index block length 3 * 2^30, data blocks
+// 1..(3 * 2^30 - 1)). A completely full list has the insertion state
+// (3 * 2^30, 0). The data blocks of the crafted states stay empty; a
+// structural test at this size is impossible (the index block alone would
+// be gigabytes), and exceeding the capacity traps, which a wasi-mode test
+// cannot assert as a passing test (verified manually: repeat of
+// 2^61 + 1 elements traps with "List capacity of 2^61 elements exceeded").
+Test.suite(
+  "the 2^61 capacity boundary",
+  func() {
+    Test.test(
+      "size 2^61 - 1",
+      func() {
+        let fake : List.List<Nat> = {
+          var blocks = [var] : [var [var ?Nat]];
+          var blockIndex = 3_221_225_471;
+          var elementIndex = 1_073_741_823
+        };
+        Test.expect.nat(List.size(fake)).equal(2_305_843_009_213_693_951)
+      }
+    );
+    Test.test(
+      "size 2^61 (completely full list)",
+      func() {
+        let fake : List.List<Nat> = {
+          var blocks = [var] : [var [var ?Nat]];
+          var blockIndex = 3_221_225_472;
+          var elementIndex = 0
+        };
+        Test.expect.nat(List.size(fake)).equal(2_305_843_009_213_693_952)
+      }
+    );
+    Test.test(
+      "truncate to the current size 2^61 is a no-op",
+      func() {
+        // also exercises newIndexBlockLength at its maximal legal input,
+        // block index 3 * 2^30 - 1, without firing the capacity guard
+        let fake : List.List<Nat> = {
+          var blocks = [var] : [var [var ?Nat]];
+          var blockIndex = 3_221_225_472;
+          var elementIndex = 0
+        };
+        List.truncate(fake, 2_305_843_009_213_693_952);
+        Test.expect.nat(List.size(fake)).equal(2_305_843_009_213_693_952)
+      }
+    );
+    Test.test(
+      "get returns null at and beyond the maximal index",
+      func() {
+        let small = List.fromArray<Nat>([1, 2, 3]);
+        Test.expect.bool(List.get(small, 2_305_843_009_213_693_951) == null).equal(true);
+        Test.expect.bool(List.get(small, 2_305_843_009_213_693_952) == null).equal(true)
       }
     )
   }
