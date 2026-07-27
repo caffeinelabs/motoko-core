@@ -1076,17 +1076,16 @@ module {
     return element
   };
 
+  // Returns the (blockIndex, elementIndex) position of the element with
+  // the given index. For example, locate(2^32) = (131_072, 0).
+  // Also often used with a size-valued argument, in which case the next
+  // next insertion position is returned (see prevIndexOf, truncate,
+  // repeat/tabulate/addRepeat).
   func locate(index : Nat) : (Nat, Nat) {
     // For the derivation of the bit arithmetic see locate_readable64
     // and locate_optimal64 in test/List.test.mo; the latter is a
     // verbatim copy of this function and tests its arithmetic across
     // the full supported range.
-    //
-    // Also accepts size-valued arguments, one beyond the largest index
-    // in a List (from prevIndexOf, truncate, repeat/tabulate/addRepeat):
-    // e.g. locate(2^32) returns the normalized one-past-the-end position
-    // (131_072, 0), consistent with locate at every smaller data-block
-    // boundary.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
@@ -1116,9 +1115,8 @@ module {
     //     case (?element) element;
     //     case (null) Prim.trap "";
     //   };
-    // Nat64-based like locate; for index >= size the block lookup or the
-    // null slot check below traps as required (the message just differs
-    // from the Nat32 version's).
+    // for index >= size the block lookup or the null slot check
+    // below traps as required.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
@@ -1150,9 +1148,8 @@ module {
   ///
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
-    // The guard only rejects index >= 2^64, where the wrap conversion
-    // below would alias a small index. Any index >= size falls through
-    // to the physical checks below: a block index beyond blocks.size()
+    // The guard only rejects index >= 2^64. Any index in `[size, 2^64)` falls
+    // through to the physical checks below: a block index beyond blocks.size()
     // or a null slot, so null is returned.
     if (Prim.shiftRight(index, 64) != 0) return null;
     // inlined version of locate
@@ -1187,9 +1184,9 @@ module {
   ///
   /// Runtime: `O(1)`
   public func put<T>(self : List<T>, index : Nat, value : T) {
-    // Nat64-based like locate; for index >= size the block lookup or the
-    // null slot check below traps as required (the message just differs
-    // from the Nat32 version's).
+    // inlined version of locate.
+    // for index >= size the block lookup or the null slot check
+    // below traps as required.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;

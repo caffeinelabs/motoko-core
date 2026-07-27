@@ -2251,12 +2251,21 @@ Test.suite(
   }
 );
 
+// Constructs a List record with crafted internal state and blockCount
+// empty data block slots, for the fake tests below. Individual slots can
+// be populated through the returned record's blocks field.
+func fakeList(blockCount : Nat, blockIndex : Nat, elementIndex : Nat) : List.List<Nat> = {
+  var blocks = VarArray.repeat<[var ?Nat]>([var], blockCount);
+  var blockIndex = blockIndex;
+  var elementIndex = elementIndex
+};
+
 // A size as large as 2^32 cannot be reached by actually adding elements
 // (32 GB of data blocks), so these tests craft the List's internal state
 // directly. size() derives the size purely from the (blockIndex,
 // elementIndex) insertion position, so the data blocks can remain empty.
-// The crafted states follow the pattern of real full lists, checked
-// against reachable sizes: a full list of size 2^(2m) has
+// The crafted states follow the pattern of real lists at these sizes,
+// checked against reachable sizes: a list of size 2^(2m) has
 // blockIndex = 2^(m+1) and elementIndex = 0 (e.g. size 2^24 has
 // blockIndex = 8192); the state one element earlier is
 // blockIndex = 2^(m+1) - 1, elementIndex = lastBlockSize - 1.
@@ -2266,29 +2275,21 @@ Test.suite(
     Test.test(
       "size 2^32 - 1",
       func() {
-        let almostFull : List.List<Nat> = {
-          var blocks = [var] : [var [var ?Nat]];
-          var blockIndex = 131_071;
-          var elementIndex = 65_535
-        };
-        Test.expect.nat(List.size(almostFull)).equal(4_294_967_295)
+        let midBlock = fakeList(0, 131_071, 65_535);
+        Test.expect.nat(List.size(midBlock)).equal(4_294_967_295)
       }
     );
     Test.test(
       "size 2^32 (one-past state (131_072, 0))",
       func() {
-        let full : List.List<Nat> = {
-          var blocks = [var] : [var [var ?Nat]];
-          var blockIndex = 131_072;
-          var elementIndex = 0
-        };
-        Test.expect.nat(List.size(full)).equal(4_294_967_296)
+        let atBlockBoundary = fakeList(0, 131_072, 0);
+        Test.expect.nat(List.size(atBlockBoundary)).equal(4_294_967_296)
       }
     )
   }
 );
 
-// binarySearch on a faked completely full list of size 2^32 (see the size
+// binarySearch on a faked list of size 2^32 (see the size
 // tests above for the crafted blockIndex/elementIndex values). A real list
 // of this size would need ~32 GB, but binarySearch only reads O(log n)
 // slots, so only the data blocks actually hit by the search are
@@ -2306,13 +2307,14 @@ Test.suite(
 // traps when read (empty block or unwrap of null), so this test also
 // asserts the exact probe set of the search.
 Test.suite(
-  "binarySearch on a faked full 2^32 list",
+  "binarySearch on a faked 2^32 list",
   func() {
     Test.test(
       "finds the last element",
       func() {
         let target = 4_294_967_295; // == the last index; all other probed slots hold 0
-        let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+        let fake = fakeList(131_072, 131_072, 0);
+        let dataBlocks = fake.blocks;
 
         // phase 1 probe
         dataBlocks[98_304] := [var ?0];
@@ -2343,12 +2345,6 @@ Test.suite(
         lastBlock[65_535] := ?target;
         dataBlocks[131_071] := lastBlock;
 
-        let fake : List.List<Nat> = {
-          var blocks = dataBlocks;
-          var blockIndex = 131_072;
-          var elementIndex = 0
-        };
-
         let result = List.binarySearch(fake, Nat.compare, target);
         Test.expect.bool(result == #found(4_294_967_295)).equal(true)
       }
@@ -2362,7 +2358,8 @@ Test.suite(
         // the one-past-the-end index of this list, verifying
         // indexByBlockElement's Nat64 arithmetic at the first value
         // beyond every valid element index.
-        let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+        let fake = fakeList(131_072, 131_072, 0);
+        let dataBlocks = fake.blocks;
         dataBlocks[98_304] := [var ?0];
         var left = 98_304;
         let right = 131_072;
@@ -2381,12 +2378,6 @@ Test.suite(
           l := mid + 1
         };
         dataBlocks[131_071] := lastBlock;
-
-        let fake : List.List<Nat> = {
-          var blocks = dataBlocks;
-          var blockIndex = 131_072;
-          var elementIndex = 0
-        };
 
         switch (List.binarySearch(fake, Nat.compare, 1)) {
           case (#insertionIndex i) Test.expect.nat(i).equal(4_294_967_296);
@@ -2413,15 +2404,11 @@ Test.suite(
       func() {
         // fake list; only the last slot holds a (matching) element,
         // so the backward scan succeeds on its first probe
-        let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
+        let fake = fakeList(131_072, 131_072, 0);
+        let dataBlocks = fake.blocks;
         let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
         lastBlock[65_535] := ?7;
         dataBlocks[131_071] := lastBlock;
-        let fake : List.List<Nat> = {
-          var blocks = dataBlocks;
-          var blockIndex = 131_072;
-          var elementIndex = 0
-        };
         switch (List.lastIndexOf<Nat>(fake, Nat.equal, 7)) {
           case (?i) Test.expect.nat(i).equal(4_294_967_295);
           case null Test.expect.nat(0).equal(4_294_967_295) // fails informatively
@@ -2431,11 +2418,7 @@ Test.suite(
     Test.test(
       "truncate to the current size 2^32 is a no-op",
       func() {
-        let fake : List.List<Nat> = {
-          var blocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
-          var blockIndex = 131_072;
-          var elementIndex = 0
-        };
+        let fake = fakeList(131_072, 131_072, 0);
         List.truncate(fake, 4_294_967_296);
         Test.expect.nat(List.size(fake)).equal(4_294_967_296)
       }
@@ -2443,11 +2426,7 @@ Test.suite(
     Test.test(
       "addRepeat of zero elements at size 2^32 is a no-op",
       func() {
-        let fake : List.List<Nat> = {
-          var blocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
-          var blockIndex = 131_072;
-          var elementIndex = 0
-        };
+        let fake = fakeList(131_072, 131_072, 0);
         List.addRepeat(fake, 7, 0);
         Test.expect.nat(List.size(fake)).equal(4_294_967_296)
       }
