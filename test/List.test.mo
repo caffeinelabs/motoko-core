@@ -2393,4 +2393,76 @@ Test.suite(
       }
     )
   }
+);
+
+// The index block grows and shrinks along a ladder of exactly-full
+// lengths (the "rungs" {2^j, 3*2^j}): growth rounds the block index up
+// to the next rung and shrinking is checked at rung crossings only.
+// These tests drive add/removeLast through the full ladder below 512
+// elements and assert the resulting index block lengths.
+Test.suite(
+  "index block grow/shrink ladder",
+  func() {
+    Test.test(
+      "growing reaches an exactly-full index block at a rung",
+      func() {
+        let l = List.empty<Nat>();
+        var i = 0;
+        while (i < 512) {
+          List.add(l, i);
+          i += 1
+        };
+        assert List.size(l) == 512;
+        assert l.blockIndex == 48;
+        assert l.elementIndex == 0;
+        assert l.blocks.size() == 48; // exactly full at the rung
+        assert List.at(l, 0) == 0;
+        assert List.at(l, 511) == 511
+      }
+    );
+    Test.test(
+      "draining from a rung state shrinks the index block",
+      func() {
+        let l = List.empty<Nat>();
+        var i = 0;
+        while (i < 512) {
+          List.add(l, i);
+          i += 1
+        };
+        // the first removeLast runs shrinkIndexBlockIfNeeded at the rung
+        // state (48, 0), where newIndexBlockLength rounds up to 64 and the
+        // newLength < blocks.size() filter rejects the shrink
+        assert List.removeLast(l) == ?511;
+        assert List.size(l) == 511;
+        var expected = 510;
+        while (List.size(l) > 0) {
+          assert List.removeLast(l) == ?expected;
+          if (expected > 0) expected -= 1
+        };
+        assert List.size(l) == 0;
+        assert List.removeLast(l) == null;
+        // the index block shrank on the way down
+        assert l.blocks.size() < 48
+      }
+    );
+    Test.test(
+      "add/removeLast cycle at a rung boundary",
+      func() {
+        let l = List.empty<Nat>();
+        var i = 0;
+        while (i < 512) {
+          List.add(l, i);
+          i += 1
+        };
+        var k = 0;
+        while (k < 3) {
+          assert List.removeLast(l) == ?511;
+          List.add(l, 511);
+          k += 1
+        };
+        assert List.size(l) == 512;
+        assert List.at(l, 511) == 511
+      }
+    )
+  }
 )

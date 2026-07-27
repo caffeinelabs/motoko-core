@@ -2,10 +2,13 @@
 /// `List` provides O(1) access time and O(sqrt(n)) memory overhead. In contrast, `pure/List` is a purely functional linked list.
 /// Can be declared `stable` for orthogonal persistence.
 ///
+/// The List size is in practice limited only by available memory. The
+/// theoretical limit is 2^61 elements.
+///
 /// Performance note: on a 64-bit build (enhanced orthogonal persistence, the
 /// compiler default) all index and size arithmetic in this module operates on
-/// unboxed values over the entire supported size range (up to 2^32 elements),
-/// so there are no boxing-related performance cliffs or hidden allocations.
+/// unboxed values, so there are no boxing-related performance cliffs or
+/// hidden allocations.
 /// On a 32-bit build (deprecated legacy persistence) `Nat` values >= 2^30 are
 /// boxed, so an operation receiving such an index, or internally computing
 /// such a size, would take slower bignum code paths and allocate a few dozen
@@ -921,18 +924,21 @@ module {
     Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat.toNat32(blockIndex) / 3))
   };
 
+  // The Nat32 arithmetic below bounds the List size to exactly 2^61
+  // elements: it produces valid index block lengths up to and including
+  // the top rung 3 * 2^30, whose index block fills exactly when the List
+  // reaches size 2^61 (insertion state (3 * 2^30, 0)). One step further
+  // the round-up 4 << 30 wraps to 0, so at exactly size 2^61 add traps
+  // with "Array index out of bounds" (growing into the wrapped
+  // zero-length index block) -- the effect of a capacity guard, with a
+  // less descriptive message. All other operations keep working at
+  // size 2^61, including removeLast, whose shrink path dodges the wrap
+  // with the early return in shrinkIndexBlockIfNeeded. Constructor and
+  // addRepeat targets in (2^61, 2^62) hit the same wrap; targets
+  // >= 2^62 trap in the Nat.toNat32 conversions at the call sites. The
+  // bound is theoretical: 2^61 elements need at least 16 EiB of data
+  // blocks, orders of magnitude beyond any real memory.
   func newIndexBlockLength(blockIndex : Nat32) : Nat {
-    // The maximum List capacity is 2^32 elements, stored in data blocks
-    // 1..131_071; asking to accommodate a block index beyond that means
-    // the capacity would be exceeded. This is the single chokepoint that
-    // all index block growth goes through (add, repeat, tabulate,
-    // addRepeat, ...), and it only executes when the index block actually
-    // grows, so this guard costs one comparison on a path that runs
-    // O(log capacity) times over a list's lifetime — never on ordinary
-    // adds. Without the guard the element would be written successfully
-    // but get() would deny its existence (guarded at index < 2^32),
-    // silently breaking the API's consistency.
-    if (blockIndex > 131_071) Prim.trap "List capacity of 2^32 elements exceeded";
     if (blockIndex <= 1) 2 else {
       let s = 30 - Nat32.bitcountLeadingZero(blockIndex);
       Nat32.toNat(((blockIndex >> s) +% 1) << s)
@@ -953,12 +959,12 @@ module {
 
   func shrinkIndexBlockIfNeeded<T>(list : List<T>) {
     let blockIndex = Nat.toNat32(list.blockIndex);
-    // At the completely full list the insertion state sits one past the
-    // maximal data block. No shrink is possible there (the index block is
-    // at its exactly-full ladder length, and newIndexBlockLength of the
-    // one-past index could only round up to the next rung), but that query
-    // would trap on newIndexBlockLength's capacity guard, so return early.
-    if (blockIndex > 131_071) return;
+    // No shrink is possible for blockIndex >= 2^31: the only rung there
+    // is the top rung 3 * 2^30 (the completely full 2^61 List), where
+    // the index block is at its exactly-full maximal length -- but
+    // newIndexBlockLength would wrap to 0 there and shrink the index
+    // block to nothing, so return early.
+    if (blockIndex >> 31 != 0) return;
     // kind of index of the first block in the super block
     if ((blockIndex << Nat32.bitcountLeadingZero(blockIndex)) << 2 == 0) {
       let newLength = newIndexBlockLength(blockIndex);
@@ -1119,9 +1125,9 @@ module {
     //     case (?element) element;
     //     case (null) Prim.trap "";
     //   };
-    // Nat64-based like locate; for index >= 2^32 the computed block index
-    // is >= 2^17, past any possible index block, so the array access traps
-    // as required (the message just differs from the Nat32 version's).
+    // Nat64-based like locate; for index >= size the block lookup or the
+    // null slot check below traps as required (the message just differs
+    // from the Nat32 version's).
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
@@ -1154,10 +1160,9 @@ module {
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
     // The guard only rejects index >= 2^64, where the wrap conversion
-    // below would alias a small index. Indices in [2^32, 2^64) fall
-    // through to the physical bounds checks: they yield a data block
-    // index >= 2^17, past any possible index block (the List capacity
-    // is 2^32), so `a < blocks.size()` fails and null is returned.
+    // below would alias a small index. Any index >= size falls through
+    // to the physical checks below: a block index beyond blocks.size()
+    // or a null slot, so null is returned.
     if (Prim.shiftRight(index, 64) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
@@ -1191,9 +1196,9 @@ module {
   ///
   /// Runtime: `O(1)`
   public func put<T>(self : List<T>, index : Nat, value : T) {
-    // Nat64-based like locate; for index >= 2^32 the computed block index
-    // is >= 2^17, past any possible index block, so the array access traps
-    // as required (the message just differs from the Nat32 version's).
+    // Nat64-based like locate; for index >= size the block lookup or the
+    // null slot check below traps as required (the message just differs
+    // from the Nat32 version's).
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
