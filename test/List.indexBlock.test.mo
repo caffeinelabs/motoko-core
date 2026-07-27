@@ -81,7 +81,8 @@ func shrinkIndexBlockIfNeeded<T>(list : List.List<T>) {
   // newIndexBlockLength would wrap to 0 there and shrink the index
   // block to nothing, so return early.
   if (blockIndex >> 7 != 0) return;
-  // kind of index of the first block in the super block
+  // only when blockIndex is the first block of a super block (i.e. of
+  // the form 2^j or 3 * 2^j, the index block ladder) can a shrink be due
   if ((blockIndex << Nat8.bitcountLeadingZero(blockIndex)) << 2 == 0) {
     let newLength = newIndexBlockLength(blockIndex);
     if (newLength < list.blocks.size()) {

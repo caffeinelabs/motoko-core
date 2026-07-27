@@ -873,25 +873,20 @@ module {
     // Each epoch starting with epoch 1 spans exactly two super blocks.
     // Super block s falls in epoch ceil(s/2).
 
-    // epoch of last data block
+    // epoch of position's data block
     // e = 64 - lz
     let lz = Nat64.bitcountLeadingZero(d / 3);
 
     // capacity of all prior epochs combined
-    // capacity_before_e = 2 * 4 ** (e - 1) - 1
+    // capacity_before_e = 2 * 4 ** (e - 1)
 
-    // data blocks in all prior epochs combined
-    // blocks_before_e = 3 * 2 ** (e - 1) - 2
+    // data block indices before epoch e (counting the dummy block 0)
+    // blocks_before_e = 3 * 2 ** (e - 1)
 
     // then size = d * 2 ** e + i - c
-    // where c = blocks_before_e * 2 ** e - capacity_before_e
+    // where c = blocks_before_e * 2 ** e - capacity_before_e = 4 ** e
+    // i.e. size = (d - 2 ** e) * 2 ** e + i, which is the line below
 
-    // The formula is based on Nat64 arithmetic (one epoch further up than
-    // the Nat32-based one would be), like in size(): no intermediate result
-    // overflows for blockIndex <= 2^17. In particular the one-past-the-end
-    // insertion position (131_071, 65_536) of a completely full list maps
-    // correctly to 2^32, which would overflow Nat32.
-    //
     // Intermediate values may exceed 2^64; that is harmless because every
     // operation used (-%, +%, <>>) is a bijection mod 2^64, so the final
     // value is exact whenever the true result fits in 64 bits. A plain >>
@@ -918,26 +913,18 @@ module {
     Nat64.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat64(self.elementIndex))
   };
 
+  // Returns the size of data block blockIndex, i.e. 2^e where e is the
+  // epoch of the block. Do not call it for blockIndex == 0.
   func dataBlockSize(blockIndex : Nat) : Nat {
-    // formula for the size of given blockIndex
-    // don't call it for blockIndex == 0
     Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat.toNat32(blockIndex) / 3))
   };
 
-  // The Nat32 arithmetic below bounds the List size to exactly 2^61
-  // elements: it produces valid index block lengths up to and including
-  // the top rung 3 * 2^30, whose index block fills exactly when the List
-  // reaches size 2^61 (insertion state (3 * 2^30, 0)). One step further
-  // the round-up 4 << 30 wraps to 0, so at exactly size 2^61 add traps
-  // with "Array index out of bounds" (growing into the wrapped
-  // zero-length index block) -- the effect of a capacity guard, with a
-  // less descriptive message. All other operations keep working at
-  // size 2^61, including removeLast, whose shrink path dodges the wrap
-  // with the early return in shrinkIndexBlockIfNeeded. Constructor and
-  // addRepeat targets in (2^61, 2^62) hit the same wrap; targets
-  // >= 2^62 trap in the Nat.toNat32 conversions at the call sites. The
-  // bound is theoretical: 2^61 elements need at least 16 EiB of data
-  // blocks, orders of magnitude beyond any real memory.
+  // Returns the length of the index block needed to accommodate data
+  // block blockIndex: the smallest length in the ladder {2^j, 3 * 2^j}
+  // that is strictly greater than blockIndex. Correct for
+  // blockIndex < 3 * 2^30. For blockIndex >= 3 * 2^30 the true result
+  // 2^32 does not fit in Nat32: the round-up 4 << 30 wraps and 0 is
+  // returned (see the size limit section at the end of this file).
   func newIndexBlockLength(blockIndex : Nat32) : Nat {
     if (blockIndex <= 1) 2 else {
       let s = 30 - Nat32.bitcountLeadingZero(blockIndex);
@@ -945,6 +932,8 @@ module {
     }
   };
 
+  // If the index block is exactly full then grow it to the next ladder
+  // length, otherwise do nothing.
   func growIndexBlockIfNeeded<T>(list : List<T>) {
     if (list.blocks.size() == list.blockIndex) {
       let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(Nat.toNat32(list.blockIndex)));
@@ -965,7 +954,8 @@ module {
     // newIndexBlockLength would wrap to 0 there and shrink the index
     // block to nothing, so return early.
     if (blockIndex >> 31 != 0) return;
-    // kind of index of the first block in the super block
+    // only when blockIndex is the first block of a super block (i.e. of
+    // the form 2^j or 3 * 2^j, the index block ladder) can a shrink be due
     if ((blockIndex << Nat32.bitcountLeadingZero(blockIndex)) << 2 == 0) {
       let newLength = newIndexBlockLength(blockIndex);
       if (newLength < list.blocks.size()) {
@@ -3219,5 +3209,24 @@ module {
     };
     next
   };
+
+  // The theoretical size limit of 2^61 elements
+  //
+  // The Nat32 index block arithmetic bounds the List size to exactly
+  // 2^61 elements: newIndexBlockLength is correct up to the top ladder
+  // length 3 * 2^30 (see its contract), and the index block of that
+  // length fills exactly when the List reaches size 2^61 (insertion
+  // state (3 * 2^30, 0)). Growing any further -- add through
+  // growIndexBlockIfNeeded, or constructor and addRepeat targets in
+  // (2^61, 2^62) through their newIndexBlockLength call sites -- builds
+  // the wrapped zero-length index block and traps with "Array index out
+  // of bounds": the effect of a capacity guard, with a less descriptive
+  // message. Targets >= 2^62 trap in the Nat.toNat32 conversions at the
+  // call sites instead. All other operations keep working at size 2^61,
+  // including removeLast, whose shrink path dodges the wrap with the
+  // early return in shrinkIndexBlockIfNeeded. The bound is purely
+  // theoretical: 2^61 elements need at least 16 EiB of data blocks.
+  // test/List.indexBlock.test.mo exercises the machinery at this bound
+  // with width-scaled (Nat8) copies of these functions.
 
 }
