@@ -7,6 +7,7 @@ import Prim "mo:⛔";
 import Iter "../src/Iter";
 import Array "../src/Array";
 import Nat32 "../src/Nat32";
+import Nat64 "../src/Nat64";
 import Nat "../src/Nat";
 import Order "../src/Order";
 import List "../src/List";
@@ -118,6 +119,70 @@ while (i < locate_n) {
   assert (locate_readable(2 ** 32 - 1 - i : Nat) == locate_optimal(2 ** 32 - 1 - i : Nat));
   i += 1
 };
+
+// The Nat64 widening of locate_readable: bit length 64, so super block
+// s = 63 - lz; the mask derivation is unchanged.
+func locate_readable64<X>(index : Nat) : (Nat, Nat) {
+  let i = Nat.toNat64(index);
+  if (i == 0) {
+    return (1, 0)
+  };
+  let lz = Nat64.bitcountLeadingZero(i);
+  let s = 63 - lz;
+  let down = s >> 1;
+  let up = (s + 1) >> 1;
+  let e_mask = 1 << up - 1;
+  let b_mask = 1 << down - 1;
+  (Nat64.toNat(e_mask + b_mask + 2 + (i >> up) & b_mask), Nat64.toNat(i & e_mask))
+};
+
+// Verbatim copy of the private locate in src/List.mo, the shipped Nat64
+// version of locate_optimal. KEEP IN SYNC WITH src/List.mo.
+func locate_optimal64<X>(index : Nat) : (Nat, Nat) {
+  let i = index.toNat64();
+  let lz = Nat64.bitcountLeadingZero(i);
+  let lz2 = lz >> 1;
+  if (lz & 1 == 0) {
+    ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
+  } else {
+    ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
+  }
+};
+
+// link the Nat64 spec to the Nat32 spec below 2^32, and check the
+// shipped arithmetic against the Nat64 spec on the same ranges
+i := 0;
+while (i < locate_n) {
+  assert (locate_readable64(i) == locate_readable(i));
+  assert (locate_readable64(2 ** 32 - 1 - i : Nat) == locate_readable(2 ** 32 - 1 - i : Nat));
+  assert (locate_readable64(i) == locate_optimal64(i));
+  assert (locate_readable64(2 ** 32 - 1 - i : Nat) == locate_optimal64(2 ** 32 - 1 - i : Nat));
+  i += 1
+};
+
+// boundaries across the full supported range up to the maximum size
+// 2^61: neighborhoods of every power 2^k and of the odd-power interior
+// boundary 3 * 2^(k-1); the values above each boundary include the
+// size-valued arguments at data block boundaries
+var k = 1;
+while (k <= 61) {
+  let p = 2 ** k;
+  let q = 3 * 2 ** (k - 1 : Nat);
+  var d = 0;
+  while (d < 8) {
+    if (p + d <= 2 ** 61) assert (locate_readable64(p + d) == locate_optimal64(p + d));
+    if (d < p) assert (locate_readable64(p - d - 1 : Nat) == locate_optimal64(p - d - 1 : Nat));
+    if (q + d <= 2 ** 61) assert (locate_readable64(q + d) == locate_optimal64(q + d));
+    if (d < q) assert (locate_readable64(q - d - 1 : Nat) == locate_optimal64(q - d - 1 : Nat));
+    d += 1
+  };
+  k += 1
+};
+
+// anchors: the one-past-the-end positions of the 2^32 list and of the
+// maximal 2^61 list
+assert (locate_optimal64(2 ** 32) == (131_072, 0));
+assert (locate_optimal64(2 ** 61) == (3 * 2 ** 30, 0));
 
 // IMPLEMENTATION DETAILS END
 
@@ -2186,7 +2251,7 @@ Test.suite(
   }
 );
 
-// The maximum size 2^32 cannot be reached by actually adding elements
+// A size as large as 2^32 cannot be reached by actually adding elements
 // (32 GB of data blocks), so these tests craft the List's internal state
 // directly. size() derives the size purely from the (blockIndex,
 // elementIndex) insertion position, so the data blocks can remain empty.
@@ -2196,7 +2261,7 @@ Test.suite(
 // blockIndex = 8192); the state one element earlier is
 // blockIndex = 2^(m+1) - 1, elementIndex = lastBlockSize - 1.
 Test.suite(
-  "size at the 2^32 capacity boundary",
+  "size at 2^32",
   func() {
     Test.test(
       "size 2^32 - 1",
@@ -2210,7 +2275,7 @@ Test.suite(
       }
     );
     Test.test(
-      "size 2^32 (completely full list)",
+      "size 2^32 (one-past state (131_072, 0))",
       func() {
         let full : List.List<Nat> = {
           var blocks = [var] : [var [var ?Nat]];
@@ -2293,13 +2358,10 @@ Test.suite(
       func() {
         // Same fake and probe set as above, but every probed slot (including
         // the very last one) holds 0 and we search for 1, which is greater
-        // than everything: the search must report insertion index 2^32.
-        // This is the one case where indexByBlockElement's Nat32 arithmetic
-        // overflows: blockStart(131_071) + 65_536 = 2^32 wraps to 0, so a
-        // caller would be told to insert the LARGEST element at the FRONT.
-        // (Any list shorter than the full 2^32 yields insertion indices
-        // < 2^32, which fit Nat32 — only the completely full list is
-        // affected.)
+        // than everything: the search must report insertion index 2^32 --
+        // the one-past-the-end index of this list, verifying
+        // indexByBlockElement's Nat64 arithmetic at the first value
+        // beyond every valid element index.
         let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
         dataBlocks[98_304] := [var ?0];
         var left = 98_304;
@@ -2335,23 +2397,21 @@ Test.suite(
   }
 );
 
-// Operations whose argument is a SIZE (not an index) must accept the value
-// 2^32 — the size of a completely full list. Internally they pass it to
-// locate(), whose Nat32 conversion can only express indices (<= 2^32 - 1),
-// so today all three trap with "losing precision". locate(2^32) must
-// return the normalized one-past-the-end position (131_072, 0), like it
-// already does at every smaller data-block boundary (e.g. locate(8) is
-// the start of the next block).
-// The same defect makes repeat/tabulate/addRepeat trap when constructing
-// a list of size exactly 2^32; that case has no value-asserting test
-// because a successful construction needs ~32 GB of data blocks.
+// These tests probe the value 2^32 on a fake list of that size:
+// locate(2^32) returns the normalized
+// one-past-the-end position (131_072, 0), like locate does at every
+// smaller data-block boundary (e.g. locate(8) is the start of the next
+// block), and all three operations succeed.
+// (Constructing a real list of size 2^32 with repeat/tabulate/
+// addRepeat has no value-asserting test because a successful
+// construction needs ~32 GB of data blocks.)
 Test.suite(
-  "size-valued arguments at the 2^32 capacity boundary",
+  "size-valued arguments at size 2^32",
   func() {
     Test.test(
       "lastIndexOf scans from the very end",
       func() {
-        // fake full list; only the last slot holds a (matching) element,
+        // fake list; only the last slot holds a (matching) element,
         // so the backward scan succeeds on its first probe
         let dataBlocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
         let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
@@ -2381,7 +2441,7 @@ Test.suite(
       }
     );
     Test.test(
-      "addRepeat of zero elements at full capacity is a no-op",
+      "addRepeat of zero elements at size 2^32 is a no-op",
       func() {
         let fake : List.List<Nat> = {
           var blocks = VarArray.repeat<[var ?Nat]>([var], 131_072);
