@@ -75,6 +75,8 @@ func growIndexBlockIfNeeded<T>(list : List.List<T>) {
 
 func shrinkIndexBlockIfNeeded<T>(list : List.List<T>) {
   let blockIndex = Nat.toNat8(list.blockIndex);
+  // (comment verbatim from src/List.mo; in this Nat8-scaled copy the
+  // threshold is 2^7, the top rung 3 * 2^6 and the full size 2^13)
   // No shrink is possible for blockIndex >= 2^31: the only rung there
   // is the top rung 3 * 2^30 (the completely full 2^61 List), where
   // the index block is at its exactly-full maximal length -- but

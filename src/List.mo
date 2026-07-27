@@ -44,7 +44,8 @@ module {
   /// will naturally be 2x slower than Buffer and Array. However, Array is not resizable and Buffer
   /// has `O(size)` memory waste.
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   public type List<T> = Types.List<T>;
 
   let INTERNAL_ERROR = "List: internal error";
@@ -293,7 +294,8 @@ module {
   /// List.addRepeat(list, 2, 1); // [2, 2, 2, 2, 1, 1]
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(count)`
   public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal<T>(self, ?initValue, count);
@@ -984,8 +986,8 @@ module {
   /// assert List.toArray(list) == [0, 1, 2, 3];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32; adding beyond
-  /// that traps.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements, beyond which `add` traps.
   ///
   /// Amortized Runtime: `O(1)`, Worst Case Runtime: `O(sqrt(n))`
   public func add<T>(self : List<T>, element : T) {
@@ -1075,17 +1077,16 @@ module {
   };
 
   func locate(index : Nat) : (Nat, Nat) {
-    // see comments in tests
+    // For the derivation of the bit arithmetic see locate_readable64
+    // and locate_optimal64 in test/List.test.mo; the latter is a
+    // verbatim copy of this function and tests its arithmetic across
+    // the full supported range.
     //
-    // Based on Nat64 arithmetic: the halves of the index are 32 bits wide
-    // instead of 16, hence all constants and shift amounts are doubled
-    // compared to the Nat32-based version. The branch parities are
-    // unchanged because 64 - 32 is even.
-    // Unlike the Nat32-based version this also accepts size-valued
-    // arguments, which reach 2^32 for a completely full list (from
-    // prevIndexOf, truncate, repeat/tabulate/addRepeat): locate(2^32)
-    // returns the normalized one-past-the-end position (131_072, 0),
-    // consistent with locate at every smaller data-block boundary.
+    // Also accepts size-valued arguments, one beyond the largest index
+    // in a List (from prevIndexOf, truncate, repeat/tabulate/addRepeat):
+    // e.g. locate(2^32) returns the normalized one-past-the-end position
+    // (131_072, 0), consistent with locate at every smaller data-block
+    // boundary.
     let i = index.toNat64();
     let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
@@ -2081,7 +2082,8 @@ module {
   /// assert Iter.toArray(List.values(list)) == [2, 1, 1, 1];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(size)`, where n is the size of iter.
   public func addAll<T>(self : List<T>, iter : Types.Iter<T>) {
