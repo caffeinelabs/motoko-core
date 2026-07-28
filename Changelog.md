@@ -1,6 +1,7 @@
 ## Next
 
 ## 2.6.1
+* Remove unnecessary allocations in `List` functions. Fix bugs that occur for the exact maximum List size of `2^32` (#515). 
 * Fix `Queue` and `pure/Queue` for certain sequences of push + peek (#513).
 * Fix: correct List range/slice/get bounds handling (#512).
 

@@ -7,6 +7,7 @@ import Prim "mo:⛔";
 import Iter "../src/Iter";
 import Array "../src/Array";
 import Nat32 "../src/Nat32";
+import Nat64 "../src/Nat64";
 import Nat "../src/Nat";
 import Order "../src/Order";
 import List "../src/List";
@@ -118,6 +119,70 @@ while (i < locate_n) {
   assert (locate_readable(2 ** 32 - 1 - i : Nat) == locate_optimal(2 ** 32 - 1 - i : Nat));
   i += 1
 };
+
+// The Nat64 widening of locate_readable: bit length 64, so super block
+// s = 63 - lz; the mask derivation is unchanged.
+func locate_readable64<X>(index : Nat) : (Nat, Nat) {
+  let i = Nat.toNat64(index);
+  if (i == 0) {
+    return (1, 0)
+  };
+  let lz = Nat64.bitcountLeadingZero(i);
+  let s = 63 - lz;
+  let down = s >> 1;
+  let up = (s + 1) >> 1;
+  let e_mask = 1 << up - 1;
+  let b_mask = 1 << down - 1;
+  (Nat64.toNat(e_mask + b_mask + 2 + (i >> up) & b_mask), Nat64.toNat(i & e_mask))
+};
+
+// Verbatim copy of the private locate in src/List.mo, the shipped Nat64
+// version of locate_optimal. KEEP IN SYNC WITH src/List.mo.
+func locate_optimal64<X>(index : Nat) : (Nat, Nat) {
+  let i = index.toNat64();
+  let lz = Nat64.bitcountLeadingZero(i);
+  let lz2 = lz >> 1;
+  if (lz & 1 == 0) {
+    ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
+  } else {
+    ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
+  }
+};
+
+// link the Nat64 spec to the Nat32 spec below 2^32, and check the
+// shipped arithmetic against the Nat64 spec on the same ranges
+i := 0;
+while (i < locate_n) {
+  assert (locate_readable64(i) == locate_readable(i));
+  assert (locate_readable64(2 ** 32 - 1 - i : Nat) == locate_readable(2 ** 32 - 1 - i : Nat));
+  assert (locate_readable64(i) == locate_optimal64(i));
+  assert (locate_readable64(2 ** 32 - 1 - i : Nat) == locate_optimal64(2 ** 32 - 1 - i : Nat));
+  i += 1
+};
+
+// boundaries across the full supported range up to the maximum size
+// 2^61: neighborhoods of every power 2^k and of the odd-power interior
+// boundary 3 * 2^(k-1); the values above each boundary include the
+// size-valued arguments at data block boundaries
+var k = 1;
+while (k <= 61) {
+  let p = 2 ** k;
+  let q = 3 * 2 ** (k - 1 : Nat);
+  var d = 0;
+  while (d < 8) {
+    if (p + d <= 2 ** 61) assert (locate_readable64(p + d) == locate_optimal64(p + d));
+    if (d < p) assert (locate_readable64(p - d - 1 : Nat) == locate_optimal64(p - d - 1 : Nat));
+    if (q + d <= 2 ** 61) assert (locate_readable64(q + d) == locate_optimal64(q + d));
+    if (d < q) assert (locate_readable64(q - d - 1 : Nat) == locate_optimal64(q - d - 1 : Nat));
+    d += 1
+  };
+  k += 1
+};
+
+// anchors: the one-past-the-end positions of the 2^32 list and of the
+// maximal 2^61 list
+assert (locate_optimal64(2 ** 32) == (131_072, 0));
+assert (locate_optimal64(2 ** 61) == (3 * 2 ** 30, 0));
 
 // IMPLEMENTATION DETAILS END
 
@@ -2181,6 +2246,261 @@ Test.suite(
           case _ { false }
         };
         Test.expect.bool(ok).equal(true)
+      }
+    )
+  }
+);
+
+// Constructs a List record with crafted internal state and blockCount
+// empty data block slots, for the fake tests below. Individual slots can
+// be populated through the returned record's blocks field.
+func fakeList(blockCount : Nat, blockIndex : Nat, elementIndex : Nat) : List.List<Nat> = {
+  var blocks = VarArray.repeat<[var ?Nat]>([var], blockCount);
+  var blockIndex = blockIndex;
+  var elementIndex = elementIndex
+};
+
+// A size as large as 2^32 cannot be reached by actually adding elements
+// (32 GB of data blocks), so these tests craft the List's internal state
+// directly. size() derives the size purely from the (blockIndex,
+// elementIndex) insertion position, so the data blocks can remain empty.
+// The crafted states follow the pattern of real lists at these sizes,
+// checked against reachable sizes: a list of size 2^(2m) has
+// blockIndex = 2^(m+1) and elementIndex = 0 (e.g. size 2^24 has
+// blockIndex = 8192); the state one element earlier is
+// blockIndex = 2^(m+1) - 1, elementIndex = lastBlockSize - 1.
+Test.suite(
+  "size at 2^32",
+  func() {
+    Test.test(
+      "size 2^32 - 1",
+      func() {
+        let midBlock = fakeList(0, 131_071, 65_535);
+        Test.expect.nat(List.size(midBlock)).equal(4_294_967_295)
+      }
+    );
+    Test.test(
+      "size 2^32 (one-past state (131_072, 0))",
+      func() {
+        let atBlockBoundary = fakeList(0, 131_072, 0);
+        Test.expect.nat(List.size(atBlockBoundary)).equal(4_294_967_296)
+      }
+    )
+  }
+);
+
+// binarySearch on a faked list of size 2^32 (see the size
+// tests above for the crafted blockIndex/elementIndex values). A real list
+// of this size would need ~32 GB, but binarySearch only reads O(log n)
+// slots, so only the data blocks actually hit by the search are
+// instantiated, and only as long as needed:
+// - phase 1 (epoch scan) probes blocks[3 * 2^(epoch-1)][0]; searching for
+//   the maximum it stops at the first probe: blocks[98_304][0]
+//   (b = 131_071, epoch = 32 - lz32(b/3) = 16, lessOrEqual = 2^16/2)
+// - phase 2 bisects block indices in [98_304, 131_072) reading only
+//   slot 0 of each probed block, so those blocks have length 1; every
+//   probe compares #less because the target is the maximum
+// - phase 3 bisects inside block 131_071; its `right` bound is the
+//   block's PHYSICAL size, so this one block must be full-length (65_536)
+// The probed slots hold ?0 (any value < target keeps the outcomes #less);
+// the target sits in the very last slot. Every slot NOT instantiated
+// traps when read (empty block or unwrap of null), so this test also
+// asserts the exact probe set of the search.
+Test.suite(
+  "binarySearch on a faked 2^32 list",
+  func() {
+    Test.test(
+      "finds the last element",
+      func() {
+        let target = 4_294_967_295; // == the last index; all other probed slots hold 0
+        let fake = fakeList(131_072, 131_072, 0);
+        let dataBlocks = fake.blocks;
+
+        // phase 1 probe
+        dataBlocks[98_304] := [var ?0];
+
+        // phase 2 probes: replicate the bisection index arithmetic,
+        // outcome is #less (left := mid) at every step
+        var left = 98_304;
+        var right = 131_072;
+        while (right - left : Nat > 1) {
+          let mid = (left + right) / 2;
+          dataBlocks[mid] := [var ?0];
+          left := mid
+        };
+        // left is now 131_071, the block holding the last element
+
+        // phase 3 probes inside the (full-length) last block,
+        // outcome is #less (left := mid + 1) until the final probe
+        let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
+        lastBlock[0] := ?0; // probed by phase 2 (its final mid is 131_071)
+        var l = 0;
+        var r = 65_536;
+        label sim while (l != r) {
+          let mid = (l + r) / 2;
+          if (mid == 65_535) break sim;
+          lastBlock[mid] := ?0;
+          l := mid + 1
+        };
+        lastBlock[65_535] := ?target;
+        dataBlocks[131_071] := lastBlock;
+
+        let result = List.binarySearch(fake, Nat.compare, target);
+        Test.expect.bool(result == #found(4_294_967_295)).equal(true)
+      }
+    );
+    Test.test(
+      "insertion point past the last element",
+      func() {
+        // Same fake and probe set as above, but every probed slot (including
+        // the very last one) holds 0 and we search for 1, which is greater
+        // than everything: the search must report insertion index 2^32 --
+        // the one-past-the-end index of this list, verifying
+        // indexByBlockElement's Nat64 arithmetic at the first value
+        // beyond every valid element index.
+        let fake = fakeList(131_072, 131_072, 0);
+        let dataBlocks = fake.blocks;
+        dataBlocks[98_304] := [var ?0];
+        var left = 98_304;
+        let right = 131_072;
+        while (right - left : Nat > 1) {
+          let mid = (left + right) / 2;
+          dataBlocks[mid] := [var ?0];
+          left := mid
+        };
+        let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
+        lastBlock[0] := ?0;
+        var l = 0;
+        let r = 65_536;
+        while (l != r) {
+          let mid = (l + r) / 2;
+          lastBlock[mid] := ?0;
+          l := mid + 1
+        };
+        dataBlocks[131_071] := lastBlock;
+
+        switch (List.binarySearch(fake, Nat.compare, 1)) {
+          case (#insertionIndex i) Test.expect.nat(i).equal(4_294_967_296);
+          case (#found i) Test.expect.nat(i).equal(4_294_967_296) // unreachable; fails informatively
+        }
+      }
+    )
+  }
+);
+
+// These tests probe the value 2^32 on a fake list of that size:
+// locate(2^32) returns the normalized
+// one-past-the-end position (131_072, 0), like locate does at every
+// smaller data-block boundary (e.g. locate(8) is the start of the next
+// block), and all three operations succeed.
+// (Constructing a real list of size 2^32 with repeat/tabulate/
+// addRepeat has no value-asserting test because a successful
+// construction needs ~32 GB of data blocks.)
+Test.suite(
+  "size-valued arguments at size 2^32",
+  func() {
+    Test.test(
+      "lastIndexOf scans from the very end",
+      func() {
+        // fake list; only the last slot holds a (matching) element,
+        // so the backward scan succeeds on its first probe
+        let fake = fakeList(131_072, 131_072, 0);
+        let dataBlocks = fake.blocks;
+        let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
+        lastBlock[65_535] := ?7;
+        dataBlocks[131_071] := lastBlock;
+        switch (List.lastIndexOf<Nat>(fake, Nat.equal, 7)) {
+          case (?i) Test.expect.nat(i).equal(4_294_967_295);
+          case null Test.expect.nat(0).equal(4_294_967_295) // fails informatively
+        }
+      }
+    );
+    Test.test(
+      "truncate to the current size 2^32 is a no-op",
+      func() {
+        let fake = fakeList(131_072, 131_072, 0);
+        List.truncate(fake, 4_294_967_296);
+        Test.expect.nat(List.size(fake)).equal(4_294_967_296)
+      }
+    );
+    Test.test(
+      "addRepeat of zero elements at size 2^32 is a no-op",
+      func() {
+        let fake = fakeList(131_072, 131_072, 0);
+        List.addRepeat(fake, 7, 0);
+        Test.expect.nat(List.size(fake)).equal(4_294_967_296)
+      }
+    )
+  }
+);
+
+// The index block grows and shrinks along a ladder of exactly-full
+// lengths (the "rungs" {2^j, 3*2^j}): growth rounds the block index up
+// to the next rung and shrinking is checked at rung crossings only.
+// These tests drive add/removeLast through the full ladder below 512
+// elements and assert the resulting index block lengths.
+Test.suite(
+  "index block grow/shrink ladder",
+  func() {
+    Test.test(
+      "growing reaches an exactly-full index block at a rung",
+      func() {
+        let l = List.empty<Nat>();
+        var i = 0;
+        while (i < 512) {
+          List.add(l, i);
+          i += 1
+        };
+        assert List.size(l) == 512;
+        assert l.blockIndex == 48;
+        assert l.elementIndex == 0;
+        assert l.blocks.size() == 48; // exactly full at the rung
+        assert List.at(l, 0) == 0;
+        assert List.at(l, 511) == 511
+      }
+    );
+    Test.test(
+      "draining from a rung state shrinks the index block",
+      func() {
+        let l = List.empty<Nat>();
+        var i = 0;
+        while (i < 512) {
+          List.add(l, i);
+          i += 1
+        };
+        // the first removeLast runs shrinkIndexBlockIfNeeded at the rung
+        // state (48, 0), where newIndexBlockLength rounds up to 64 and the
+        // newLength < blocks.size() filter rejects the shrink
+        assert List.removeLast(l) == ?511;
+        assert List.size(l) == 511;
+        var expected = 510;
+        while (List.size(l) > 0) {
+          assert List.removeLast(l) == ?expected;
+          if (expected > 0) expected -= 1
+        };
+        assert List.size(l) == 0;
+        assert List.removeLast(l) == null;
+        // the index block shrank on the way down
+        assert l.blocks.size() < 48
+      }
+    );
+    Test.test(
+      "add/removeLast cycle at a rung boundary",
+      func() {
+        let l = List.empty<Nat>();
+        var i = 0;
+        while (i < 512) {
+          List.add(l, i);
+          i += 1
+        };
+        var k = 0;
+        while (k < 3) {
+          assert List.removeLast(l) == ?511;
+          List.add(l, 511);
+          k += 1
+        };
+        assert List.size(l) == 512;
+        assert List.at(l, 511) == 511
       }
     )
   }
