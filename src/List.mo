@@ -2,6 +2,21 @@
 /// `List` provides O(1) access time and O(sqrt(n)) memory overhead. In contrast, `pure/List` is a purely functional linked list.
 /// Can be declared `stable` for orthogonal persistence.
 ///
+/// The List size is in practice limited only by available memory. The
+/// theoretical limit is 2^61 elements.
+///
+/// Performance note: on a 64-bit build (enhanced orthogonal persistence, the
+/// compiler default) all index and size arithmetic in this module operates on
+/// unboxed values, so there are no boxing-related performance cliffs or
+/// hidden allocations.
+/// On a 32-bit build (deprecated legacy persistence) `Nat` values >= 2^30 are
+/// boxed, so an operation receiving such an index, or internally computing
+/// such a size, would take slower bignum code paths and allocate a few dozen
+/// bytes per call. This is theoretical only: a 32-bit heap is limited to
+/// 4 GB and a list occupies at least 4 bytes per element, so a list can
+/// never actually grow to 2^30 elements there, and indices >= 2^30 can only
+/// occur as out-of-range arguments.
+///
 /// This implementation is adapted with permission from the `vector` Mops package created by Research AG.
 ///
 /// Copyright: 2023 MR Research AG
@@ -15,6 +30,7 @@
 import PureList "pure/List";
 import Prim "mo:⛔";
 import Nat32 "Nat32";
+import Nat64 "Nat64";
 import Array "Array";
 import Nat "Nat";
 import Option "Option";
@@ -28,7 +44,8 @@ module {
   /// will naturally be 2x slower than Buffer and Array. However, Array is not resizable and Buffer
   /// has `O(size)` memory waste.
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   public type List<T> = Types.List<T>;
 
   let INTERNAL_ERROR = "List: internal error";
@@ -195,7 +212,7 @@ module {
   /// @deprecated M0235
   public func fromPure<T>(pure : PureList.List<T>) : List<T> {
     var p = pure;
-    var list = empty<T>();
+    let list = empty<T>();
     loop {
       switch (p) {
         case (?(x, xs)) {
@@ -277,7 +294,8 @@ module {
   /// List.addRepeat(list, 2, 1); // [2, 2, 2, 2, 1, 1]
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(count)`
   public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal<T>(self, ?initValue, count);
@@ -319,7 +337,7 @@ module {
     if (elementIndex != 0) {
       let block = newBlocks[blockIndex];
       var i = elementIndex;
-      var to = block.size();
+      let to = block.size();
       while (i < to) {
         block[i] := null;
         i += 1
@@ -447,7 +465,7 @@ module {
   ///
   /// Space: O(number of elements in list)
   public func join<T>(self : Types.Iter<List<T>>) : List<T> {
-    var result = empty<T>();
+    let result = empty<T>();
     for (list in self) {
       reserve(result, size(list));
       forEach<T>(list, func item = addUnsafe(result, item))
@@ -850,29 +868,33 @@ module {
   };
 
   func indexByBlockElement<T>(blockIndex : Nat, elementIndex : Nat) : Nat {
-    let d = Nat.toNat32(blockIndex);
+    let d = blockIndex.toNat64();
 
     // We call all data blocks of the same capacity an "epoch". We number the epochs 0,1,2,...
     // A data block is in epoch e iff the data block has capacity 2 ** e.
     // Each epoch starting with epoch 1 spans exactly two super blocks.
     // Super block s falls in epoch ceil(s/2).
 
-    // epoch of last data block
-    // e = 32 - lz
-    let lz = Nat32.bitcountLeadingZero(d / 3);
+    // epoch of position's data block
+    // e = 64 - lz
+    let lz = Nat64.bitcountLeadingZero(d / 3);
 
     // capacity of all prior epochs combined
-    // capacity_before_e = 2 * 4 ** (e - 1) - 1
+    // capacity_before_e = 2 * 4 ** (e - 1)
 
-    // data blocks in all prior epochs combined
-    // blocks_before_e = 3 * 2 ** (e - 1) - 2
+    // data block indices before epoch e (counting the dummy block 0)
+    // blocks_before_e = 3 * 2 ** (e - 1)
 
     // then size = d * 2 ** e + i - c
-    // where c = blocks_before_e * 2 ** e - capacity_before_e
+    // where c = blocks_before_e * 2 ** e - capacity_before_e = 4 ** e
+    // i.e. size = (d - 2 ** e) * 2 ** e + i, which is the line below
 
-    // there can be overflows, but the result is without overflows, so use addWrap and subWrap
-    // we don't erase bits by >>, so to use <>> is ok
-    Nat32.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat32(elementIndex))
+    // Intermediate values may exceed 2^64; that is harmless because every
+    // operation used (-%, +%, <>>) is a bijection mod 2^64, so the final
+    // value is exact whenever the true result fits in 64 bits. A plain >>
+    // would erase the shifted-out bits and break this argument, which is
+    // why the rotation <>> is used.
+    ((d -% (1 <>> lz)) <>> lz +% elementIndex.toNat64()).toNat()
   };
 
   /// Returns the current number of elements in the list.
@@ -888,17 +910,23 @@ module {
     // due to the design of List (blockIndex, elementIndex) pair points
     // exactly to the place where size-th element should be added
     // so, it's the inlined version of indexByBlockElement
-    let d = Nat.toNat32(self.blockIndex);
-    let lz = Nat32.bitcountLeadingZero(d / 3);
-    Nat32.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat32(self.elementIndex))
+    let d = Nat.toNat64(self.blockIndex);
+    let lz = Nat64.bitcountLeadingZero(d / 3);
+    Nat64.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat64(self.elementIndex))
   };
 
+  // Returns the size of data block blockIndex, i.e. 2^e where e is the
+  // epoch of the block. Do not call it for blockIndex == 0.
   func dataBlockSize(blockIndex : Nat) : Nat {
-    // formula for the size of given blockIndex
-    // don't call it for blockIndex == 0
     Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat.toNat32(blockIndex) / 3))
   };
 
+  // Returns the length of the index block needed to accommodate data
+  // block blockIndex: the smallest length in the ladder {2^j, 3 * 2^j}
+  // that is strictly greater than blockIndex. Correct for
+  // blockIndex < 3 * 2^30. For blockIndex >= 3 * 2^30 the true result
+  // 2^32 does not fit in Nat32: the round-up 4 << 30 wraps and 0 is
+  // returned (see the size limit section at the end of this file).
   func newIndexBlockLength(blockIndex : Nat32) : Nat {
     if (blockIndex <= 1) 2 else {
       let s = 30 - Nat32.bitcountLeadingZero(blockIndex);
@@ -906,6 +934,8 @@ module {
     }
   };
 
+  // If the index block is exactly full then grow it to the next ladder
+  // length, otherwise do nothing.
   func growIndexBlockIfNeeded<T>(list : List<T>) {
     if (list.blocks.size() == list.blockIndex) {
       let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(Nat.toNat32(list.blockIndex)));
@@ -920,7 +950,14 @@ module {
 
   func shrinkIndexBlockIfNeeded<T>(list : List<T>) {
     let blockIndex = Nat.toNat32(list.blockIndex);
-    // kind of index of the first block in the super block
+    // No shrink is possible for blockIndex >= 2^31: the only rung there
+    // is the top rung 3 * 2^30 (the completely full 2^61 List), where
+    // the index block is at its exactly-full maximal length -- but
+    // newIndexBlockLength would wrap to 0 there and shrink the index
+    // block to nothing, so return early.
+    if (blockIndex >> 31 != 0) return;
+    // only when blockIndex is the first block of a super block (i.e. of
+    // the form 2^j or 3 * 2^j, the index block ladder) can a shrink be due
     if ((blockIndex << Nat32.bitcountLeadingZero(blockIndex)) << 2 == 0) {
       let newLength = newIndexBlockLength(blockIndex);
       if (newLength < list.blocks.size()) {
@@ -949,7 +986,8 @@ module {
   /// assert List.toArray(list) == [0, 1, 2, 3];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements, beyond which `add` traps.
   ///
   /// Amortized Runtime: `O(1)`, Worst Case Runtime: `O(sqrt(n))`
   public func add<T>(self : List<T>, element : T) {
@@ -1038,15 +1076,23 @@ module {
     return element
   };
 
+  // Returns the (blockIndex, elementIndex) position of the element with
+  // the given index. For example, locate(2^32) = (131_072, 0).
+  // Also often used with a size-valued argument, in which case the next
+  // next insertion position is returned (see prevIndexOf, truncate,
+  // repeat/tabulate/addRepeat).
   func locate(index : Nat) : (Nat, Nat) {
-    // see comments in tests
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // For the derivation of the bit arithmetic see locate_readable64
+    // and locate_optimal64 in test/List.test.mo; the latter is a
+    // verbatim copy of this function and tests its arithmetic across
+    // the full supported range.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     if (lz & 1 == 0) {
-      (Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2)), Nat32.toNat(i & (0xFFFF >> lz2)))
+      ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
     } else {
-      (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
+      ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
     }
   };
 
@@ -1069,14 +1115,16 @@ module {
     //     case (?element) element;
     //     case (null) Prim.trap "";
     //   };
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // for index >= size the block lookup or the null slot check
+    // below traps as required.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     switch (
       if (lz & 1 == 0) {
-        self.blocks[Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2))][Nat32.toNat(i & (0xFFFF >> lz2))]
+        self.blocks[(((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat()][(i & (0xFFFF_FFFF >> lz2)).toNat()]
       } else {
-        self.blocks[Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2))][Nat32.toNat(i & (0x7FFF >> lz2))]
+        self.blocks[(((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat()][(i & (0x7FFF_FFFF >> lz2)).toNat()]
       }
     ) {
       case (?result) return result;
@@ -1100,20 +1148,26 @@ module {
   ///
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
-    if (index >= 0x1_0000_0000) return null;
+    // The guard only rejects index >= 2^64. Any index in `[size, 2^64)` falls
+    // through to the physical checks below: a block index beyond blocks.size()
+    // or a null slot, so null is returned.
+    if (Prim.shiftRight(index, 64) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
-      let i = Nat.toNat32(index);
-      let lz = Nat32.bitcountLeadingZero(i);
+      // the guard above ensures index < 2^64, so the wrap cannot trigger
+      let i = Nat64.fromIntWrap(index);
+      let lz = Nat64.bitcountLeadingZero(i);
       let lz2 = lz >> 1;
       if (lz & 1 == 0) {
-        (Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2)), Nat32.toNat(i & (0xFFFF >> lz2)))
+        ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
       } else {
-        (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
+        ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
       }
     };
-    if (a < self.blockIndex or self.elementIndex != 0 and a == self.blockIndex) {
-      self.blocks[a][b]
+    let blocks = self.blocks;
+    if (a < blocks.size()) {
+      let db = blocks[a];
+      if (b < db.size()) db[b] else null
     } else null
   };
 
@@ -1130,13 +1184,16 @@ module {
   ///
   /// Runtime: `O(1)`
   public func put<T>(self : List<T>, index : Nat, value : T) {
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // inlined version of locate.
+    // for index >= size the block lookup or the null slot check
+    // below traps as required.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     let (block, element) = if (lz & 1 == 0) {
-      (self.blocks[Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2))], Nat32.toNat(i & (0xFFFF >> lz2)))
+      (self.blocks[(((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat()], (i & (0xFFFF_FFFF >> lz2)).toNat())
     } else {
-      (self.blocks[Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2))], Nat32.toNat(i & (0x7FFF >> lz2)))
+      (self.blocks[(((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat()], (i & (0x7FFF_FFFF >> lz2)).toNat())
     };
 
     switch (block[element]) {
@@ -1342,6 +1399,8 @@ module {
 
   /// Returns the index of the next occurence of `element` in the `list` starting from the `from` index (inclusive).
   ///
+  /// Traps if `fromInclusive >= size(list)`.
+  ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let list = List.fromArray(['c', 'o', 'f', 'f', 'e', 'e']);
@@ -1409,6 +1468,9 @@ module {
 
   /// Returns the index of the previous occurence of `element` in the `list` starting from the `from` index (exclusive).
   ///
+  /// Traps if `fromExclusive > size(list)`. Note that `fromExclusive = size(list)`
+  /// is valid and starts the search from the end of the list.
+  ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let list = List.fromArray(['c', 'o', 'f', 'f', 'e', 'e']);
@@ -1461,7 +1523,10 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func find<T>(self : List<T>, predicate : T -> Bool) : ?T {
-    Option.map<Nat, T>(findIndex<T>(self, predicate), func(i) = at(self, i))
+    switch (findIndex<T>(self, predicate)) {
+      case (?i) ?at(self, i);
+      case null null
+    }
   };
 
   /// Finds the index of the first element in `list` for which `predicate` is true.
@@ -2014,7 +2079,8 @@ module {
   /// assert Iter.toArray(List.values(list)) == [2, 1, 1, 1];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(size)`, where n is the size of iter.
   public func addAll<T>(self : List<T>, iter : Types.Iter<T>) {
@@ -2770,9 +2836,13 @@ module {
 
       var j = 0;
       while (j < sz) {
-        switch (db1[j], db2[j]) {
-          case (?x, ?y) if (not equal(x, y)) return false;
-          case (_, _) return true
+        // nested switches only to avoid allocating a tuple for a pair switch
+        switch (db1[j]) {
+          case (?x) switch (db2[j]) {
+            case (?y) if (not equal(x, y)) return false;
+            case null return true
+          };
+          case null return true
         };
         j += 1
       };
@@ -2817,13 +2887,17 @@ module {
 
       var j = 0;
       while (j < sz) {
-        switch (db1[j], db2[j]) {
-          case (?x, ?y) switch (compare(x, y)) {
-            case (#less) return #less;
-            case (#greater) return #greater;
-            case _ {}
+        // nested switches only to avoid allocating a tuple for a pair switch
+        switch (db1[j]) {
+          case (?x) switch (db2[j]) {
+            case (?y) switch (compare(x, y)) {
+              case (#less) return #less;
+              case (#greater) return #greater;
+              case _ {}
+            };
+            case null break l
           };
-          case (_, _) break l
+          case null break l
         };
         j += 1
       };
@@ -3134,5 +3208,24 @@ module {
     };
     next
   };
+
+  // The theoretical size limit of 2^61 elements
+  //
+  // The Nat32 index block arithmetic bounds the List size to exactly
+  // 2^61 elements: newIndexBlockLength is correct up to the top ladder
+  // length 3 * 2^30 (see its contract), and the index block of that
+  // length fills exactly when the List reaches size 2^61 (insertion
+  // state (3 * 2^30, 0)). Growing any further -- add through
+  // growIndexBlockIfNeeded, or constructor and addRepeat targets in
+  // (2^61, 2^62) through their newIndexBlockLength call sites -- builds
+  // the wrapped zero-length index block and traps with "Array index out
+  // of bounds": the effect of a capacity guard, with a less descriptive
+  // message. Targets >= 2^62 trap in the Nat.toNat32 conversions at the
+  // call sites instead. All other operations keep working at size 2^61,
+  // including removeLast, whose shrink path dodges the wrap with the
+  // early return in shrinkIndexBlockIfNeeded. The bound is purely
+  // theoretical: 2^61 elements need at least 16 EiB of data blocks.
+  // test/List.indexBlock.test.mo exercises the machinery at this bound
+  // with width-scaled (Nat8) copies of these functions.
 
 }

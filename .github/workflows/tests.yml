@@ -113,6 +113,9 @@ jobs:
       - uses: ./.github/actions/setup
       - run: npm test
 
+      - name: Tests under legacy persistence
+        run: npx ic-mops test List.allocation -- --legacy-persistence
+
   bench:
     needs: check-motoko-changes
     if: |
