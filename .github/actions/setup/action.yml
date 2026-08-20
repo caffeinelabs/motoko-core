@@ -35,11 +35,6 @@ runs:
       shell: bash
       run: npm ci
 
-    - name: Init Mops Toolchain
-      if: ${{ inputs.setup-mops == 'true' }}
-      shell: bash
-      run: npx mops toolchain init
-
     - name: Setup dfx
       if: ${{ inputs.setup-dfx == 'true' }}
       uses: dfinity/setup-dfx@main
