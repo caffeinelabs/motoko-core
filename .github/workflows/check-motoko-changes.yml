@@ -24,6 +24,9 @@ on:
       has_validate_docs_script_changes:
         description: "Whether the validate:docs script was changed"
         value: ${{ jobs.check.outputs.has_validate_docs_script_changes }}
+      has_toolchain_changes:
+        description: "Whether the build/test tooling was changed"
+        value: ${{ jobs.check.outputs.has_toolchain_changes }}
 
 jobs:
   check:
@@ -36,6 +39,7 @@ jobs:
       has_mops_dependency_changes: ${{ steps.check_mo_changes.outputs.has_mops_dependency_changes }}
       has_mops_package_version_changes: ${{ steps.check_mo_changes.outputs.has_mops_package_version_changes }}
       has_validate_docs_script_changes: ${{ steps.check_mo_changes.outputs.has_validate_docs_script_changes }}
+      has_toolchain_changes: ${{ steps.check_mo_changes.outputs.has_toolchain_changes }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -89,6 +93,15 @@ jobs:
             echo "No mops package version changes detected"
           else
             echo "has_mops_package_version_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Tooling that decides how sources are compiled, tested and documented.
+          # A change here can break the build with no .mo file touched.
+          if [ -z "$(git diff --name-only $BASE_SHA $HEAD_SHA -- package.json package-lock.json mops.lock 'test/ts/**' '.github/**')" ]; then
+            echo "has_toolchain_changes=false" >> $GITHUB_OUTPUT
+            echo "No build or test tooling changes detected"
+          else
+            echo "has_toolchain_changes=true" >> $GITHUB_OUTPUT
           fi
 
           # Check for validate:docs script changes

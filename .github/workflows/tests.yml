@@ -68,13 +68,13 @@ jobs:
 
   validate-docs:
     needs: check-motoko-changes
-    if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true' || needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true'
+    if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true' || needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true' || needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Validate docs for changed src/*.mo files
-        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false' && needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'false'
+        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false' && needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'false' && needs.check-motoko-changes.outputs.has_toolchain_changes == 'false'
         shell: bash
         run: |
           set -euo pipefail
@@ -90,7 +90,7 @@ jobs:
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
       - name: Validate all docs on version or script change
-        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true'
+        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true' || needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
         run: npm run validate:docs
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
@@ -106,7 +106,8 @@ jobs:
     needs: check-motoko-changes
     if: |
       needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
-      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true'
+      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true' ||
+      needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -120,10 +121,25 @@ jobs:
     needs: check-motoko-changes
     if: |
       needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
-      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true'
+      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true' ||
+      needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Run benchmarks (same replica path as mops publish)
         run: npm run bench
+
+  # Single required check. Gating on the individual jobs cannot work: most of
+  # them are conditional, and a skipped job satisfies a required check, so a PR
+  # touching no Motoko source would pass every gate without running anything.
+  # validate-changelog is advisory and deliberately absent.
+  ci:
+    name: "ci:required"
+    if: always()
+    needs: [check-motoko-changes, validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
