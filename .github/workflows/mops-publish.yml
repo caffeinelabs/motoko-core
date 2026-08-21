@@ -14,9 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      # Publishes with the ic-mops pinned in package.json, the same CLI every
-      # other job runs. Set the MOPS_IDENTITY_PEM repository secret:
-      # https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
       - name: Configure mops identity
         env:
           MOPS_IDENTITY_PEM: ${{ secrets.MOPS_IDENTITY_PEM }}
