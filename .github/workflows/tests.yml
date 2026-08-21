@@ -133,10 +133,11 @@ jobs:
   # Single required check. Gating on the individual jobs cannot work: most of
   # them are conditional, and a skipped job satisfies a required check, so a PR
   # touching no Motoko source would pass every gate without running anything.
+  # validate-changelog is advisory and deliberately absent.
   ci:
     name: "ci:required"
     if: always()
-    needs: [check-motoko-changes, validate-changelog, validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
+    needs: [check-motoko-changes, validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled
