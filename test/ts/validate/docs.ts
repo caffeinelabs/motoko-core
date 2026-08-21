@@ -49,7 +49,7 @@ async function resolveMocPath(): Promise<string> {
   const path = stdout.trim();
   if (!path) {
     throw new Error(
-      "Could not resolve `moc` binary. Run `mops toolchain init`."
+      "Could not resolve `moc` binary. Run `mops install`."
     );
   }
   return path;
