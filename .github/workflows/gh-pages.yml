@@ -20,9 +20,6 @@ jobs:
         uses: actions/checkout@v6
 
       - uses: ./.github/actions/setup
-        with:
-          setup-mops: false
-          setup-dfx: true
 
       - name: Build docs
         run: npm run docs
