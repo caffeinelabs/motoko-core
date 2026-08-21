@@ -13,16 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup
-      # Written rather than passed to `mops user import`, which takes the key as
-      # an argument: that puts it in the process table and echoes it back on a
-      # parse error. get-principal exits 0 when the file is missing, hence -s.
-      - env:
-          MOPS_IDENTITY_PEM: ${{ secrets.MOPS_IDENTITY_PEM }}
-        run: |
-          mkdir -p ~/.config/mops
-          printf '%s' "$MOPS_IDENTITY_PEM" > ~/.config/mops/identity.pem
-          chmod 600 ~/.config/mops/identity.pem
-          [ -s ~/.config/mops/identity.pem ]
-          npx mops user get-principal
-      - run: npx mops publish
+      - uses: caffeinelabs/setup-mops@5424732c5bb709eb6195b1ed1d351fa98f6c8aad # v1.1
+        with:
+          # Keep in step with the ic-mops devDependency in package.json.
+          mops-version: "3.1.0"
+          identity-pem: ${{ secrets.MOPS_IDENTITY_PEM }}
+      - run: mops install
+      - run: mops publish
