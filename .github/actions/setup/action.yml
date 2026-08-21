@@ -6,10 +6,6 @@ inputs:
     description: Whether to setup mops
     required: false
     default: "true"
-  setup-dfx:
-    description: Whether to setup dfx
-    required: false
-    default: "false"
 runs:
   using: composite
   steps:
@@ -34,12 +30,3 @@ runs:
     - name: Install dependencies
       shell: bash
       run: npm ci
-
-    - name: Setup dfx
-      if: ${{ inputs.setup-dfx == 'true' }}
-      uses: dfinity/setup-dfx@main
-
-    - name: Install dfx cache
-      if: ${{ inputs.setup-dfx == 'true' }}
-      shell: bash
-      run: dfx cache install

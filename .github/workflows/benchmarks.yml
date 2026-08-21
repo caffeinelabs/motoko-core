@@ -23,8 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-        with:
-          setup-dfx: true
 
       - name: Checkout baseline benchmark-results from upstream
         if: github.event_name == 'pull_request'

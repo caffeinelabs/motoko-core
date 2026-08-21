@@ -18,7 +18,7 @@
     "validate:version": "cd test/ts/validate && tsx version",
     "validate:api": "cd test/ts/validate && tsx api",
     "validate:docs": "cd test/ts/validate && tsx docs",
-    "docs": "$(dfx cache show)/mo-doc",
+    "docs": "\"$(dirname \"$(mops toolchain bin moc)\")/mo-doc\"",
     "bench": "mops bench"
   },
   "repository": {

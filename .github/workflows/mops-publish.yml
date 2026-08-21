@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: dfinity/setup-dfx@main # Currently required for `mops publish`
-      - uses: ZenVoich/setup-mops@v1
+      - uses: caffeinelabs/setup-mops@5424732c5bb709eb6195b1ed1d351fa98f6c8aad # v1.1
         with:
-          # Make sure you set the MOPS_IDENTITY_PEM secret in your repository settings https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
+          # Keep in step with the ic-mops devDependency in package.json.
+          mops-version: "3.1.0"
           identity-pem: ${{ secrets.MOPS_IDENTITY_PEM }}
       - run: mops install
       - run: mops publish
