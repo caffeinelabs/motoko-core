@@ -110,6 +110,7 @@ module {
   ///
   /// Note: Creates `O(n * log(n))` temporary objects that will be collected as garbage.
   public func toSet<T>(self : Iter.Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
+    // ignore-self-type-check
     fromIter(self, compare)
   };
 
@@ -1050,6 +1051,7 @@ module {
   /// where `n` denotes the number of elements stored in the iterated sets,
   /// and assuming that the `compare` function implements an `O(1)` comparison.
   public func join<T>(self : Iter.Iter<Set<T>>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
+    // ignore-self-type-check
     var result = empty<T>();
     for (set in self) {
       result := union(result, set, compare)

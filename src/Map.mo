@@ -968,6 +968,7 @@ module {
   /// where `n` denotes the number of key-value entries returned by the iterator and
   /// assuming that the `compare` function implements an `O(1)` comparison.
   public func toMap<K, V>(self : Types.Iter<(K, V)>, compare : (implicit : (K, K) -> Order.Order)) : Map<K, V> {
+    // ignore-self-type-check
     fromIter(self, compare)
   };
 

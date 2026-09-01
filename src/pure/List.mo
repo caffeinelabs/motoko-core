@@ -1069,6 +1069,7 @@ module {
   ///
   /// Space: O(size)
   public func toList<T>(self : Iter.Iter<T>) : List<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 

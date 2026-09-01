@@ -565,6 +565,7 @@ module {
   ///
   /// Space: `O(size)`
   public func toQueue<T>(self : Iter<T>) : Queue<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 

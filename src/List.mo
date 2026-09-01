@@ -465,6 +465,7 @@ module {
   ///
   /// Space: O(number of elements in list)
   public func join<T>(self : Types.Iter<List<T>>) : List<T> {
+    // ignore-self-type-check
     let result = empty<T>();
     for (list in self) {
       reserve(result, size(list));
@@ -2024,6 +2025,7 @@ module {
   ///
   /// Runtime: `O(size)`
   public func toList<T>(self : Types.Iter<T>) : List<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 

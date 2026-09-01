@@ -782,6 +782,7 @@ module {
   ///
   /// Space: O(number of elements in array)
   public func join<T>(self : Types.Iter<[var T]>) : [var T] {
+    // ignore-self-type-check
     flatten<T>(fromIter(self))
   };
 

@@ -116,6 +116,7 @@ module {
   /// assert "-1234".toInt() == ?-1234;
   /// ```
   public func toInt(self : Text) : ?Int {
+    // ignore-self-type-check
     fromText(self)
   };
 
