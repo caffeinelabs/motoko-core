@@ -40,6 +40,24 @@ Formatting is enforced by the `prettier-plugin-motoko` plugin with the `*.mo` ov
 - Public modules open with a one-line purpose, then a `/// ```motoko name=import``` snippet preceded by "Import from the core package to use this module." (see `src/Nat.mo`).
 - Data-structure functions document asymptotic cost as `Runtime: O(...)` and `Space: O(...)` lines at the end of the doc comment.
 
+## Consistency
+
+- Same-name functions are defined on all modules where they make sense (e.g. `values` on every data structure).
+- Same-name functions return consistent types: either both trap on a failing case, or both return a safe option (`?T`).
+- Same-name functions take the same arguments, in the same places, with the same names.
+
+These are the target convention, not a description of the current state — divergences exist in the codebase today.
+
+Concrete checks:
+- Every collection module provides `size` and `isEmpty`.
+- `get` is a safe-optional lookup (`?T`/`?V`) that never traps; a trapping indexed access is a separate name (`at`) or native `[]`.
+- Head and removal reads (`first`/`peek`/`pop`/`last`) return optionals, never trap on empty.
+- A mutating-named operation returns the updated structure in `src/pure/` (`Map.add` returns the new `Map`), but `()` or a flag in the matching `src/` module.
+- `fromIter`/`fromArray`/`toArray` conversions exist broadly; ordered modules (Map, Set, PriorityQueue) take `compare` as the last argument.
+- User-supplied equality/ordering/rendering are trailing `implicit` arguments named `equal`/`compare`/`toText` (`compare` returns an `Order`); callers pass module functions like `Nat.compare`.
+- Failure-implying names trap (`unwrap`/`assert*`); `get`-style total lookups never do.
+- Boundary constants are `minValue`/`maxValue` literals (no `bitSize`); sized-unsigned modules define only `maxValue`.
+
 ## Conventions and CI gotchas
 
 - The public API is locked in `validation/api/api.lock.json`. CI fails if `npm run validate:api` produces a diff; regenerate with `npm run validate` and commit the result when the public API changes intentionally.
