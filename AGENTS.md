@@ -32,14 +32,21 @@ Formatting is enforced by the `prettier-plugin-motoko` plugin with the `*.mo` ov
 
 ## Consistency
 
+- Same-name functions are defined on all modules where they make sense (e.g. `values` on every data structure).
+- Same-name functions return consistent types: either both trap on a failing case, or both return a safe option (`?T`).
+- Same-name functions take the same arguments, in the same places, with the same names.
+
+These are the target convention, not a description of the current state — divergences exist in the codebase today.
+
+Concrete checks:
 - Every collection module provides `size` and `isEmpty`.
-- `get` is a safe-optional lookup (`?T`/`?V`) that never traps, and a trapping indexed access is a separate name (`at`) or native `[]`.
-- Head and removal reads return optionals and never trap on empty — `first`/`peek`/`pop`/`last`.
-- A mutating-named operation returns the updated structure in `src/pure/` — `Map.add` returns the new `Map` — but `()` or a flag in the matching `src/` module.
-- `fromIter`/`fromArray`/`toArray` conversions exist broadly, and ordered modules (Map, Set, PriorityQueue) take `compare` as the last argument.
-- User-supplied equality/ordering/rendering are trailing `implicit` arguments named `equal`/`compare`/`toText` (`compare` returns an `Order`), so callers pass module functions like `Nat.compare`.
-- Failure-implying names trap — `unwrap`/`assert*` — while `get`-style total lookups never do.
-- Boundary constants are `minValue`/`maxValue` literals (no `bitSize`), and sized-unsigned modules define only `maxValue`.
+- `get` is a safe-optional lookup (`?T`/`?V`) that never traps; a trapping indexed access is a separate name (`at`) or native `[]`.
+- Head and removal reads (`first`/`peek`/`pop`/`last`) return optionals, never trap on empty.
+- A mutating-named operation returns the updated structure in `src/pure/` (`Map.add` returns the new `Map`), but `()` or a flag in the matching `src/` module.
+- `fromIter`/`fromArray`/`toArray` conversions exist broadly; ordered modules (Map, Set, PriorityQueue) take `compare` as the last argument.
+- User-supplied equality/ordering/rendering are trailing `implicit` arguments named `equal`/`compare`/`toText` (`compare` returns an `Order`); callers pass module functions like `Nat.compare`.
+- Failure-implying names trap (`unwrap`/`assert*`); `get`-style total lookups never do.
+- Boundary constants are `minValue`/`maxValue` literals (no `bitSize`); sized-unsigned modules define only `maxValue`.
 
 ## Conventions and CI gotchas
 
