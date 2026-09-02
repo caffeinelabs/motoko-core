@@ -178,7 +178,9 @@ function parseModules(
         error(dec, `Unable to determine signature of public ${kind} declaration`);
       }
       const name = nameNode.text;
-      const declaration = source.slice(field.startIndex, end);
+      const declaration =
+        (kind === "let" && functionTypedLet(dec, name, source)) ||
+        source.slice(dec.startIndex, end);
       functions.push({
         name,
         declaration: formatDeclaration(declaration, () =>
@@ -206,86 +208,46 @@ function parseModules(
   return modules;
 }
 
-// Normalize a declaration for the lockfile: collapse whitespace, drop the
-// redundant `public` keyword, and present function-typed `let` bindings (used
-// as an inlining optimization) in ordinary `func` syntax.
+// Rewrite a function-typed `let` binding (used as an inlining optimization)
+// in ordinary `func` syntax: `let name : <T>(args) -> Ret` becomes
+// `func name<T>(args) : Ret`. Returns null for non-function types.
+function functionTypedLet(
+  dec: Node,
+  name: string,
+  source: string
+): string | null {
+  const pattern = dec.namedChild(0);
+  if (pattern?.type !== "annot_pat") return null;
+  const annot = pattern.namedChildren.find((c) => c?.type === "typ_annot");
+  const type = annot?.namedChild(0);
+  if (type?.type !== "func_typ") return null;
+  const parts = type.namedChildren.filter((c): c is Node => !!c);
+  const typeParams = parts[0]?.type === "typ_params" ? parts[0] : null;
+  const domain = typeParams ? parts[1] : parts[0];
+  const codomain = parts[parts.length - 1];
+  if (!domain || !codomain || domain === codomain) return null;
+  // Leading modifiers such as `shared`
+  const modifiers = source.slice(
+    type.startIndex,
+    (typeParams ?? domain).startIndex
+  );
+  const params = domain.type === "tup_typ" ? domain.text : `(${domain.text})`;
+  return `${modifiers}func ${name}${
+    typeParams ? typeParams.text : ""
+  }${params} : ${codomain.text}`;
+}
+
+// Normalize a declaration for the lockfile
 function formatDeclaration(declaration: string, malformed: () => never): string {
-  let result = declaration
+  const result = declaration
     .replace(/\s+/g, " ")
     .replace(/([(<[])\s+/g, "$1")
     .replace(/\s+([)>\],])/g, "$1")
-    .trim()
-    .replace(/^public /, "");
+    .trim();
   if (!result || result.endsWith(":") || result.endsWith("=")) {
     malformed();
   }
-  const letMatch = result.match(/^let (\w+) : (.+)$/);
-  if (letMatch) {
-    const asFunc = letToFunc(letMatch[1], letMatch[2]);
-    if (asFunc !== null) {
-      result = asFunc;
-    }
-  }
   return result;
-}
-
-// Rewrite `let name : <T>(args) -> Ret` as `func name<T>(args) : Ret`;
-// returns null for non-function types
-function letToFunc(name: string, type: string): string | null {
-  let rest = type;
-  const modifiers = rest.match(/^(shared( query)?|query|composite query) /);
-  const prefix = modifiers ? modifiers[0] : "";
-  rest = rest.slice(prefix.length);
-  let typeParams = "";
-  if (rest.startsWith("<")) {
-    const end = findBalanced(rest, "<", ">");
-    if (end < 0) return null;
-    typeParams = rest.slice(0, end + 1);
-    rest = rest.slice(end + 1).trimStart();
-  }
-  const arrow = findTopLevelArrow(rest);
-  if (arrow < 0) return null;
-  const domain = rest.slice(0, arrow).trim();
-  const codomain = rest.slice(arrow + 2).trim();
-  const params =
-    domain.startsWith("(") && findBalanced(domain, "(", ")") === domain.length - 1
-      ? domain
-      : `(${domain})`;
-  return `${prefix}func ${name}${typeParams}${params} : ${codomain}`;
-}
-
-// Index of the closing delimiter matching an opening one at index 0
-function findBalanced(text: string, open: string, close: string): number {
-  let depth = 0;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (open === "<" && c === "<" && text[i + 1] === ":") {
-      i++;
-      continue;
-    }
-    if (open === "<" && c === ">" && text[i - 1] === "-") continue;
-    if (c === open) depth++;
-    else if (c === close) {
-      depth--;
-      if (depth === 0) return i;
-    }
-  }
-  return -1;
-}
-
-// Index of the first `->` outside any brackets, or -1
-function findTopLevelArrow(type: string): number {
-  let depth = 0;
-  for (let i = 0; i < type.length; i++) {
-    const c = type[i];
-    if (c === "-" && type[i + 1] === ">") {
-      if (depth === 0) return i;
-      i++;
-    } else if (c === "<" && type[i + 1] === ":") i++;
-    else if (c === "(" || c === "[" || c === "{" || c === "<") depth++;
-    else if (c === ")" || c === "]" || c === "}" || c === ">") depth--;
-  }
-  return -1;
 }
 
 async function main() {
