@@ -30,6 +30,17 @@ Formatting is enforced by the `prettier-plugin-motoko` plugin with the `*.mo` ov
 - `bench/` — benchmarks (`*.bench.mo`).
 - `validation/` — checked-in fixtures, including the public API lockfile `validation/api/api.lock.json`.
 
+## Consistency
+
+- Every collection module provides `size` and `isEmpty`.
+- `get` is a safe-optional lookup (`?T`/`?V`) that never traps, and a trapping indexed access is a separate name (`at`) or native `[]`.
+- Head and removal reads return optionals and never trap on empty — `first`/`peek`/`pop`/`last`.
+- A mutating-named operation returns the updated structure in `src/pure/` — `Map.add` returns the new `Map` — but `()` or a flag in the matching `src/` module.
+- `fromIter`/`fromArray`/`toArray` conversions exist broadly, and ordered modules (Map, Set, PriorityQueue) take `compare` as the last argument.
+- User-supplied equality/ordering/rendering are trailing `implicit` arguments named `equal`/`compare`/`toText` (`compare` returns an `Order`), so callers pass module functions like `Nat.compare`.
+- Failure-implying names trap — `unwrap`/`assert*` — while `get`-style total lookups never do.
+- Boundary constants are `minValue`/`maxValue` literals (no `bitSize`), and sized-unsigned modules define only `maxValue`.
+
 ## Conventions and CI gotchas
 
 - The public API is locked in `validation/api/api.lock.json`. CI fails if `npm run validate:api` produces a diff; regenerate with `npm run validate` and commit the result when the public API changes intentionally.
