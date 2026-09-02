@@ -30,6 +30,15 @@ Formatting is enforced by the `prettier-plugin-motoko` plugin with the `*.mo` ov
 - `bench/` — benchmarks (`*.bench.mo`).
 - `validation/` — checked-in fixtures, including the public API lockfile `validation/api/api.lock.json`.
 
+## Interface conventions
+
+- Prefer `toX` with `self` as first parameter over `fromX`; `fromX` may exist for legacy reasons but must never take the `self` parameter (exception: legacy preexisting functions).
+- Every context-dot function whose first parameter is `self` must type it as the module's own type, e.g. `toX(self : Nat) : X` belongs in `Nat.mo`. CI-enforced; escape hatch is a `// ignore-self-type-check` comment.
+- Higher-order functions put the function parameter last (after `self`), e.g. `map(self, f)`, `find(self, predicate)`.
+- Every data-structure/primitive module provides `equal`, `compare`, `toText`; `compare` returns `Types.Order`.
+- Public modules open with a one-line purpose, then a `/// ```motoko name=import``` snippet preceded by "Import from the core package to use this module." (see `src/Nat.mo`).
+- Data-structure functions document asymptotic cost as `Runtime: O(...)` and `Space: O(...)` lines at the end of the doc comment.
+
 ## Conventions and CI gotchas
 
 - The public API is locked in `validation/api/api.lock.json`. CI fails if `npm run validate:api` produces a diff; regenerate with `npm run validate` and commit the result when the public API changes intentionally.
