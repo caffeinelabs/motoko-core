@@ -1574,42 +1574,6 @@
     ]
   },
   {
-    "name": "internal/BTreeHelper",
-    "exports": [
-      "type DeletionSide = { #left; #right }",
-      "func deleteAndShift<T>(array : [var ?T], deleteIndex : Nat) : T",
-      "func insertAtPosition<T>(array : [var ?T], insertElement : ?T, insertIndex : Nat, currentLastElementIndex : Nat)",
-      "func insertAtPostionAndDeleteAtPosition<T>(array : [var ?T], insertElement : ?T, insertIndex : Nat, deleteIndex : Nat) : T",
-      "func insertOneAtIndexAndSplitArray<T>(array : [var ?T], insertElement : T, insertIndex : Nat) : ([var ?T], T, [var ?T])",
-      "func mergeParentWithChildrenAndDelete<T>(parentElement : ?T, childCount : Nat, leftChild : [var ?T], rightChild : [var ?T], deleteIndex : Nat, deletionSide : DeletionSide) : ([var ?T], T)",
-      "func replaceTwoWithElementAndShift<T>(array : [var ?T], element : T, replaceIndex : Nat)",
-      "func splitArrayAndInsertTwo<T>(children : [var ?T], rebalancedChildIndex : Nat, leftChildInsert : T, rightChildInsert : T) : ([var ?T], [var ?T])"
-    ]
-  },
-  {
-    "name": "internal/PRNG",
-    "exports": [
-      "class SFC64(p : Nat64, q : Nat64, r : Nat64)",
-      "func sfc64a() : SFC64"
-    ]
-  },
-  {
-    "name": "internal/PRNG.SFC64",
-    "exports": [
-      "func init(seed : Nat64)",
-      "func init3(seed1 : Nat64, seed2 : Nat64, seed3 : Nat64)",
-      "func initPre()",
-      "func next() : Nat64"
-    ]
-  },
-  {
-    "name": "internal/SortHelper",
-    "exports": [
-      "func insertionSortSmall<T>(buffer : [var T], dest : [var T], compare : (T, T) -> Order.Order, newFrom : Nat32, len : Nat32)",
-      "func insertionSortSmallMove<T>(buffer : [var T], dest : [var T], compare : (T, T) -> Order.Order, newFrom : Nat32, len : Nat32, offset : Nat32)"
-    ]
-  },
-  {
     "name": "pure/List",
     "exports": [
       "type List<T> = Types.Pure.List<T>",

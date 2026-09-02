@@ -41,7 +41,10 @@ function readModules(parser: Parser, dir: string, subdir: string = "") {
     const subPath = join(subdir, entry.name);
     const fullPath = join(dir, subPath);
     if (entry.isDirectory()) {
-      readModules(parser, dir, subPath);
+      // Internal modules are published but not part of the usable API
+      if (subPath.replace(/\\/g, "/") !== "internal") {
+        readModules(parser, dir, subPath);
+      }
     } else if (entry.isFile() && entry.name.endsWith(".mo")) {
       // Use forward slashes regardless of platform
       const name = subPath.replace(/\\/g, "/").replace(/\.mo$/, "");
