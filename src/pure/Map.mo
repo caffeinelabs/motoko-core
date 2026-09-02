@@ -622,7 +622,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   ///
   /// Note: Creates `O(n * log(n))` temporary objects that will be collected as garbage.
-  public func toMap<K, V>(self : Iter.Iter<(K, V)>, compare : (implicit : (K, K) -> Order.Order)) : Map<K, V> = Internal.fromIter(self, compare);
+  public func toMap<K, V>(self : Iter.Iter<(K, V)>, compare : (implicit : (K, K) -> Order.Order)) : Map<K, V> = Internal.fromIter(self, compare); // ignore-self-type-check
 
   /// Given a `map` and function `f`, creates a new map by applying `f` to each entry in the map `m`. Each entry
   /// `(k, v)` in the old map is transformed into a new entry `(k, v2)`, where

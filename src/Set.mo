@@ -749,6 +749,7 @@ module {
   /// where `n` denotes the number of elements returned by the iterator and
   /// assuming that the `compare` function implements an `O(1)` comparison.
   public func toSet<T>(self : Types.Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
+    // ignore-self-type-check
     fromIter(self, compare)
   };
 

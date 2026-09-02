@@ -457,6 +457,7 @@ module {
   /// Space: O(n)
   /// `n` denotes the number of elements stored in the queue.
   public func toQueue<T>(self : Iter.Iter<T>) : Queue<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 

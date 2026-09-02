@@ -809,6 +809,7 @@ module {
   /// Space: O(n)
   /// where `n` denotes the number of iterated elements.
   public func toStack<T>(self : Types.Iter<T>) : Stack<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 

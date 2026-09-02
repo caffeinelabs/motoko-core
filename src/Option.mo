@@ -104,7 +104,7 @@ module {
   /// import Option "mo:core/Option";
   /// assert Option.some(42) == ?42;
   /// ```
-  public func some<T>(self : T) : ?T = ?self;
+  public func some<T>(self : T) : ?T = ?self; // ignore-self-type-check
 
   /// Returns true if the argument is not `null`, otherwise returns false.
   public func isSome(self : ?Any) : Bool {

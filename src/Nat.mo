@@ -65,7 +65,7 @@ module {
   /// ```motoko include=import
   /// assert "1234".toNat() == ?1234;
   /// ```
-  public let toNat : (self : Text) -> ?Nat = fromText;
+  public let toNat : (self : Text) -> ?Nat = fromText; // ignore-self-type-check
 
   /// Converts an integer to a natural number. Traps if the integer is negative.
   /// @deprecated Use `Int.toNat` instead.

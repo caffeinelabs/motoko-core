@@ -330,6 +330,7 @@ module {
   /// assert joined == "a, b, c";
   /// ```
   public func join(self : Iter.Iter<Text>, sep : Text) : Text {
+    // ignore-self-type-check
     var r = "";
     if (sep.size() == 0) {
       for (t in self) {
@@ -934,7 +935,7 @@ module {
   /// let text = Text.decodeUtf8("\48\65\6C\6C\6F");
   /// assert text == ?"Hello";
   /// ```
-  public let decodeUtf8 : (self : Blob) -> ?Text = Prim.decodeUtf8;
+  public let decodeUtf8 : (self : Blob) -> ?Text = Prim.decodeUtf8; // ignore-self-type-check
 
   /// Returns the text argument in lowercase.
   /// WARNING: Unicode compliant only when compiled, not interpreted.
