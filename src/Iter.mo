@@ -737,13 +737,13 @@ module {
 
   /// Creates an iterator that produces the elements of an Array in ascending index order.
   /// @deprecated Use `Array.values` instead.
-  public func fromArray<T>(array : [T]) : Iter<T> = array.vals();
+  public func fromArray<T>(array : [T]) : Iter<T> = array.values();
 
   /// Like `fromArray` but for Arrays with mutable elements. Captures
   /// the elements of the Array at the time the iterator is created, so
   /// further modifications won't be reflected in the iterator.
   /// @deprecated Use `VarArray.values` instead.
-  public func fromVarArray<T>(array : [var T]) : Iter<T> = array.vals();
+  public func fromVarArray<T>(array : [var T]) : Iter<T> = array.values();
 
   /// Consumes an iterator and collects its produced elements in an Array.
   /// ```motoko include=import

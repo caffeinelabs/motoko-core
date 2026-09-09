@@ -457,7 +457,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let lists = [List.fromArray<Nat>([0, 1, 2]), List.fromArray<Nat>([2, 3]), List.fromArray<Nat>([]), List.fromArray<Nat>([4])];
-  /// let joinedList = List.join(lists.vals());
+  /// let joinedList = List.join(lists.values());
   /// assert List.equal<Nat>(joinedList, List.fromArray<Nat>([0, 1, 2, 2, 3, 4]), Nat.equal);
   /// ```
   ///
@@ -835,7 +835,7 @@ module {
   /// import Int "mo:core/Int"
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3, 4]);
-  /// let newList = List.flatMap(list, func x = [x, -x].vals());
+  /// let newList = List.flatMap(list, func x = [x, -x].values());
   /// assert List.equal(newList, List.fromArray<Int>([1, -1, 2, -2, 3, -3, 4, -4]), Int.equal);
   /// ```
   /// Runtime: O(size)
@@ -1995,7 +1995,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let array = [1, 1, 1];
-  /// let iter = array.vals();
+  /// let iter = array.values();
   ///
   /// let list = List.fromIter<Nat>(iter);
   /// assert Iter.toArray(List.values(list)) == [1, 1, 1];
@@ -2017,7 +2017,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let array = [1, 1, 1];
-  /// let iter = array.vals();
+  /// let iter = array.values();
   ///
   /// let list = iter.toList<Nat>();
   /// assert Iter.toArray(List.values(list)) == [1, 1, 1];
@@ -2074,7 +2074,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let array = [1, 1, 1];
-  /// let iter = array.vals();
+  /// let iter = array.values();
   /// let list = List.repeat<Nat>(2, 1);
   ///
   /// List.addAll<Nat>(list, iter);

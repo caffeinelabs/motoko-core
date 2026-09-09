@@ -480,7 +480,7 @@ module {
   /// `n` denotes the number of elements stored in the array.
   public func fromArray<T>(array : [T]) : Queue<T> {
     let queue = empty<T>();
-    for (element in array.vals()) {
+    for (element in array.values()) {
       pushBack(queue, element)
     };
     queue

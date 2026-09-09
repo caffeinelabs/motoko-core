@@ -844,10 +844,10 @@ run(
           let copy = smallMap();
           let clone = Map.clone(original);
           let keys = Iter.toArray(Map.keys(original));
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             Map.add(original, Nat.compare, key, "X")
           };
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             assert Map.get(clone, Nat.compare, key) == Map.get(copy, Nat.compare, key)
           };
           Map.size(clone)
