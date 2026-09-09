@@ -20,7 +20,7 @@ Use the `package.json` scripts:
 - `npm run format:check` — Prettier check on `*.mo` files. `npm run format` rewrites them.
 - `npm run validate` — runs `validate:changelog`, `validate:version`, `validate:api`.
 - `npm run validate:docs [Module ...]` — runs doc-comment code examples for the named `src/*.mo` modules (or all when no argument).
-- `npm run docs` — generates `docs/` via mo-doc (CI builds it in `gh-pages.yml`).
+- `npm run docs` — generates `docs/` via mo-doc (run manually; there is no CI pages deploy).
 - `npm run check:mo` — runs `test:mops`, `bench`, and `check:orphans` together.
 
 Formatting is enforced by the `prettier-plugin-motoko` plugin with the `*.mo` overrides in `.prettierrc` (2-space indent, no semicolons, no trailing commas).
