@@ -1,5 +1,5 @@
 ## Next
-* Replace all uses of the deprecated `.vals()` array/blob iterator method with `.values()` across `src`, `test`, and `bench` (#PR).
+* Replace all uses of the deprecated `.vals()` array/blob iterator method with `.values()` across `src`, `test`, and `bench` (#530).
 
 ## 2.6.1
 * Remove unnecessary allocations in `List` functions. Raise `List` size limit to `2^61` (#515).
