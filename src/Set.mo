@@ -8,7 +8,7 @@
 /// import Nat "mo:core/Nat";
 ///
 /// persistent actor {
-///   let set = Set.fromIter([3, 1, 2, 3].vals(), Nat.compare);
+///   let set = Set.fromIter([3, 1, 2, 3].values(), Nat.compare);
 ///   assert Set.size(set) == 3;
 ///   assert not Set.contains(set, Nat.compare, 4);
 ///   let diff = Set.difference(set, set, Nat.compare);
@@ -988,7 +988,7 @@ module {
     deleteAll(
       self,
       compare,
-      Iter.filter<T>(array.vals(), func(element : T) : Bool = not predicate(element))
+      Iter.filter<T>(array.values(), func(element : T) : Bool = not predicate(element))
     )
   };
 

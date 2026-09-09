@@ -945,10 +945,10 @@ run(
           let copy = smallSet();
           let clone = Set.clone(original);
           let keys = Iter.toArray(Set.values(original));
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             Set.remove(original, Nat.compare, key)
           };
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             assert Set.contains(clone, Nat.compare, key) == Set.contains(copy, Nat.compare, key)
           };
           Set.size(clone)

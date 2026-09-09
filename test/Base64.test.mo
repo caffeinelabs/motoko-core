@@ -164,7 +164,7 @@ suite(
           "Hello, World!" : Blob,
           Array.toBlob([0, 1, 2, 3, 127, 128, 254, 255])
         ];
-        for (b in cases.vals()) {
+        for (b in cases.values()) {
           expect.option<Blob>(Base64.decode(Base64.encode(b)), blobToText, Blob.equal).equal(?b)
         }
       }

@@ -61,7 +61,7 @@ module {
   ///
   /// Runtime: O(a.size())
   /// Space: O(a.size())
-  public func fromArray(a : [Char]) : Text = fromIter(a.vals());
+  public func fromArray(a : [Char]) : Text = fromIter(a.values());
 
   /// Converts the given `[var Char]` to a `Text` value.
   ///
@@ -72,7 +72,7 @@ module {
   ///
   /// Runtime: O(a.size())
   /// Space: O(a.size())
-  public func fromVarArray(a : [var Char]) : Text = fromIter(a.vals());
+  public func fromVarArray(a : [var Char]) : Text = fromIter(a.values());
 
   /// Iterates over each `Char` value in the given `Text`.
   ///
