@@ -48,7 +48,13 @@ jobs:
       - name: Check for Motoko file changes
         id: check_mo_changes
         run: |
-          BASE_SHA="${{ github.event.pull_request.base.sha || '$(git rev-parse HEAD~1)' }}"
+          # On PRs diff against the merge base; the fallback covers non-PR
+          # triggers (e.g. workflow_dispatch on benchmarks.yml) where there is
+          # no pull_request.base.sha.
+          BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [[ -z "$BASE_SHA" ]]; then
+            BASE_SHA=$(git merge-base HEAD origin/main 2>/dev/null || git rev-parse HEAD~1)
+          fi
           HEAD_SHA="${{ github.event.pull_request.head.sha }}"
 
           # Check for any .mo changes
