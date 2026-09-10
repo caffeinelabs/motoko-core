@@ -11,10 +11,43 @@
 ///
 /// The functionality described below is enabled only when the actor does not override it by declaring an explicit `system func timer`.
 ///
-/// Timers are _not_ persisted across upgrades. One possible strategy
-/// to re-establish timers after an upgrade is to use stable variables
-/// in the `post_upgrade` hook and distill necessary timer information
-/// from there.
+/// Timers are _not_ persisted across upgrades. Re-establish them from an
+/// **actor initialization expression** — a `let` binding or statement at the
+/// top of the actor body — which runs on every install and upgrade.
+///
+/// For a timer that always exists, arm it directly:
+///
+/// ```motoko include=import
+/// persistent actor {
+///   func job() : async () = async {};
+///
+///   transient let daily = Timer.recurringTimer<system>(#seconds 86400, job);
+/// }
+/// ```
+///
+/// For timers created on demand, persist what each one needs and rehydrate:
+///
+/// ```motoko
+/// import Timer "mo:core/Timer";
+/// import Map "mo:core/Map";
+/// import Nat "mo:core/Nat";
+///
+/// persistent actor {
+///   func fire() : async () = async {};
+///   var pending = Map.empty<Nat, Nat>(); // delay in nanoseconds per timer
+///
+///   do {
+///     for ((_, delay) in Map.entries(pending)) {
+///       ignore Timer.setTimer<system>(#nanoseconds delay, fire);
+///     };
+///   };
+/// };
+/// ```
+///
+/// Persist **durations, not ids**, and bind ids with `transient`: an id names
+/// a timer that no longer exists after an upgrade, while a duration still means
+/// something. The initialization expression must be declared after the state
+/// it reads.
 ///
 /// Using timers for security (e.g., access control) is strongly discouraged.
 /// Make sure to inform yourself about state-of-the-art dapp security.
