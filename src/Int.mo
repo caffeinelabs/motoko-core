@@ -32,7 +32,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Int.toText(-1234) == "-1234";
+  /// assert -1234.toText() == "-1234";
   /// ```
   public func toText(self : Int) : Text {
     if (self == 0) {
@@ -124,7 +124,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Int.toNat(1234) == (1234 : Nat);
+  /// assert 1234.toNat() == (1234 : Nat);
   /// ```
   public func toNat(self : Int) : Nat {
     if (self < 0) {

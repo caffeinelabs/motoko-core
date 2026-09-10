@@ -8,5 +8,5 @@ Steps to publish a new version of the `core` package:
    * Update the `## Next` header to the new version, e.g. `## 1.2.3` (checked by CI).
    * Create an empty `## Next` section at the top of the file.
 4. Open a PR with the above changes.
-5. Create and push a git tag, e.g. `v1.2.3`.
-6. Verify that the [`core` Mops package](https://mops.one/core) was published successfully after pushing the tag.
+5. The CI workflow (`.github/workflows/release-tag.yml`) automatically creates and pushes a git tag when the PR is merged. No manual tagging is required.
+6. Verify that the [`core` Mops package](https://mops.one/core) was published successfully after the tag is pushed.

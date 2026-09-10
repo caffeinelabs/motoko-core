@@ -75,7 +75,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let array = [0, 1, 2];
-  /// let varArray = Array.toVarArray<Nat>(array);
+  /// let varArray = array.toVarArray<Nat>();
   /// varArray[2] := 3;
   /// assert VarArray.equal(varArray, [var 0, 1, 3], Nat.equal);
   /// ```
@@ -120,7 +120,7 @@ module {
   ///
   /// let array1 = [0, 1, 2, 3];
   /// let array2 = [0, 1, 2, 3];
-  /// assert Array.equal(array1, array2, equal);
+  /// assert array1.equal(array2, equal);
   /// ```
   ///
   /// Runtime: O(size1 + size2)
@@ -149,7 +149,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 9, 4, 8];
-  /// let found = Array.find(array, func x = x > 8);
+  /// let found = array.find(func x = x > 8);
   /// assert found == ?9;
   /// ```
   /// Runtime: O(size)
@@ -171,7 +171,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = ['A', 'B', 'C', 'D'];
-  /// let found = Array.findIndex(array, func(x) { x == 'C' });
+  /// let found = array.findIndex(func(x) { x == 'C' });
   /// assert found == ?2;
   /// ```
   /// Runtime: O(size)
@@ -194,7 +194,7 @@ module {
   /// ```motoko include=import
   /// let array1 = [1, 2, 3];
   /// let array2 = [4, 5, 6];
-  /// let result = Array.concat(array1, array2);
+  /// let result = array1.concat(array2);
   /// assert result == [1, 2, 3, 4, 5, 6];
   /// ```
   /// Runtime: O(size1 + size2)
@@ -222,7 +222,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let array = [4, 2, 6];
-  /// let sorted = Array.sort(array, Nat.compare);
+  /// let sorted = array.sort();
   /// assert sorted == [2, 4, 6];
   /// ```
   /// Runtime: O(size * log(size))
@@ -239,7 +239,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [10, 11, 12];
-  /// let reversed = Array.reverse(array);
+  /// let reversed = array.reverse();
   /// assert reversed == [12, 11, 10];
   /// ```
   ///
@@ -280,7 +280,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array1 = [0, 1, 2, 3];
-  /// let array2 = Array.map(array1, func x = x * 2);
+  /// let array2 = array1.map(func x = x * 2);
   /// assert array2 == [0, 2, 4, 6];
   /// ```
   ///
@@ -296,7 +296,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [4, 2, 6, 1, 5];
-  /// let evenElements = Array.filter(array, func x = x % 2 == 0);
+  /// let evenElements = array.filter(func x = x % 2 == 0);
   /// assert evenElements == [4, 2, 6];
   /// ```
   /// Runtime: O(size)
@@ -461,7 +461,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [10, 10, 10, 10];
-  /// let newArray = Array.mapEntries(array, func (x, i) = i * x);
+  /// let newArray = array.mapEntries(func (x, i) = i * x);
   /// assert newArray == [0, 10, 20, 30];
   /// ```
   ///
@@ -477,7 +477,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4];
-  /// let newArray = Array.flatMap(array, func x = [x, -x].values());
+  /// let newArray = array.flatMap(func x = [x, -x].values());
   /// assert newArray == [1, -1, 2, -2, 3, -3, 4, -4];
   /// ```
   /// Runtime: O(size)
@@ -551,7 +551,7 @@ module {
   /// import {toText} "mo:core/Nat";
   ///
   /// let array = [1, 9, 4, 8];
-  /// let bookTitle = Array.foldRight(array, "", func(x, acc) = toText(x) # acc);
+  /// let bookTitle = array.foldRight("", func(x, acc) = toText(x) # acc);
   /// assert bookTitle == "1948";
   /// ```
   ///
@@ -578,7 +578,7 @@ module {
   ///
   /// ```motoko include=import
   /// let arrays = [[0, 1, 2], [2, 3], [], [4]];
-  /// let joinedArray = Array.join(arrays.values());
+  /// let joinedArray = arrays.values().join();
   /// assert joinedArray == [0, 1, 2, 2, 3, 4];
   /// ```
   ///
@@ -597,7 +597,7 @@ module {
   ///
   /// ```motoko include=import
   /// let arrays = [[0, 1, 2], [2, 3], [], [4]];
-  /// let flatArray = Array.flatten(arrays);
+  /// let flatArray = arrays.flatten();
   /// assert flatArray == [0, 1, 2, 2, 3, 4];
   /// ```
   ///
@@ -734,7 +734,7 @@ module {
   /// let array = [10, 11, 12];
   ///
   /// var sum = 0;
-  /// for ((index, element) in Array.enumerate(array)) {
+  /// for ((index, element) in array.enumerate()) {
   ///   sum += element;
   /// };
   /// assert sum == 33;
@@ -760,7 +760,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4];
-  /// assert Array.all<Nat>(array, func x = x > 0);
+  /// assert array.all<Nat>(func x = x > 0);
   /// ```
   ///
   /// Runtime: O(size)
@@ -781,7 +781,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4];
-  /// assert Array.any<Nat>(array, func x = x > 3);
+  /// assert array.any<Nat>(func x = x > 3);
   /// ```
   ///
   /// Runtime: O(size)
@@ -803,9 +803,9 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert Array.indexOf<Char>(array, Char.equal, 'c') == ?0;
-  /// assert Array.indexOf<Char>(array, Char.equal, 'f') == ?2;
-  /// assert Array.indexOf<Char>(array, Char.equal, 'g') == null;
+  /// assert array.indexOf<Char>('c') == ?0;
+  /// assert array.indexOf<Char>('f') == ?2;
+  /// assert array.indexOf<Char>('g') == null;
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -818,11 +818,11 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert Array.nextIndexOf<Char>(array, Char.equal, 'c', 0) == ?0;
-  /// assert Array.nextIndexOf<Char>(array, Char.equal, 'f', 0) == ?2;
-  /// assert Array.nextIndexOf<Char>(array, Char.equal, 'f', 2) == ?2;
-  /// assert Array.nextIndexOf<Char>(array, Char.equal, 'f', 3) == ?3;
-  /// assert Array.nextIndexOf<Char>(array, Char.equal, 'f', 4) == null;
+  /// assert array.nextIndexOf<Char>('c', 0) == ?0;
+  /// assert array.nextIndexOf<Char>('f', 0) == ?2;
+  /// assert array.nextIndexOf<Char>('f', 2) == ?2;
+  /// assert array.nextIndexOf<Char>('f', 3) == ?3;
+  /// assert array.nextIndexOf<Char>('f', 4) == null;
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -846,10 +846,10 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert Array.lastIndexOf<Char>(array, Char.equal, 'c') == ?0;
-  /// assert Array.lastIndexOf<Char>(array, Char.equal, 'f') == ?3;
-  /// assert Array.lastIndexOf<Char>(array, Char.equal, 'e') == ?5;
-  /// assert Array.lastIndexOf<Char>(array, Char.equal, 'g') == null;
+  /// assert array.lastIndexOf<Char>('c') == ?0;
+  /// assert array.lastIndexOf<Char>('f') == ?3;
+  /// assert array.lastIndexOf<Char>('e') == ?5;
+  /// assert array.lastIndexOf<Char>('g') == null;
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -867,10 +867,10 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert Array.prevIndexOf<Char>(array, Char.equal, 'c', array.size()) == ?0;
-  /// assert Array.prevIndexOf<Char>(array, Char.equal, 'e', array.size()) == ?5;
-  /// assert Array.prevIndexOf<Char>(array, Char.equal, 'e', 5) == ?4;
-  /// assert Array.prevIndexOf<Char>(array, Char.equal, 'e', 4) == null;
+  /// assert array.prevIndexOf<Char>('c', array.size()) == ?0;
+  /// assert array.prevIndexOf<Char>('e', array.size()) == ?5;
+  /// assert array.prevIndexOf<Char>('e', 5) == ?4;
+  /// assert array.prevIndexOf<Char>('e', 4) == null;
   /// ```
   ///
   /// Runtime: O(array.size());
@@ -891,8 +891,8 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert Array.contains<Char>(array, Char.equal, 'f');
-  /// assert not Array.contains<Char>(array, Char.equal, 'g');
+  /// assert array.contains<Char>('f');
+  /// assert not array.contains<Char>('g');
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -916,16 +916,16 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4, 5];
-  /// let iter1 = Array.range(array, 3, array.size());
+  /// let iter1 = array.range(3, array.size());
   /// assert iter1.next() == ?4;
   /// assert iter1.next() == ?5;
   /// assert iter1.next() == null;
   ///
-  /// let iter2 = Array.range(array, 3, -1);
+  /// let iter2 = array.range(3, -1);
   /// assert iter2.next() == ?4;
   /// assert iter2.next() == null;
   ///
-  /// let iter3 = Array.range(array, 0, 0);
+  /// let iter3 = array.range(0, 0);
   /// assert iter3.next() == null;
   /// ```
   ///
@@ -970,10 +970,10 @@ module {
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4, 5];
   ///
-  /// let slice1 = Array.sliceToArray(array, 1, 4);
+  /// let slice1 = array.sliceToArray(1, 4);
   /// assert slice1 == [2, 3, 4];
   ///
-  /// let slice2 = Array.sliceToArray(array, 1, -1);
+  /// let slice2 = array.sliceToArray(1, -1);
   /// assert slice2 == [2, 3, 4];
   /// ```
   ///
@@ -1013,10 +1013,10 @@ module {
   ///
   /// let array = [1, 2, 3, 4, 5];
   ///
-  /// let slice1 = Array.sliceToVarArray<Nat>(array, 1, 4);
+  /// let slice1 = array.sliceToVarArray<Nat>(1, 4);
   /// assert VarArray.equal(slice1, [var 2, 3, 4], Nat.equal);
   ///
-  /// let slice2 = Array.sliceToVarArray<Nat>(array, 1, -1);
+  /// let slice2 = array.sliceToVarArray<Nat>(1, -1);
   /// assert VarArray.equal(slice2, [var 2, 3, 4], Nat.equal);
   /// ```
   ///
@@ -1053,7 +1053,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let array = [1, 2, 3];
-  /// let text = Array.toText(array, Nat.toText);
+  /// let text = array.toText(Nat.toText);
   /// assert text == "[1, 2, 3]";
   /// ```
   ///
@@ -1090,7 +1090,7 @@ module {
   ///
   /// let array1 = [1, 2, 3];
   /// let array2 = [1, 2, 4];
-  /// assert Array.compare<Nat>(array1, array2, Nat.compare) == #less;
+  /// assert array1.compare<Nat>(array2, Nat.compare) == #less;
   /// ```
   ///
   /// ```motoko include=import
@@ -1098,7 +1098,7 @@ module {
   ///
   /// let array3 = [1, 2];
   /// let array4 = [1, 2, 3];
-  /// assert Array.compare<Nat>(array3, array4, Nat.compare) == #less;
+  /// assert array3.compare<Nat>(array4, Nat.compare) == #less;
   /// ```
   ///
   /// Runtime: O(min(size1, size2))
@@ -1135,8 +1135,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let sorted = [1, 3, 5, 7, 9, 11];
-  /// assert Array.binarySearch<Nat>(sorted, Nat.compare, 5) == #found(2);
-  /// assert Array.binarySearch<Nat>(sorted, Nat.compare, 6) == #insertionIndex(3);
+  /// assert sorted.binarySearch<Nat>(5) == #found(2);
+  /// assert sorted.binarySearch<Nat>(6) == #insertionIndex(3);
   /// ```
   ///
   /// Runtime: O(log(size))
@@ -1167,7 +1167,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let array = [1, 2, 3];
-  /// assert Array.isSorted<Nat>(array, Nat.compare);
+  /// assert array.isSorted<Nat>();
   /// ```
   ///
   /// Runtime: O(size)

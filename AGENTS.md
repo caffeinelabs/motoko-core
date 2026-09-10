@@ -17,9 +17,10 @@ Use the `package.json` scripts:
 - `npm run test:ts` — TypeScript integration tests (`test/ts`).
 - `npm run bench` — benchmarks (`mops bench`); run in CI by the `bench` job.
 - `npm run check:orphans` — type-checks Motoko modules not otherwise imported.
-- `npm run format:check` — Prettier check on `*.mo` files. `npm run format` rewrites them.
+- `npm run format:check` — Prettier check on `**/*.mo` files. `npm run format` rewrites them.
 - `npm run validate` — runs `validate:changelog`, `validate:version`, `validate:api`.
 - `npm run validate:docs [Module ...]` — runs doc-comment code examples for the named `src/*.mo` modules (or all when no argument).
+- `npm run check:bench` — type-checks `bench/*.bench.mo`.
 - `npm run docs` — generates `docs/` via mo-doc (run manually; there is no CI pages deploy).
 - `npm run check:mo` — runs `test:mops`, `bench`, and `check:orphans` together.
 

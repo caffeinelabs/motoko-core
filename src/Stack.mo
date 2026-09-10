@@ -9,13 +9,13 @@
 ///
 /// persistent actor {
 ///   let levels = Stack.empty<Text>();
-///   Stack.push(levels, "Inner");
-///   Stack.push(levels, "Middle");
-///   Stack.push(levels, "Outer");
-///   assert Stack.pop(levels) == ?"Outer";
-///   assert Stack.pop(levels) == ?"Middle";
-///   assert Stack.pop(levels) == ?"Inner";
-///   assert Stack.pop(levels) == null;
+///   levels.push("Inner");
+///   levels.push("Middle");
+///   levels.push("Outer");
+///   assert levels.pop() == ?"Outer";
+///   assert levels.pop() == ?"Middle";
+///   assert levels.pop() == ?"Inner";
+///   assert levels.pop() == null;
 /// }
 /// ```
 ///
@@ -48,10 +48,10 @@ module {
   ///
   /// persistent actor {
   ///   let mutableStack = Stack.empty<Nat>();
-  ///   Stack.push(mutableStack, 3);
-  ///   Stack.push(mutableStack, 2);
-  ///   Stack.push(mutableStack, 1);
-  ///   let immutableList = Stack.toPure(mutableStack);
+  ///   mutableStack.push(3);
+  ///   mutableStack.push(2);
+  ///   mutableStack.push(1);
+  ///   let immutableList = mutableStack.toPure();
   ///   assert Iter.toArray(PureList.values(immutableList)) == [1, 2, 3];
   /// }
   /// ```
@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   let immutableList = PureList.fromIter([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
-  ///   assert Iter.toArray(Stack.values(mutableStack)) == [1, 2, 3];
+  ///   assert Iter.toArray(mutableStack.values()) == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -125,7 +125,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Text>();
-  ///   assert Stack.size(stack) == 0;
+  ///   assert stack.size() == 0;
   /// }
   /// ```
   ///
@@ -149,7 +149,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.tabulate<Nat>(3, func(i) { 2 * i });
-  ///   assert Iter.toArray(Stack.values(stack)) == [4, 2, 0];
+  ///   assert Iter.toArray(stack.values()) == [4, 2, 0];
   /// }
   /// ```
   ///
@@ -176,7 +176,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.singleton("motoko");
-  ///   assert Stack.peek(stack) == ?"motoko";
+  ///   assert stack.peek() == ?"motoko";
   /// }
   /// ```
   ///
@@ -196,8 +196,8 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   Stack.clear(stack);
-  ///   assert Stack.isEmpty(stack);
+  ///   stack.clear();
+  ///   assert stack.isEmpty();
   /// }
   /// ```
   ///
@@ -217,8 +217,8 @@ module {
   ///
   /// persistent actor {
   ///   let original = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   let copy = Stack.clone(original);
-  ///   assert Stack.equal(copy, original, Nat.equal);
+  ///   let copy = original.clone();
+  ///   assert copy.equal(original, Nat.equal);
   /// }
   /// ```
   ///
@@ -242,7 +242,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   assert Stack.isEmpty(stack);
+  ///   assert stack.isEmpty();
   /// }
   /// ```
   ///
@@ -260,7 +260,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Stack.size(stack) == 3;
+  ///   assert stack.size() == 3;
   /// }
   /// ```
   ///
@@ -280,7 +280,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Stack.contains(stack, Nat.equal, 2);
+  ///   assert stack.contains(2);
   /// }
   /// ```
   ///
@@ -309,8 +309,8 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 42);
-  ///   assert Stack.peek(stack) == ?42;
+  ///   stack.push(42);
+  ///   assert stack.peek() == ?42;
   /// }
   /// ```
   ///
@@ -330,10 +330,10 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
-  ///   assert Stack.peek(stack) == ?1;
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
+  ///   assert stack.peek() == ?1;
   /// }
   /// ```
   ///
@@ -355,13 +355,13 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
-  ///   assert Stack.pop(stack) == ?1;
-  ///   assert Stack.pop(stack) == ?2;
-  ///   assert Stack.pop(stack) == ?3;
-  ///   assert Stack.pop(stack) == null;
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
+  ///   assert stack.pop() == ?1;
+  ///   assert stack.pop() == ?2;
+  ///   assert stack.pop() == ?3;
+  ///   assert stack.pop() == null;
   /// }
   /// ```
   ///
@@ -388,13 +388,13 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Char>();
-  ///   Stack.push(stack, 'c');
-  ///   Stack.push(stack, 'b');
-  ///   Stack.push(stack, 'a');
-  ///   assert Stack.get(stack, 0) == ?'a';
-  ///   assert Stack.get(stack, 1) == ?'b';
-  ///   assert Stack.get(stack, 2) == ?'c';
-  ///   assert Stack.get(stack, 3) == null;
+  ///   stack.push('c');
+  ///   stack.push('b');
+  ///   stack.push('a');
+  ///   assert stack.get(0) == ?'a';
+  ///   assert stack.get(1) == ?'b';
+  ///   assert stack.get(2) == ?'c';
+  ///   assert stack.get(3) == null;
   /// }
   /// ```
   ///
@@ -427,14 +427,14 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
-  ///   Stack.reverse(stack);
-  ///   assert Stack.pop(stack) == ?3;
-  ///   assert Stack.pop(stack) == ?2;
-  ///   assert Stack.pop(stack) == ?1;
-  ///   assert Stack.pop(stack) == null;
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
+  ///   stack.reverse();
+  ///   assert stack.pop() == ?3;
+  ///   assert stack.pop() == ?2;
+  ///   assert stack.pop() == ?1;
+  ///   assert stack.pop() == null;
   /// }
   /// ```
   ///
@@ -459,10 +459,10 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
+  ///   assert Iter.toArray(stack.values()) == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -493,7 +493,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([2, 4, 6].values());
-  ///   assert Stack.all<Nat>(stack, func(n) = n % 2 == 0);
+  ///   assert stack.all<Nat>(func(n) = n % 2 == 0);
   /// }
   /// ```
   ///
@@ -518,7 +518,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Stack.any<Nat>(stack, func(n) = n == 2);
+  ///   assert stack.any<Nat>(func(n) = n == 2);
   /// }
   /// ```
   ///
@@ -545,11 +545,11 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
   ///   var text = "";
-  ///   Stack.forEach<Nat>(stack, func(n) = text #= Nat.toText(n));
+  ///   stack.forEach<Nat>(func(n) = text #= Nat.toText(n));
   ///   assert text == "123";
   /// }
   /// ```
@@ -574,14 +574,14 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
-  ///   let doubled = Stack.map<Nat, Nat>(stack, func(n) { 2 * n });
-  ///   assert Stack.get(doubled, 0) == ?2;
-  ///   assert Stack.get(doubled, 1) == ?4;
-  ///   assert Stack.get(doubled, 2) == ?6;
-  ///   assert Stack.get(doubled, 3) == null;
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
+  ///   let doubled = stack.map<Nat, Nat>(func(n) { 2 * n });
+  ///   assert doubled.get(0) == ?2;
+  ///   assert doubled.get(1) == ?4;
+  ///   assert doubled.get(2) == ?6;
+  ///   assert doubled.get(3) == null;
   /// }
   /// ```
   ///
@@ -607,14 +607,14 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 4);
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
-  ///   let evens = Stack.filter(stack, func(n) { n % 2 == 0 });
-  ///   assert Stack.pop(evens) == ?2;
-  ///   assert Stack.pop(evens) == ?4;
-  ///   assert Stack.pop(evens) == null;
+  ///   stack.push(4);
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
+  ///   let evens = stack.filter(func(n) { n % 2 == 0 });
+  ///   assert evens.pop() == ?2;
+  ///   assert evens.pop() == ?4;
+  ///   assert evens.pop() == null;
   /// }
   /// ```
   ///
@@ -643,10 +643,10 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.empty<Nat>();
-  ///   Stack.push(stack, 4);
-  ///   Stack.push(stack, 3);
-  ///   Stack.push(stack, 2);
-  ///   Stack.push(stack, 1);
+  ///   stack.push(4);
+  ///   stack.push(3);
+  ///   stack.push(2);
+  ///   stack.push(1);
   ///   let evenDoubled = Stack.filterMap<Nat, Nat>(stack, func(n) {
   ///     if (n % 2 == 0) {
   ///       ?(n * 2)
@@ -654,9 +654,9 @@ module {
   ///       null
   ///     }
   ///   });
-  ///   assert Stack.pop(evenDoubled) == ?4;
-  ///   assert Stack.pop(evenDoubled) == ?8;
-  ///   assert Stack.pop(evenDoubled) == null;
+  ///   assert evenDoubled.pop() == ?4;
+  ///   assert evenDoubled.pop() == ?8;
+  ///   assert evenDoubled.pop() == null;
   /// }
   /// ```
   ///
@@ -687,7 +687,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromPure<Nat>(?(1, ?(2, ?(3, null))));
-  ///   assert Stack.find<Nat>(stack, func n = n > 1) == ?2;
+  ///   assert stack.find<Nat>(func n = n > 1) == ?2;
   /// }
   /// ```
   ///
@@ -708,7 +708,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromPure(?('A', ?('B', ?('C', ?('D', null)))));
-  ///   let found = Stack.findIndex(stack, func x = x == 'C');
+  ///   let found = stack.findIndex(func x = x == 'C');
   ///   assert found == ?2;
   /// }
   /// ```
@@ -730,7 +730,7 @@ module {
   /// persistent actor {
   ///   let stack1 = Stack.fromIter<Nat>([3, 2, 1].values());
   ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Stack.equal(stack1, stack2, Nat.equal);
+  ///   assert stack1.equal(stack2, Nat.equal);
   /// }
   /// ```
   ///
@@ -772,7 +772,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert Iter.toArray(stack.values()) == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -801,7 +801,7 @@ module {
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
-  ///   assert Iter.toArray(Stack.values(stack)) == [1, 2, 3];
+  ///   assert Iter.toArray(stack.values()) == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -823,7 +823,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Stack.toText(stack, Nat.toText) == "Stack[1, 2, 3]";
+  ///   assert stack.toText(Nat.toText) == "Stack[1, 2, 3]";
   /// }
   /// ```
   ///
@@ -852,7 +852,7 @@ module {
   /// persistent actor {
   ///   let stack1 = Stack.fromIter<Nat>([2, 1].values());
   ///   let stack2 = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Stack.compare(stack1, stack2, Nat.compare) == #less;
+  ///   assert stack1.compare(stack2, Nat.compare) == #less;
   /// }
   /// ```
   ///

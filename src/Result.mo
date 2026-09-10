@@ -228,9 +228,9 @@ module {
   ///
   /// ```motoko include=import
   /// var counter : Nat = 0;
-  /// Result.forOk<Nat, Text>(#ok(5), func (x : Nat) { counter += x });
+  /// Result.forOk<Nat, Text>(#ok(5), func (x) { counter += x });
   /// assert counter == 5;
-  /// Result.forOk<Nat, Text>(#err("Error"), func (x : Nat) { counter += x });
+  /// Result.forOk<Nat, Text>(#err("Error"), func (x) { counter += x });
   /// assert counter == 5;
   /// ```
   public func forOk<Ok, Err>(self : Result<Ok, Err>, f : Ok -> ()) {
@@ -245,9 +245,9 @@ module {
   ///
   /// ```motoko include=import
   /// var counter : Nat = 0;
-  /// Result.forErr<Nat, Text>(#err("Error"), func (x : Text) { counter += 1 });
+  /// Result.forErr<Nat, Text>(#err("Error"), func (x) { counter += 1 });
   /// assert counter == 1;
-  /// Result.forErr<Nat, Text>(#ok(5), func (x : Text) { counter += 1 });
+  /// Result.forErr<Nat, Text>(#ok(5), func (x) { counter += 1 });
   /// assert counter == 1;
   /// ```
   public func forErr<Ok, Err>(self : Result<Ok, Err>, f : Err -> ()) {

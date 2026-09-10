@@ -10,13 +10,13 @@
 ///   // creation
 ///   let map = Map.empty<Nat, Text>();
 ///   // insertion
-///   Map.add(map, Nat.compare, 0, "Zero");
+///   map.add(0, "Zero");
 ///   // retrieval
-///   assert Map.get(map, Nat.compare, 0) == ?"Zero";
-///   assert Map.get(map, Nat.compare, 1) == null;
+///   assert map.get(0) == ?"Zero";
+///   assert map.get(1) == null;
 ///   // removal
-///   Map.remove(map, Nat.compare, 0);
-///   assert Map.isEmpty(map);
+///   map.remove(0);
+///   assert map.isEmpty();
 /// }
 /// ```
 ///
@@ -65,8 +65,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter(
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(), Nat.compare);
-  ///   let pureMap = Map.toPure(map, Nat.compare);
-  ///   assert Iter.toArray(PureMap.entries(pureMap)) == Iter.toArray(Map.entries(map))
+  ///   let pureMap = map.toPure();
+  ///   assert Iter.toArray(PureMap.entries(pureMap)) == Iter.toArray(map.entries())
   /// }
   /// ```
   ///
@@ -94,7 +94,7 @@ module {
   ///   let pureMap = PureMap.fromIter(
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(), Nat.compare);
   ///   let map = Map.fromPure(pureMap, Nat.compare);
-  ///   assert Iter.toArray(Map.entries(map)) == Iter.toArray(PureMap.entries(pureMap))
+  ///   assert Iter.toArray(map.entries()) == Iter.toArray(PureMap.entries(pureMap))
   /// }
   /// ```
   ///
@@ -117,10 +117,10 @@ module {
   /// persistent actor {
   ///   let originalMap = Map.fromIter(
   ///     [(1, "One"), (2, "Two"), (3, "Three")].values(), Nat.compare);
-  ///   let clonedMap = Map.clone(originalMap);
-  ///   Map.add(originalMap, Nat.compare, 4, "Four");
-  ///   assert Map.size(clonedMap) == 3;
-  ///   assert Map.size(originalMap) == 4;
+  ///   let clonedMap = originalMap.clone();
+  ///   originalMap.add(4, "Four");
+  ///   assert clonedMap.size() == 3;
+  ///   assert originalMap.size() == 4;
   /// }
   /// ```
   ///
@@ -142,7 +142,7 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.empty<Nat, Text>();
-  ///   assert Map.size(map) == 0;
+  ///   assert map.size() == 0;
   /// }
   /// ```
   ///
@@ -169,7 +169,7 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.singleton<Nat, Text>(0, "Zero");
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero")];
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero")];
   /// }
   /// ```
   ///
@@ -196,10 +196,10 @@ module {
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(),
   ///     Nat.compare);
   ///
-  ///   assert Map.size(map) == 3;
+  ///   assert map.size() == 3;
   ///
-  ///   Map.clear(map);
-  ///   assert Map.size(map) == 0;
+  ///   map.clear();
+  ///   assert map.size() == 0;
   /// }
   /// ```
   ///
@@ -223,9 +223,9 @@ module {
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(),
   ///     Nat.compare);
   ///
-  ///   assert not Map.isEmpty(map);
-  ///   Map.clear(map);
-  ///   assert Map.isEmpty(map);
+  ///   assert not map.isEmpty();
+  ///   map.clear();
+  ///   assert map.isEmpty();
   /// }
   /// ```
   ///
@@ -247,9 +247,9 @@ module {
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(),
   ///     Nat.compare);
   ///
-  ///   assert Map.size(map) == 3;
-  ///   Map.clear(map);
-  ///   assert Map.size(map) == 0;
+  ///   assert map.size() == 3;
+  ///   map.clear();
+  ///   assert map.size() == 0;
   /// }
   /// ```
   ///
@@ -272,11 +272,11 @@ module {
   ///   let map1 = Map.fromIter(
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(),
   ///     Nat.compare);
-  ///   let map2 = Map.clone(map1);
+  ///   let map2 = map1.clone();
   ///
-  ///   assert Map.equal(map1, map2, Nat.compare, Text.equal);
-  ///   Map.clear(map2);
-  ///   assert not Map.equal(map1, map2, Nat.compare, Text.equal);
+  ///   assert map1.equal(map2, Nat.compare, Text.equal);
+  ///   map2.clear();
+  ///   assert not map1.equal(map2, Nat.compare, Text.equal);
   /// }
   /// ```
   ///
@@ -320,8 +320,8 @@ module {
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(),
   ///     Nat.compare);
   ///
-  ///   assert Map.containsKey(map, Nat.compare, 1);
-  ///   assert not Map.containsKey(map, Nat.compare, 3);
+  ///   assert map.containsKey(1);
+  ///   assert not map.containsKey(3);
   /// }
   /// ```
   ///
@@ -345,8 +345,8 @@ module {
   ///     [(0, "Zero"), (1, "One"), (2, "Two")].values(),
   ///     Nat.compare);
   ///
-  ///   assert Map.get(map, Nat.compare, 1) == ?"One";
-  ///   assert Map.get(map, Nat.compare, 3) == null;
+  ///   assert map.get(1) == ?"One";
+  ///   assert map.get(3) == null;
   /// }
   /// ```
   ///
@@ -375,11 +375,11 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.empty<Nat, Text>();
-  ///   assert Map.insert(map, Nat.compare, 0, "Zero");
-  ///   assert Map.insert(map, Nat.compare, 1, "One");
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One")];
-  ///   assert not Map.insert(map, Nat.compare, 0, "Nil");
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Nil"), (1, "One")]
+  ///   assert map.insert(0, "Zero");
+  ///   assert map.insert(1, "One");
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (1, "One")];
+  ///   assert not map.insert(0, "Nil");
+  ///   assert Iter.toArray(map.entries()) == [(0, "Nil"), (1, "One")]
   /// }
   /// ```
   ///
@@ -407,11 +407,11 @@ module {
   /// persistent actor {
   ///   let map = Map.empty<Nat, Text>();
   ///
-  ///   Map.add(map, Nat.compare, 0, "Zero");
-  ///   Map.add(map, Nat.compare, 1, "One");
-  ///   Map.add(map, Nat.compare, 0, "Nil");
+  ///   map.add(0, "Zero");
+  ///   map.add(1, "One");
+  ///   map.add(0, "Nil");
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Nil"), (1, "One")]
+  ///   assert Iter.toArray(map.entries()) == [(0, "Nil"), (1, "One")]
   /// }
   /// ```
   ///
@@ -436,11 +436,11 @@ module {
   /// persistent actor {
   ///   let map = Map.singleton<Nat, Text>(1, "One");
   ///
-  ///   assert Map.swap(map, Nat.compare, 0, "Zero") == null;
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One")];
+  ///   assert map.swap(0, "Zero") == null;
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (1, "One")];
   ///
-  ///   assert Map.swap(map, Nat.compare, 0, "Nil") == ?"Zero";
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Nil"), (1, "One")];
+  ///   assert map.swap(0, "Nil") == ?"Zero";
+  ///   assert Iter.toArray(map.entries()) == [(0, "Nil"), (1, "One")];
   /// }
   /// ```
   ///
@@ -499,13 +499,13 @@ module {
   /// persistent actor {
   ///   let map = Map.singleton<Nat, Text>(0, "Zero");
   ///
-  ///   let prev1 = Map.replace(map, Nat.compare, 0, "Nil"); // overwrites the value for existing key.
+  ///   let prev1 = map.replace(0, "Nil"); // overwrites the value for existing key.
   ///   assert prev1 == ?"Zero";
-  ///   assert Map.get(map, Nat.compare, 0) == ?"Nil";
+  ///   assert map.get(0) == ?"Nil";
   ///
-  ///   let prev2 = Map.replace(map, Nat.compare, 1, "One");  // no effect, key is absent
+  ///   let prev2 = map.replace(1, "One");  // no effect, key is absent
   ///   assert prev2 == null;
-  ///   assert Map.get(map, Nat.compare, 1) == null;
+  ///   assert map.get(1) == null;
   /// }
   /// ```
   ///
@@ -535,10 +535,10 @@ module {
   ///     [(0, "Zero"), (2, "Two"), (1, "One")].values(),
   ///     Nat.compare);
   ///
-  ///   Map.remove(map, Nat.compare, 1);
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
-  ///   Map.remove(map, Nat.compare, 42);
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   map.remove(1);
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (2, "Two")];
+  ///   map.remove(42);
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -565,11 +565,11 @@ module {
   ///     [(0, "Zero"), (2, "Two"), (1, "One")].values(),
   ///     Nat.compare);
   ///
-  ///   assert Map.delete(map, Nat.compare, 1); // present, returns true
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   assert map.delete(1); // present, returns true
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (2, "Two")];
   ///
-  ///   assert not Map.delete(map, Nat.compare, 42); // absent, returns false
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (2, "Two")];
+  ///   assert not map.delete(42); // absent, returns false
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -600,11 +600,11 @@ module {
   ///     [(0, "Zero"), (2, "Two"), (1, "One")].values(),
   ///     Nat.compare);
   ///
-  ///   assert Map.take(map, Nat.compare, 0) == ?"Zero";
-  ///   assert Iter.toArray(Map.entries(map)) == [(1, "One"), (2, "Two")];
+  ///   assert map.take(0) == ?"Zero";
+  ///   assert Iter.toArray(map.entries()) == [(1, "One"), (2, "Two")];
   ///
-  ///   assert Map.take(map, Nat.compare, 3) == null;
-  ///   assert Iter.toArray(Map.entries(map)) == [(1, "One"), (2, "Two")];
+  ///   assert map.take(3) == null;
+  ///   assert Iter.toArray(map.entries()) == [(1, "One"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -678,13 +678,13 @@ module {
   /// persistent actor {
   ///   let map = Map.empty<Nat, Text>();
   ///
-  ///   assert Map.maxEntry(map) == null;
+  ///   assert map.maxEntry() == null;
   ///
-  ///   Map.add(map, Nat.compare, 0, "Zero");
-  ///   Map.add(map, Nat.compare, 2, "Two");
-  ///   Map.add(map, Nat.compare, 1, "One");
+  ///   map.add(0, "Zero");
+  ///   map.add(2, "Two");
+  ///   map.add(1, "One");
   ///
-  ///   assert Map.maxEntry(map) == ?(2, "Two")
+  ///   assert map.maxEntry() == ?(2, "Two")
   /// }
   /// ```
   ///
@@ -706,13 +706,13 @@ module {
   /// persistent actor {
   ///   let map = Map.empty<Nat, Text>();
   ///
-  ///   assert Map.minEntry(map) == null;
+  ///   assert map.minEntry() == null;
   ///
-  ///   Map.add(map, Nat.compare, 2, "Two");
-  ///   Map.add(map, Nat.compare, 0, "Zero");
-  ///   Map.add(map, Nat.compare, 1, "One");
+  ///   map.add(2, "Two");
+  ///   map.add(0, "Zero");
+  ///   map.add(1, "One");
   ///
-  ///   assert Map.minEntry(map) == ?(0, "Zero")
+  ///   assert map.minEntry() == ?(0, "Zero")
   /// }
   /// ```
   ///
@@ -735,10 +735,10 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One"), (2, "Two")];
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (1, "One"), (2, "Two")];
   ///   var sum = 0;
   ///   var text = "";
-  ///   for ((k, v) in Map.entries(map)) { sum += k; text #= v };
+  ///   for ((k, v) in map.entries()) { sum += k; text #= v };
   ///   assert sum == 3;
   ///   assert text == "ZeroOneTwo"
   /// }
@@ -767,8 +767,8 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (3, "Three"),  (1, "One")].values(), Nat.compare);
-  ///   assert Iter.toArray(Map.entriesFrom(map, Nat.compare, 1)) == [(1, "One"), (3, "Three")];
-  ///   assert Iter.toArray(Map.entriesFrom(map, Nat.compare, 2)) == [(3, "Three")];
+  ///   assert Iter.toArray(map.entriesFrom(1)) == [(1, "One"), (3, "Three")];
+  ///   assert Iter.toArray(map.entriesFrom(2)) == [(3, "Three")];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -800,10 +800,10 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.reverseEntries(map)) == [(2, "Two"), (1, "One"), (0, "Zero")];
+  ///   assert Iter.toArray(map.reverseEntries()) == [(2, "Two"), (1, "One"), (0, "Zero")];
   ///   var sum = 0;
   ///   var text = "";
-  ///   for ((k, v) in Map.reverseEntries(map)) { sum += k; text #= v };
+  ///   for ((k, v) in map.reverseEntries()) { sum += k; text #= v };
   ///   assert sum == 3;
   ///   assert text == "TwoOneZero"
   /// }
@@ -832,8 +832,8 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (1, "One"), (3, "Three")].values(), Nat.compare);
-  ///   assert Iter.toArray(Map.reverseEntriesFrom(map, Nat.compare, 0)) == [(0, "Zero")];
-  ///   assert Iter.toArray(Map.reverseEntriesFrom(map, Nat.compare, 2)) == [(1, "One"), (0, "Zero")];
+  ///   assert Iter.toArray(map.reverseEntriesFrom(0)) == [(0, "Zero")];
+  ///   assert Iter.toArray(map.reverseEntriesFrom(2)) == [(1, "One"), (0, "Zero")];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -865,7 +865,7 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.keys(map)) == [0, 1, 2];
+  ///   assert Iter.toArray(map.keys()) == [0, 1, 2];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -896,7 +896,7 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.values(map)) == ["Zero", "One", "Two"];
+  ///   assert Iter.toArray(map.values()) == ["Zero", "One", "Two"];
   /// }
   /// ```
   /// Cost of iteration over all elements:
@@ -929,7 +929,7 @@ module {
   ///
   ///   let map = Map.fromIter(iter, Nat.compare);
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One"), (2, "Two")];
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (1, "One"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -957,9 +957,9 @@ module {
   ///   transient let iter =
   ///     [(0, "Zero"), (2, "Two"), (1, "One")].values();
   ///
-  ///   let map = iter.toMap(Nat.compare);
+  ///   let map = iter.toMap<Nat, Text>();
   ///
-  ///   assert Iter.toArray(Map.entries(map)) == [(0, "Zero"), (1, "One"), (2, "Two")];
+  ///   assert Iter.toArray(map.entries()) == [(0, "Zero"), (1, "One"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -1029,7 +1029,7 @@ module {
   ///     key % 2 == 0
   ///   });
   ///
-  ///   assert Iter.toArray(Map.entries(evenNames)) == [(0, "Zero"), (2, "Two")];
+  ///   assert Iter.toArray(evenNames.entries()) == [(0, "Zero"), (2, "Two")];
   /// }
   /// ```
   ///
@@ -1062,9 +1062,9 @@ module {
   ///
   ///   func f(key : Nat, _val : Text) : Nat = key * 2;
   ///
-  ///   let resMap = Map.map<Nat, Text, Nat>(map, f);
+  ///   let resMap = map.map<Nat, Text, Nat>(f);
   ///
-  ///   assert Iter.toArray(Map.entries(resMap)) == [(0, 0), (1, 2), (2, 4)];
+  ///   assert Iter.toArray(resMap.entries()) == [(0, 0), (1, 2), (2, 4)];
   /// }
   /// ```
   ///
@@ -1095,7 +1095,7 @@ module {
   ///   func folder(accum : (Nat, Text), key : Nat, val : Text) : ((Nat, Text))
   ///     = (key + accum.0, accum.1 # val);
   ///
-  ///   assert Map.foldLeft(map, (0, ""), folder) == (3, "ZeroOneTwo");
+  ///   assert map.foldLeft((0, ""), folder) == (3, "ZeroOneTwo");
   /// }
   /// ```
   ///
@@ -1130,7 +1130,7 @@ module {
   ///   func folder(key : Nat, val : Text, accum : (Nat, Text)) : ((Nat, Text))
   ///     = (key + accum.0, accum.1 # val);
   ///
-  ///   assert Map.foldRight(map, (0, ""), folder) == (3, "TwoOneZero");
+  ///   assert map.foldRight((0, ""), folder) == (3, "TwoOneZero");
   /// }
   /// ```
   ///
@@ -1163,8 +1163,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert Map.all<Nat, Text>(map, func (k, v) = v == Nat.toText(k));
-  ///   assert not Map.all<Nat, Text>(map, func (k, v) = k < 2);
+  ///   assert map.all<Nat, Text>(func (k, v) = v == Nat.toText(k));
+  ///   assert not map.all<Nat, Text>(func (k, v) = k < 2);
   /// }
   /// ```
   ///
@@ -1193,8 +1193,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert Map.any<Nat, Text>(map, func (k, v) = (k >= 0));
-  ///   assert not Map.any<Nat, Text>(map, func (k, v) = (k >= 3));
+  ///   assert map.any<Nat, Text>(func (k, v) = (k >= 0));
+  ///   assert not map.any<Nat, Text>(func (k, v) = (k >= 3));
   /// }
   /// ```
   ///
@@ -1232,9 +1232,9 @@ module {
   ///     else { ?("Twenty " # val)}
   ///   };
   ///
-  ///   let newMap = Map.filterMap(map, Nat.compare, f);
+  ///   let newMap = map.filterMap(f);
   ///
-  ///   assert Iter.toArray(Map.entries(newMap)) == [(1, "Twenty One"), (2, "Twenty Two")];
+  ///   assert Iter.toArray(newMap.entries()) == [(1, "Twenty One"), (2, "Twenty Two")];
   /// }
   /// ```
   ///
@@ -1293,7 +1293,7 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
-  ///   assert Map.toText<Nat, Text>(map, Nat.toText, func t { t }) == "Map{(0, Zero), (1, One), (2, Two)}";
+  ///   assert map.toText<Nat, Text>(Nat.toText, func t { t }) == "Map{(0, Zero), (1, One), (2, Two)}";
   /// }
   /// ```
   ///
@@ -1342,9 +1342,9 @@ module {
   ///   let map1 = Map.fromIter([(0, "Zero"), (1, "One")].values(), Nat.compare);
   ///   let map2 = Map.fromIter([(0, "Zero"), (2, "Two")].values(), Nat.compare);
   ///
-  ///   assert Map.compare(map1, map2, Nat.compare, Text.compare) == #less;
-  ///   assert Map.compare(map1, map1, Nat.compare, Text.compare) == #equal;
-  ///   assert Map.compare(map2, map1, Nat.compare, Text.compare) == #greater
+  ///   assert map1.compare(map2, Nat.compare, Text.compare) == #less;
+  ///   assert map1.compare(map1, Nat.compare, Text.compare) == #equal;
+  ///   assert map2.compare(map1, Nat.compare, Text.compare) == #greater
   /// }
   /// ```
   ///

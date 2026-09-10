@@ -72,7 +72,7 @@ module {
   /// ```motoko include=import no-validate
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let subAccount : Blob = "\4A\8D\3F\2B\6E\01\C8\7D\9E\03\B4\56\7C\F8\9A\01\D2\34\56\78\9A\BC\DE\F0\12\34\56\78\9A\BC\DE\F0";
-  /// let account = Principal.toLedgerAccount(principal, ?subAccount);
+  /// let account = principal.toLedgerAccount(?subAccount);
   /// assert account == "\8C\5C\20\C6\15\3F\7F\51\E2\0D\0F\0F\B5\08\51\5B\47\65\63\A9\62\B4\A9\91\5F\4F\02\70\8A\ED\4F\82";
   /// ```
   public func toLedgerAccount(self : Principal, subAccount : ?Blob) : Blob {
@@ -114,7 +114,7 @@ module {
   /// ```motoko include=import
   /// let blob = "\00\00\00\00\00\30\00\D3\01\01" : Blob;
   /// let principal = Principal.fromBlob(blob);
-  /// assert Principal.toText(principal) == "un4fu-tqaaa-aaaab-qadjq-cai";
+  /// assert principal.toText() == "un4fu-tqaaa-aaaab-qadjq-cai";
   /// ```
   public let fromBlob : (blob : Blob) -> Principal = Prim.principalOfBlob;
 
@@ -123,7 +123,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert Principal.toText(principal) == "un4fu-tqaaa-aaaab-qadjq-cai";
+  /// assert principal.toText() == "un4fu-tqaaa-aaaab-qadjq-cai";
   /// ```
   public func toText(self : Principal) : Text = debug_show (self);
 
@@ -132,7 +132,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert Principal.toText(principal) == "un4fu-tqaaa-aaaab-qadjq-cai";
+  /// assert principal.toText() == "un4fu-tqaaa-aaaab-qadjq-cai";
   /// ```
   public func fromText(t : Text) : Principal = fromActor(actor (t));
 
@@ -146,7 +146,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert not Principal.isAnonymous(principal);
+  /// assert not principal.isAnonymous();
   /// ```
   public func isAnonymous(self : Principal) : Bool = Prim.blobOfPrincipal self == anonymousBlob;
 
@@ -158,7 +158,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert Principal.isCanister(principal);
+  /// assert principal.isCanister();
   /// ```
   public func isCanister(self : Principal) : Bool {
     let byteArray = toByteArray(self);
@@ -175,7 +175,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("6rgy7-3uukz-jrj2k-crt3v-u2wjm-dmn3t-p26d6-ndilt-3gusv-75ybk-jae");
-  /// assert Principal.isSelfAuthenticating(principal);
+  /// assert principal.isSelfAuthenticating();
   /// ```
   public func isSelfAuthenticating(self : Principal) : Bool {
     let byteArray = toByteArray(self);
@@ -191,7 +191,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert not Principal.isReserved(principal);
+  /// assert not principal.isReserved();
   /// ```
   public func isReserved(self : Principal) : Bool {
     let byteArray = toByteArray(self);
@@ -204,7 +204,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert not Principal.isController(principal);
+  /// assert not principal.isController();
   /// ```
   public func isController(self : Principal) : Bool = Prim.isController self;
 
@@ -213,7 +213,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert Principal.hash(principal) == 2_742_573_646;
+  /// assert principal.hash() == 2_742_573_646;
   /// ```
   public func hash(self : Principal) : Types.Hash = Blob.hash(Prim.blobOfPrincipal(self));
 
@@ -225,7 +225,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// assert Principal.compare(principal1, principal2) == #equal;
+  /// assert principal1.compare(principal2) == #equal;
   /// ```
   public func compare(self : Principal, other : Principal) : {
     #less;
@@ -248,7 +248,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// ignore Principal.equal(principal1, principal2);
+  /// ignore principal1.equal(principal2);
   /// assert principal1 == principal2;
   /// ```
   ///
@@ -261,7 +261,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.anonymous();
   /// let principal2 = Principal.fromBlob("\04");
-  /// assert Principal.equal(principal1, principal2);
+  /// assert principal1.equal(principal2);
   /// ```
   public func equal(self : Principal, other : Principal) : Bool {
     self == other
@@ -274,7 +274,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// ignore Principal.notEqual(principal1, principal2);
+  /// ignore principal1.notEqual(principal2);
   /// assert not (principal1 != principal2);
   /// ```
   ///
@@ -293,7 +293,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// ignore Principal.less(principal1, principal2);
+  /// ignore principal1.less(principal2);
   /// assert not (principal1 < principal2);
   /// ```
   ///
@@ -312,7 +312,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// ignore Principal.lessOrEqual(principal1, principal2);
+  /// ignore principal1.lessOrEqual(principal2);
   /// assert principal1 <= principal2;
   /// ```
   ///
@@ -331,7 +331,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// ignore Principal.greater(principal1, principal2);
+  /// ignore principal1.greater(principal2);
   /// assert not (principal1 > principal2);
   /// ```
   ///
@@ -350,7 +350,7 @@ module {
   /// ```motoko include=import
   /// let principal1 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// let principal2 = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// ignore Principal.greaterOrEqual(principal1, principal2);
+  /// ignore principal1.greaterOrEqual(principal2);
   /// assert principal1 >= principal2;
   /// ```
   ///
