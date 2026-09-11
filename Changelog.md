@@ -1,5 +1,5 @@
 ## Next
-* Enforce `M0236` (suggest contextual dot notation) in `validate:docs` doc snippets and bump the pinned `moc` toolchain to 1.9.0, which ships the check — doc examples now fail validation if a module-function call could be written with dot notation (e.g. `Map.get(map, k, Nat.compare)` → `map.get(k)`).
+* Enforce `M0236` (suggest contextual dot notation) in `validate:docs` doc snippets and bump the pinned `moc` toolchain to 1.16.0, which ships the check — doc examples now fail validation if a module-function call could be written with dot notation (e.g. `Map.get(map, k, Nat.compare)` → `map.get(k)`).
 * Modernize doc-comment code examples: convert module-function calls to dot notation, strip redundant implicit `compare`/`equal` arguments, and remove unnecessary inline lambda type annotations (#534).
 * Replace all uses of the deprecated `.vals()` array/blob iterator method with `.values()` across `src`, `test`, and `bench` (#530).
 
