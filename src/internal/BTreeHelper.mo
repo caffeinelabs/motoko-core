@@ -172,7 +172,7 @@ module {
     let rightRebalanceChildren : [var ?T] =
     // Case 1: if both left and right rebalanced halves were inserted into the left child can just go from the split index onwards
     if (rebalancedChildIndex + 1 <= splitIndex) {
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         children.size(),
         func(i) {
           let adjIndex = i + splitIndex;
@@ -183,7 +183,7 @@ module {
     // Case 2: if both left and right rebalanced halves will be inserted into the right child
     else if (rebalancedChildIndex > splitIndex) {
       var rebalanceOffset = 0;
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         children.size(),
         func(i) {
           let adjIndex = i + splitIndex + 1;
@@ -199,7 +199,7 @@ module {
     // Case 3: if left rebalanced half was in left child, and right rebalanced half will be in right child
     // rebalancedChildIndex == splitIndex
     else {
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         children.size(),
         func(i) {
           // first element is the right rebalanced half
@@ -226,7 +226,7 @@ module {
   /// Deletes an element from the the array, and then shifts all non-null elements coming after that deleted element by 1
   /// to the left. Returns the element that was deleted.
   public func deleteAndShift<T>(array : [var ?T], deleteIndex : Nat) : T {
-    var deleted : T = switch (array[deleteIndex]) {
+    let deleted : T = switch (array[deleteIndex]) {
       case null {
         Runtime.trap("UNREACHABLE_ERROR: file a bug report! In internal/BTreeHelper: deleteAndShift, an invalid/incorrect delete index was passed")
       };
@@ -279,7 +279,7 @@ module {
   ///
   /// This is used when borrowing an element from an inorder predecessor/successor through the parent node
   public func insertAtPostionAndDeleteAtPosition<T>(array : [var ?T], insertElement : ?T, insertIndex : Nat, deleteIndex : Nat) : T {
-    var deleted : T = switch (array[deleteIndex]) {
+    let deleted : T = switch (array[deleteIndex]) {
       case null {
         Runtime.trap("UNREACHABLE_ERROR: file a bug report! In internal/BTreeHelper: insertAtPositionAndDeleteAtPosition, and incorrect delete index was passed")
       }; // indicated an incorrect delete index was passed - trap
