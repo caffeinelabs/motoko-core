@@ -44,7 +44,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 123.toNat8() == (123 : Nat8);
+  /// assert Nat32.toNat8(123) == (123 : Nat8);
   /// ```
   public func toNat8(self : Nat32) : Nat8 {
     Prim.nat16ToNat8(Prim.nat32ToNat16(self))
@@ -108,7 +108,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 1234.toText() == ("1234" : Text);
+  /// assert Nat32.toText(1234) == ("1234" : Text);
   /// ```
   public func toText(self : Nat32) : Text {
     Nat.toText(toNat(self))

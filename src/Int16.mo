@@ -97,7 +97,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert -12_345.toInt64() == (-12_345 : Int64);
+  /// assert Int16.toInt64(-12_345) == (-12_345 : Int64);
   /// ```
   public func toInt64(self : Int16) : Int64 {
     Prim.int32ToInt64(Prim.int16ToInt32(self))
@@ -128,7 +128,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert -12345.toText() == "-12345";
+  /// assert Int16.toText(-12345) == "-12345";
   /// ```
   public func toText(self : Int16) : Text {
     Int.toText(toInt(self))

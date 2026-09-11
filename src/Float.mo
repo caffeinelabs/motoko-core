@@ -71,7 +71,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 0.0/0.0.isNaN();
+  /// assert Float.isNaN(0.0/0.0);
   /// ```
   public func isNaN(self : Float) : Bool {
     self != self
@@ -396,7 +396,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import no-validate
-  /// assert #exp 3.format(123.0) == "1.230e+02";
+  /// assert Float.format(#exp 3, 123.0) == "1.230e+02";
   /// ```
   public func format(self : Float, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text = switch fmt {
     case (#fix(prec)) { Prim.floatToFormattedText(self, prec, 0) };

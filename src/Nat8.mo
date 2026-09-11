@@ -72,7 +72,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 123.toNat32() == (123 : Nat32);
+  /// assert Nat8.toNat32(123) == (123 : Nat32);
   /// ```
   public func toNat32(self : Nat8) : Nat32 {
     Prim.nat16ToNat32(Prim.nat8ToNat16(self))
@@ -94,7 +94,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 123.toNat64() == (123 : Nat64);
+  /// assert Nat8.toNat64(123) == (123 : Nat64);
   /// ```
   public func toNat64(self : Nat8) : Nat64 {
     Prim.nat32ToNat64(Prim.nat16ToNat32(Prim.nat8ToNat16(self)))
@@ -114,7 +114,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 123.toText() == ("123" : Text);
+  /// assert Nat8.toText(123) == ("123" : Text);
   /// ```
   public func toText(self : Nat8) : Text {
     Nat.toText(toNat(self))

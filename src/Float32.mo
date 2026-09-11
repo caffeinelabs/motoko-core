@@ -83,7 +83,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 0.0/0.0.isNaN();
+  /// assert Float32.isNaN(0.0/0.0);
   /// ```
   public func isNaN(self : Float32) : Bool {
     self != self
@@ -443,7 +443,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import no-validate
-  /// assert 123.0 : #exp (3 : Nat8).format() == "1.230e+02";
+  /// assert Float32.format(123.0 : Float32, #exp (3 : Nat8)) == "1.230e+02";
   /// ```
   public func format(self : Float32, fmt : { #fix : Nat8; #exp : Nat8; #gen : Nat8; #exact }) : Text {
     let f = toFloat(self);
@@ -468,7 +468,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import no-validate
-  /// assert 1.5.toText() == "1.5";
+  /// assert Float32.toText(1.5) == "1.5";
   /// ```
   public func toText(self : Float32) : Text {
     Prim.floatToText(toFloat(self))
@@ -481,7 +481,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert -12.0.toInt64() == -12;
+  /// assert Float32.toInt64(-12.0) == -12;
   /// ```
   public func toInt64(self : Float32) : Int64 {
     Prim.floatToInt64(toFloat(self))
@@ -505,7 +505,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert 1.0e6.toInt() == +1_000_000;
+  /// assert Float32.toInt(1.0e6) == +1_000_000;
   /// ```
   public func toInt(self : Float32) : Int {
     Prim.floatToInt(toFloat(self))

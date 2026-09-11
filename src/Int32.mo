@@ -72,7 +72,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert -123.toInt8() == (-123 : Int8);
+  /// assert Int32.toInt8(-123) == (-123 : Int8);
   /// ```
   public func toInt8(self : Int32) : Int8 {
     Prim.int16ToInt8(Prim.int32ToInt16(self))
@@ -84,7 +84,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert -123.toInt16() == (-123 : Int16);
+  /// assert Int32.toInt16(-123) == (-123 : Int16);
   /// ```
   public func toInt16(self : Int32) : Int16 {
     Prim.int32ToInt16(self)
@@ -129,7 +129,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert -123456.toText() == "-123456";
+  /// assert Int32.toText(-123456) == "-123456";
   /// ```
   public func toText(self : Int32) : Text {
     Int.toText(toInt(self))
