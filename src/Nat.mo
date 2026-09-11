@@ -92,7 +92,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Nat.toInt(1234) == 1234;
+  /// assert 1234.toInt() == 1234;
   /// ```
   public func toInt(self : Nat) : Int {
     self : Int

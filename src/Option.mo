@@ -60,9 +60,9 @@ module {
   /// ```motoko
   /// import Option "mo:core/Option";
   /// var counter : Nat = 0;
-  /// Option.forEach(?5, func (x : Nat) { counter += x });
+  /// Option.forEach(?5, func (x) { counter += x });
   /// assert counter == 5;
-  /// Option.forEach(null, func (x : Nat) { counter += x });
+  /// Option.forEach(null, func (x) { counter += x });
   /// assert counter == 5;
   /// ```
   public func forEach<T>(self : ?T, f : T -> ()) = switch self {

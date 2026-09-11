@@ -1,4 +1,5 @@
 ## Next
+* Modernize doc-comment code examples: convert module-function calls to dot notation, strip redundant implicit `compare`/`equal` arguments, and remove unnecessary inline lambda type annotations (#534).
 * Replace all uses of the deprecated `.vals()` array/blob iterator method with `.values()` across `src`, `test`, and `bench` (#530).
 
 ## 2.6.1

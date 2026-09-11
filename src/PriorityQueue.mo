@@ -14,13 +14,13 @@
 ///
 /// persistent actor {
 ///   let pq = PriorityQueue.empty<Nat>();
-///   PriorityQueue.push(pq, Nat.compare, 5);
-///   PriorityQueue.push(pq, Nat.compare, 10);
-///   PriorityQueue.push(pq, Nat.compare, 3);
-///   assert PriorityQueue.pop(pq, Nat.compare) == ?10;
-///   assert PriorityQueue.pop(pq, Nat.compare) == ?5;
-///   assert PriorityQueue.pop(pq, Nat.compare) == ?3;
-///   assert PriorityQueue.pop(pq, Nat.compare) == null;
+///   pq.push(5);
+///   pq.push(10);
+///   pq.push(3);
+///   assert pq.pop() == ?10;
+///   assert pq.pop() == ?5;
+///   assert pq.pop() == ?3;
+///   assert pq.pop() == null;
 /// }
 /// ```
 ///
@@ -49,7 +49,7 @@ module {
   /// import PriorityQueue "mo:core/PriorityQueue";
   ///
   /// let pq = PriorityQueue.empty<Nat>();
-  /// assert PriorityQueue.isEmpty(pq);
+  /// assert pq.isEmpty();
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
@@ -64,7 +64,7 @@ module {
   /// import PriorityQueue "mo:core/PriorityQueue";
   ///
   /// let pq = PriorityQueue.singleton<Nat>(42);
-  /// assert PriorityQueue.peek(pq) == ?42;
+  /// assert pq.peek() == ?42;
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
@@ -85,9 +85,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let pq = PriorityQueue.empty<Nat>();
-  /// assert PriorityQueue.isEmpty(pq);
-  /// PriorityQueue.push(pq, Nat.compare, 5);
-  /// assert not PriorityQueue.isEmpty(pq);
+  /// assert pq.isEmpty();
+  /// pq.push(5);
+  /// assert not pq.isEmpty();
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
@@ -102,11 +102,11 @@ module {
   ///
   ///
   /// let pq = PriorityQueue.empty<Nat>();
-  /// PriorityQueue.push(pq, Nat.compare, 5);
-  /// PriorityQueue.push(pq, Nat.compare, 10);
-  /// assert not PriorityQueue.isEmpty(pq);
-  /// PriorityQueue.clear(pq);
-  /// assert PriorityQueue.isEmpty(pq);
+  /// pq.push(5);
+  /// pq.push(10);
+  /// assert not pq.isEmpty();
+  /// pq.clear();
+  /// assert pq.isEmpty();
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
@@ -122,9 +122,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let pq = PriorityQueue.empty<Nat>();
-  /// PriorityQueue.push(pq, Nat.compare, 5);
-  /// PriorityQueue.push(pq, Nat.compare, 10);
-  /// assert PriorityQueue.peek(pq) == ?10;
+  /// pq.push(5);
+  /// pq.push(10);
+  /// assert pq.peek() == ?10;
   /// ```
   ///
   /// Runtime: `O(log n)`. Space: `O(1)`.
@@ -158,7 +158,7 @@ module {
   /// import PriorityQueue "mo:core/PriorityQueue";
   ///
   /// let pq = PriorityQueue.singleton<Nat>(42);
-  /// assert PriorityQueue.peek(pq) == ?42;
+  /// assert pq.peek() == ?42;
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
@@ -175,9 +175,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let pq = PriorityQueue.empty<Nat>();
-  /// PriorityQueue.push(pq, Nat.compare, 5);
-  /// PriorityQueue.push(pq, Nat.compare, 10);
-  /// assert PriorityQueue.pop(pq, Nat.compare) == ?10;
+  /// pq.push(5);
+  /// pq.push(10);
+  /// assert pq.pop() == ?10;
   /// ```
   ///
   /// Runtime: `O(log n)`. Space: `O(1)`.
@@ -233,8 +233,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
-  /// assert PriorityQueue.size(pq) == 3;
-  /// assert PriorityQueue.peek(pq) == ?10;
+  /// assert pq.size() == 3;
+  /// assert pq.peek() == ?10;
   /// ```
   ///
   /// Runtime: `O(n * log(n))`.
@@ -256,9 +256,9 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let original = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
-  /// let copy = PriorityQueue.clone(original);
-  /// assert PriorityQueue.pop(copy, Nat.compare) == ?10;
-  /// assert PriorityQueue.size(original) == 3;
+  /// let copy = original.clone();
+  /// assert copy.pop() == ?10;
+  /// assert original.size() == 3;
   /// ```
   ///
   /// Runtime: `O(n)`. Space: `O(n)`.
@@ -282,7 +282,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
-  /// assert Iter.toArray(PriorityQueue.values(pq, Nat.compare)) == [10, 5, 3];
+  /// assert Iter.toArray(pq.values()) == [10, 5, 3];
   /// ```
   ///
   /// Runtime: `O(n)` to create the iterator, `O(log n)` per `next()` call.

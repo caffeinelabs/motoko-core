@@ -12,13 +12,13 @@
 ///
 /// persistent actor {
 ///   let orders = Queue.empty<Text>();
-///   Queue.pushBack(orders, "Motoko");
-///   Queue.pushBack(orders, "Mops");
-///   Queue.pushBack(orders, "IC");
-///   assert Queue.popFront(orders) == ?"Motoko";
-///   assert Queue.popFront(orders) == ?"Mops";
-///   assert Queue.popFront(orders) == ?"IC";
-///   assert Queue.popFront(orders) == null;
+///   orders.pushBack("Motoko");
+///   orders.pushBack("Mops");
+///   orders.pushBack("IC");
+///   assert orders.popFront() == ?"Motoko";
+///   assert orders.popFront() == ?"Mops";
+///   assert orders.popFront() == ?"IC";
+///   assert orders.popFront() == null;
 /// }
 /// ```
 ///
@@ -49,7 +49,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let pureQueue = Queue.toPure(queue);
+  ///   let pureQueue = queue.toPure();
   /// }
   /// ```
   ///
@@ -105,7 +105,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.empty<Text>();
-  ///   assert Queue.size(queue) == 0;
+  ///   assert queue.size() == 0;
   /// }
   /// ```
   ///
@@ -123,7 +123,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.singleton<Nat>(123);
-  ///   assert Queue.size(queue) == 1;
+  ///   assert queue.size() == 1;
   /// }
   /// ```
   ///
@@ -143,8 +143,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   Queue.clear(queue);
-  ///   assert Queue.isEmpty(queue);
+  ///   queue.clear();
+  ///   assert queue.isEmpty();
   /// }
   /// ```
   ///
@@ -164,10 +164,10 @@ module {
   ///
   /// persistent actor {
   ///   let original = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let copy = Queue.clone(original);
-  ///   Queue.clear(original);
-  ///   assert Queue.size(original) == 0;
-  ///   assert Queue.size(copy) == 3;
+  ///   let copy = original.clone();
+  ///   original.clear();
+  ///   assert original.size() == 0;
+  ///   assert copy.size() == 3;
   /// }
   /// ```
   ///
@@ -190,7 +190,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter(["A", "B", "C"].values());
-  ///   assert Queue.size(queue) == 3;
+  ///   assert queue.size() == 3;
   /// }
   /// ```
   ///
@@ -208,7 +208,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.empty<Nat>();
-  ///   assert Queue.isEmpty(queue);
+  ///   assert queue.isEmpty();
   /// }
   /// ```
   ///
@@ -227,7 +227,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.contains(queue, Nat.equal, 2);
+  ///   assert queue.contains(2);
   /// }
   /// ```
   ///
@@ -252,7 +252,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.peekFront(queue) == ?1;
+  ///   assert queue.peekFront() == ?1;
   /// }
   /// ```
   ///
@@ -274,7 +274,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.peekBack(queue) == ?3;
+  ///   assert queue.peekBack() == ?3;
   /// }
   /// ```
   ///
@@ -295,8 +295,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.empty<Nat>();
-  ///   Queue.pushFront(queue, 1);
-  ///   assert Queue.peekFront(queue) == ?1;
+  ///   queue.pushFront(1);
+  ///   assert queue.peekFront() == ?1;
   /// }
   /// ```
   ///
@@ -328,8 +328,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.empty<Nat>();
-  ///   Queue.pushBack(queue, 1);
-  ///   assert Queue.peekBack(queue) == ?1;
+  ///   queue.pushBack(1);
+  ///   assert queue.peekBack() == ?1;
   /// }
   /// ```
   ///
@@ -362,8 +362,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.popFront(queue) == ?1;
-  ///   assert Queue.size(queue) == 2;
+  ///   assert queue.popFront() == ?1;
+  ///   assert queue.size() == 2;
   /// }
   /// ```
   ///
@@ -393,8 +393,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.popBack(queue) == ?3;
-  ///   assert Queue.size(queue) == 2;
+  ///   assert queue.popBack() == ?3;
+  ///   assert queue.size() == 2;
   /// }
   /// ```
   ///
@@ -423,7 +423,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter(["A", "B", "C"].values());
-  ///   assert Queue.size(queue) == 3;
+  ///   assert queue.size() == 3;
   /// }
   /// ```
   ///
@@ -449,7 +449,7 @@ module {
   ///
   ///   let queue = iter.toQueue();
   ///
-  ///   assert Queue.size(queue) == 3;
+  ///   assert queue.size() == 3;
   /// }
   /// ```
   ///
@@ -470,8 +470,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromArray(["A", "B", "C"]);
-  ///   assert Queue.size(queue) == 3;
-  ///   assert Queue.peekFront(queue) == ?"A";
+  ///   assert queue.size() == 3;
+  ///   assert queue.peekFront() == ?"A";
   /// }
   /// ```
   ///
@@ -500,7 +500,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromArray(["A", "B", "C"]);
-  ///   let array = Queue.toArray(queue);
+  ///   let array = queue.toArray();
   ///   assert array == ["A", "B", "C"];
   /// }
   /// ```
@@ -533,7 +533,7 @@ module {
   /// import Queue "mo:core/Queue";
   /// persistent actor {
   ///   let queue = Queue.fromIter(["A", "B", "C"].values());
-  ///   transient let iter = Queue.values(queue);
+  ///   transient let iter = queue.values();
   ///   assert iter.next() == ?"A";
   ///   assert iter.next() == ?"B";
   ///   assert iter.next() == ?"C";
@@ -571,7 +571,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([2, 4, 6].values());
-  ///   assert Queue.all<Nat>(queue, func(x) { x % 2 == 0 });
+  ///   assert queue.all<Nat>(func(x) { x % 2 == 0 });
   /// }
   /// ```
   ///
@@ -594,7 +594,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.any<Nat>(queue, func (x) { x > 2 });
+  ///   assert queue.any<Nat>(func (x) { x > 2 });
   /// }
   /// ```
   ///
@@ -619,7 +619,7 @@ module {
   /// persistent actor {
   ///   var sum = 0;
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   Queue.forEach<Nat>(queue, func(x) { sum += x });
+  ///   queue.forEach<Nat>(func(x) { sum += x });
   ///   assert sum == 6;
   /// }
   /// ```
@@ -641,8 +641,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   let doubled = Queue.map<Nat, Nat>(queue, func(x) { x * 2 });
-  ///   assert Queue.peekFront(doubled) == ?2;
+  ///   let doubled = queue.map<Nat, Nat>(func(x) { x * 2 });
+  ///   assert doubled.peekFront() == ?2;
   /// }
   /// ```
   ///
@@ -665,8 +665,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
-  ///   let evens = Queue.filter(queue, func(x) { x % 2 == 0 });
-  ///   assert Queue.size(evens) == 2;
+  ///   let evens = queue.filter(func(x) { x % 2 == 0 });
+  ///   assert evens.size() == 2;
   /// }
   /// ```
   ///
@@ -698,7 +698,7 @@ module {
   ///       if (x % 2 == 0) { ?(x * 2) } else  { null }
   ///     }
   ///   );
-  ///   assert Queue.size(evenDoubled) == 2;
+  ///   assert evenDoubled.size() == 2;
   /// }
   /// ```
   ///
@@ -726,7 +726,7 @@ module {
   /// persistent actor {
   ///   let queue1 = Queue.fromIter<Nat>([1, 2, 3].values());
   ///   let queue2 = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.equal(queue1, queue2, Nat.equal);
+  ///   assert queue1.equal(queue2, Nat.equal);
   /// }
   /// ```
   ///
@@ -765,7 +765,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.toText(queue, Nat.toText) == "Queue[1, 2, 3]";
+  ///   assert queue.toText(Nat.toText) == "Queue[1, 2, 3]";
   /// }
   /// ```
   ///
@@ -794,7 +794,7 @@ module {
   /// persistent actor {
   ///   let queue1 = Queue.fromIter<Nat>([1, 2].values());
   ///   let queue2 = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert Queue.compare(queue1, queue2, Nat.compare) == #less;
+  ///   assert queue1.compare(queue2, Nat.compare) == #less;
   /// }
   /// ```
   ///

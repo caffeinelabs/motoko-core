@@ -1,13 +1,13 @@
 # `core`
 
 * 📦 [Mops Package](https://mops.one/core)
-* ✨ [Documentation](https://internetcomputer.org/docs/motoko/core)
+* ✨ [Documentation](https://mops.one/core/docs)
 
 ---
 
-The `core` package is the official standard library for the [Motoko](https://github.com/dfinity/motoko) programming language. 
+The `core` package is the official standard library for the [Motoko](https://github.com/caffeinelabs/motoko) programming language. 
 
-This replaces the original `base` library, which is available [here](https://github.com/dfinity/motoko-base). 
+This replaces the original `base` library, which is available [here](https://github.com/caffeinelabs/motoko-base). 
 
 An official [migration guide](https://internetcomputer.org/docs/motoko/base-core-migration) is available for upgrading projects from `base` to `core`.
 
@@ -26,19 +26,19 @@ core = "2.6.1"
 
 ## Contributing
 
-This repository is currently closed to external contributions. Please feel free to report a bug, ask a question, or request a feature on the project's [GitHub issues](https://github.com/dfinity/motoko-core/issues) page.
+This repository is currently closed to external contributions. Please feel free to report a bug, ask a question, or request a feature on the project's [GitHub issues](https://github.com/caffeinelabs/motoko-core/issues) page.
 
-Interface design and code style guidelines for the repository can be found [here](https://github.com/dfinity/motoko-core/blob/main/Styleguide.md).
+Interface design and code style guidelines for the repository can be found [here](https://github.com/caffeinelabs/motoko-core/blob/main/Styleguide.md).
 
 ### Dev Environment
 
-> Make sure that [Node.js](https://nodejs.org/en/) `>= 22.x` is installed on your system.
+> Make sure that [Node.js](https://nodejs.org/en/) `>= 24.x` is installed on your system.
 
 Run the following commands to configure your local development branch:
 
 ```sh
 # First-time setup
-git clone https://github.com/dfinity/motoko-core
+git clone https://github.com/caffeinelabs/motoko-core
 cd motoko-core
 npm ci
 ```
@@ -52,7 +52,7 @@ npm run validate:api # Update the public API lockfile
 npm run validate:docs Array # Run code snippets in `src/Array.mo`
 ```
 
-All available scripts can be found in the project's [`package.json`](https://github.com/dfinity/motoko-core/blob/main/package.json) file.
+All available scripts can be found in the project's [`package.json`](https://github.com/caffeinelabs/motoko-core/blob/main/package.json) file.
 
 ### Major Contributors
 

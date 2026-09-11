@@ -214,7 +214,7 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat32 = 123;
-  ///     Region.storeNat32(region, offset, value);
+  ///     region.storeNat32(offset, value);
   ///     assert Region.loadNat32(region, offset) == 123;
   ///   }
   /// }
@@ -231,7 +231,7 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat32 = 123;
-  ///     Region.storeNat32(region, offset, value);
+  ///     region.storeNat32(offset, value);
   ///     assert Region.loadNat32(region, offset) == 123;
   ///   }
   /// }

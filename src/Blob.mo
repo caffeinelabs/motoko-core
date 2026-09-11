@@ -53,8 +53,8 @@ module {
   /// ```motoko include=import
   /// let blob1 = "" : Blob;
   /// let blob2 = "\FF\00" : Blob;
-  /// assert Blob.isEmpty(blob1);
-  /// assert not Blob.isEmpty(blob2);
+  /// assert blob1.isEmpty();
+  /// assert not blob2.isEmpty();
   /// ```
   public func isEmpty(self : Blob) : Bool = self == "";
 
@@ -64,7 +64,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let blob = "\FF\00\AA" : Blob;
-  /// assert Blob.size(blob) == 3;
+  /// assert blob.size() == 3;
   /// assert blob.size() == 3;
   /// ```
   public func size(self : Blob) : Nat = self.size();
@@ -118,7 +118,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\00\00\00" : Blob;
   /// let blob2 = "\00\FF\00" : Blob;
-  /// let result = Blob.compare(blob1, blob2);
+  /// let result = blob1.compare(blob2);
   /// assert result == #less;
   /// ```
   public func compare(self : Blob, other : Blob) : Order.Order {
@@ -133,7 +133,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\00\FF\00" : Blob;
   /// let blob2 = "\00\FF\00" : Blob;
-  /// assert Blob.equal(blob1, blob2);
+  /// assert blob1.equal(blob2);
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -157,7 +157,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\00\AA\AA" : Blob;
   /// let blob2 = "\00\FF\00" : Blob;
-  /// assert Blob.notEqual(blob1, blob2);
+  /// assert blob1.notEqual(blob2);
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -172,7 +172,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\00\AA\AA" : Blob;
   /// let blob2 = "\00\FF\00" : Blob;
-  /// assert Blob.less(blob1, blob2);
+  /// assert blob1.less(blob2);
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -187,7 +187,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\00\AA\AA" : Blob;
   /// let blob2 = "\00\FF\00" : Blob;
-  /// assert Blob.lessOrEqual(blob1, blob2);
+  /// assert blob1.lessOrEqual(blob2);
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -202,7 +202,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\BB\AA\AA" : Blob;
   /// let blob2 = "\00\00\00" : Blob;
-  /// assert Blob.greater(blob1, blob2);
+  /// assert blob1.greater(blob2);
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -217,7 +217,7 @@ module {
   /// ```motoko include=import
   /// let blob1 = "\BB\AA\AA" : Blob;
   /// let blob2 = "\00\00\00" : Blob;
-  /// assert Blob.greaterOrEqual(blob1, blob2);
+  /// assert blob1.greaterOrEqual(blob2);
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition

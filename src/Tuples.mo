@@ -33,7 +33,7 @@ module {
     /// import { Tuple2 } "mo:core/Tuples";
     ///
     /// import Nat "mo:core/Nat";
-    /// assert Tuple2.toText((1, "hello"), Nat.toText, func (x: Text): Text = x) == "(1, hello)";
+    /// assert Tuple2.toText((1, "hello"), Nat.toText, func (x): Text = x) == "(1, hello)";
     /// ```
     public func toText<A, B>(
       self : (A, B),
@@ -135,7 +135,7 @@ module {
     /// import { Tuple3 } "mo:core/Tuples";
     ///
     /// import Nat "mo:core/Nat";
-    /// assert Tuple3.toText((1, "hello", 2), Nat.toText, func (x: Text): Text = x, Nat.toText) == "(1, hello, 2)";
+    /// assert Tuple3.toText((1, "hello", 2), Nat.toText, func (x): Text = x, Nat.toText) == "(1, hello, 2)";
     /// ```
     public func toText<A, B, C>(
       self : (A, B, C),
@@ -247,7 +247,7 @@ module {
     /// import { Tuple4 } "mo:core/Tuples";
     ///
     /// import Nat "mo:core/Nat";
-    /// assert Tuple4.toText((1, "hello", 2, 3), Nat.toText, func (x: Text): Text = x, Nat.toText, Nat.toText) == "(1, hello, 2, 3)";
+    /// assert Tuple4.toText((1, "hello", 2, 3), Nat.toText, func (x): Text = x, Nat.toText, Nat.toText) == "(1, hello, 2, 3)";
     /// ```
     public func toText<A, B, C, D>(
       self : (A, B, C, D),
