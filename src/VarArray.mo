@@ -47,7 +47,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func repeat<T>(item : T, size : Nat) : [var T] = Prim.Array_init<T>(size, item);
+  public func repeat<T>(item : T, size : Nat) : [var T] = Prim.Array_init(size, item);
 
   /// Duplicates `array`, returning a shallow copy of the original.
   ///
@@ -64,7 +64,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func clone<T>(self : [var T]) : [var T] = Prim.Array_tabulateVar<T>(self.size(), func i = self[i]);
+  public func clone<T>(self : [var T]) : [var T] = Prim.Array_tabulateVar(self.size(), func i = self[i]);
 
   /// Creates a mutable array of size `size`. Each element at index i
   /// is created by applying `generator` to i.
@@ -177,7 +177,7 @@ module {
   public func concat<T>(self : [var T], other : [var T]) : [var T] {
     let size1 = self.size();
     let size2 = other.size();
-    tabulate<T>(
+    tabulate(
       size1 + size2,
       func i {
         if (i < size1) {
@@ -366,7 +366,7 @@ module {
   /// Space: O(1)
   public func reverse<T>(self : [var T]) : [var T] {
     let size = self.size();
-    tabulate<T>(size, func i = self[size - i - 1])
+    tabulate(size, func i = self[size - i - 1])
   };
 
   /// Reverses the order of elements in a mutable array in place.
@@ -440,7 +440,7 @@ module {
   ///
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
   public func map<T, R>(self : [var T], f : T -> R) : [var R] {
-    tabulate<R>(
+    tabulate(
       self.size(),
       func(index) {
         f(self[index])
@@ -502,7 +502,7 @@ module {
       }
     );
     var nextKeep = 0;
-    tabulate<T>(
+    tabulate(
       count,
       func _ {
         while (not keep[nextKeep]) {
@@ -552,7 +552,7 @@ module {
     );
 
     var nextSome = 0;
-    tabulate<R>(
+    tabulate(
       count,
       func _ {
         while (Option.isNull(options[nextSome])) {
@@ -623,7 +623,7 @@ module {
       case null {
         // unpack the option
         #ok(
-          map<?R, R>(
+          map(
             results,
             func element {
               switch element {
@@ -661,7 +661,7 @@ module {
   ///
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
   public func mapEntries<T, R>(self : [var T], f : (T, Nat) -> R) : [var R] {
-    tabulate<R>(self.size(), func i = f(self[i], i))
+    tabulate(self.size(), func i = f(self[i], i))
   };
 
   /// Creates a new mutable array by applying `k` to each element in `array`,
@@ -693,7 +693,7 @@ module {
     // but it would require an extra pass (to compute `flatSize`)
     var outer = 0;
     var inner = 0;
-    tabulate<R>(
+    tabulate(
       flatSize,
       func _ {
         while (inner == arrays[outer].size()) {
@@ -783,7 +783,7 @@ module {
   /// Space: O(number of elements in array)
   public func join<T>(self : Types.Iter<[var T]>) : [var T] {
     // ignore-self-type-check
-    flatten<T>(fromIter(self))
+    flatten(fromIter(self))
   };
 
   /// Combines a mutable array of mutable arrays into a single mutable array. Retains the original
@@ -810,7 +810,7 @@ module {
 
     var outer = 0;
     var inner = 0;
-    tabulate<T>(
+    tabulate(
       flatSize,
       func _ {
         while (inner == self[outer].size()) {
@@ -850,7 +850,7 @@ module {
   ///
   /// Space: O(1)
   /// @deprecated Use `Array.toVarArray` instead.
-  public func fromArray<T>(array : [T]) : [var T] = Prim.Array_tabulateVar<T>(array.size(), func i = array[i]);
+  public func fromArray<T>(array : [T]) : [var T] = Prim.Array_tabulateVar(array.size(), func i = array[i]);
 
   /// Converts an iterator to a mutable array.
   /// @deprecated Use `Iter.toVarArray` instead.
@@ -1020,7 +1020,7 @@ module {
   /// Runtime: O(array.size())
   ///
   /// Space: O(1)
-  public func indexOf<T>(self : [var T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = nextIndexOf<T>(self, equal, element, 0);
+  public func indexOf<T>(self : [var T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = nextIndexOf(self, equal, element, 0);
 
   /// Returns the index of the next occurence of `element` in the `array` starting from the `from` index (inclusive).
   ///
@@ -1066,7 +1066,7 @@ module {
   /// Runtime: O(array.size())
   ///
   /// Space: O(1)
-  public func lastIndexOf<T>(self : [var T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf<T>(self, equal, element, self.size());
+  public func lastIndexOf<T>(self : [var T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf(self, equal, element, self.size());
 
   /// Returns the index of the previous occurence of `element` in the `array` starting from the `from` index (exclusive).
   ///
@@ -1208,7 +1208,7 @@ module {
     if (start >= end) {
       return []
     };
-    Prim.Array_tabulate<T>(end - start, func i = self[start + i])
+    Prim.Array_tabulate(end - start, func i = self[start + i])
   };
 
   /// Returns a new mutable array containing elements from `array` starting at index `fromInclusive` up to (but not including) index `toExclusive`.
@@ -1250,7 +1250,7 @@ module {
     if (start >= end) {
       return [var]
     };
-    Prim.Array_tabulateVar<T>(end - start, func i = self[start + i])
+    Prim.Array_tabulateVar(end - start, func i = self[start + i])
   };
 
   /// Transforms a mutable array into an immutable array.
@@ -1265,7 +1265,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(1)
-  public func toArray<T>(self : [var T]) : [T] = Prim.Array_tabulate<T>(self.size(), func i = self[i]);
+  public func toArray<T>(self : [var T]) : [T] = Prim.Array_tabulate(self.size(), func i = self[i]);
 
   /// Creates a `Blob` from a mutable array of bytes (`[var Nat8]`), by copying each element.
   ///
