@@ -62,7 +62,7 @@ Concrete checks:
 ## Conventions and CI gotchas
 
 - The public API is locked in `validation/api/api.lock.json`. CI fails if `npm run validate:api` produces a diff; regenerate with `npm run validate` and commit the result when the public API changes intentionally.
-- CI validates `Changelog.md` on every PR (advisory, `continue-on-error`), and blocks the release tag if the latest changelog entry does not match the `mops.toml` version (`release-tag.yml`). There is no per-PR cross-check that `Changelog.md` was touched when `src/*.mo` changes — the detection machinery was removed to avoid silent CI gaps.
+- CI validates `Changelog.md` on every PR (advisory, `continue-on-error`), and blocks the release tag if the latest changelog entry does not match the `mops.toml` version (`release-tag.yml`).
 - `npm run validate:version` cross-checks the version; the `version` in `mops.toml` is the source of truth (`package.json` version is `0.0.0`).
 - See `Releasing.md` for the release steps (version bump, changelog, tag, publish).
 - Every public function should carry a doc comment with a runnable example, since `validate:docs` executes them (see `Styleguide.md`).
