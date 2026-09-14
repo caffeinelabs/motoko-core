@@ -1109,12 +1109,12 @@ run(
       test(
         "toArray-example",
         Text.toArray("Café"),
-        M.equals(T.array<Char>(T.charTestable, ['C', 'a', 'f', 'é']))
+        M.equals(T.array(T.charTestable, ['C', 'a', 'f', 'é']))
       ),
       test(
         "toArray-example",
         VarArray.toArray(Text.toVarArray("Café")),
-        M.equals(T.array<Char>(T.charTestable, ['C', 'a', 'f', 'é']))
+        M.equals(T.array(T.charTestable, ['C', 'a', 'f', 'é']))
       ),
       test(
         "fromArray-example",

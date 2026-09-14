@@ -179,7 +179,7 @@ module {
   /// Note: The returned set shares with the `set` most of the tree nodes.
   /// Garbage collecting one of the sets (e.g. after an assignment `m := Set.add(m, c, e)`)
   /// causes collecting `O(log(n))` nodes.
-  public func insert<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), elem : T) : (Set<T>, Bool) = Internal.insert<T>(self, compare, elem);
+  public func insert<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), elem : T) : (Set<T>, Bool) = Internal.insert(self, compare, elem);
 
   /// Given `set` ordered by `compare` return the set with `element` removed.
   /// Return the set unchanged if the element was absent.
@@ -485,7 +485,7 @@ module {
   /// where `n` denotes the number of elements stored in the set.
   ///
   public func forEach<T>(self : Set<T>, operation : T -> ()) {
-    ignore foldLeft<T, Null>(self, null, func(acc, e) : Null { operation(e); null })
+    ignore foldLeft(self, null, func(acc, e) : Null { operation(e); null })
   };
 
   /// Filter elements in a new set.

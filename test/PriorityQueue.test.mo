@@ -38,7 +38,7 @@ suite(
         PriorityQueue.push(priorityQueue, Nat.compare, 42);
         expect.nat(PriorityQueue.size(priorityQueue)).equal(1);
         let top = PriorityQueue.peek(priorityQueue);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(?42)
+        expect.option(top, Nat.toText, Nat.equal).equal(?42)
       }
     );
 
@@ -48,7 +48,7 @@ suite(
         let priorityQueue = PriorityQueue.empty<Nat>();
         let top = PriorityQueue.peek(priorityQueue);
         expect.bool(PriorityQueue.isEmpty(priorityQueue)).equal(true);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(null)
+        expect.option(top, Nat.toText, Nat.equal).equal(null)
       }
     );
 
@@ -58,7 +58,7 @@ suite(
         let priorityQueue = PriorityQueue.empty<Nat>();
         let top = PriorityQueue.pop(priorityQueue, Nat.compare);
         expect.bool(PriorityQueue.isEmpty(priorityQueue)).equal(true);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(null)
+        expect.option(top, Nat.toText, Nat.equal).equal(null)
       }
     );
 
@@ -97,7 +97,7 @@ suite(
         PriorityQueue.push(priorityQueue, Nat.compare, 41);
         expect.nat(PriorityQueue.size(priorityQueue)).equal(2);
         let top = PriorityQueue.peek(priorityQueue);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(?42)
+        expect.option(top, Nat.toText, Nat.equal).equal(?42)
       }
     );
 
@@ -108,7 +108,7 @@ suite(
         PriorityQueue.push(priorityQueue, Nat.compare, 42);
         expect.nat(PriorityQueue.size(priorityQueue)).equal(2);
         let top = PriorityQueue.peek(priorityQueue);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(?42)
+        expect.option(top, Nat.toText, Nat.equal).equal(?42)
       }
     );
 
@@ -119,7 +119,7 @@ suite(
         PriorityQueue.push(priorityQueue, Nat.compare, 43);
         expect.nat(PriorityQueue.size(priorityQueue)).equal(2);
         let top = PriorityQueue.peek(priorityQueue);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(?43)
+        expect.option(top, Nat.toText, Nat.equal).equal(?43)
       }
     );
 
@@ -129,7 +129,7 @@ suite(
         let priorityQueue = PriorityQueue.singleton<Nat>(42);
         let top = PriorityQueue.peek(priorityQueue);
         expect.nat(PriorityQueue.size(priorityQueue)).equal(1);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(?42)
+        expect.option(top, Nat.toText, Nat.equal).equal(?42)
       }
     );
 
@@ -139,7 +139,7 @@ suite(
         let priorityQueue = PriorityQueue.singleton<Nat>(42);
         let top = PriorityQueue.pop(priorityQueue, Nat.compare);
         expect.bool(PriorityQueue.isEmpty(priorityQueue)).equal(true);
-        expect.option<Nat>(top, Nat.toText, Nat.equal).equal(?42)
+        expect.option(top, Nat.toText, Nat.equal).equal(?42)
       }
     );
 
@@ -166,7 +166,7 @@ func testPushAndPeekThenPopArray<T>(
     PriorityQueue.push(priorityQueue, compare, v);
     expect.nat(PriorityQueue.size(priorityQueue)).equal(i + 1);
     let top = PriorityQueue.peek(priorityQueue);
-    expect.option<T>(top, toText, equal).equal(
+    expect.option(top, toText, equal).equal(
       values.values()
       |> Iter.take(_, i + 1) |> Iter.max(_, compare)
     )
@@ -178,7 +178,7 @@ func testPushAndPeekThenPopArray<T>(
     expect.nat(PriorityQueue.size(priorityQueue)).equal(values.size() - i - 1)
   };
 
-  expect.array<T>(
+  expect.array(
     VarArray.map(
       extractedValues,
       func(optTop) {
@@ -195,8 +195,8 @@ func testPushAndPeekThenPopArray<T>(
   )
 };
 
-func testPushAndPeekThenPopArrayNat(values : [Nat]) = testPushAndPeekThenPopArray<Nat>(values, Nat.compare, Nat.equal, Nat.toText);
-func testPushAndPeekThenPopArrayText(values : [Text]) = testPushAndPeekThenPopArray<Text>(values, Text.compare, Text.equal, func x = x);
+func testPushAndPeekThenPopArrayNat(values : [Nat]) = testPushAndPeekThenPopArray(values, Nat.compare, Nat.equal, Nat.toText);
+func testPushAndPeekThenPopArrayText(values : [Text]) = testPushAndPeekThenPopArray(values, Text.compare, Text.equal, func x = x);
 
 suite(
   "push & peek, then pop",
@@ -249,11 +249,11 @@ suite(
           }
         );
 
-        expect.array<Nat>(
+        expect.array(
           Array.sort(extractedTags, Nat.compare),
           Nat.toText,
           Nat.equal
-        ).equal(Array.tabulate<Nat>(values.size(), func tag = tag))
+        ).equal(Array.tabulate(values.size(), func tag = tag))
       }
     )
   }
@@ -316,7 +316,7 @@ func runOpsTwoQueues<T>(
         let top = PriorityQueue.pop(priorityQueue, compare);
         let expectedTop = PriorityQueueSet.pop(priorityQueueSet, compare);
         // Verify that the popped values are equal.
-        expect.option<T>(top, toText, equal).equal(expectedTop)
+        expect.option(top, toText, equal).equal(expectedTop)
       };
       case (#Clear) {
         PriorityQueue.clear(priorityQueue);
@@ -326,7 +326,7 @@ func runOpsTwoQueues<T>(
     // After every operation, validate that query methods yield the same results.
     let top = PriorityQueue.peek(priorityQueue);
     let expectedTop = PriorityQueueSet.peek(priorityQueueSet);
-    expect.option<T>(top, toText, equal).equal(expectedTop);
+    expect.option(top, toText, equal).equal(expectedTop);
     expect.nat(PriorityQueue.size(priorityQueue)).equal(PriorityQueueSet.size(priorityQueueSet));
     expect.bool(PriorityQueue.isEmpty(priorityQueue)).equal(PriorityQueueSet.isEmpty(priorityQueueSet))
   }
@@ -350,7 +350,7 @@ func genOpsNatRandom(
   wClear : Nat
 ) : [PriorityQueueUpdateOperation<Nat>] {
   let rng = Random.seed(randomSeed);
-  Array.tabulate<PriorityQueueUpdateOperation<Nat>>(
+  Array.tabulate(
     operationsCount,
     func(_) {
       let aux = rng.natRange(0, wPush + wPop + wClear);
@@ -418,7 +418,7 @@ suite(
             ).values()
           ) {
             //Debug.print("ops = " # opsToText(ops, Nat.toText));
-            runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+            runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
           }
         }
       )
@@ -441,7 +441,7 @@ suite(
           /* wClear = */ 0
         );
         //Debug.print("ops = " # opsToText(ops, Nat.toText));
-        runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+        runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
     test(
@@ -456,7 +456,7 @@ suite(
           /* wClear = */ 1
         );
         //Debug.print("ops = " # opsToText(ops, Nat.toText));
-        runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+        runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
     test(
@@ -471,7 +471,7 @@ suite(
           /* wClear = */ 0
         );
         //Debug.print("ops = " # opsToText(ops, Nat.toText));
-        runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+        runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
     test(
@@ -486,7 +486,7 @@ suite(
           /* wClear = */ 1
         );
         //Debug.print("ops = " # opsToText(ops, Nat.toText));
-        runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+        runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
     test(
@@ -501,7 +501,7 @@ suite(
           /* wClear = */ 0
         );
         //Debug.print("ops = " # opsToText(ops, Nat.toText));
-        runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+        runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
     test(
@@ -516,7 +516,7 @@ suite(
           /* wClear = */ 0
         );
         //Debug.print("ops = " # opsToText(ops, Nat.toText));
-        runOpsTwoQueues<Nat>(ops, Nat.compare, Nat.equal, Nat.toText)
+        runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     )
   }
@@ -539,7 +539,7 @@ suite(
       func() {
         let pq = PriorityQueue.fromIter([42].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(1);
-        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?42)
+        expect.option(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?42)
       }
     );
 
@@ -548,7 +548,7 @@ suite(
       func() {
         let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(3);
-        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
+        expect.option(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
       }
     );
 
@@ -557,15 +557,15 @@ suite(
       func() {
         let pq = PriorityQueue.fromIter([3, 1, 4, 1, 5, 9, 2, 6].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(8);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?9);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?6);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?4);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?3);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?2);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?1);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?1);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(null)
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?9);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?6);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?4);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?3);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?2);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?1);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?1);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(null)
       }
     );
 
@@ -574,10 +574,10 @@ suite(
       func() {
         let pq = PriorityQueue.fromIter([5, 5, 5].values(), Nat.compare);
         expect.nat(PriorityQueue.size(pq)).equal(3);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
-        expect.option<Nat>(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(null)
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(?5);
+        expect.option(PriorityQueue.pop(pq, Nat.compare), Nat.toText, Nat.equal).equal(null)
       }
     )
   }
@@ -601,7 +601,7 @@ suite(
         let original = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         let copy = PriorityQueue.clone(original);
         expect.nat(PriorityQueue.size(copy)).equal(3);
-        expect.option<Nat>(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
+        expect.option(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
       }
     );
 
@@ -614,7 +614,7 @@ suite(
         ignore PriorityQueue.pop(copy, Nat.compare);
         expect.nat(PriorityQueue.size(copy)).equal(1);
         expect.nat(PriorityQueue.size(original)).equal(3);
-        expect.option<Nat>(PriorityQueue.peek(original), Nat.toText, Nat.equal).equal(?10)
+        expect.option(PriorityQueue.peek(original), Nat.toText, Nat.equal).equal(?10)
       }
     );
 
@@ -626,7 +626,7 @@ suite(
         PriorityQueue.clear(original);
         expect.bool(PriorityQueue.isEmpty(original)).equal(true);
         expect.nat(PriorityQueue.size(copy)).equal(3);
-        expect.option<Nat>(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
+        expect.option(PriorityQueue.peek(copy), Nat.toText, Nat.equal).equal(?10)
       }
     )
   }
@@ -640,7 +640,7 @@ suite(
       func() {
         let pq = PriorityQueue.empty<Nat>();
         let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
-        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([])
+        expect.array(vals, Nat.toText, Nat.equal).equal([])
       }
     );
 
@@ -649,7 +649,7 @@ suite(
       func() {
         let pq = PriorityQueue.singleton<Nat>(42);
         let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
-        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([42])
+        expect.array(vals, Nat.toText, Nat.equal).equal([42])
       }
     );
 
@@ -658,7 +658,7 @@ suite(
       func() {
         let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
-        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([10, 5, 3])
+        expect.array(vals, Nat.toText, Nat.equal).equal([10, 5, 3])
       }
     );
 
@@ -668,7 +668,7 @@ suite(
         let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
         ignore Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         expect.nat(PriorityQueue.size(pq)).equal(3);
-        expect.option<Nat>(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
+        expect.option(PriorityQueue.peek(pq), Nat.toText, Nat.equal).equal(?10)
       }
     );
 
@@ -677,7 +677,7 @@ suite(
       func() {
         let pq = PriorityQueue.fromIter([3, 1, 4, 1, 5].values(), Nat.compare);
         let vals = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
-        expect.array<Nat>(vals, Nat.toText, Nat.equal).equal([5, 4, 3, 1, 1])
+        expect.array(vals, Nat.toText, Nat.equal).equal([5, 4, 3, 1, 1])
       }
     );
 
@@ -687,8 +687,8 @@ suite(
         let pq = PriorityQueue.fromIter([2, 7, 1].values(), Nat.compare);
         let vals1 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
         let vals2 = Iter.toArray(PriorityQueue.values(pq, Nat.compare));
-        expect.array<Nat>(vals1, Nat.toText, Nat.equal).equal([7, 2, 1]);
-        expect.array<Nat>(vals2, Nat.toText, Nat.equal).equal([7, 2, 1])
+        expect.array(vals1, Nat.toText, Nat.equal).equal([7, 2, 1]);
+        expect.array(vals2, Nat.toText, Nat.equal).equal([7, 2, 1])
       }
     )
   }

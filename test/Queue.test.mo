@@ -372,7 +372,7 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         var sum = 0;
-        Queue.forEach<Nat>(queue, func n { sum += n });
+        Queue.forEach(queue, func n { sum += n });
         assert sum == 6
       }
     )
@@ -386,7 +386,7 @@ suite(
       "all true",
       func() {
         let queue = Queue.fromIter<Nat>([2, 4, 6].values());
-        assert Queue.all<Nat>(queue, func n = n % 2 == 0)
+        assert Queue.all(queue, func n = n % 2 == 0)
       }
     );
 
@@ -394,7 +394,7 @@ suite(
       "all false",
       func() {
         let queue = Queue.fromIter<Nat>([2, 3, 4].values());
-        assert not Queue.all<Nat>(queue, func n = n % 2 == 0)
+        assert not Queue.all(queue, func n = n % 2 == 0)
       }
     );
 
@@ -402,7 +402,7 @@ suite(
       "any true",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-        assert Queue.any<Nat>(queue, func n = n % 2 == 0)
+        assert Queue.any(queue, func n = n % 2 == 0)
       }
     );
 
@@ -410,7 +410,7 @@ suite(
       "any false",
       func() {
         let queue = Queue.fromIter<Nat>([1, 3, 5].values());
-        assert not Queue.any<Nat>(queue, func n = n % 2 == 0)
+        assert not Queue.any(queue, func n = n % 2 == 0)
       }
     )
   }

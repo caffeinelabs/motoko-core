@@ -510,7 +510,7 @@ module {
   /// `n` denotes the number of elements stored in the queue.
   public func toArray<T>(self : Queue<T>) : [T] {
     let iter = values(self);
-    Array.tabulate<T>(
+    Array.tabulate(
       self.size,
       func(i) {
         switch (iter.next()) {
