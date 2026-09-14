@@ -9,11 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  check-motoko-changes:
-    uses: ./.github/workflows/check-motoko-changes.yml
-
   validate-changelog:
-    needs: check-motoko-changes
     if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'
     continue-on-error: true
     runs-on: ubuntu-24.04
@@ -23,14 +19,6 @@ jobs:
         with:
           setup-mops: false
       - run: npm run validate:changelog
-      - name: Verify Changelog updated when Motoko source files changed
-        if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true'
-        run: |
-          if [ "${{ needs.check-motoko-changes.outputs.has_changelog_changes }}" != "true" ]; then
-            echo "Error: Motoko files were modified but Changelog.md was not updated"
-            exit 1
-          fi
-          echo "Changelog.md was updated"
 
   validate-version:
     runs-on: ubuntu-24.04
@@ -67,31 +55,11 @@ jobs:
           fi
 
   validate-docs:
-    needs: check-motoko-changes
-    if: needs.check-motoko-changes.outputs.has_src_mo_changes == 'true' || needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true' || needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      - name: Validate docs for changed src/*.mo files
-        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'false' && needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'false' && needs.check-motoko-changes.outputs.has_toolchain_changes == 'false'
-        shell: bash
-        run: |
-          set -euo pipefail
-          files=()
-          while IFS= read -r file; do
-            [[ -n "$file" ]] && files+=("$file")
-          done <<< "${{ needs.check-motoko-changes.outputs.src_mo_changed_files }}"
-          if [[ ${#files[@]} -eq 0 ]]; then
-            echo "No changed src/*.mo files."
-            exit 0
-          fi
-          npm run validate:docs -- "${files[@]}"
-        env:
-          FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
-      - name: Validate all docs on version or script change
-        if: needs.check-motoko-changes.outputs.has_mops_package_version_changes == 'true' || needs.check-motoko-changes.outputs.has_validate_docs_script_changes == 'true' || needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
-        run: npm run validate:docs
+      - run: npm run validate:docs
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
 
@@ -103,11 +71,6 @@ jobs:
       - run: npm run format:check
 
   test:
-    needs: check-motoko-changes
-    if: |
-      needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
-      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true' ||
-      needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -118,11 +81,6 @@ jobs:
         run: npx ic-mops test List.allocation -- --legacy-persistence
 
   bench:
-    needs: check-motoko-changes
-    if: |
-      needs.check-motoko-changes.outputs.has_mo_changes == 'true' ||
-      needs.check-motoko-changes.outputs.has_mops_dependency_changes == 'true' ||
-      needs.check-motoko-changes.outputs.has_toolchain_changes == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -130,14 +88,12 @@ jobs:
       - name: Run benchmarks (same replica path as mops publish)
         run: npm run bench
 
-  # Single required check. Gating on the individual jobs cannot work: most of
-  # them are conditional, and a skipped job satisfies a required check, so a PR
-  # touching no Motoko source would pass every gate without running anything.
-  # validate-changelog is advisory and deliberately absent.
+  # Single required check. Every job runs unconditionally, so a green gate means
+  # the full suite ran. validate-changelog is advisory and deliberately absent.
   ci:
     name: "ci:required"
     if: always()
-    needs: [check-motoko-changes, validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
+    needs: [validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled
