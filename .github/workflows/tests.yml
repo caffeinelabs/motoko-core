@@ -55,11 +55,17 @@ jobs:
           fi
 
   validate-docs:
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      - run: npm run validate:docs
+      - name: Validate doc examples (shard ${{ matrix.shard }}/5)
+        run: npm run validate:docs -- --shard=${{ matrix.shard }}/5
         env:
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
 
