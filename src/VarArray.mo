@@ -1098,8 +1098,8 @@ module {
   /// import Char "mo:core/Char";
   ///
   /// let array = [var 'c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.contains<Char>('f');
-  /// assert not array.contains<Char>('g');
+  /// assert array.contains('f');
+  /// assert not array.contains('g');
   /// ```
   ///
   /// Runtime: O(array.size())
