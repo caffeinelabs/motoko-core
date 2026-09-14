@@ -46,8 +46,8 @@ module {
   /// Applies a function to the wrapped value. `null`'s are left untouched.
   /// ```motoko
   /// import Option "mo:core/Option";
-  /// assert Option.map<Nat, Nat>(?42, func x = x + 1) == ?43;
-  /// assert Option.map<Nat, Nat>(null, func x = x + 1) == null;
+  /// assert Option.map(?42, func x = x + 1) == ?43;
+  /// assert Option.map(null, func x = x + 1) == null;
   /// ```
   public func map<T, R>(self : ?T, f : T -> R) : ?R = switch self {
     case null { null };

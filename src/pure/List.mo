@@ -217,7 +217,7 @@ module {
   /// persistent actor {
   ///   let list = ?(0, ?(1, ?(2, null)));
   ///   var sum = 0;
-  ///   List.forEach<Nat>(list, func n = sum += n);
+  ///   List.forEach(list, func n = sum += n);
   ///   assert sum == 3;
   /// }
   /// ```
@@ -266,7 +266,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(0, ?(1, ?(2, null)));
-  ///   assert List.filter<Nat>(list, func n = n != 1) == ?(0, ?(2, null));
+  ///   assert List.filter(list, func n = n != 1) == ?(0, ?(2, null));
   /// }
   /// ```
   ///
@@ -289,7 +289,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.filterMap<Nat, Nat>(
+  ///   assert List.filterMap(
   ///     list,
   ///     func n = if (n > 1) ?(n * 2) else null
   ///   ) == ?(4, ?(6, null));
@@ -320,7 +320,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.mapResult<Nat, Nat, Text>(
+  ///   assert List.mapResult(
   ///     list,
   ///     func n = if (n > 0) #ok(n * 2) else #err "Some element is zero"
   ///   ) == #ok(?(2, ?(4, ?(6, null))));
@@ -353,7 +353,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(0, ?(1, ?(2, null)));
-  ///   assert List.partition<Nat>(list, func n = n != 1) == (?(0, ?(2, null)), ?(1, null));
+  ///   assert List.partition(list, func n = n != 1) == (?(0, ?(2, null)), ?(1, null));
   /// }
   /// ```
   ///
@@ -490,7 +490,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.foldLeft<Nat, Text>(
+  ///   assert List.foldLeft(
   ///     list,
   ///     "",
   ///     func (acc, x) = acc # Nat.toText(x)
@@ -519,7 +519,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.foldRight<Nat, Text>(
+  ///   assert List.foldRight(
   ///     list,
   ///     "",
   ///     func (x, acc) = Nat.toText(x) # acc
@@ -548,7 +548,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.find<Nat>(list, func n = n > 1) == ?2;
+  ///   assert List.find(list, func n = n > 1) == ?2;
   /// }
   /// ```
   ///
@@ -599,7 +599,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert not List.all<Nat>(list, func n = n > 1);
+  ///   assert not List.all(list, func n = n > 1);
   /// }
   /// ```
   ///
@@ -622,7 +622,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.any<Nat>(list, func n = n > 1);
+  ///   assert List.any(list, func n = n > 1);
   /// }
   /// ```
   ///
@@ -826,7 +826,7 @@ module {
   /// persistent actor {
   ///   let list1 = ?(0, ?(1, ?(2, null)));
   ///   let list2 = ?('a', ?('b', null));
-  ///   assert List.zipWith<Nat, Char, Text>(
+  ///   assert List.zipWith(
   ///     list1,
   ///     list2,
   ///     func (n, c) = Nat.toText(n) # Char.toText(c)

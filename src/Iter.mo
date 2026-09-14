@@ -97,7 +97,7 @@ module {
   ///
   /// ```motoko include=import
   /// var sum = 0;
-  /// Iter.forEach<Nat>([1, 2, 3].values(), func(x) {
+  /// Iter.forEach([1, 2, 3].values(), func(x) {
   ///   sum += x;
   /// });
   /// assert sum == 6;
@@ -461,8 +461,8 @@ module {
   /// It stops consuming elements from the original iterator as soon as the predicate returns false.
   ///
   /// ```motoko include=import
-  /// assert [1, 2, 3].values().all<Nat>(func (x) = x < 4);
-  /// assert not [1, 2, 3].values().all<Nat>(func (x) = x < 3);
+  /// assert [1, 2, 3].values().all(func (x) = x < 4);
+  /// assert not [1, 2, 3].values().all(func (x) = x < 3);
   /// ```
   public func all<T>(self : Iter<T>, f : T -> Bool) : Bool {
     for (x in self) {
@@ -475,8 +475,8 @@ module {
   /// It stops consuming elements from the original iterator as soon as the predicate returns true.
   ///
   /// ```motoko include=import
-  /// assert [1, 2, 3].values().any<Nat>(func (x) = x == 2);
-  /// assert not [1, 2, 3].values().any<Nat>(func (x) = x == 4);
+  /// assert [1, 2, 3].values().any(func (x) = x == 2);
+  /// assert not [1, 2, 3].values().any(func (x) = x == 4);
   /// ```
   public func any<T>(self : Iter<T>, f : T -> Bool) : Bool {
     for (x in self) {
@@ -491,7 +491,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4].values();
-  /// assert ?2 == iter.find<Nat>(func (x) = x % 2 == 0);
+  /// assert ?2 == iter.find(func (x) = x % 2 == 0);
   /// ```
   public func find<T>(self : Iter<T>, f : T -> Bool) : ?T {
     for (x in self) {
@@ -529,7 +529,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3, 4].values();
-  /// assert iter.contains<Nat>(2);
+  /// assert iter.contains(2);
   /// ```
   public func contains<T>(self : Iter<T>, equal : (implicit : (T, T) -> Bool), value : T) : Bool {
     for (x in self) {
@@ -580,7 +580,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// assert ?6 == iter.reduce<Nat>(Nat.add);
+  /// assert ?6 == iter.reduce(Nat.add);
   /// ```
   public func reduce<T>(self : Iter<T>, combine : (T, T) -> T) : ?T {
     let ?first = self.next() else return null;
@@ -659,7 +659,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// assert ?3 == iter.max<Nat>();
+  /// assert ?3 == iter.max();
   /// ```
   public func max<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : ?T {
     reduce(
@@ -680,7 +680,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// assert ?1 == iter.min<Nat>();
+  /// assert ?1 == iter.min();
   /// ```
   public func min<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : ?T {
     reduce(

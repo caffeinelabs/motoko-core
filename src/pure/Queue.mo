@@ -488,7 +488,7 @@ module {
   /// persistent actor {
   ///   var text = "";
   ///   let queue = Queue.fromIter(["A", "B", "C"].values());
-  ///   Queue.forEach<Text>(queue, func n = text #= n);
+  ///   Queue.forEach(queue, func n = text #= n);
   ///   assert text == "ABC";
   /// }
   /// ```

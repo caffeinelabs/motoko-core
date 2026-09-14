@@ -473,7 +473,7 @@ module {
   ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   var text = "";
-  ///   Set.forEach<Nat>(numbers, func (element) {
+  ///   Set.forEach(numbers, func (element) {
   ///     text #= " " # Nat.toText(element)
   ///   });
   ///   assert text == " 0 1 2 3";

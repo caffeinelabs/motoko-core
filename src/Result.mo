@@ -56,8 +56,8 @@ module {
   /// let result2 = #ok 10;
   /// let result3 = #err "error";
   ///
-  /// assert Result.equal<Nat, Text>(result1, result2, Nat.equal, Text.equal);
-  /// assert not Result.equal<Nat, Text>(result1, result3, Nat.equal, Text.equal);
+  /// assert Result.equal(result1, result2, Nat.equal, Text.equal);
+  /// assert not Result.equal(result1, result3, Nat.equal, Text.equal);
   /// ```
   public func equal<Ok, Err>(
     self : Result<Ok, Err>,
@@ -88,9 +88,9 @@ module {
   /// let result2 = #ok 10;
   /// let result3 = #err "error";
   ///
-  /// assert Result.compare<Nat, Text>(result1, result2, Nat.compare, Text.compare) == #less;
-  /// assert Result.compare<Nat, Text>(result2, result1, Nat.compare, Text.compare) == #greater;
-  /// assert Result.compare<Nat, Text>(result1, result3, Nat.compare, Text.compare) == #greater;
+  /// assert Result.compare(result1, result2, Nat.compare, Text.compare) == #less;
+  /// assert Result.compare(result2, result1, Nat.compare, Text.compare) == #greater;
+  /// assert Result.compare(result1, result3, Nat.compare, Text.compare) == #greater;
   /// ```
   public func compare<Ok, Err>(
     self : Result<Ok, Err>,

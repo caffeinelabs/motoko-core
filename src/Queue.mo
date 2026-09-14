@@ -570,8 +570,8 @@ module {
   /// import Queue "mo:core/Queue";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([2, 4, 6].values());
-  ///   assert queue.all<Nat>(func(x) { x % 2 == 0 });
+  ///   let queue = Queue.fromIter([2, 4, 6].values());
+  ///   assert queue.all(func(x) { x % 2 == 0 });
   /// }
   /// ```
   ///
@@ -593,8 +593,8 @@ module {
   /// import Queue "mo:core/Queue";
   ///
   /// persistent actor {
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert queue.any<Nat>(func (x) { x > 2 });
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   assert queue.any(func (x) { x > 2 });
   /// }
   /// ```
   ///
@@ -618,8 +618,8 @@ module {
   ///
   /// persistent actor {
   ///   var sum = 0;
-  ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   queue.forEach<Nat>(func(x) { sum += x });
+  ///   let queue = Queue.fromIter([1, 2, 3].values());
+  ///   queue.forEach(func(x) { sum += x });
   ///   assert sum == 6;
   /// }
   /// ```
