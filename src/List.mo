@@ -1976,7 +1976,7 @@ module {
   /// list.add("A");
   /// list.add("B");
   /// list.add("C");
-  /// Iter.toArray(list.keys()) // [0, 1, 2]
+  /// list.keys().toArray() // [0, 1, 2]
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,

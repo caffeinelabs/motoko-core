@@ -9,10 +9,10 @@
 ///
 /// persistent actor {
 ///   let set = Set.fromIter([3, 1, 2, 3].values(), Nat.compare);
-///   assert Set.size(set) == 3;
-///   assert not Set.contains(set, Nat.compare, 4);
-///   let diff = Set.difference(set, set, Nat.compare);
-///   assert Set.isEmpty(diff);
+///   assert set.size() == 3;
+///   assert not set.contains(Nat.compare, 4);
+///   let diff = set.difference(set, Nat.compare);
+///   assert diff.isEmpty();
 /// }
 /// ```
 ///
@@ -66,7 +66,7 @@ module {
   ///
   /// persistent actor {
   ///   let set = Set.fromIter([3, 1, 2, 1].values(), Nat.compare);
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2, 3];
+  ///   assert set.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -99,7 +99,7 @@ module {
   ///
   ///   let set = iter.toSet(Nat.compare);
   ///
-  ///   assert Iter.toArray(Set.values(set)) == [1, 2, 3];
+  ///   assert set.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -127,13 +127,13 @@ module {
   ///
   /// persistent actor {
   ///   let set0 = Set.empty<Nat>();
-  ///   let set1 = Set.add(set0, Nat.compare, 2);
-  ///   let set2 = Set.add(set1, Nat.compare, 1);
-  ///   let set3 = Set.add(set2, Nat.compare, 2);
-  ///   assert Iter.toArray(Set.values(set0)) == [];
-  ///   assert Iter.toArray(Set.values(set1)) == [2];
-  ///   assert Iter.toArray(Set.values(set2)) == [1, 2];
-  ///   assert Iter.toArray(Set.values(set3)) == [1, 2];
+  ///   let set1 = set0.add(Nat.compare, 2);
+  ///   let set2 = set1.add(Nat.compare, 1);
+  ///   let set3 = set2.add(Nat.compare, 2);
+  ///   assert set0.values().toArray() == [];
+  ///   assert set1.values().toArray() == [2];
+  ///   assert set2.values().toArray() == [1, 2];
+  ///   assert set3.values().toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -160,13 +160,13 @@ module {
   /// persistent actor {
   ///   let set0 = Set.empty();
   ///   do {
-  ///     let (set1, new1) = Set.insert(set0, Nat.compare, 2);
+  ///     let (set1, new1) = set0.insert(Nat.compare, 2);
   ///     assert new1;
-  ///     let (set2, new2) = Set.insert(set1, Nat.compare, 1);
+  ///     let (set2, new2) = set1.insert(Nat.compare, 1);
   ///     assert new2;
-  ///     let (set3, new3) = Set.insert(set2, Nat.compare, 2);
+  ///     let (set3, new3) = set2.insert(Nat.compare, 2);
   ///     assert not new3;
-  ///     assert Iter.toArray(Set.values(set3)) == [1, 2]
+  ///     assert set3.values().toArray() == [1, 2]
   ///   }
   /// }
   /// ```
@@ -192,9 +192,9 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///
-  ///   let set1 = Set.remove(set, Nat.compare, 2);
-  ///   let set2 = Set.remove(set1, Nat.compare, 4);
-  ///   assert Iter.toArray(Set.values(set2)) == [1, 3];
+  ///   let set1 = set.remove(Nat.compare, 2);
+  ///   let set2 = set1.remove(Nat.compare, 4);
+  ///   assert set2.values().toArray() == [1, 3];
   /// }
   /// ```
   ///
@@ -221,12 +221,12 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   do {
-  ///     let (set1, contained1) = Set.delete(set, Nat.compare, 2);
+  ///     let (set1, contained1) = set.delete(Nat.compare, 2);
   ///     assert contained1;
-  ///     assert Iter.toArray(Set.values(set1)) == [1, 3];
-  ///     let (set2, contained2) = Set.delete(set1, Nat.compare, 4);
+  ///     assert set1.values().toArray() == [1, 3];
+  ///     let (set2, contained2) = set1.delete(Nat.compare, 4);
   ///     assert not contained2;
-  ///     assert Iter.toArray(Set.values(set2)) == [1, 3];
+  ///     assert set2.values().toArray() == [1, 3];
   ///   }
   /// }
   /// ```
@@ -253,8 +253,8 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([3, 1, 2].values(), Nat.compare);
   ///
-  ///   assert Set.contains(set, Nat.compare, 1);
-  ///   assert not Set.contains(set, Nat.compare, 4);
+  ///   assert set.contains(Nat.compare, 1);
+  ///   assert not set.contains(Nat.compare, 4);
   /// }
   /// ```
   ///
@@ -274,8 +274,8 @@ module {
   /// persistent actor {
   ///   let set1 = Set.fromIter([0, 2, 1].values(), Nat.compare);
   ///   let set2 = Set.empty<Nat>();
-  ///   assert Set.max(set1) == ?2;
-  ///   assert Set.max(set2) == null;
+  ///   assert set1.max() == ?2;
+  ///   assert set2.max() == null;
   /// }
   /// ```
   ///
@@ -295,8 +295,8 @@ module {
   /// persistent actor {
   ///   let set1 = Set.fromIter([2, 0, 1].values(), Nat.compare);
   ///   let set2 = Set.empty<Nat>();
-  ///   assert Set.min(set1) == ?0;
-  ///   assert Set.min(set2) == null;
+  ///   assert set1.min() == ?0;
+  ///   assert set2.min() == null;
   /// }
   /// ```
   ///
@@ -319,8 +319,8 @@ module {
   /// persistent actor {
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
-  ///   let union = Set.union(set1, set2, Nat.compare);
-  ///   assert Iter.toArray(Set.values(union)) == [1, 2, 3, 4, 5];
+  ///   let union = set1.union(set2, Nat.compare);
+  ///   assert union.values().toArray() == [1, 2, 3, 4, 5];
   /// }
   /// ```
   ///
@@ -350,8 +350,8 @@ module {
   /// persistent actor {
   ///   let set1 = Set.fromIter([0, 1, 2].values(), Nat.compare);
   ///   let set2 = Set.fromIter([1, 2, 3].values(), Nat.compare);
-  ///   let intersection = Set.intersection(set1, set2, Nat.compare);
-  ///   assert Iter.toArray(Set.values(intersection)) == [1, 2];
+  ///   let intersection = set1.intersection(set2, Nat.compare);
+  ///   assert intersection.values().toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -397,8 +397,8 @@ module {
   /// persistent actor {
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
-  ///   let difference = Set.difference(set1, set2, Nat.compare);
-  ///   assert Iter.toArray(Set.values(difference)) == [1, 2];
+  ///   let difference = set1.difference(set2, Nat.compare);
+  ///   assert difference.values().toArray() == [1, 2];
   /// }
   /// ```
   ///
@@ -448,8 +448,8 @@ module {
   ///   let numbers = Set.fromIter([3, 1, 2].values(), Nat.compare);
   ///
   ///   let textNumbers =
-  ///     Set.map(numbers, Text.compare, Nat.toText);
-  ///   assert Iter.toArray(Set.values(textNumbers)) == ["1", "2", "3"];
+  ///     numbers.map(Text.compare, Nat.toText);
+  ///   assert textNumbers.values().toArray() == ["1", "2", "3"];
   /// }
   /// ```
   ///
@@ -473,8 +473,8 @@ module {
   ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   var text = "";
-  ///   Set.forEach<Nat>(numbers, func (element) {
-  ///     text #= " " # Nat.toText(element)
+  ///   numbers.forEach(func (element) {
+  ///     text #= " " # element.toText()
   ///   });
   ///   assert text == " 0 1 2 3";
   /// }
@@ -501,10 +501,10 @@ module {
   /// persistent actor {
   ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let evenNumbers = Set.filter(numbers, Nat.compare, func (number) {
+  ///   let evenNumbers = numbers.filter(Nat.compare, func (number) {
   ///     number % 2 == 0
   ///   });
-  ///   assert Iter.toArray(Set.values(evenNumbers)) == [0, 2];
+  ///   assert evenNumbers.values().toArray() == [0, 2];
   /// }
   /// ```
   ///
@@ -537,14 +537,14 @@ module {
   /// persistent actor {
   ///   let numbers = Set.fromIter([3, 0, 2, 1].values(), Nat.compare);
   ///
-  ///   let evenTextNumbers = Set.filterMap(numbers, Text.compare, func (number) {
+  ///   let evenTextNumbers = numbers.filterMap(Text.compare, func (number) {
   ///     if (number % 2 == 0) {
-  ///        ?Nat.toText(number)
+  ///        ?number.toText()
   ///     } else {
   ///        null // discard odd numbers
   ///     }
   ///   });
-  ///   assert Iter.toArray(Set.values(evenTextNumbers)) == ["0", "2"];
+  ///   assert evenTextNumbers.values().toArray() == ["0", "2"];
   /// }
   /// ```
   ///
@@ -583,8 +583,8 @@ module {
   ///   let set1 = Set.fromIter([1, 2].values(), Nat.compare);
   ///   let set2 = Set.fromIter([2, 1, 0].values(), Nat.compare);
   ///   let set3 = Set.fromIter([3, 4].values(), Nat.compare);
-  ///   assert Set.isSubset(set1, set2, Nat.compare);
-  ///   assert not Set.isSubset(set1, set3, Nat.compare);
+  ///   assert set1.isSubset(set2, Nat.compare);
+  ///   assert not set1.isSubset(set3, Nat.compare);
   /// }
   /// ```
   ///
@@ -609,8 +609,8 @@ module {
   ///   let set1 = Set.fromIter([1, 2].values(), Nat.compare);
   ///   let set2 = Set.fromIter([2, 1].values(), Nat.compare);
   ///   let set3 = Set.fromIter([2, 1, 0].values(), Nat.compare);
-  ///   assert Set.equal(set1, set2, Nat.compare);
-  ///   assert not Set.equal(set1, set3, Nat.compare);
+  ///   assert set1.equal(set2, Nat.compare);
+  ///   assert not set1.equal(set3, Nat.compare);
   /// }
   /// ```
   ///
@@ -669,9 +669,9 @@ module {
   ///   let set1 = Set.fromIter([0, 1].values(), Nat.compare);
   ///   let set2 = Set.fromIter([0, 2].values(), Nat.compare);
   ///
-  ///   assert Set.compare(set1, set2, Nat.compare) == #less;
-  ///   assert Set.compare(set1, set1, Nat.compare) == #equal;
-  ///   assert Set.compare(set2, set1, Nat.compare) == #greater;
+  ///   assert set1.compare(set2, Nat.compare) == #less;
+  ///   assert set1.compare(set1, Nat.compare) == #equal;
+  ///   assert set2.compare(set1, Nat.compare) == #greater;
   /// }
   /// ```
   ///
@@ -712,8 +712,8 @@ module {
   ///   let set = Set.fromIter([0, 2, 3, 1].values(), Nat.compare);
   ///
   ///   var text = "";
-  ///   for (number in Set.values(set)) {
-  ///      text #= " " # Nat.toText(number);
+  ///   for (number in set.values()) {
+  ///      text #= " " # number.toText();
   ///   };
   ///   assert text == " 0 1 2 3";
   /// }
@@ -738,8 +738,8 @@ module {
   ///   let set = Set.fromIter([0, 2, 3, 1].values(), Nat.compare);
   ///
   ///   var tmp = "";
-  ///   for (number in Set.reverseValues(set)) {
-  ///      tmp #= " " # Nat.toText(number);
+  ///   for (number in set.reverseValues()) {
+  ///      tmp #= " " # number.toText();
   ///   };
   ///   assert tmp == " 3 2 1 0";
   /// }
@@ -762,7 +762,7 @@ module {
   ///
   /// persistent actor {
   ///   let set = Set.empty<Nat>();
-  ///   assert Iter.toArray(Set.values(set)) == [];
+  ///   assert set.values().toArray() == [];
   /// }
   /// ```
   ///
@@ -780,7 +780,7 @@ module {
   ///
   /// persistent actor {
   ///   let set = Set.singleton(0);
-  ///   assert Iter.toArray(Set.values(set)) == [0];
+  ///   assert set.values().toArray() == [0];
   /// }
   /// ```
   ///
@@ -803,7 +803,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 2, 1, 3].values(), Nat.compare);
   ///
-  ///   assert Set.size(set) == 4;
+  ///   assert set.size() == 4;
   /// }
   /// ```
   ///
@@ -822,11 +822,10 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
-  ///   let text = Set.foldLeft(
-  ///      set,
+  ///   let text = set.foldLeft(
   ///      "",
   ///      func (accumulator, element) {
-  ///        accumulator # " " # Nat.toText(element)
+  ///        accumulator # " " # element.toText()
   ///      }
   ///   );
   ///   assert text == " 0 1 2 3";
@@ -853,11 +852,10 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
-  ///   let text = Set.foldRight(
-  ///      set,
+  ///   let text = set.foldRight(
   ///      "",
   ///      func (element, accumulator) {
-  ///         accumulator # " " # Nat.toText(element)
+  ///         accumulator # " " # element.toText()
   ///      }
   ///   );
   ///   assert text == " 3 2 1 0";
@@ -884,8 +882,8 @@ module {
   ///   let set1 = Set.empty<Nat>();
   ///   let set2 = Set.singleton(1);
   ///
-  ///   assert Set.isEmpty(set1);
-  ///   assert not Set.isEmpty(set2);
+  ///   assert set1.isEmpty();
+  ///   assert not set2.isEmpty();
   /// }
   /// ```
   ///
@@ -910,7 +908,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let belowTen = Set.all(set, func (number) {
+  ///   let belowTen = set.all(func (number) {
   ///     number < 10
   ///   });
   ///   assert belowTen;
@@ -934,7 +932,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let aboveTen = Set.any(set, func (number) {
+  ///   let aboveTen = set.any(func (number) {
   ///     number > 10
   ///   });
   ///   assert not aboveTen;
@@ -964,7 +962,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   assert Set.toText(set, Nat.toText) == "PureSet{0, 1, 2, 3}";
+  ///   assert set.toText(Nat.toText) == "PureSet{0, 1, 2, 3}";
   /// }
   /// ```
   ///
@@ -1000,15 +998,15 @@ module {
   ///
   /// persistent actor {
   ///   func setCompare(first: Set.Set<Nat>, second: Set.Set<Nat>) : Order.Order {
-  ///      Set.compare(first, second, Nat.compare)
+  ///      first.compare(second, Nat.compare)
   ///   };
   ///
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let set3 = Set.fromIter([5, 6, 7].values(), Nat.compare);
   ///   let setOfSets = Set.fromIter([set1, set2, set3].values(), setCompare);
-  ///   let flatSet = Set.flatten(setOfSets, Nat.compare);
-  ///   assert Iter.toArray(Set.values(flatSet)) == [1, 2, 3, 4, 5, 6, 7];
+  ///   let flatSet = setOfSets.flatten(Nat.compare);
+  ///   assert flatSet.values().toArray() == [1, 2, 3, 4, 5, 6, 7];
   /// }
   /// ```
   ///
@@ -1041,8 +1039,8 @@ module {
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);
   ///   let set2 = Set.fromIter([3, 4, 5].values(), Nat.compare);
   ///   let set3 = Set.fromIter([5, 6, 7].values(), Nat.compare);
-  ///   let combined = Set.join([set1, set2, set3].values(), Nat.compare);
-  ///   assert Iter.toArray(Set.values(combined)) == [1, 2, 3, 4, 5, 6, 7];
+  ///   let combined = [set1, set2, set3].values().join(Nat.compare);
+  ///   assert combined.values().toArray() == [1, 2, 3, 4, 5, 6, 7];
   /// }
   /// ```
   ///

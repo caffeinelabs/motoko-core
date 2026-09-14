@@ -101,7 +101,7 @@ module {
   ///
   /// ```motoko include=import
   /// let bytes : [Nat8] = [0, 255, 0];
-  /// let blob = Array.toBlob(bytes);
+  /// let blob = bytes.toBlob();
   /// assert blob == "\00\FF\00";
   /// assert bytes.toBlob() == "\00\FF\00";
   /// ```
@@ -337,8 +337,7 @@ module {
   ///
   /// let array = [4, 2, 0, 1];
   /// let newArray =
-  ///   Array.filterMap( // mapping from Nat to Text values
-  ///     array,
+  ///   array.filterMap( // mapping from Nat to Text values
   ///     func x = if (x == 0) { null } else { ?toText(100 / x) } // can't divide by 0, so return null
   ///   );
   /// assert newArray == ["25", "50", "100"];
@@ -522,8 +521,7 @@ module {
   ///
   /// let array = [4, 2, 0, 1];
   /// let sum =
-  ///   Array.foldLeft(
-  ///     array,
+  ///   array.foldLeft(
   ///     0, // start the sum at 0
   ///     func(sumSoFar, x) = sumSoFar + x // this entire function can be replaced with `add`!
   ///   );
@@ -891,8 +889,8 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.contains<Char>('f');
-  /// assert not array.contains<Char>('g');
+  /// assert array.contains(Char.equal, 'f');
+  /// assert not array.contains(Char.equal, 'g');
   /// ```
   ///
   /// Runtime: O(array.size())
