@@ -809,7 +809,7 @@ module {
   /// Runtime: O(min(size(xs), size(ys)))
   ///
   /// Space: O(min(size(xs), size(ys)))
-  public func zip<T, U>(self : List<T>, other : List<U>) : List<(T, U)> = zipWith<T, U, (T, U)>(self, other, func(x, y) = (x, y));
+  public func zip<T, U>(self : List<T>, other : List<U>) : List<(T, U)> = zipWith(self, other, func(x, y) = (x, y));
 
   /// Create a list in which elements are created by applying function `f` to each pair `(x, y)` of elements
   /// occuring at the same position in list `xs` and list `ys`.
@@ -988,7 +988,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray<T>(VarArray.toArray<T>(array));
+  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray(VarArray.toArray(array));
 
   /// Create an array from a list.
   /// Example:
@@ -1008,7 +1008,7 @@ module {
   /// Space: O(size)
   public func toArray<T>(self : List<T>) : [T] {
     var l = self;
-    Array_tabulate<T>(size self, func _ { let ?(h, t) = l else Runtime.trap("List.toArray(): unreachable"); l := t; h })
+    Array_tabulate(size self, func _ { let ?(h, t) = l else Runtime.trap("List.toArray(): unreachable"); l := t; h })
   };
 
   /// Create a mutable array from a list.
@@ -1027,7 +1027,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func toVarArray<T>(self : List<T>) : [var T] = Array.toVarArray<T>(toArray<T>(self));
+  public func toVarArray<T>(self : List<T>) : [var T] = Array.toVarArray(toArray(self));
 
   /// Create a list from an iterator, consuming the iterator.
   /// Example:

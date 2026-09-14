@@ -128,7 +128,7 @@ module {
     let cs = self.chars();
     // We rely on Array_tabulate's implementation details: it fills
     // the array from left to right sequentially.
-    Prim.Array_tabulate<Char>(
+    Prim.Array_tabulate(
       self.size(),
       func _ {
         switch (cs.next()) {

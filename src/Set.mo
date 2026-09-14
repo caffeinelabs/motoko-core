@@ -149,7 +149,7 @@ module {
     {
       var root = #leaf({
         data = {
-          elements = VarArray.repeat<?T>(null, btreeOrder - 1);
+          elements = VarArray.repeat(null, btreeOrder - 1);
           var count = 0
         }
       });
@@ -479,7 +479,7 @@ module {
         switch (NodeUtil.getElementIndex(leafNode.data, compare, element)) {
           case (#elementFound(deleteIndex)) {
             leafNode.data.count -= 1;
-            ignore BTreeHelper.deleteAndShift<T>(leafNode.data.elements, deleteIndex);
+            ignore BTreeHelper.deleteAndShift(leafNode.data.elements, deleteIndex);
             self.size -= 1;
             true
           };
@@ -988,7 +988,7 @@ module {
     deleteAll(
       self,
       compare,
-      Iter.filter<T>(array.values(), func(element) : Bool = not predicate(element))
+      Iter.filter(array.values(), func(element) : Bool = not predicate(element))
     )
   };
 
@@ -2051,7 +2051,7 @@ module {
                     let elementToBePushedToChild = internalNode.data.elements[childIndex];
                     internalNode.data.elements[childIndex] := ?borrowedElement;
 
-                    ignore BTreeHelper.insertAtPostionAndDeleteAtPosition<T>(leafChild.data.elements, elementToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
+                    ignore BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.elements, elementToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
                     #deleted
                   };
 
@@ -2071,9 +2071,9 @@ module {
                       #left
                     );
                     // delete the left most internal node element, since was merging from a deletion in left most child (0) and the parent element was pushed into the mergedLeaf
-                    ignore BTreeHelper.deleteAndShift<T>(internalNode.data.elements, 0);
+                    ignore BTreeHelper.deleteAndShift(internalNode.data.elements, 0);
                     // update internal node children
-                    BTreeHelper.replaceTwoWithElementAndShift<Node<T>>(internalNode.children, #leaf(mergedLeaf), 0);
+                    BTreeHelper.replaceTwoWithElementAndShift(internalNode.children, #leaf(mergedLeaf), 0);
                     internalNode.data.count -= 1;
 
                     if (internalNode.data.count < minElements) {
@@ -2094,7 +2094,7 @@ module {
                   case (?borrowedElement) {
                     let elementToBePushedToChild = internalNode.data.elements[childIndex - 1];
                     internalNode.data.elements[childIndex - 1] := ?borrowedElement;
-                    ignore BTreeHelper.insertAtPostionAndDeleteAtPosition<T>(leafChild.data.elements, elementToBePushedToChild, 0, leafDeleteIndex);
+                    ignore BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.elements, elementToBePushedToChild, 0, leafDeleteIndex);
                     #deleted
                   };
                   case null {
@@ -2106,7 +2106,7 @@ module {
                           let elementToBePushedToChild = internalNode.data.elements[childIndex];
                           internalNode.data.elements[childIndex] := ?borrowedElement;
                           // insert the successor at the very last element
-                          ignore BTreeHelper.insertAtPostionAndDeleteAtPosition<T>(leafChild.data.elements, elementToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
+                          ignore BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.elements, elementToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
                           return #deleted
                         };
                         // if cannot borrow, from left or right, merge (see below)
@@ -2129,9 +2129,9 @@ module {
                       #right
                     );
                     // delete the right most internal node element, since was merging from a deletion in the right most child and the parent element was pushed into the mergedLeaf
-                    ignore BTreeHelper.deleteAndShift<T>(internalNode.data.elements, childIndex - 1);
+                    ignore BTreeHelper.deleteAndShift(internalNode.data.elements, childIndex - 1);
                     // update internal node children
-                    BTreeHelper.replaceTwoWithElementAndShift<Node<T>>(internalNode.children, #leaf(mergedLeaf), childIndex - 1);
+                    BTreeHelper.replaceTwoWithElementAndShift(internalNode.children, #leaf(mergedLeaf), childIndex - 1);
                     internalNode.data.count -= 1;
 
                     if (internalNode.data.count < minElements) {
@@ -2167,11 +2167,11 @@ module {
   func leafDeleteHelper<T>(leafNode : Leaf<T>, order : Nat, compare : (T, T) -> Order.Order, deleteElement : T) : IntermediateLeafDeleteResult<T> {
     let minElements = NodeUtil.minElementsFromOrder(order);
 
-    switch (NodeUtil.getElementIndex<T>(leafNode.data, compare, deleteElement)) {
+    switch (NodeUtil.getElementIndex(leafNode.data, compare, deleteElement)) {
       case (#elementFound(deleteIndex)) {
         if (leafNode.data.count > minElements) {
           leafNode.data.count -= 1;
-          ignore BTreeHelper.deleteAndShift<T>(leafNode.data.elements, deleteIndex);
+          ignore BTreeHelper.deleteAndShift(leafNode.data.elements, deleteIndex);
           #deleted
         } else {
           #mergeLeafData({
@@ -2187,7 +2187,7 @@ module {
   };
 
   func containsInInternal<T>(internalNode : Internal<T>, compare : (T, T) -> Order.Order, element : T) : Bool {
-    switch (NodeUtil.getElementIndex<T>(internalNode.data, compare, element)) {
+    switch (NodeUtil.getElementIndex(internalNode.data, compare, element)) {
       case (#elementFound _index) {
         true
       };
@@ -2205,7 +2205,7 @@ module {
   };
 
   func containsInLeaf<T>(leafNode : Leaf<T>, compare : (T, T) -> Order.Order, element : T) : Bool {
-    switch (NodeUtil.getElementIndex<T>(leafNode.data, compare, element)) {
+    switch (NodeUtil.getElementIndex(leafNode.data, compare, element)) {
       case (#elementFound(_index)) {
         true
       };
@@ -2256,7 +2256,7 @@ module {
   // Helper for inserting into a leaf node
   func leafInsertHelper<T>(leafNode : Leaf<T>, order : Nat, compare : (T, T) -> Order.Order, insertedElement : T) : (IntermediateInsertResult<T>) {
     // Perform binary search to see if the element exists in the node
-    switch (NodeUtil.getElementIndex<T>(leafNode.data, compare, insertedElement)) {
+    switch (NodeUtil.getElementIndex(leafNode.data, compare, insertedElement)) {
       case (#elementFound(insertIndex)) {
         let previous = leafNode.data.elements[insertIndex];
         leafNode.data.elements[insertIndex] := ?insertedElement;
@@ -2284,14 +2284,14 @@ module {
           (
             #promote({
               element = promotedParentElement;
-              leftChild = createLeaf<T>(leftElements, leftCount);
-              rightChild = createLeaf<T>(rightElements, rightCount)
+              leftChild = createLeaf(leftElements, leftCount);
+              rightChild = createLeaf(rightElements, rightCount)
             })
           )
         }
         // Otherwise, insert at the specified index (shifting elements over if necessary)
         else {
-          NodeUtil.insertAtIndexOfNonFullNodeData<T>(leafNode.data, ?insertedElement, insertIndex);
+          NodeUtil.insertAtIndexOfNonFullNodeData(leafNode.data, ?insertedElement, insertIndex);
           #inserted
         }
       }
@@ -2300,7 +2300,7 @@ module {
 
   // Helper for inserting into an internal node
   func internalInsertHelper<T>(internalNode : Internal<T>, order : Nat, compare : (T, T) -> Order.Order, insertElement : T) : IntermediateInsertResult<T> {
-    switch (NodeUtil.getElementIndex<T>(internalNode.data, compare, insertElement)) {
+    switch (NodeUtil.getElementIndex(internalNode.data, compare, insertElement)) {
       case (#elementFound(insertIndex)) {
         let previous = internalNode.data.elements[insertIndex];
         internalNode.data.elements[insertIndex] := ?insertElement;
@@ -2503,7 +2503,7 @@ module {
       let currentLastElementIndex : Nat = if (data.count == 0) { 0 } else {
         data.count - 1
       };
-      BTreeHelper.insertAtPosition<T>(data.elements, element, insertIndex, currentLastElementIndex);
+      BTreeHelper.insertAtPosition(data.elements, element, insertIndex, currentLastElementIndex);
 
       // increment the count of data in this node since just inserted an element
       data.count += 1
@@ -2540,14 +2540,14 @@ module {
       leftChildInsert : Node<T>,
       rightChildInsert : Node<T>
     ) : ([var ?Node<T>], [var ?Node<T>]) {
-      BTreeHelper.splitArrayAndInsertTwo<Node<T>>(children, rebalancedChildIndex, leftChildInsert, rightChildInsert)
+      BTreeHelper.splitArrayAndInsertTwo(children, rebalancedChildIndex, leftChildInsert, rightChildInsert)
     };
 
     /// Helper used to get the element index of of a element within a node
     ///
     /// for more, see the BinarySearch.binarySearchNode() documentation
     public func getElementIndex<T>(data : Data<T>, compare : (T, T) -> Order.Order, element : T) : BinarySearch.SearchResult {
-      BinarySearch.binarySearchNode<T>(data.elements, compare, element, data.count)
+      BinarySearch.binarySearchNode(data.elements, compare, element, data.count)
     };
 
     // calculates a BTree Node's minimum allowed elements given the order of the BTree
@@ -2692,15 +2692,15 @@ module {
       // replace the parent with the sibling element
       internalNode.data.elements[parentRotateIndex] := borrowedSiblingElement;
       // push the element and child down into the internalChild
-      insertAtIndexOfNonFullNodeData<T>(internalChildRecipient.data, elementToBePushedToChild, elementIndex);
+      insertAtIndexOfNonFullNodeData(internalChildRecipient.data, elementToBePushedToChild, elementIndex);
 
-      BTreeHelper.insertAtPosition<Node<T>>(internalChildRecipient.children, borrowedSiblingChild, childIndex, internalChildRecipient.data.count)
+      BTreeHelper.insertAtPosition(internalChildRecipient.children, borrowedSiblingChild, childIndex, internalChildRecipient.data.count)
     };
 
     // Merges the elements and children of two internal nodes, pushing the parent element in between the right and left halves
     public func mergeChildrenAndPushDownParent<T>(leftChild : Internal<T>, parentElement : ?T, rightChild : Internal<T>) : Internal<T> {
       {
-        data = mergeData<T>(leftChild.data, parentElement, rightChild.data);
+        data = mergeData(leftChild.data, parentElement, rightChild.data);
         children = mergeChildren(leftChild.children, rightChild.children)
       }
     };

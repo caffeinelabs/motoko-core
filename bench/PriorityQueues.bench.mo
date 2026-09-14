@@ -36,7 +36,7 @@ module {
     wClear : Nat
   ) : [PriorityQueueUpdateOperation<Nat>] {
     let rng = Random.seed(randomSeed);
-    Array.tabulate<PriorityQueueUpdateOperation<Nat>>(
+    Array.tabulate(
       operationsCount,
       func(_) {
         let aux = rng.natRange(0, wPush + wPop + wClear);

@@ -182,7 +182,7 @@ module {
   /// ```
   public func size<T>(self : Iter<T>) : Nat {
     var len = 0;
-    forEach<T>(self, func(x) { len += 1 });
+    forEach(self, func(x) { len += 1 });
     len
   };
 
@@ -569,7 +569,7 @@ module {
   /// assert result == "(A(B(CS)))";
   /// ```
   public func foldRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : R {
-    foldLeft<T, R>(reverse(self), initial, func(acc, x) = combine(x, acc))
+    foldLeft(reverse(self), initial, func(acc, x) = combine(x, acc))
   };
 
   /// Reduces an iterator to a single value by applying a function to each element, starting with the first elements.
@@ -630,7 +630,7 @@ module {
   /// assert result == [0, 3, 5, 6];
   /// ```
   public func scanRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : Iter<R> {
-    scanLeft<T, R>(reverse(self), initial, func(x, acc) = combine(acc, x))
+    scanLeft(reverse(self), initial, func(x, acc) = combine(acc, x))
   };
 
   /// Creates an iterator that produces elements using the `step` function starting from the `initial` value.
@@ -662,7 +662,7 @@ module {
   /// assert ?3 == iter.max<Nat>();
   /// ```
   public func max<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : ?T {
-    reduce<T>(
+    reduce(
       self,
       func(a, b) {
         switch (compare(a, b)) {
@@ -683,7 +683,7 @@ module {
   /// assert ?1 == iter.min<Nat>();
   /// ```
   public func min<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : ?T {
-    reduce<T>(
+    reduce(
       self,
       func(a, b) {
         switch (compare(a, b)) {
@@ -778,7 +778,7 @@ module {
       return []
     };
     var current = first;
-    Prim.Array_tabulate<T>(
+    Prim.Array_tabulate(
       count,
       func(_) {
         switch (current) {
@@ -794,14 +794,14 @@ module {
 
   /// Like `toArray` but for Arrays with mutable elements.
   public func toVarArray<T>(self : Iter<T>) : [var T] {
-    Array.toVarArray<T>(toArray<T>(self))
+    Array.toVarArray(toArray(self))
   };
 
   /// Sorted iterator.  Will iterate over *all* elements to sort them, necessarily.
   public func sort<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Iter<T> {
     let array = toVarArray(self);
-    VarArray.sortInPlace<T>(array, compare);
-    fromVarArray<T>(array)
+    VarArray.sortInPlace(array, compare);
+    fromVarArray(array)
   };
 
   /// Creates an iterator that produces a given item a specified number of times.

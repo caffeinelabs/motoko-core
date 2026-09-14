@@ -50,14 +50,14 @@ module {
       "1000"
     ]);
 
-    let source8 = Array.tabulate<Nat8>(1000, func i = Nat8.fromIntWrap(i));
-    let source16 = Array.tabulate<Nat16>(1000, func i = Nat16.fromIntWrap(i));
-    let source32 = Array.tabulate<Nat32>(1000, func i = Nat32.fromIntWrap(i));
-    let source64 = Array.tabulate<Nat64>(1000, func i = Nat64.fromIntWrap(i));
-    let source8int = Array.tabulate<Int8>(1000, func i = Int8.fromIntWrap(i));
-    let source16int = Array.tabulate<Int16>(1000, func i = Int16.fromIntWrap(i));
-    let source32int = Array.tabulate<Int32>(1000, func i = Int32.fromIntWrap(i));
-    let source64int = Array.tabulate<Int64>(1000, func i = Int64.fromIntWrap(i));
+    let source8 = Array.tabulate(1000, func i = Nat8.fromIntWrap(i));
+    let source16 = Array.tabulate(1000, func i = Nat16.fromIntWrap(i));
+    let source32 = Array.tabulate(1000, func i = Nat32.fromIntWrap(i));
+    let source64 = Array.tabulate(1000, func i = Nat64.fromIntWrap(i));
+    let source8int = Array.tabulate(1000, func i = Int8.fromIntWrap(i));
+    let source16int = Array.tabulate(1000, func i = Int16.fromIntWrap(i));
+    let source32int = Array.tabulate(1000, func i = Int32.fromIntWrap(i));
+    let source64int = Array.tabulate(1000, func i = Int64.fromIntWrap(i));
     let size = 1000;
 
     bench.runner(

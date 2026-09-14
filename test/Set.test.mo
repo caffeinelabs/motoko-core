@@ -33,7 +33,7 @@ run(
           set.add(0);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "insert empty",
@@ -42,7 +42,7 @@ run(
           assert set.insert(0);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "remove empty",
@@ -51,7 +51,7 @@ run(
           set.remove(0);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "delete empty",
@@ -60,7 +60,7 @@ run(
           assert (not set.delete(0));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "clone no alias",
@@ -85,12 +85,12 @@ run(
       test(
         "iterate forward",
         Iter.toArray(Set.values(Set.empty<Nat>())),
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "iterate backward",
         Iter.toArray(Set.reverseValues(Set.empty<Nat>())),
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "contains present",
@@ -155,7 +155,7 @@ run(
         "for each",
         do {
           let set = Set.empty<Nat>();
-          Set.forEach<Nat>(
+          Set.forEach(
             set,
             func(_) {
               Runtime.trap("test failed")
@@ -208,7 +208,7 @@ run(
         "fold left",
         do {
           let set = Set.empty<Nat>();
-          Set.foldLeft<Nat, Nat>(
+          Set.foldLeft(
             set,
             0,
             func(_, _) {
@@ -222,7 +222,7 @@ run(
         "fold right",
         do {
           let set = Set.empty<Nat>();
-          Set.foldRight<Nat, Nat>(
+          Set.foldRight(
             set,
             0,
             func(_, _) {
@@ -236,7 +236,7 @@ run(
         "all",
         do {
           let set = Set.empty<Nat>();
-          Set.all<Nat>(
+          Set.all(
             set,
             func(_) {
               Runtime.trap("test failed")
@@ -249,7 +249,7 @@ run(
         "any",
         do {
           let set = Set.empty<Nat>();
-          Set.any<Nat>(
+          Set.any(
             set,
             func(_) {
               Runtime.trap("test failed")
@@ -335,7 +335,7 @@ run(
           Set.add(set, Nat.compare, 0);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "add singleton new",
@@ -344,7 +344,7 @@ run(
           Set.add(set, Nat.compare, 1);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0, 1]))
+        M.equals(T.array(T.natTestable, [0, 1]))
       ),
       test(
         "insert singleton old",
@@ -353,7 +353,7 @@ run(
           assert (not Set.insert(set, Nat.compare, 0));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "insert singleton new",
@@ -362,7 +362,7 @@ run(
           assert Set.insert(set, Nat.compare, 1);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0, 1]))
+        M.equals(T.array(T.natTestable, [0, 1]))
       ),
       test(
         "remove singleton old",
@@ -371,7 +371,7 @@ run(
           Set.remove(set, Nat.compare, 0);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "remove singleton new",
@@ -380,7 +380,7 @@ run(
           Set.remove(set, Nat.compare, 1);
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "delete singleton old",
@@ -389,7 +389,7 @@ run(
           assert (Set.delete(set, Nat.compare, 0));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "delete singleton new",
@@ -398,7 +398,7 @@ run(
           assert (not Set.delete(set, Nat.compare, 1));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "clone",
@@ -427,12 +427,12 @@ run(
       test(
         "iterate forward",
         Iter.toArray(Set.values(Set.singleton<Nat>(0))),
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "iterate backward",
         Iter.toArray(Set.reverseValues(Set.singleton<Nat>(0))),
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "contains present key",
@@ -515,12 +515,12 @@ run(
       test(
         "iterate forward",
         Iter.toArray(Set.values(Set.singleton<Nat>(0))),
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "iterate backwards",
         Iter.toArray(Set.reverseValues(Set.singleton<Nat>(0))),
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "from iterator",
@@ -536,7 +536,7 @@ run(
         "for each",
         do {
           let set = Set.singleton<Nat>(0);
-          Set.forEach<Nat>(
+          Set.forEach(
             set,
             func(number) {
               assert (number == 0)
@@ -601,7 +601,7 @@ run(
         "fold left",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.foldLeft<Nat, Nat>(
+          Set.foldLeft(
             set,
             0,
             func(accumulator, number) {
@@ -615,7 +615,7 @@ run(
         "fold right",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.foldRight<Nat, Nat>(
+          Set.foldRight(
             set,
             0,
             func(number, accumulator) {
@@ -629,7 +629,7 @@ run(
         "all",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.all<Nat>(
+          Set.all(
             set,
             func(number) {
               number == 1
@@ -642,7 +642,7 @@ run(
         "not all",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.all<Nat>(
+          Set.all(
             set,
             func(number) {
               number == 2
@@ -655,7 +655,7 @@ run(
         "any",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.any<Nat>(
+          Set.any(
             set,
             func(number) {
               number == 1
@@ -668,7 +668,7 @@ run(
         "not any",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.any<Nat>(
+          Set.any(
             set,
             func(number) {
               number == 0
@@ -681,7 +681,7 @@ run(
         "to text",
         do {
           let set = Set.singleton<Nat>(1);
-          Set.toText<Nat>(set, Nat.toText)
+          Set.toText(set, Nat.toText)
         },
         M.equals(T.text("Set{1}"))
       ),
@@ -751,7 +751,7 @@ run(
           Iter.toArray(Set.values(union))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [1, 2]
           )
@@ -766,7 +766,7 @@ run(
           Iter.toArray(Set.values(union))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [1]
           )
@@ -781,7 +781,7 @@ run(
           Iter.toArray(Set.values(intersection))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             []
           )
@@ -796,7 +796,7 @@ run(
           Iter.toArray(Set.values(intersection))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [1]
           )
@@ -811,7 +811,7 @@ run(
           Iter.toArray(Set.values(difference))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             []
           )
@@ -826,7 +826,7 @@ run(
           Iter.toArray(Set.values(difference))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [0]
           )
@@ -842,7 +842,7 @@ run(
           Iter.toArray(Set.values(combined))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [0, 1, 2]
           )
@@ -860,7 +860,7 @@ run(
           Iter.toArray(Set.values(combined))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [0, 1, 2]
           )
@@ -886,7 +886,7 @@ run(
     [
       test(
         "size",
-        Set.size<Nat>(smallSet()),
+        Set.size(smallSet()),
         M.equals(T.nat(smallSize))
       ),
       test(
@@ -925,7 +925,7 @@ run(
       ),
       test(
         "is empty",
-        Set.isEmpty<Nat>(smallSet()),
+        Set.isEmpty(smallSet()),
         M.equals(T.bool(false))
       ),
       test(
@@ -959,16 +959,16 @@ run(
         "iterate forward",
         Iter.toArray(Set.values(smallSet())),
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
-            Array.tabulate<Nat>(smallSize, func(index) { index })
+            Array.tabulate(smallSize, func(index) { index })
           )
         )
       ),
       test(
         "iterate backward",
         Iter.toArray(Set.reverseValues(smallSet())),
-        M.equals(T.array<Nat>(T.natTestable, Array.reverse(Array.tabulate<Nat>(smallSize, func(index) { index }))))
+        M.equals(T.array(T.natTestable, Array.reverse(Array.tabulate(smallSize, func(index) { index }))))
       ),
       test(
         "contains present",
@@ -1047,12 +1047,12 @@ run(
       test(
         "forward iteration",
         Iter.toArray(Set.values(smallSet())),
-        M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { index })))
+        M.equals(T.array(T.natTestable, Array.tabulate(smallSize, func(index) { index })))
       ),
       test(
         "backwards iteration",
         Iter.toArray(Set.reverseValues(smallSet())),
-        M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { smallSize - 1 - index : Nat })))
+        M.equals(T.array(T.natTestable, Array.tabulate(smallSize, func(index) { smallSize - 1 - index : Nat })))
       ),
       test(
         "from iterator",
@@ -1072,7 +1072,7 @@ run(
         do {
           let set = smallSet();
           var index = 0;
-          Set.forEach<Nat>(
+          Set.forEach(
             set,
             func(element) {
               assert (element == index);
@@ -1155,7 +1155,7 @@ run(
         "fold left",
         do {
           let set = smallSet();
-          Set.foldLeft<Nat, Nat>(
+          Set.foldLeft(
             set,
             0,
             func(accumulator, element) {
@@ -1169,7 +1169,7 @@ run(
         "fold right",
         do {
           let set = smallSet();
-          Set.foldRight<Nat, Nat>(
+          Set.foldRight(
             set,
             0,
             func(element, accumulator) {
@@ -1183,7 +1183,7 @@ run(
         "all",
         do {
           let set = smallSet();
-          Set.all<Nat>(
+          Set.all(
             set,
             func(number) {
               number < smallSize
@@ -1196,7 +1196,7 @@ run(
         "any",
         do {
           let set = smallSet();
-          Set.any<Nat>(
+          Set.any(
             set,
             func(number) {
               number == (smallSize - 1 : Nat)
@@ -1209,7 +1209,7 @@ run(
         "to text",
         do {
           let set = smallSet();
-          Set.toText<Nat>(set, Nat.toText)
+          Set.toText(set, Nat.toText)
         },
         do {
           var text = "Set{";
@@ -1264,7 +1264,7 @@ run(
           Iter.toArray(Set.values(union))
         },
         M.equals(
-          T.array<Int>(
+          T.array(
             T.intTestable,
             Array.tabulate<Int>(
               smallSize * 2 - 1 : Nat,
@@ -1286,7 +1286,7 @@ run(
           Iter.toArray(Set.values(intersection))
         },
         M.equals(
-          T.array<Int>(
+          T.array(
             T.intTestable,
             [-1, 0, 1]
           )
@@ -1304,7 +1304,7 @@ run(
           Iter.toArray(Set.values(difference))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [0, 1, 2]
           )
@@ -1320,7 +1320,7 @@ run(
           Iter.toArray(Set.values(combined))
         },
         M.equals(
-          T.array<Int>(
+          T.array(
             T.intTestable,
             Array.tabulate<Int>(
               smallSize * 2 - 1 : Nat,
@@ -1343,7 +1343,7 @@ run(
           Iter.toArray(Set.values(combined))
         },
         M.equals(
-          T.array<Int>(
+          T.array(
             T.intTestable,
             Array.tabulate<Int>(
               smallSize * 2 - 1 : Nat,
@@ -1642,7 +1642,7 @@ run(
           let intersection = Set.intersection(set1, set2, Nat.compare);
           Iter.toArray(Set.values(intersection))
         },
-        M.equals(T.array<Nat>(T.natTestable, [2, 3]))
+        M.equals(T.array(T.natTestable, [2, 3]))
       ),
       test(
         "diff both empty",
@@ -1662,7 +1662,7 @@ run(
           let difference = Set.difference(set1, set2, Nat.compare);
           Iter.toArray(Set.values(difference))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "diff second non-empty",
@@ -1682,7 +1682,7 @@ run(
           let difference = Set.difference(set1, set2, Nat.compare);
           Iter.toArray(Set.values(difference))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "diff both non-empty overlapping",
@@ -1692,7 +1692,7 @@ run(
           let difference = Set.difference(set1, set2, Nat.compare);
           Iter.toArray(Set.values(difference))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1]))
+        M.equals(T.array(T.natTestable, [1]))
       ),
       test(
         "addAll both empty",
@@ -1712,7 +1712,7 @@ run(
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "addAll second non-empty",
@@ -1722,7 +1722,7 @@ run(
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "addAll both non-empty disjoint",
@@ -1732,7 +1732,7 @@ run(
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3, 4, 5, 6]))
+        M.equals(T.array(T.natTestable, [1, 2, 3, 4, 5, 6]))
       ),
       test(
         "addAll both non-empty overlapping",
@@ -1742,13 +1742,13 @@ run(
           Set.addAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3, 4]))
+        M.equals(T.array(T.natTestable, [1, 2, 3, 4]))
       ),
       test(
         "retainAll empty",
         do {
           let set = Set.empty<Nat>();
-          assert (not Set.retainAll<Nat>(set, Nat.compare, func(n) { true }));
+          assert (not Set.retainAll(set, Nat.compare, func(n) { true }));
           Set.size(set)
         },
         M.equals(T.nat(0))
@@ -1757,16 +1757,16 @@ run(
         "retainAll all",
         do {
           let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
-          assert (not Set.retainAll<Nat>(set, Nat.compare, func(n) { true }));
+          assert (not Set.retainAll(set, Nat.compare, func(n) { true }));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "retainAll none",
         do {
           let set = Set.fromIter([1, 2, 3].values(), Nat.compare);
-          assert (Set.retainAll<Nat>(set, Nat.compare, func(n) { false }));
+          assert (Set.retainAll(set, Nat.compare, func(n) { false }));
           Set.size(set)
         },
         M.equals(T.nat(0))
@@ -1775,19 +1775,19 @@ run(
         "retainAll even",
         do {
           let set = Set.fromIter([1, 2, 3, 4].values(), Nat.compare);
-          assert (Set.retainAll<Nat>(set, Nat.compare, func(n) { n % 2 == 0 }));
+          assert (Set.retainAll(set, Nat.compare, func(n) { n % 2 == 0 }));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [2, 4]))
+        M.equals(T.array(T.natTestable, [2, 4]))
       ),
       test(
         "retainAll predicate",
         do {
           let set = Set.fromIter([1, 2, 3, 4, 5].values(), Nat.compare);
-          assert (Set.retainAll<Nat>(set, Nat.compare, func(n) { n > 2 and n < 5 }));
+          assert (Set.retainAll(set, Nat.compare, func(n) { n > 2 and n < 5 }));
           Iter.toArray(Set.values(set))
         },
-        M.equals(T.array<Nat>(T.natTestable, [3, 4]))
+        M.equals(T.array(T.natTestable, [3, 4]))
       ),
       test(
         "deleteAll both empty",
@@ -1807,7 +1807,7 @@ run(
           assert (not Set.deleteAll(set1, Nat.compare, Set.values(set2)));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "deleteAll both non-empty equal",
@@ -1837,7 +1837,7 @@ run(
           assert (not (Set.deleteAll(set1, Nat.compare, Set.values(set2))));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "deleteAll both non-empty overlapping",
@@ -1847,7 +1847,7 @@ run(
           assert Set.deleteAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1]))
+        M.equals(T.array(T.natTestable, [1]))
       ),
 
       test(
@@ -1858,7 +1858,7 @@ run(
           assert (not Set.insertAll(set1, Nat.compare, Set.values(set2)));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3]))
+        M.equals(T.array(T.natTestable, [1, 2, 3]))
       ),
       test(
         "insertAll both non-empty equal",
@@ -1888,7 +1888,7 @@ run(
           assert (Set.insertAll(set1, Nat.compare, Set.values(set2)));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3, 4, 5, 6]))
+        M.equals(T.array(T.natTestable, [1, 2, 3, 4, 5, 6]))
       ),
       test(
         "insertAll both non-empty overlapping",
@@ -1898,7 +1898,7 @@ run(
           assert Set.insertAll(set1, Nat.compare, Set.values(set2));
           Iter.toArray(Set.values(set1))
         },
-        M.equals(T.array<Nat>(T.natTestable, [1, 2, 3, 4]))
+        M.equals(T.array(T.natTestable, [1, 2, 3, 4]))
       ),
 
     ]

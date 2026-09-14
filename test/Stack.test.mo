@@ -205,7 +205,7 @@ suite(
       "all true when all match",
       func() {
         let s = Stack.fromIter<Nat>([2, 4, 6].values());
-        expect.bool(Stack.all<Nat>(s, func(x) { x % 2 == 0 })).isTrue()
+        expect.bool(Stack.all(s, func(x) { x % 2 == 0 })).isTrue()
       }
     );
 
@@ -213,7 +213,7 @@ suite(
       "all false when any doesn't match",
       func() {
         let s = Stack.fromIter<Nat>([2, 3, 4].values());
-        expect.bool(Stack.all<Nat>(s, func(x) { x % 2 == 0 })).isFalse()
+        expect.bool(Stack.all(s, func(x) { x % 2 == 0 })).isFalse()
       }
     );
 
@@ -221,7 +221,7 @@ suite(
       "any true when one matches",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.bool(Stack.any<Nat>(s, func(x) { x % 2 == 0 })).isTrue()
+        expect.bool(Stack.any(s, func(x) { x % 2 == 0 })).isTrue()
       }
     );
 
@@ -229,7 +229,7 @@ suite(
       "any false when none match",
       func() {
         let s = Stack.fromIter<Nat>([1, 3, 5].values());
-        expect.bool(Stack.any<Nat>(s, func(x) { x % 2 == 0 })).isFalse()
+        expect.bool(Stack.any(s, func(x) { x % 2 == 0 })).isFalse()
       }
     )
   }

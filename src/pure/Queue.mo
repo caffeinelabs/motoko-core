@@ -370,7 +370,7 @@ module {
   /// Space: O(size)
   public func toArray<T>(self : Queue<T>) : [T] {
     let iter = values(self);
-    Array.tabulate<T>(
+    Array.tabulate(
       self.1,
       func(i) {
         switch (iter.next()) {

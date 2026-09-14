@@ -91,14 +91,14 @@ module {
     let dataBlocks = VarArray.repeat<[var ?T]>([var], blocks);
     var i = 1;
     while (i < blockIndex) {
-      dataBlocks[i] := VarArray.repeat<?T>(initValue, dataBlockSize(i));
+      dataBlocks[i] := VarArray.repeat(initValue, dataBlockSize(i));
       i += 1
     };
     if (elementIndex != 0) {
-      dataBlocks[blockIndex] := if (Option.isNull(initValue)) VarArray.repeat<?T>(
+      dataBlocks[blockIndex] := if (Option.isNull(initValue)) VarArray.repeat(
         null,
         dataBlockSize(blockIndex)
-      ) else VarArray.tabulate<?T>(
+      ) else VarArray.tabulate(
         dataBlockSize(blockIndex),
         func i = if (i < elementIndex) initValue else null
       )
@@ -122,7 +122,7 @@ module {
   /// Runtime: `O(size)`
   ///
   /// Space: `O(size)`
-  public func repeat<T>(initValue : T, size : Nat) : List<T> = repeatInternal<T>(?initValue, size);
+  public func repeat<T>(initValue : T, size : Nat) : List<T> = repeatInternal(?initValue, size);
 
   /// Fills all elements in the list with the given value.
   ///
@@ -249,12 +249,12 @@ module {
       if (blocks[blockIndex].size() == 0) {
         let dbSize = dataBlockSize(blockIndex);
         if (cnt >= dbSize) {
-          blocks[blockIndex] := VarArray.repeat<?T>(initValue, dbSize);
+          blocks[blockIndex] := VarArray.repeat(initValue, dbSize);
           blockIndex += 1;
           cnt -= dbSize;
           continue L
         };
-        blocks[blockIndex] := VarArray.repeat<?T>(null, dbSize)
+        blocks[blockIndex] := VarArray.repeat(null, dbSize)
       };
 
       let block = blocks[blockIndex];
@@ -281,7 +281,7 @@ module {
     let blockIndex = list.blockIndex;
     let elementIndex = list.elementIndex;
 
-    addRepeatInternal<T>(list, null, size);
+    addRepeatInternal(list, null, size);
 
     list.blockIndex := blockIndex;
     list.elementIndex := elementIndex
@@ -298,7 +298,7 @@ module {
   /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(count)`
-  public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal<T>(self, ?initValue, count);
+  public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal(self, ?initValue, count);
 
   /// Truncates the list to the specified size.
   /// If the new size is larger than the current size, it will do nothing.
@@ -325,7 +325,7 @@ module {
 
     let newBlocks = if (newBlocksCount < self.blocks.size()) {
       let oldDataBlocks = self.blocks;
-      self.blocks := VarArray.tabulate<[var ?T]>(newBlocksCount, func(i) = oldDataBlocks[i]);
+      self.blocks := VarArray.tabulate(newBlocksCount, func(i) = oldDataBlocks[i]);
       self.blocks
     } else self.blocks;
 
@@ -390,12 +390,12 @@ module {
 
     while (i < blockIndex) {
       let len = dataBlockSize(i);
-      dataBlocks[i] := VarArray.tabulate<?T>(len, func i = ?generator(pos + i));
+      dataBlocks[i] := VarArray.tabulate(len, func i = ?generator(pos + i));
       pos += len;
       i += 1
     };
     if (elementIndex != 0 and blockIndex < blocks) {
-      dataBlocks[i] := VarArray.tabulate<?T>(
+      dataBlocks[i] := VarArray.tabulate(
         dataBlockSize(blockIndex),
         func i = if (i < elementIndex) ?generator(pos + i) else null
       )
@@ -428,16 +428,16 @@ module {
   /// Space: O(number of elements in list)
   public func flatten<T>(self : List<List<T>>) : List<T> {
     var sz = 0;
-    forEach<List<T>>(self, func(sublist) = sz += size(sublist));
+    forEach(self, func(sublist) = sz += size(sublist));
 
     let result = repeatInternal<T>(null, sz);
     result.blockIndex := 1;
     result.elementIndex := 0;
 
-    forEach<List<T>>(
+    forEach(
       self,
       func(sublist) {
-        forEach<T>(
+        forEach(
           sublist,
           func(item) {
             add(result, item)
@@ -469,7 +469,7 @@ module {
     let result = empty<T>();
     for (list in self) {
       reserve(result, size(list));
-      forEach<T>(list, func item = addUnsafe(result, item))
+      forEach(list, func item = addUnsafe(result, item))
     };
     result
   };
@@ -487,12 +487,12 @@ module {
   ///
   /// Runtime: `O(size)`
   public func clone<T>(self : List<T>) : List<T> = {
-    var blocks = VarArray.tabulate<[var ?T]>(
+    var blocks = VarArray.tabulate(
       Nat.min(
         newIndexBlockLength(Nat.toNat32(if (self.elementIndex == 0) self.blockIndex - 1 else self.blockIndex)),
         self.blocks.size()
       ),
-      func(i) = VarArray.clone<?T>(self.blocks[i])
+      func(i) = VarArray.clone(self.blocks[i])
     );
     var blockIndex = self.blockIndex;
     var elementIndex = self.elementIndex
@@ -999,7 +999,7 @@ module {
 
       // When removing last we keep one more data block, so can be not empty
       if (self.blocks[blockIndex].size() == 0) {
-        self.blocks[blockIndex] := VarArray.repeat<?T>(
+        self.blocks[blockIndex] := VarArray.repeat(
           null,
           dataBlockSize(blockIndex)
         )
@@ -1395,7 +1395,7 @@ module {
   /// *Runtime and space assumes that `equal` runs in `O(1)` time and space.
   public func indexOf<T>(self : List<T>, equal : (implicit : (T, T) -> Bool), element : T) : ?Nat {
     if (isEmpty(self)) return null;
-    nextIndexOf<T>(self, equal, element, 0)
+    nextIndexOf(self, equal, element, 0)
   };
 
   /// Returns the index of the next occurence of `element` in the `list` starting from the `from` index (inclusive).
@@ -1460,7 +1460,7 @@ module {
   /// Runtime: `O(size)`
   ///
   /// *Runtime and space assumes that `equal` runs in `O(1)` time and space.
-  public func lastIndexOf<T>(self : List<T>, equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf<T>(
+  public func lastIndexOf<T>(self : List<T>, equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf(
     self,
     equal,
     element,
@@ -1524,7 +1524,7 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func find<T>(self : List<T>, predicate : T -> Bool) : ?T {
-    switch (findIndex<T>(self, predicate)) {
+    switch (findIndex(self, predicate)) {
       case (?i) ?at(self, i);
       case null null
     }
@@ -1774,7 +1774,7 @@ module {
   /// Space: `O(1)`
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
-  public func any<T>(self : List<T>, predicate : T -> Bool) : Bool = findIndex<T>(self, predicate) != null;
+  public func any<T>(self : List<T>, predicate : T -> Bool) : Bool = findIndex(self, predicate) != null;
 
   /// Returns an Iterator (`Iter`) over the elements of a List.
   /// Iterator provides a single method `next()`, which returns
@@ -2122,7 +2122,7 @@ module {
       }
     };
 
-    Array.tabulate<T>(size(self), generator)
+    Array.tabulate(size(self), generator)
   };
 
   /// Creates a List containing elements from an Array.
@@ -2149,12 +2149,12 @@ module {
 
     while (i < blockIndex) {
       let len = dataBlockSize(i);
-      dataBlocks[i] := VarArray.tabulate<?T>(len, func i = ?array[pos + i]);
+      dataBlocks[i] := VarArray.tabulate(len, func i = ?array[pos + i]);
       pos += len;
       i += 1
     };
     if (elementIndex != 0 and blockIndex < blocks) {
-      dataBlocks[i] := VarArray.tabulate<?T>(
+      dataBlocks[i] := VarArray.tabulate(
         dataBlockSize(i),
         func i = if (i < elementIndex) ?array[pos + i] else null
       )
@@ -2507,7 +2507,7 @@ module {
   /// Space: O(toExclusive - fromInclusive)
   public func sliceToArray<T>(self : List<T>, fromInclusive : Int, toExclusive : Int) : [T] {
     let (start, end) = actualInterval(fromInclusive, toExclusive, size(self));
-    Array.tabulate<T>(end - start, sliceToArrayBase(self, start).next)
+    Array.tabulate(end - start, sliceToArrayBase(self, start).next)
   };
 
   /// Returns a new var array containing elements from `list` starting at index `fromInclusive` up to (but not including) index `toExclusive`.
@@ -2531,7 +2531,7 @@ module {
   /// Space: O(toExclusive - fromInclusive)
   public func sliceToVarArray<T>(self : List<T>, fromInclusive : Int, toExclusive : Int) : [var T] {
     let (start, end) = actualInterval(fromInclusive, toExclusive, size(self));
-    VarArray.tabulate<T>(end - start, sliceToArrayBase(self, start).next)
+    VarArray.tabulate(end - start, sliceToArrayBase(self, start).next)
   };
 
   /// Like `forEachEntryRev` but iterates through the list in reverse order,

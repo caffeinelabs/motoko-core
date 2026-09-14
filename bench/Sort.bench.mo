@@ -100,13 +100,13 @@ module {
 
     let sourceArrays : [[Nat32]] = Array.tabulate(
       cols.size(),
-      func(j) = Array.tabulate<Nat32>(
+      func(j) = Array.tabulate(
         [100, 1_000, 10_000, 12_000, 100_000, 1_000_000][j],
         func(i) = Nat64.toNat32(rng.nat64() % (2 ** 32))
       )
     );
 
-    let routines : [() -> ()] = Array.tabulate<() -> ()>(
+    let routines : [() -> ()] = Array.tabulate(
       rows.size() * cols.size(),
       func(i) {
         let row : Nat = i % rows.size();

@@ -96,7 +96,7 @@ module {
   /// assert Option.flatten(null) == null;
   /// ```
   public func flatten<T>(self : ??T) : ?T {
-    chain<?T, T>(self, func(x_ : ?T) : ?T = x_)
+    chain(self, func(x_ : ?T) : ?T = x_)
   };
 
   /// Creates an optional value from a definite value.

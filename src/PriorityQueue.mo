@@ -54,7 +54,7 @@ module {
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
   public func empty<T>() : PriorityQueue<T> = {
-    heap = List.empty<T>()
+    heap = List.empty()
   };
 
   /// Returns a priority queue containing a single element.

@@ -152,7 +152,7 @@ module {
     {
       var root = #leaf({
         data = {
-          kvs = VarArray.repeat<?(K, V)>(null, btreeOrder - 1);
+          kvs = VarArray.repeat(null, btreeOrder - 1);
           var count = 0
         }
       });
@@ -1972,9 +1972,9 @@ module {
                       #left
                     );
                     // delete the left most internal node kv, since was merging from a deletion in left most child (0) and the parent kv was pushed into the mergedLeaf
-                    ignore BTreeHelper.deleteAndShift<(K, V)>(internalNode.data.kvs, 0);
+                    ignore BTreeHelper.deleteAndShift(internalNode.data.kvs, 0);
                     // update internal node children
-                    BTreeHelper.replaceTwoWithElementAndShift<Node<K, V>>(internalNode.children, #leaf(mergedLeaf), 0);
+                    BTreeHelper.replaceTwoWithElementAndShift(internalNode.children, #leaf(mergedLeaf), 0);
                     internalNode.data.count -= 1;
 
                     if (internalNode.data.count < minKeys) {
@@ -2031,9 +2031,9 @@ module {
                       #right
                     );
                     // delete the right most internal node kv, since was merging from a deletion in the right most child and the parent kv was pushed into the mergedLeaf
-                    ignore BTreeHelper.deleteAndShift<(K, V)>(internalNode.data.kvs, childIndex - 1);
+                    ignore BTreeHelper.deleteAndShift(internalNode.data.kvs, childIndex - 1);
                     // update internal node children
-                    BTreeHelper.replaceTwoWithElementAndShift<Node<K, V>>(internalNode.children, #leaf(mergedLeaf), childIndex - 1);
+                    BTreeHelper.replaceTwoWithElementAndShift(internalNode.children, #leaf(mergedLeaf), childIndex - 1);
                     internalNode.data.count -= 1;
 
                     if (internalNode.data.count < minKeys) {
@@ -2068,11 +2068,11 @@ module {
   func leafDeleteHelper<K, V>(leafNode : Leaf<K, V>, order : Nat, compare : (K, K) -> Order.Order, deleteKey : K) : IntermediateLeafDeleteResult<K, V> {
     let minKeys = NodeUtil.minKeysFromOrder(order);
 
-    switch (NodeUtil.getKeyIndex<K, V>(leafNode.data, compare, deleteKey)) {
+    switch (NodeUtil.getKeyIndex(leafNode.data, compare, deleteKey)) {
       case (#keyFound(deleteIndex)) {
         if (leafNode.data.count > minKeys) {
           leafNode.data.count -= 1;
-          #delete(?BTreeHelper.deleteAndShift<(K, V)>(leafNode.data.kvs, deleteIndex).1)
+          #delete(?BTreeHelper.deleteAndShift(leafNode.data.kvs, deleteIndex).1)
         } else {
           #mergeLeafData({
             data = leafNode.data;
@@ -2088,7 +2088,7 @@ module {
 
   // get helper if internal node
   func getFromInternal<K, V>(internalNode : Internal<K, V>, compare : (K, K) -> Order.Order, key : K) : ?V {
-    switch (NodeUtil.getKeyIndex<K, V>(internalNode.data, compare, key)) {
+    switch (NodeUtil.getKeyIndex(internalNode.data, compare, key)) {
       case (#keyFound(index)) {
         getExistingValueFromIndex(internalNode.data, index)
       };
@@ -2107,7 +2107,7 @@ module {
 
   // get function helper if leaf node
   func getFromLeaf<K, V>(leafNode : Leaf<K, V>, compare : (K, K) -> Order.Order, key : K) : ?V {
-    switch (NodeUtil.getKeyIndex<K, V>(leafNode.data, compare, key)) {
+    switch (NodeUtil.getKeyIndex(leafNode.data, compare, key)) {
       case (#keyFound(index)) {
         getExistingValueFromIndex(leafNode.data, index)
       };
@@ -2168,7 +2168,7 @@ module {
   // Helper for inserting into a leaf node
   func leafInsertHelper<K, V>(leafNode : Leaf<K, V>, order : Nat, compare : (K, K) -> Order.Order, key : K, value : V) : (IntermediateInsertResult<K, V>) {
     // Perform binary search to see if the element exists in the node
-    switch (NodeUtil.getKeyIndex<K, V>(leafNode.data, compare, key)) {
+    switch (NodeUtil.getKeyIndex(leafNode.data, compare, key)) {
       case (#keyFound(insertIndex)) {
         let previous = leafNode.data.kvs[insertIndex];
         leafNode.data.kvs[insertIndex] := ?(key, value);
@@ -2196,14 +2196,14 @@ module {
           (
             #promote({
               kv = promotedParentElement;
-              leftChild = createLeaf<K, V>(leftKVs, leftCount);
-              rightChild = createLeaf<K, V>(rightKVs, rightCount)
+              leftChild = createLeaf(leftKVs, leftCount);
+              rightChild = createLeaf(rightKVs, rightCount)
             })
           )
         }
         // Otherwise, insert at the specified index (shifting elements over if necessary)
         else {
-          NodeUtil.insertAtIndexOfNonFullNodeData<K, V>(leafNode.data, ?(key, value), insertIndex);
+          NodeUtil.insertAtIndexOfNonFullNodeData(leafNode.data, ?(key, value), insertIndex);
           #insert(null)
         }
       }
@@ -2212,7 +2212,7 @@ module {
 
   // Helper for inserting into an internal node
   func internalInsertHelper<K, V>(internalNode : Internal<K, V>, order : Nat, compare : (K, K) -> Order.Order, key : K, value : V) : IntermediateInsertResult<K, V> {
-    switch (NodeUtil.getKeyIndex<K, V>(internalNode.data, compare, key)) {
+    switch (NodeUtil.getKeyIndex(internalNode.data, compare, key)) {
       case (#keyFound(insertIndex)) {
         let previous = internalNode.data.kvs[insertIndex];
         internalNode.data.kvs[insertIndex] := ?(key, value);
@@ -2298,7 +2298,7 @@ module {
 
   func mapData<K, V1, V2>(data : Data<K, V1>, project : (K, V1) -> V2) : Data<K, V2> {
     {
-      kvs = VarArray.map<?(K, V1), ?(K, V2)>(
+      kvs = VarArray.map(
         data.kvs,
         func entry {
           switch entry {
@@ -2335,7 +2335,7 @@ module {
     }
   };
 
-  func cloneNode<K, V>(node : Node<K, V>) : Node<K, V> = mapNode<K, V, V>(node, func(k, v) = v);
+  func cloneNode<K, V>(node : Node<K, V>) : Node<K, V> = mapNode(node, func(k, v) = v);
 
   module BinarySearch {
     public type SearchResult = {
@@ -2419,7 +2419,7 @@ module {
       let currentLastElementIndex : Nat = if (data.count == 0) { 0 } else {
         data.count - 1
       };
-      BTreeHelper.insertAtPosition<(K, V)>(data.kvs, kvPair, insertIndex, currentLastElementIndex);
+      BTreeHelper.insertAtPosition(data.kvs, kvPair, insertIndex, currentLastElementIndex);
 
       // increment the count of data in this node since just inserted an element
       data.count += 1
@@ -2456,14 +2456,14 @@ module {
       leftChildInsert : Node<K, V>,
       rightChildInsert : Node<K, V>
     ) : ([var ?Node<K, V>], [var ?Node<K, V>]) {
-      BTreeHelper.splitArrayAndInsertTwo<Node<K, V>>(children, rebalancedChildIndex, leftChildInsert, rightChildInsert)
+      BTreeHelper.splitArrayAndInsertTwo(children, rebalancedChildIndex, leftChildInsert, rightChildInsert)
     };
 
     /// Helper used to get the key index of of a key within a node
     ///
     /// for more, see the BinarySearch.binarySearchNode() documentation
     public func getKeyIndex<K, V>(data : Data<K, V>, compare : (K, K) -> Order.Order, key : K) : BinarySearch.SearchResult {
-      BinarySearch.binarySearchNode<K, V>(data.kvs, compare, key, data.count)
+      BinarySearch.binarySearchNode(data.kvs, compare, key, data.count)
     };
 
     // calculates a BTree Node's minimum allowed keys given the order of the BTree
@@ -2608,15 +2608,15 @@ module {
       // replace the parent with the sibling kv
       internalNode.data.kvs[parentRotateIndex] := borrowedSiblingKVPair;
       // push the kv and child down into the internalChild
-      insertAtIndexOfNonFullNodeData<K, V>(internalChildRecipient.data, kvPairToBePushedToChild, kvIndex);
+      insertAtIndexOfNonFullNodeData(internalChildRecipient.data, kvPairToBePushedToChild, kvIndex);
 
-      BTreeHelper.insertAtPosition<Node<K, V>>(internalChildRecipient.children, borrowedSiblingChild, childIndex, internalChildRecipient.data.count)
+      BTreeHelper.insertAtPosition(internalChildRecipient.children, borrowedSiblingChild, childIndex, internalChildRecipient.data.count)
     };
 
     // Merges the kvs and children of two internal nodes, pushing the parent kv in between the right and left halves
     public func mergeChildrenAndPushDownParent<K, V>(leftChild : Internal<K, V>, parentKV : ?(K, V), rightChild : Internal<K, V>) : Internal<K, V> {
       {
-        data = mergeData<K, V>(leftChild.data, parentKV, rightChild.data);
+        data = mergeData(leftChild.data, parentKV, rightChild.data);
         children = mergeChildren(leftChild.children, rightChild.children)
       }
     };

@@ -144,7 +144,7 @@ test(
   "forEach",
   func() {
     var witness = 0;
-    Option.forEach<Nat>(?(1), func(x : Nat) { witness += 1 });
+    Option.forEach(?(1), func(x : Nat) { witness += 1 });
     assert (witness == 1);
     Option.forEach<Nat>(null, func(x : Nat) { witness += 1 });
     assert (witness == 1)
@@ -173,11 +173,11 @@ test(
   "compare",
   func() {
     expect.bool(Option.compare<Nat>(null, null, Nat.compare) == #equal).isTrue();
-    expect.bool(Option.compare<Nat>(null, ?0, Nat.compare) == #less).isTrue();
-    expect.bool(Option.compare<Nat>(?0, null, Nat.compare) == #greater).isTrue();
-    expect.bool(Option.compare<Nat>(?0, ?0, Nat.compare) == #equal).isTrue();
-    expect.bool(Option.compare<Nat>(?0, ?1, Nat.compare) == #less).isTrue();
-    expect.bool(Option.compare<Nat>(?1, ?0, Nat.compare) == #greater).isTrue()
+    expect.bool(Option.compare(null, ?0, Nat.compare) == #less).isTrue();
+    expect.bool(Option.compare(?0, null, Nat.compare) == #greater).isTrue();
+    expect.bool(Option.compare(?0, ?0, Nat.compare) == #equal).isTrue();
+    expect.bool(Option.compare(?0, ?1, Nat.compare) == #less).isTrue();
+    expect.bool(Option.compare(?1, ?0, Nat.compare) == #greater).isTrue()
   }
 );
 
@@ -185,6 +185,6 @@ test(
   "toText",
   func() {
     expect.text(Option.toText<Nat>(null, Nat.toText)).equal("null");
-    expect.text(Option.toText<Nat>(?0, Nat.toText)).equal("?0")
+    expect.text(Option.toText(?0, Nat.toText)).equal("?0")
   }
 )
