@@ -332,7 +332,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.sort([1, -2, -3], Int.compare) == [-3, -2, 1];
+  /// assert [1, -2, -3].sort(Int.compare) == [-3, -2, 1];
   /// ```
   public func compare(x : Int, y : Int) : Order.Order {
     if (x < y) { #less } else if (x == y) { #equal } else {
@@ -370,7 +370,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.foldLeft([1, -2, -3], 0, Int.add) == -4;
+  /// assert [1, -2, -3].foldLeft(0, Int.add) == -4;
   /// ```
   public func add(x : Int, y : Int) : Int { x + y };
 
@@ -391,7 +391,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.foldLeft([1, -2, -3], 0, Int.sub) == 4;
+  /// assert [1, -2, -3].foldLeft(0, Int.sub) == 4;
   /// ```
   public func sub(x : Int, y : Int) : Int { x - y };
 
@@ -412,7 +412,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.foldLeft([1, -2, -3], 1, Int.mul) == 6;
+  /// assert [1, -2, -3].foldLeft(1, Int.mul) == 6;
   /// ```
   public func mul(x : Int, y : Int) : Int { x * y };
 

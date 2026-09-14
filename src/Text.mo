@@ -147,7 +147,7 @@ module {
   /// import VarArray "mo:core/VarArray";
   /// import Char "mo:core/Char";
   ///
-  /// assert VarArray.equal("Café".toVarArray(), [var 'C', 'a', 'f', 'é'], Char.equal);
+  /// assert "Café".toVarArray().equal([var 'C', 'a', 'f', 'é'], Char.equal);
   /// ```
   ///
   /// Runtime: O(t.size())
@@ -382,7 +382,7 @@ module {
   /// // Replace all occurrences of '?' with "!!"
   /// let result = Text.flatMap("Motoko?", func(c) {
   ///   if (c == '?') "!!"
-  ///   else Char.toText(c)
+  ///   else c.toText()
   /// });
   /// assert result == "Motoko!!";
   /// ```

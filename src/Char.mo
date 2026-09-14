@@ -21,7 +21,7 @@
 /// let unicodeChar = '漢';
 /// let digit = '7';
 /// assert digit.isDigit();
-/// assert Char.toText(char) == "A";
+/// assert char.toText() == "A";
 /// ```
 
 import Prim "mo:⛔";
@@ -36,7 +36,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let char = 'A';
-  /// let unicode = Char.toNat32(char);
+  /// let unicode = char.toNat32();
   /// assert unicode == 65;
   /// ```
   public let toNat32 : (self : Char) -> Nat32 = Prim.charToNat32;
@@ -52,7 +52,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let char = '漢';
-  /// let text = Char.toText(char);
+  /// let text = char.toText();
   /// assert text == "漢";
   /// ```
   public let toText : (self : Char) -> Text = Prim.charToText;

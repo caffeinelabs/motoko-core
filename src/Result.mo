@@ -25,13 +25,13 @@ module {
   /// type ErrorMessage = Text;
   ///
   /// func validateEmail(email : Text) : Result.Result<Email, ErrorMessage> {
-  ///   let parts = Text.split(email, #char '@');
+  ///   let parts = email.split(#char '@');
   ///   let beforeAt = parts.next();
   ///   let afterAt = parts.next();
   ///   switch (beforeAt, afterAt) {
   ///     case (?local, ?domain) {
   ///       if (local == "") return #err("Username cannot be empty");
-  ///       if (not Text.contains(domain, #char '.')) return #err("Invalid domain format");
+  ///       if (not domain.contains(#char '.')) return #err("Invalid domain format");
   ///       #ok(email)
   ///     };
   ///     case _ #err("Email must contain exactly one @ symbol")
@@ -57,7 +57,7 @@ module {
   /// let result3 = #err "error";
   ///
   /// assert Result.equal<Nat, Text>(result1, result2, Nat.equal, Text.equal);
-  /// assert not Result.equal<Nat, Text>(result1, result3, Nat.equal, Text.equal);
+  /// assert not Result.equal(result1, result3, Nat.equal, Text.equal);
   /// ```
   public func equal<Ok, Err>(
     self : Result<Ok, Err>,
@@ -90,7 +90,7 @@ module {
   ///
   /// assert Result.compare<Nat, Text>(result1, result2, Nat.compare, Text.compare) == #less;
   /// assert Result.compare<Nat, Text>(result2, result1, Nat.compare, Text.compare) == #greater;
-  /// assert Result.compare<Nat, Text>(result1, result3, Nat.compare, Text.compare) == #greater;
+  /// assert Result.compare(result1, result3, Nat.compare, Text.compare) == #greater;
   /// ```
   public func compare<Ok, Err>(
     self : Result<Ok, Err>,
@@ -121,7 +121,7 @@ module {
   ///   if (x < 20) { #ok(x) } else { #err("Not smaller than 20.") };
   ///
   /// func between10And20(x : Nat) : Result<Nat, Text> =
-  ///   Result.chain(largerThan10(x), smallerThan20);
+  ///   largerThan10(x).chain(smallerThan20);
   ///
   /// assert between10And20(15) == #ok(15);
   /// assert between10And20(9) == #err("Not larger than 10.");

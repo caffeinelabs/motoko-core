@@ -115,7 +115,7 @@ module {
   ///
   /// let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  /// assert Map.size(map) == 3;
+  /// assert map.size() == 3;
   /// ```
   ///
   /// Runtime: `O(n)`.

@@ -82,7 +82,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let blob = "\00\FF\00" : Blob;
-  /// let bytes = Blob.toArray(blob);
+  /// let bytes = blob.toArray();
   /// assert bytes == [0, 255, 0];
   /// ```
   public let toArray : (self : Blob) -> [Nat8] = Prim.blobToArray;
@@ -95,8 +95,8 @@ module {
   /// import VarArray "mo:core/VarArray";
   ///
   /// let blob = "\00\FF\00" : Blob;
-  /// let bytes = Blob.toVarArray(blob);
-  /// assert VarArray.equal<Nat8>(bytes, [var 0, 255, 0], Nat8.equal);
+  /// let bytes = blob.toVarArray();
+  /// assert bytes.equal<Nat8>([var 0, 255, 0], Nat8.equal);
   /// ```
   public let toVarArray : (self : Blob) -> [var Nat8] = Prim.blobToArrayMut;
 
@@ -105,7 +105,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let blob = "\00\FF\00" : Blob;
-  /// let h = Blob.hash(blob);
+  /// let h = blob.hash();
   /// assert h == 1_818_567_776;
   /// ```
   public let hash : (self : Blob) -> Types.Hash = Prim.hashBlob;
@@ -146,7 +146,7 @@ module {
   ///
   /// let list1 = List.singleton<Blob>("\00\FF\00");
   /// let list2 = List.singleton<Blob>("\00\FF\00");
-  /// assert List.equal(list1, list2, Blob.equal);
+  /// assert list1.equal(list2, Blob.equal);
   /// ```
   public func equal(self : Blob, other : Blob) : Bool { self == other };
 
