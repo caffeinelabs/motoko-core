@@ -62,7 +62,7 @@ Concrete checks:
 ## Conventions and CI gotchas
 
 - The public API is locked in `validation/api/api.lock.json`. CI fails if `npm run validate:api` produces a diff; regenerate with `npm run validate` and commit the result when the public API changes intentionally.
-- CI requires `Changelog.md` to be updated when any `src/*.mo` file changes — advisory in `tests.yml` (warns only), mandatory on a release PR where `release-tag.yml` blocks the tag if it does not match the bumped version.
+- CI validates `Changelog.md` on every PR (advisory, `continue-on-error`), and blocks the release tag if the latest changelog entry does not match the `mops.toml` version (`release-tag.yml`).
 - `npm run validate:version` cross-checks the version; the `version` in `mops.toml` is the source of truth (`package.json` version is `0.0.0`).
 - See `Releasing.md` for the release steps (version bump, changelog, tag, publish).
 - Every public function should carry a doc comment with a runnable example, since `validate:docs` executes them (see `Styleguide.md`).
@@ -70,5 +70,5 @@ Concrete checks:
 - Generated/local directories are git-ignored and must not be committed: `.mops/`, `docs/`, `test/generated/`, `_build/`, `_out/`.
 - `.npmrc` sets `min-release-age=7`; newly published dependency versions younger than 7 days are not installed.
 - `mops.toml` sets `[moc] args = ["-E=M0154,M0223"]`, demoting those two unused-identifier errors to warnings.
-- `tests.yml` gates all jobs on one required aggregate job `ci:required` (most jobs are conditional; a skipped job would otherwise satisfy its required check). `test` and `bench` run only on `.mo`/mops/tooling changes.
+- `tests.yml` runs every job on every PR and push, gated on one required aggregate job `ci:required` — a green gate means the full suite passed.
 - The `test` job also runs one Motoko test under legacy persistence: `npx ic-mops test List.allocation -- --legacy-persistence`.
