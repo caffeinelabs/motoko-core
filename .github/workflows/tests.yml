@@ -98,12 +98,11 @@ jobs:
         run: npm run bench
 
   # Single required check. Every job runs unconditionally, so a green gate means
-  # the full suite ran. validate-changelog and validate-docs are advisory and
-  # deliberately absent.
+  # the full suite ran. validate-changelog is advisory and deliberately absent.
   ci:
     name: "ci:required"
     if: always()
-    needs: [validate-version, check-orphans, validate-api, format, test, bench]
+    needs: [validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled
