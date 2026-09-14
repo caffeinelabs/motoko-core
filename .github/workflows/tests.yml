@@ -59,17 +59,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [0, 1, 2, 3, 4]
+        shard: [0, 1, 2, 3, 4]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      - name: Validate doc examples (group ${{ matrix.group }})
-        run: |
-          MODULES=$(node -e "console.log(require('./validation/docs/doc-groups.json')[process.env.GROUP].join(' '))")
-          npm run validate:docs -- $MODULES
+      - name: Validate doc examples (shard ${{ matrix.shard }}/5)
+        run: npm run validate:docs -- --shard=${{ matrix.shard }}/5
         env:
-          GROUP: ${{ matrix.group }}
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
 
   format:
