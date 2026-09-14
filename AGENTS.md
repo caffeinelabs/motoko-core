@@ -70,5 +70,5 @@ Concrete checks:
 - Generated/local directories are git-ignored and must not be committed: `.mops/`, `docs/`, `test/generated/`, `_build/`, `_out/`.
 - `.npmrc` sets `min-release-age=7`; newly published dependency versions younger than 7 days are not installed.
 - `mops.toml` sets `[moc] args = ["-E=M0154,M0223"]`, demoting those two unused-identifier errors to warnings.
-- `tests.yml` gates all jobs on one required aggregate job `ci:required`. Every job runs unconditionally on every PR and push — there is no change-detection gating, so the full suite always executes and a green gate means everything passed.
+- `tests.yml` runs every job on every PR and push, gated on one required aggregate job `ci:required` — a green gate means the full suite passed.
 - The `test` job also runs one Motoko test under legacy persistence: `npx ic-mops test List.allocation -- --legacy-persistence`.
