@@ -639,7 +639,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([4, 3, 2, 1, 0]);
   /// // divide 100 by every element in the list
-  /// let result = List.mapResult<Nat, Nat, Text>(list, func x {
+  /// let result = list.mapResult<Nat, Nat, Text>(func x {
   ///   if (x > 0) {
   ///     #ok(100 / x)
   ///   } else {
@@ -1835,7 +1835,7 @@ module {
   /// list.add(10);
   /// list.add(11);
   /// list.add(12);
-  /// assert Iter.toArray(list.enumerate()) == [(0, 10), (1, 11), (2, 12)];
+  /// assert list.enumerate().toArray() == [(0, 10), (1, 11), (2, 12)];
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,
@@ -1928,7 +1928,7 @@ module {
   /// list.add(10);
   /// list.add(11);
   /// list.add(12);
-  /// assert Iter.toArray(list.reverseEnumerate()) == [(2, 12), (1, 11), (0, 10)];
+  /// assert list.reverseEnumerate().toArray() == [(2, 12), (1, 11), (0, 10)];
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,
@@ -1976,7 +1976,7 @@ module {
   /// list.add("A");
   /// list.add("B");
   /// list.add("C");
-  /// Iter.toArray(list.keys()) // [0, 1, 2]
+  /// list.keys().toArray() // [0, 1, 2]
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,
@@ -1998,7 +1998,7 @@ module {
   /// let iter = array.values();
   ///
   /// let list = List.fromIter<Nat>(iter);
-  /// assert Iter.toArray(list.values()) == [1, 1, 1];
+  /// assert list.values().toArray() == [1, 1, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2020,7 +2020,7 @@ module {
   /// let iter = array.values();
   ///
   /// let list = iter.toList<Nat>();
-  /// assert Iter.toArray(list.values()) == [1, 1, 1];
+  /// assert list.values().toArray() == [1, 1, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2078,7 +2078,7 @@ module {
   /// let list = List.repeat<Nat>(2, 1);
   ///
   /// list.addAll(iter);
-  /// assert Iter.toArray(list.values()) == [2, 1, 1, 1];
+  /// assert list.values().toArray() == [2, 1, 1, 1];
   /// ```
   ///
   /// The List size is in practice limited only by available memory; the
@@ -2134,7 +2134,7 @@ module {
   ///
   /// let array = [2, 3];
   /// let list = List.fromArray<Nat>(array);
-  /// assert Iter.toArray(list.values()) == [2, 3];
+  /// assert list.values().toArray() == [2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2177,7 +2177,7 @@ module {
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
   /// let varArray = list.toVarArray();
-  /// assert VarArray.toArray(varArray) == [1, 2, 3];
+  /// assert varArray.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2221,7 +2221,7 @@ module {
   ///
   /// let array = [var 2, 3];
   /// let list = List.fromVarArray(array);
-  /// assert Iter.toArray(list.values()) == [2, 3];
+  /// assert list.values().toArray() == [2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2309,8 +2309,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.forEach(list, func(x) {
-  ///   Debug.print(Nat.toText(x)); // prints each element in list
+  /// list.forEach(func(x) {
+  ///   Debug.print(x.toText()); // prints each element in list
   /// });
   /// ```
   ///
@@ -2351,9 +2351,9 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.forEachEntry(list, func (i,x) {
+  /// list.forEachEntry(func (i,x) {
   ///   // prints each item (i,x) in list
-  ///   Debug.print(Nat.toText(i) # Nat.toText(x));
+  ///   Debug.print(i.toText() # x.toText());
   /// });
   /// ```
   ///
@@ -2520,10 +2520,10 @@ module {
   /// let array = List.fromArray<Nat>([1, 2, 3, 4, 5]);
   ///
   /// let slice1 = array.sliceToVarArray(1, 4);
-  /// assert VarArray.equal(slice1, [var 2, 3, 4], Nat.equal);
+  /// assert slice1.equal([var 2, 3, 4], Nat.equal);
   ///
   /// let slice2 = array.sliceToVarArray(1, -1);
-  /// assert VarArray.equal(slice2, [var 2, 3, 4], Nat.equal);
+  /// assert slice2.equal([var 2, 3, 4], Nat.equal);
   /// ```
   ///
   /// Runtime: O(toExclusive - fromInclusive)
@@ -2544,9 +2544,9 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.reverseForEachEntry(list, func (i,x) {
+  /// list.reverseForEachEntry(func (i,x) {
   ///   // prints each item (i,x) in list
-  ///   Debug.print(Nat.toText(i) # Nat.toText(x));
+  ///   Debug.print(i.toText() # x.toText());
   /// });
   /// ```
   ///
@@ -2590,8 +2590,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.reverseForEach(list, func (x) {
-  ///   Debug.print(Nat.toText(x)); // prints each element in list in reverse order
+  /// list.reverseForEach(func (x) {
+  ///   Debug.print(x.toText()); // prints each element in list in reverse order
   /// });
   /// ```
   ///
@@ -2630,7 +2630,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3, 4, 5]);
-  /// list.forEachInRange(func x = Debug.print(Nat.toText(x)), 1, 2); // prints 2 and 3
+  /// list.forEachInRange(func x = Debug.print(x.toText()), 1, 2); // prints 2 and 3
   /// ```
   ///
   /// Runtime: `O(toExclusive - fromExclusive)`
@@ -2964,7 +2964,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
-  /// assert list.foldLeft("", func (acc, x) { acc # Nat.toText(x)}) == "123";
+  /// assert list.foldLeft("", func (acc, x) { acc # x.toText()}) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3007,7 +3007,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
-  /// assert list.foldRight("", func (x, acc) { Nat.toText(x) # acc }) == "123";
+  /// assert list.foldRight("", func (x, acc) { x.toText() # acc }) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3052,7 +3052,7 @@ module {
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
   /// list.reverseInPlace();
-  /// assert Iter.toArray(list.values()) == [3, 2, 1];
+  /// assert list.values().toArray() == [3, 2, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3109,7 +3109,7 @@ module {
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
   /// let rlist = list.reverse();
-  /// assert Iter.toArray(rlist.values()) == [3, 2, 1];
+  /// assert rlist.values().toArray() == [3, 2, 1];
   /// ```
   ///
   /// Runtime: `O(size)`

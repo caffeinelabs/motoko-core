@@ -37,7 +37,7 @@
 ///   var pending = Map.empty<Nat, Nat>(); // delay in nanoseconds per timer
 ///
 ///   do {
-///     for ((_, delay) in Map.entries(pending)) {
+///     for ((_, delay) in pending.entries()) {
 ///       ignore Timer.setTimer<system>(#nanoseconds delay, fire);
 ///     };
 ///   };

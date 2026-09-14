@@ -95,8 +95,7 @@ module {
   ///
   /// let text = "Mississippi";
   /// let count =
-  ///   Text.foldLeft(
-  ///     text,
+  ///   text.foldLeft(
   ///     0, // start the sum at 0
   ///     func(ss, c) = if (c == 's') ss + 1 else ss
   ///   );
@@ -147,7 +146,7 @@ module {
   /// import VarArray "mo:core/VarArray";
   /// import Char "mo:core/Char";
   ///
-  /// assert VarArray.equal("Café".toVarArray(), [var 'C', 'a', 'f', 'é'], Char.equal);
+  /// assert "Café".toVarArray().equal([var 'C', 'a', 'f', 'é'], Char.equal);
   /// ```
   ///
   /// Runtime: O(t.size())
@@ -382,7 +381,7 @@ module {
   /// // Replace all occurrences of '?' with "!!"
   /// let result = Text.flatMap("Motoko?", func(c) {
   ///   if (c == '?') "!!"
-  ///   else Char.toText(c)
+  ///   else c.toText()
   /// });
   /// assert result == "Motoko!!";
   /// ```
@@ -503,7 +502,7 @@ module {
 
   private class CharBuffer(cs : Iter.Iter<Char>) : Iter.Iter<Char> = {
 
-    var stack : Stack.Stack<(Iter.Iter<Char>, Char)> = Stack.empty();
+    let stack : Stack.Stack<(Iter.Iter<Char>, Char)> = Stack.empty();
 
     public func pushBack(cs0 : Iter.Iter<Char>, c : Char) {
       Stack.push(stack, (cs0, c))
@@ -648,7 +647,7 @@ module {
   /// assert "Motoko".startsWith(#text "Mo");
   /// ```
   public func startsWith(self : Text, p : Pattern) : Bool {
-    var cs = self.chars();
+    let cs = self.chars();
     let match = matchOfPattern(p);
     switch (match(cs)) {
       case (#success) { true };
@@ -667,7 +666,7 @@ module {
     let s1 = self.size();
     if (s2 > s1) return false;
     let match = matchOfPattern(p);
-    var cs1 = self.chars();
+    let cs1 = self.chars();
     var diff : Nat = s1 - s2;
     while (diff > 0) {
       ignore cs1.next();
@@ -734,7 +733,7 @@ module {
   public func stripStart(self : Text, p : Pattern) : ?Text {
     let s = sizeOfPattern(p);
     if (s == 0) return ?self;
-    var cs = self.chars();
+    let cs = self.chars();
     let match = matchOfPattern(p);
     switch (match(cs)) {
       case (#success) return ?fromIter(cs);
@@ -759,7 +758,7 @@ module {
     let s1 = self.size();
     if (s2 > s1) return null;
     let match = matchOfPattern(p);
-    var cs1 = self.chars();
+    let cs1 = self.chars();
     var diff : Nat = s1 - s2;
     while (diff > 0) {
       ignore cs1.next();

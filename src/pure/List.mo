@@ -493,7 +493,7 @@ module {
   ///   assert List.foldLeft(
   ///     list,
   ///     "",
-  ///     func (acc, x) = acc # Nat.toText(x)
+  ///     func (acc, x) = acc # x.toText()
   ///   ) == "123";
   /// }
   /// ```
@@ -522,7 +522,7 @@ module {
   ///   assert List.foldRight(
   ///     list,
   ///     "",
-  ///     func (x, acc) = Nat.toText(x) # acc
+  ///     func (x, acc) = x.toText() # acc
   ///   ) == "123";
   /// }
   /// ```
@@ -571,7 +571,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = List.fromArray(['A', 'B', 'C', 'D']);
-  ///   let found = List.findIndex(list, func(x) { x == 'C' });
+  ///   let found = list.findIndex(func(x) { x == 'C' });
   ///   assert found == ?2;
   /// }
   /// ```
@@ -829,7 +829,7 @@ module {
   ///   assert List.zipWith(
   ///     list1,
   ///     list2,
-  ///     func (n, c) = Nat.toText(n) # Char.toText(c)
+  ///     func (n, c) = n.toText() # c.toText()
   ///   ) == ?("0a", ?("1b", null));
   /// }
   /// ```
@@ -906,8 +906,8 @@ module {
   /// persistent actor {
   ///   let list = List.fromArray([3, 1, 4]);
   ///   var text = "";
-  ///   for (item in List.values(list)) {
-  ///     text #= Nat.toText(item);
+  ///   for (item in list.values()) {
+  ///     text #= item.toText();
   ///   };
   ///   assert text == "314";
   /// }
@@ -933,8 +933,8 @@ module {
   /// persistent actor {
   ///   let list = List.fromArray([3, 1, 4]);
   ///   var text = "";
-  ///   for ((index, element) in List.enumerate(list)) {
-  ///     text #= Nat.toText(index);
+  ///   for ((index, element) in list.enumerate()) {
+  ///     text #= index.toText();
   ///   };
   ///   assert text == "012";
   /// }
@@ -999,7 +999,7 @@ module {
   ///
   /// persistent actor {
   ///   let array = List.toArray(?(0, ?(1, ?(2, ?(3, ?(4, null))))));
-  ///   assert Array.equal(array, [0, 1, 2, 3, 4], Nat.equal);
+  ///   assert array.equal([0, 1, 2, 3, 4], Nat.equal);
   /// }
   /// ```
   ///
@@ -1020,7 +1020,7 @@ module {
   ///
   /// persistent actor {
   ///   let array = List.toVarArray<Nat>(?(0, ?(1, ?(2, ?(3, ?(4, null))))));
-  ///   assert VarArray.equal(array, [var 0, 1, 2, 3, 4], Nat.equal);
+  ///   assert array.equal([var 0, 1, 2, 3, 4], Nat.equal);
   /// }
   /// ```
   ///

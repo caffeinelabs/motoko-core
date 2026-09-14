@@ -36,9 +36,9 @@ const testStatusEmojis: Record<TestResult["status"], string> = {
 
 const rootDirectory = join(__dirname, "../../..");
 
-// Treat redundant type instantiations (M0223) and `@deprecated` usages (M0154)
-// as errors in doc snippets — examples must never use deprecated APIs.
-const mocExtraFlags = ["-E=M0223,M0154"];
+// Treat redundant type instantiations (M0223), `@deprecated` usages (M0154),
+// and module-function calls (M0236) as errors in doc snippets.
+const mocExtraFlags = ["-E=M0223,M0154,M0236"];
 
 // Always use the mops-pinned `moc` so snippets compile against the exact
 // toolchain version the project targets. Never fall back to a dfx-provided moc.

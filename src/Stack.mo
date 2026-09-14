@@ -52,7 +52,7 @@ module {
   ///   mutableStack.push(2);
   ///   mutableStack.push(1);
   ///   let immutableList = mutableStack.toPure();
-  ///   assert Iter.toArray(PureList.values(immutableList)) == [1, 2, 3];
+  ///   assert immutableList.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   let immutableList = PureList.fromIter([1, 2, 3].values());
   ///   let mutableStack = Stack.fromPure<Nat>(immutableList);
-  ///   assert Iter.toArray(mutableStack.values()) == [1, 2, 3];
+  ///   assert mutableStack.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -149,7 +149,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.tabulate<Nat>(3, func(i) { 2 * i });
-  ///   assert Iter.toArray(stack.values()) == [4, 2, 0];
+  ///   assert stack.values().toArray() == [4, 2, 0];
   /// }
   /// ```
   ///
@@ -462,7 +462,7 @@ module {
   ///   stack.push(3);
   ///   stack.push(2);
   ///   stack.push(1);
-  ///   assert Iter.toArray(stack.values()) == [1, 2, 3];
+  ///   assert stack.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -549,7 +549,7 @@ module {
   ///   stack.push(2);
   ///   stack.push(1);
   ///   var text = "";
-  ///   stack.forEach(func(n) = text #= Nat.toText(n));
+  ///   stack.forEach(func(n) = text #= n.toText());
   ///   assert text == "123";
   /// }
   /// ```
@@ -647,7 +647,7 @@ module {
   ///   stack.push(3);
   ///   stack.push(2);
   ///   stack.push(1);
-  ///   let evenDoubled = Stack.filterMap<Nat, Nat>(stack, func(n) {
+  ///   let evenDoubled = stack.filterMap<Nat, Nat>(func(n) {
   ///     if (n % 2 == 0) {
   ///       ?(n * 2)
   ///     } else {
@@ -772,7 +772,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert Iter.toArray(stack.values()) == [1, 2, 3];
+  ///   assert stack.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -801,7 +801,7 @@ module {
   ///
   ///   let stack = iter.toStack<Nat>();
   ///
-  ///   assert Iter.toArray(stack.values()) == [1, 2, 3];
+  ///   assert stack.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///

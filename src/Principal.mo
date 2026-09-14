@@ -103,7 +103,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-  /// let blob = Principal.toBlob(principal);
+  /// let blob = principal.toBlob();
   /// assert blob == "\00\00\00\00\00\30\00\D3\01\01";
   /// ```
   public let toBlob : (self : Principal) -> Blob = Prim.blobOfPrincipal;

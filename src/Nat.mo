@@ -284,7 +284,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.sort([2, 3, 1], Nat.compare) == [1, 2, 3];
+  /// assert [2, 3, 1].sort(Nat.compare) == [1, 2, 3];
   /// ```
   public func compare(x : Nat, y : Nat) : Order.Order {
     if (x < y) { #less } else if (x == y) { #equal } else {
@@ -309,7 +309,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.foldLeft([2, 3, 1], 0, Nat.add) == 6;
+  /// assert [2, 3, 1].foldLeft(0, Nat.add) == 6;
   /// ```
   public func add(x : Nat, y : Nat) : Nat { x + y };
 
@@ -331,7 +331,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.foldLeft([2, 3, 1], 10, Nat.sub) == 4;
+  /// assert [2, 3, 1].foldLeft(10, Nat.sub) == 4;
   /// ```
   public func sub(x : Nat, y : Nat) : Nat { x - y };
 
@@ -352,7 +352,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// import Array "mo:core/Array";
-  /// assert Array.foldLeft([2, 3, 1], 1, Nat.mul) == 6;
+  /// assert [2, 3, 1].foldLeft(1, Nat.mul) == 6;
   /// ```
   public func mul(x : Nat, y : Nat) : Nat { x * y };
 

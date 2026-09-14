@@ -14,7 +14,7 @@
 ///     let elapsedSeconds = (now - lastTime) / 1000_000_000;
 ///     lastTime := now;
 ///     return "Hello, " # name # "!" #
-///       " I was last called " # Int.toText(elapsedSeconds) # " seconds ago";
+///       " I was last called " # elapsedSeconds.toText() # " seconds ago";
 ///    };
 /// };
 /// ```

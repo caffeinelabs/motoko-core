@@ -692,8 +692,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
-  ///   let evenDoubled = Queue.filterMap<Nat, Nat>(
-  ///     queue,
+  ///   let evenDoubled = queue.filterMap<Nat, Nat>(
   ///     func(x) {
   ///       if (x % 2 == 0) { ?(x * 2) } else  { null }
   ///     }

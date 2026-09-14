@@ -77,7 +77,7 @@ module {
   /// let array = [0, 1, 2];
   /// let varArray = array.toVarArray<Nat>();
   /// varArray[2] := 3;
-  /// assert VarArray.equal(varArray, [var 0, 1, 3], Nat.equal);
+  /// assert varArray.equal([var 0, 1, 3], Nat.equal);
   /// ```
   ///
   /// Runtime: O(size)
@@ -101,7 +101,7 @@ module {
   ///
   /// ```motoko include=import
   /// let bytes : [Nat8] = [0, 255, 0];
-  /// let blob = Array.toBlob(bytes);
+  /// let blob = bytes.toBlob();
   /// assert blob == "\00\FF\00";
   /// assert bytes.toBlob() == "\00\FF\00";
   /// ```
@@ -257,7 +257,7 @@ module {
   /// ```motoko include=import
   /// var sum = 0;
   /// let array = [0, 1, 2, 3];
-  /// Array.forEach(array, func(x) {
+  /// array.forEach(func(x) {
   ///   sum += x;
   /// });
   /// assert sum == 6;
@@ -337,8 +337,7 @@ module {
   ///
   /// let array = [4, 2, 0, 1];
   /// let newArray =
-  ///   Array.filterMap( // mapping from Nat to Text values
-  ///     array,
+  ///   array.filterMap( // mapping from Nat to Text values
   ///     func x = if (x == 0) { null } else { ?toText(100 / x) } // can't divide by 0, so return null
   ///   );
   /// assert newArray == ["25", "50", "100"];
@@ -390,7 +389,7 @@ module {
   /// ```motoko include=import
   /// let array = [4, 3, 2, 1, 0];
   /// // divide 100 by every element in the array
-  /// let result = Array.mapResult(array, func x {
+  /// let result = array.mapResult(func x {
   ///   if (x > 0) {
   ///     #ok(100 / x)
   ///   } else {
@@ -522,8 +521,7 @@ module {
   ///
   /// let array = [4, 2, 0, 1];
   /// let sum =
-  ///   Array.foldLeft(
-  ///     array,
+  ///   array.foldLeft(
   ///     0, // start the sum at 0
   ///     func(sumSoFar, x) = sumSoFar + x // this entire function can be replaced with `add`!
   ///   );
@@ -891,8 +889,8 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.contains('f');
-  /// assert not array.contains('g');
+  /// assert array.contains(Char.equal, 'f');
+  /// assert not array.contains(Char.equal, 'g');
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -1014,10 +1012,10 @@ module {
   /// let array = [1, 2, 3, 4, 5];
   ///
   /// let slice1 = array.sliceToVarArray<Nat>(1, 4);
-  /// assert VarArray.equal(slice1, [var 2, 3, 4], Nat.equal);
+  /// assert slice1.equal([var 2, 3, 4], Nat.equal);
   ///
   /// let slice2 = array.sliceToVarArray<Nat>(1, -1);
-  /// assert VarArray.equal(slice2, [var 2, 3, 4], Nat.equal);
+  /// assert slice2.equal([var 2, 3, 4], Nat.equal);
   /// ```
   ///
   /// Runtime: O(toExclusive - fromInclusive)

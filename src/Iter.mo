@@ -97,7 +97,7 @@ module {
   ///
   /// ```motoko include=import
   /// var sum = 0;
-  /// Iter.forEach([1, 2, 3].values(), func(x) {
+  /// [1, 2, 3].values().forEach(func(x) {
   ///   sum += x;
   /// });
   /// assert sum == 6;
