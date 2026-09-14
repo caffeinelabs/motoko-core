@@ -98,7 +98,7 @@ assert Text.compareWith("abc", "ABC", Char.compare) == #greater
 
 * Type aliases should be defined for complex object or variant types or ones that are used more than once.
 
-* Define all public types in `Types.mo`, and include an alias in the relevant module.
+* Place shared types that are used across multiple modules in `Types.mo`. Module-local types may stay in their own module.
 
 
 ## Functions and methods
@@ -164,7 +164,7 @@ assert Text.compareWith("abc", "ABC", Char.compare) == #greater
 
   - `clone`: copy mutable container
 
-  - `keys`: iterator over keys of collection (same as `vals` for sets)
+  - `keys`: iterator over keys of collection (same as `values` for sets)
 
   - `values`: iterator over values of collection
 

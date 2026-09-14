@@ -195,7 +195,7 @@ await suite(
     func deterministicMockGenerator(seed : Nat8) : () -> async* Blob {
       var counter = seed;
       func() : async* Blob {
-        let bytes : [Nat8] = Array.tabulate<Nat8>(
+        let bytes : [Nat8] = Array.tabulate(
           16,
           func(i) {
             counter := Nat.toNat8((Nat8.toNat(counter) + 1) % 256);

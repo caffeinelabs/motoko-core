@@ -55,7 +55,7 @@ run(
           map.remove(0);
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "delete empty",
@@ -64,7 +64,7 @@ run(
           assert (not map.delete(0));
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "take absent",
@@ -96,12 +96,12 @@ run(
       test(
         "iterate forward",
         Iter.toArray(Map.entries(Map.empty<Nat, Text>())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "iterate backward",
         Iter.toArray(Map.reverseEntries(Map.empty<Nat, Text>())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "contains key",
@@ -174,12 +174,12 @@ run(
       test(
         "iterate keys",
         Iter.toArray(Map.keys(Map.empty<Nat, Text>())),
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "iterate values",
         Iter.toArray(Map.values(Map.empty<Nat, Text>())),
-        M.equals(T.array<Text>(T.textTestable, []))
+        M.equals(T.array(T.textTestable, []))
       ),
       test(
         "from iterator",
@@ -193,7 +193,7 @@ run(
         "for each",
         do {
           let map = Map.empty<Nat, Text>();
-          Map.forEach<Nat, Text>(
+          Map.forEach(
             map,
             func(_, _) {
               assert false
@@ -247,7 +247,7 @@ run(
         "fold left",
         do {
           let map = Map.empty<Nat, Text>();
-          Map.foldLeft<Nat, Text, Nat>(
+          Map.foldLeft(
             map,
             0,
             func(_, _, _) {
@@ -261,7 +261,7 @@ run(
         "fold right",
         do {
           let map = Map.empty<Nat, Text>();
-          Map.foldRight<Nat, Text, Nat>(
+          Map.foldRight(
             map,
             0,
             func(_, _, _) {
@@ -275,7 +275,7 @@ run(
         "all",
         do {
           let map = Map.empty<Nat, Text>();
-          Map.all<Nat, Text>(
+          Map.all(
             map,
             func(_, _) {
               Runtime.trap("test failed")
@@ -288,7 +288,7 @@ run(
         "any",
         do {
           let map = Map.empty<Nat, Text>();
-          Map.any<Nat, Text>(
+          Map.any(
             map,
             func(_, _) {
               Runtime.trap("test failed")
@@ -342,7 +342,7 @@ run(
           Map.add(map, Nat.compare, 0, "1");
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "1")]))
+        M.equals(T.array(entryTestable, [(0, "1")]))
       ),
       test(
         "add singleton new",
@@ -351,7 +351,7 @@ run(
           Map.add(map, Nat.compare, 1, "1");
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0"), (1, "1")]))
+        M.equals(T.array(entryTestable, [(0, "0"), (1, "1")]))
       ),
       test(
         "insert singleton old",
@@ -360,7 +360,7 @@ run(
           assert (not Map.insert(map, Nat.compare, 0, "1"));
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "1")]))
+        M.equals(T.array(entryTestable, [(0, "1")]))
       ),
       test(
         "insert singleton new",
@@ -369,7 +369,7 @@ run(
           assert Map.insert(map, Nat.compare, 1, "1");
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0"), (1, "1")]))
+        M.equals(T.array(entryTestable, [(0, "0"), (1, "1")]))
       ),
       test(
         "remove singleton old",
@@ -378,7 +378,7 @@ run(
           Map.remove(map, Nat.compare, 0);
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "remove singleton new",
@@ -387,7 +387,7 @@ run(
           Map.remove(map, Nat.compare, 1);
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
+        M.equals(T.array(entryTestable, [(0, "0")]))
       ),
       test(
         "delete singleton old",
@@ -396,7 +396,7 @@ run(
           assert (Map.delete(map, Nat.compare, 0));
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "delete singleton new",
@@ -405,7 +405,7 @@ run(
           assert (not Map.delete(map, Nat.compare, 1));
           Iter.toArray(Map.entries(map))
         },
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
+        M.equals(T.array(entryTestable, [(0, "0")]))
       ),
       test(
         "take function result",
@@ -448,12 +448,12 @@ run(
       test(
         "iterate forward",
         Iter.toArray(Map.entries(Map.singleton<Nat, Text>(0, "0"))),
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
+        M.equals(T.array(entryTestable, [(0, "0")]))
       ),
       test(
         "iterate backward",
         Iter.toArray(Map.reverseEntries(Map.singleton<Nat, Text>(0, "0"))),
-        M.equals(T.array<(Nat, Text)>(entryTestable, [(0, "0")]))
+        M.equals(T.array(entryTestable, [(0, "0")]))
       ),
       test(
         "contains present key",
@@ -576,12 +576,12 @@ run(
       test(
         "iterate keys",
         Iter.toArray(Map.keys(Map.singleton<Nat, Text>(0, "0"))),
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "iterate values",
         Iter.toArray(Map.values(Map.singleton<Nat, Text>(0, "0"))),
-        M.equals(T.array<Text>(T.textTestable, ["0"]))
+        M.equals(T.array(T.textTestable, ["0"]))
       ),
       test(
         "from iterator",
@@ -597,7 +597,7 @@ run(
         "for each",
         do {
           let map = Map.singleton<Nat, Text>(0, "0");
-          Map.forEach<Nat, Text>(
+          Map.forEach(
             map,
             func(key, value) {
               assert (key == 0);
@@ -665,7 +665,7 @@ run(
         "fold left",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.foldLeft<Nat, Text, Nat>(
+          Map.foldLeft(
             map,
             0,
             func(accumulator, key, value) {
@@ -679,7 +679,7 @@ run(
         "fold right",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.foldRight<Nat, Text, Nat>(
+          Map.foldRight(
             map,
             0,
             func(key, value, accumulator) {
@@ -693,7 +693,7 @@ run(
         "all",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.all<Nat, Text>(
+          Map.all(
             map,
             func(key, value) {
               key == 1 and value == "1"
@@ -706,7 +706,7 @@ run(
         "not all",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.all<Nat, Text>(
+          Map.all(
             map,
             func(key, value) {
               key == 0
@@ -719,7 +719,7 @@ run(
         "any",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.any<Nat, Text>(
+          Map.any(
             map,
             func(key, value) {
               key == 1 and value == "1"
@@ -732,7 +732,7 @@ run(
         "not any",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.any<Nat, Text>(
+          Map.any(
             map,
             func(key, value) {
               key == 0
@@ -745,7 +745,7 @@ run(
         "to text",
         do {
           let map = Map.singleton<Nat, Text>(1, "1");
-          Map.toText<Nat, Text>(map, Nat.toText, func(value) { value })
+          Map.toText(map, Nat.toText, func(value) { value })
         },
         M.equals(T.text("Map{(1, 1)}"))
       ),
@@ -819,12 +819,12 @@ run(
     [
       test(
         "size",
-        Map.size<Nat, Text>(smallMap()),
+        Map.size(smallMap()),
         M.equals(T.nat(smallSize))
       ),
       test(
         "is empty",
-        Map.isEmpty<Nat, Text>(smallMap()),
+        Map.isEmpty(smallMap()),
         M.equals(T.bool(false))
       ),
       test(
@@ -844,10 +844,10 @@ run(
           let copy = smallMap();
           let clone = Map.clone(original);
           let keys = Iter.toArray(Map.keys(original));
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             Map.add(original, Nat.compare, key, "X")
           };
-          for (key in keys.vals()) {
+          for (key in keys.values()) {
             assert Map.get(clone, Nat.compare, key) == Map.get(copy, Nat.compare, key)
           };
           Map.size(clone)
@@ -858,16 +858,16 @@ run(
         "iterate forward",
         Iter.toArray(Map.entries(smallMap())),
         M.equals(
-          T.array<(Nat, Text)>(
+          T.array(
             entryTestable,
-            Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) })
+            Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) })
           )
         )
       ),
       test(
         "iterate backward",
         Iter.toArray(Map.reverseEntries(smallMap())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, Array.reverse(Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) }))))
+        M.equals(T.array(entryTestable, Array.reverse(Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) }))))
       ),
       test(
         "contains present keys",
@@ -1004,12 +1004,12 @@ run(
       test(
         "iterate keys",
         Iter.toArray(Map.keys(smallMap())),
-        M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { index })))
+        M.equals(T.array(T.natTestable, Array.tabulate(smallSize, func(index) { index })))
       ),
       test(
         "iterate values",
         Iter.toArray(Map.values(smallMap())),
-        M.equals(T.array<Text>(T.textTestable, Array.tabulate<Text>(smallSize, func(index) { Nat.toText(index) })))
+        M.equals(T.array(T.textTestable, Array.tabulate(smallSize, func(index) { Nat.toText(index) })))
       ),
       test(
         "from iterator",
@@ -1029,7 +1029,7 @@ run(
         do {
           let map = smallMap();
           var index = 0;
-          Map.forEach<Nat, Text>(
+          Map.forEach(
             map,
             func(key, value) {
               assert (key == index);
@@ -1116,7 +1116,7 @@ run(
         "fold left",
         do {
           let map = smallMap();
-          Map.foldLeft<Nat, Text, Nat>(
+          Map.foldLeft(
             map,
             0,
             func(accumulator, key, value) {
@@ -1130,7 +1130,7 @@ run(
         "fold right",
         do {
           let map = smallMap();
-          Map.foldRight<Nat, Text, Nat>(
+          Map.foldRight(
             map,
             0,
             func(key, value, accumulator) {
@@ -1144,7 +1144,7 @@ run(
         "all",
         do {
           let map = smallMap();
-          Map.all<Nat, Text>(
+          Map.all(
             map,
             func(key, value) {
               key < smallSize
@@ -1157,7 +1157,7 @@ run(
         "any",
         do {
           let map = smallMap();
-          Map.any<Nat, Text>(
+          Map.any(
             map,
             func(key, value) {
               key == (smallSize - 1 : Nat)
@@ -1170,7 +1170,7 @@ run(
         "to text",
         do {
           let map = smallMap();
-          Map.toText<Nat, Text>(map, Nat.toText, func(value) { value })
+          Map.toText(map, Nat.toText, func(value) { value })
         },
         do {
           var text = "Map{";

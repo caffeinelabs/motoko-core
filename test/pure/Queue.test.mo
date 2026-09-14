@@ -64,7 +64,7 @@ suite(
     test(
       "iterate forward",
       func() {
-        expect.array<Nat>(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
       }
     );
 
@@ -384,7 +384,7 @@ suite(
   }
 );
 
-queue := Queue.filter<Nat>(Queue.fromIter([1, 2, 3, 4, 5].vals()), func n = n < 3);
+queue := Queue.filter(Queue.fromIter([1, 2, 3, 4, 5].values()), func n = n < 3);
 
 suite(
   "filter invariants",

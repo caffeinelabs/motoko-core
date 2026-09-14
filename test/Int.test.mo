@@ -1036,7 +1036,7 @@ run(
       test(
         "negative number",
         Int.fromText("-1234"),
-        M.equals(T.optional<Int>(T.intTestable, ?(-1234)))
+        M.equals(T.optional(T.intTestable, ?(-1234)))
       ),
       test(
         "zero",
@@ -1106,7 +1106,7 @@ run(
       test(
         "negative large number",
         Int.fromText("-" # largeNumberText),
-        M.equals(T.optional<Int>(T.intTestable, ?(-largeNumber)))
+        M.equals(T.optional(T.intTestable, ?(-largeNumber)))
       )
     ]
   )

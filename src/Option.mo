@@ -46,7 +46,7 @@ module {
   /// Applies a function to the wrapped value. `null`'s are left untouched.
   /// ```motoko
   /// import Option "mo:core/Option";
-  /// assert Option.map<Nat, Nat>(?42, func x = x + 1) == ?43;
+  /// assert Option.map(?42, func x = x + 1) == ?43;
   /// assert Option.map<Nat, Nat>(null, func x = x + 1) == null;
   /// ```
   public func map<T, R>(self : ?T, f : T -> R) : ?R = switch self {
@@ -60,9 +60,9 @@ module {
   /// ```motoko
   /// import Option "mo:core/Option";
   /// var counter : Nat = 0;
-  /// Option.forEach(?5, func (x : Nat) { counter += x });
+  /// Option.forEach(?5, func (x) { counter += x });
   /// assert counter == 5;
-  /// Option.forEach(null, func (x : Nat) { counter += x });
+  /// Option.forEach(null, func (x) { counter += x });
   /// assert counter == 5;
   /// ```
   public func forEach<T>(self : ?T, f : T -> ()) = switch self {
@@ -96,7 +96,7 @@ module {
   /// assert Option.flatten(null) == null;
   /// ```
   public func flatten<T>(self : ??T) : ?T {
-    chain<?T, T>(self, func(x_ : ?T) : ?T = x_)
+    chain(self, func(x_ : ?T) : ?T = x_)
   };
 
   /// Creates an optional value from a definite value.
@@ -104,7 +104,7 @@ module {
   /// import Option "mo:core/Option";
   /// assert Option.some(42) == ?42;
   /// ```
-  public func some<T>(self : T) : ?T = ?self;
+  public func some<T>(self : T) : ?T = ?self; // ignore-self-type-check
 
   /// Returns true if the argument is not `null`, otherwise returns false.
   public func isSome(self : ?Any) : Bool {

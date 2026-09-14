@@ -35,7 +35,7 @@ func insert(rbTree : Map.Map<Nat, Text>, key : Nat) : Map.Map<Nat, Text> {
 };
 
 func getAll(rbTree : Map.Map<Nat, Text>, keys : [Nat]) {
-  for (key in keys.vals()) {
+  for (key in keys.values()) {
     let value = Map.get(rbTree, Nat.compare, key);
     assert (value == ?debug_show (key))
   }
@@ -55,7 +55,7 @@ func clear(initialRbMap : Map.Map<Nat, Text>) : Map.Map<Nat, Text> {
 };
 
 func expectedEntries(keys : [Nat]) : [(Nat, Text)] {
-  Array.tabulate<(Nat, Text)>(keys.size(), func(index) { (keys[index], debug_show (keys[index])) })
+  Array.tabulate(keys.size(), func(index) { (keys[index], debug_show (keys[index])) })
 };
 
 func concatenateKeys(key : Nat, value : Text, accum : Text) : Text {
@@ -100,22 +100,22 @@ run(
       test(
         "entries",
         Iter.toArray(Map.entries(buildTestMap())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "reverseEntries",
         Iter.toArray(Map.reverseEntries(buildTestMap())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "keys",
         Iter.toArray(Map.keys(buildTestMap())),
-        M.equals(T.array<Nat>(T.natTestable, []))
+        M.equals(T.array(T.natTestable, []))
       ),
       test(
         "vals",
         Iter.toArray(Map.values(buildTestMap())),
-        M.equals(T.array<Text>(T.textTestable, []))
+        M.equals(T.array(T.textTestable, []))
       ),
       test(
         "empty from iter",
@@ -189,24 +189,24 @@ run(
       ),
       test(
         "empty all",
-        Map.all<Nat, Text>(buildTestMap(), func(k, v) = false),
+        Map.all(buildTestMap(), func(k, v) = false),
         M.equals(T.bool(true))
       ),
       test(
         "empty any",
-        Map.any<Nat, Text>(buildTestMap(), func(k, v) = true),
+        Map.any(buildTestMap(), func(k, v) = true),
         M.equals(T.bool(false))
       ),
       test(
         "empty to text",
-        Map.toText<Nat, Text>(buildTestMap(), Nat.toText, func(value) { value }),
+        Map.toText(buildTestMap(), Nat.toText, func(value) { value }),
         M.equals(T.text("PureMap{}"))
       ),
       test(
         "for each",
         do {
           let map = Map.empty<Nat, Text>();
-          Map.forEach<Nat, Text>(
+          Map.forEach(
             map,
             func(_, _) {
               assert false
@@ -285,22 +285,22 @@ run(
       test(
         "entries",
         Iter.toArray(Map.entries(buildTestMap())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, expected))
+        M.equals(T.array(entryTestable, expected))
       ),
       test(
         "reverseEntries",
         Iter.toArray(Map.reverseEntries(buildTestMap())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, expected))
+        M.equals(T.array(entryTestable, expected))
       ),
       test(
         "keys",
         Iter.toArray(Map.keys(buildTestMap())),
-        M.equals(T.array<Nat>(T.natTestable, [0]))
+        M.equals(T.array(T.natTestable, [0]))
       ),
       test(
         "values",
         Iter.toArray(Map.values(buildTestMap())),
-        M.equals(T.array<Text>(T.textTestable, ["0"]))
+        M.equals(T.array(T.textTestable, ["0"]))
       ),
       test(
         "from iter",
@@ -392,24 +392,24 @@ run(
       ),
       test(
         "all",
-        Map.all<Nat, Text>(buildTestMap(), func(k, v) = (k == 0)),
+        Map.all(buildTestMap(), func(k, v) = (k == 0)),
         M.equals(T.bool(true))
       ),
       test(
         "any",
-        Map.any<Nat, Text>(buildTestMap(), func(k, v) = (k == 0)),
+        Map.any(buildTestMap(), func(k, v) = (k == 0)),
         M.equals(T.bool(true))
       ),
       test(
         "to text",
-        Map.toText<Nat, Text>(buildTestMap(), Nat.toText, func(value) { value }),
+        Map.toText(buildTestMap(), Nat.toText, func(value) { value }),
         M.equals(T.text("PureMap{(0, 0)}"))
       ),
       test(
         "for each",
         do {
           let map = Map.singleton(0, "0");
-          Map.forEach<Nat, Text>(
+          Map.forEach(
             map,
             func(key, value) {
               assert (key == 0);
@@ -440,7 +440,7 @@ run(
       ),
       test(
         "singleton size",
-        Map.size<Nat, Text>(Map.singleton(0, "0")),
+        Map.size(Map.singleton(0, "0")),
         M.equals(T.nat(1))
       ),
       test(
@@ -519,22 +519,22 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   test(
     "entries",
     Iter.toArray(Map.entries(buildTestMap())),
-    M.equals(T.array<(Nat, Text)>(entryTestable, expected))
+    M.equals(T.array(entryTestable, expected))
   ),
   test(
     "reverserEntries",
     Iter.toArray(Map.reverseEntries(buildTestMap())),
-    M.equals(T.array<(Nat, Text)>(entryTestable, Array.reverse(expected)))
+    M.equals(T.array(entryTestable, Array.reverse(expected)))
   ),
   test(
     "keys",
     Iter.toArray(Map.keys(buildTestMap())),
-    M.equals(T.array<Nat>(T.natTestable, [0, 1, 2]))
+    M.equals(T.array(T.natTestable, [0, 1, 2]))
   ),
   test(
     "values",
     Iter.toArray(Map.values(buildTestMap())),
-    M.equals(T.array<Text>(T.textTestable, ["0", "1", "2"]))
+    M.equals(T.array(T.textTestable, ["0", "1", "2"]))
   ),
   test(
     "from iter",
@@ -553,7 +553,7 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   test(
     "containsKey",
     Array.tabulate<Bool>(4, func(k : Nat) = (Map.containsKey(buildTestMap(), Nat.compare, k))),
-    M.equals(T.array<Bool>(T.boolTestable, [true, true, true, false]))
+    M.equals(T.array(T.boolTestable, [true, true, true, false]))
   ),
   test(
     "maxEntry",
@@ -612,27 +612,27 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
   ),
   test(
     "all true",
-    Map.all<Nat, Text>(buildTestMap(), func(k, v) = (k >= 0)),
+    Map.all(buildTestMap(), func(k, v) = (k >= 0)),
     M.equals(T.bool(true))
   ),
   test(
     "all false",
-    Map.all<Nat, Text>(buildTestMap(), func(k, v) = (k > 0)),
+    Map.all(buildTestMap(), func(k, v) = (k > 0)),
     M.equals(T.bool(false))
   ),
   test(
     "any true",
-    Map.any<Nat, Text>(buildTestMap(), func(k, v) = (k >= 2)),
+    Map.any(buildTestMap(), func(k, v) = (k >= 2)),
     M.equals(T.bool(true))
   ),
   test(
     "any false",
-    Map.any<Nat, Text>(buildTestMap(), func(k, v) = (k > 2)),
+    Map.any(buildTestMap(), func(k, v) = (k > 2)),
     M.equals(T.bool(false))
   ),
   test(
     "to text",
-    Map.toText<Nat, Text>(buildTestMap(), Nat.toText, func(value) { value }),
+    Map.toText(buildTestMap(), Nat.toText, func(value) { value }),
     M.equals(T.text("PureMap{(0, 0), (1, 1), (2, 2)}"))
   ),
   test(
@@ -640,7 +640,7 @@ func rebalanceTests(buildTestMap : () -> Map.Map<Nat, Text>) : [Suite.Suite] = [
     do {
       let map = buildTestMap();
       var index = 0;
-      Map.forEach<Nat, Text>(
+      Map.forEach(
         map,
         func(key, value) {
           assert (key == index);
@@ -795,28 +795,28 @@ run(
     [
       test(
         "size",
-        Map.size<Nat, Text>(smallMap()),
+        Map.size(smallMap()),
         M.equals(T.nat(smallSize))
       ),
       test(
         "is empty",
-        Map.isEmpty<Nat, Text>(smallMap()),
+        Map.isEmpty(smallMap()),
         M.equals(T.bool(false))
       ),
       test(
         "iterate forward",
         Iter.toArray(Map.entries(smallMap())),
         M.equals(
-          T.array<(Nat, Text)>(
+          T.array(
             entryTestable,
-            Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) })
+            Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) })
           )
         )
       ),
       test(
         "iterate backward",
         Iter.toArray(Map.reverseEntries(smallMap())),
-        M.equals(T.array<(Nat, Text)>(entryTestable, Array.reverse(Array.tabulate<(Nat, Text)>(smallSize, func(index) { (index, Nat.toText(index)) }))))
+        M.equals(T.array(entryTestable, Array.reverse(Array.tabulate(smallSize, func(index) { (index, Nat.toText(index)) }))))
       ),
       test(
         "contains present keys",
@@ -946,12 +946,12 @@ run(
       test(
         "iterate keys",
         Iter.toArray(Map.keys(smallMap())),
-        M.equals(T.array<Nat>(T.natTestable, Array.tabulate<Nat>(smallSize, func(index) { index })))
+        M.equals(T.array(T.natTestable, Array.tabulate(smallSize, func(index) { index })))
       ),
       test(
         "iterate values",
         Iter.toArray(Map.values(smallMap())),
-        M.equals(T.array<Text>(T.textTestable, Array.tabulate<Text>(smallSize, func(index) { Nat.toText(index) })))
+        M.equals(T.array(T.textTestable, Array.tabulate(smallSize, func(index) { Nat.toText(index) })))
       ),
       test(
         "from iterator",
@@ -971,7 +971,7 @@ run(
         do {
           let map = smallMap();
           var index = 0;
-          Map.forEach<Nat, Text>(
+          Map.forEach(
             map,
             func(key, value) {
               assert (key == index);
@@ -1058,7 +1058,7 @@ run(
         "fold left",
         do {
           let map = smallMap();
-          Map.foldLeft<Nat, Text, Nat>(
+          Map.foldLeft(
             map,
             0,
             func(accumulator, key, value) {
@@ -1072,7 +1072,7 @@ run(
         "fold right",
         do {
           let map = smallMap();
-          Map.foldRight<Nat, Text, Nat>(
+          Map.foldRight(
             map,
             0,
             func(key, value, accumulator) {
@@ -1086,7 +1086,7 @@ run(
         "all",
         do {
           let map = smallMap();
-          Map.all<Nat, Text>(
+          Map.all(
             map,
             func(key, value) {
               key < smallSize
@@ -1099,7 +1099,7 @@ run(
         "any",
         do {
           let map = smallMap();
-          Map.any<Nat, Text>(
+          Map.any(
             map,
             func(key, value) {
               key == (smallSize - 1 : Nat)
@@ -1112,7 +1112,7 @@ run(
         "to text",
         do {
           let map = smallMap();
-          Map.toText<Nat, Text>(map, Nat.toText, func(value) { value })
+          Map.toText(map, Nat.toText, func(value) { value })
         },
         do {
           var text = "PureMap{";

@@ -61,7 +61,7 @@ module {
   ///
   /// Runtime: O(a.size())
   /// Space: O(a.size())
-  public func fromArray(a : [Char]) : Text = fromIter(a.vals());
+  public func fromArray(a : [Char]) : Text = fromIter(a.values());
 
   /// Converts the given `[var Char]` to a `Text` value.
   ///
@@ -72,14 +72,14 @@ module {
   ///
   /// Runtime: O(a.size())
   /// Space: O(a.size())
-  public func fromVarArray(a : [var Char]) : Text = fromIter(a.vals());
+  public func fromVarArray(a : [var Char]) : Text = fromIter(a.values());
 
   /// Iterates over each `Char` value in the given `Text`.
   ///
   /// Equivalent to calling the `t.chars()` method where `t` is a `Text` value.
   ///
   /// ```motoko include=import
-  /// let chars = Text.toIter("abc");
+  /// let chars = "abc".toIter();
   /// assert chars.next() == ?'a';
   /// assert chars.next() == ?'b';
   /// assert chars.next() == ?'c';
@@ -95,8 +95,7 @@ module {
   ///
   /// let text = "Mississippi";
   /// let count =
-  ///   Text.foldLeft(
-  ///     text,
+  ///   text.foldLeft(
   ///     0, // start the sum at 0
   ///     func(ss, c) = if (c == 's') ss + 1 else ss
   ///   );
@@ -119,7 +118,7 @@ module {
   /// Equivalent to `Iter.toArray(t.chars())`.
   ///
   /// ```motoko include=import
-  /// assert Text.toArray("Café") == ['C', 'a', 'f', 'é'];
+  /// assert "Café".toArray() == ['C', 'a', 'f', 'é'];
   /// ```
   ///
   /// Runtime: O(t.size())
@@ -128,7 +127,7 @@ module {
     let cs = self.chars();
     // We rely on Array_tabulate's implementation details: it fills
     // the array from left to right sequentially.
-    Prim.Array_tabulate<Char>(
+    Prim.Array_tabulate(
       self.size(),
       func _ {
         switch (cs.next()) {
@@ -147,7 +146,7 @@ module {
   /// import VarArray "mo:core/VarArray";
   /// import Char "mo:core/Char";
   ///
-  /// assert VarArray.equal(Text.toVarArray("Café"), [var 'C', 'a', 'f', 'é'], Char.equal);
+  /// assert "Café".toVarArray().equal([var 'C', 'a', 'f', 'é'], Char.equal);
   /// ```
   ///
   /// Runtime: O(t.size())
@@ -185,8 +184,8 @@ module {
   /// ```motoko include=import
   /// let text1 = "";
   /// let text2 = "example";
-  /// assert Text.isEmpty(text1);
-  /// assert not Text.isEmpty(text2);
+  /// assert text1.isEmpty();
+  /// assert not text2.isEmpty();
   /// ```
   public func isEmpty(self : Text) : Bool = self == "";
 
@@ -195,7 +194,7 @@ module {
   /// Equivalent to calling `t.size()` where `t` is a `Text` value.
   ///
   /// ```motoko include=import
-  /// let size = Text.size("abc");
+  /// let size = "abc".size();
   /// assert size == 3;
   /// ```
   public func size(self : Text) : Nat = self.size();
@@ -209,7 +208,7 @@ module {
   /// assert together == "HelloThere";
   /// let withSpace = a # " " # b;
   /// assert withSpace == "Hello There";
-  /// let togetherAgain = Text.concat(a, b);
+  /// let togetherAgain = a.concat(b);
   /// assert togetherAgain == "HelloThere";
   /// ```
   public func concat(self : Text, other : Text) : Text = self # other;
@@ -217,7 +216,7 @@ module {
   /// Returns a new `Text` with the characters of the input `Text` in reverse order.
   ///
   /// ```motoko include=import
-  /// let text = Text.reverse("Hello");
+  /// let text = "Hello".reverse();
   /// assert text == "olleH";
   /// ```
   ///
@@ -232,8 +231,8 @@ module {
   /// ```motoko
   /// import Text "mo:core/Text";
   ///
-  /// assert Text.equal("hello", "hello");
-  /// assert not Text.equal("hello", "world");
+  /// assert "hello".equal("hello");
+  /// assert not "hello".equal("world");
   /// ```
   public func equal(self : Text, other : Text) : Bool { self == other };
 
@@ -242,8 +241,8 @@ module {
   /// ```motoko
   /// import Text "mo:core/Text";
   ///
-  /// assert Text.notEqual("hello", "world");
-  /// assert not Text.notEqual("hello", "hello");
+  /// assert "hello".notEqual("world");
+  /// assert not "hello".notEqual("hello");
   /// ```
   public func notEqual(self : Text, other : Text) : Bool { self != other };
 
@@ -252,8 +251,8 @@ module {
   /// ```motoko
   /// import Text "mo:core/Text";
   ///
-  /// assert Text.less("apple", "banana");
-  /// assert not Text.less("banana", "apple");
+  /// assert "apple".less("banana");
+  /// assert not "banana".less("apple");
   /// ```
   public func less(self : Text, other : Text) : Bool { self < other };
 
@@ -262,9 +261,9 @@ module {
   /// ```motoko
   /// import Text "mo:core/Text";
   ///
-  /// assert Text.lessOrEqual("apple", "banana");
-  /// assert Text.lessOrEqual("apple", "apple");
-  /// assert not Text.lessOrEqual("banana", "apple");
+  /// assert "apple".lessOrEqual("banana");
+  /// assert "apple".lessOrEqual("apple");
+  /// assert not "banana".lessOrEqual("apple");
   /// ```
   public func lessOrEqual(self : Text, other : Text) : Bool { self <= other };
 
@@ -273,8 +272,8 @@ module {
   /// ```motoko
   /// import Text "mo:core/Text";
   ///
-  /// assert Text.greater("banana", "apple");
-  /// assert not Text.greater("apple", "banana");
+  /// assert "banana".greater("apple");
+  /// assert not "apple".greater("banana");
   /// ```
   public func greater(self : Text, other : Text) : Bool { self > other };
 
@@ -283,18 +282,18 @@ module {
   /// ```motoko
   /// import Text "mo:core/Text";
   ///
-  /// assert Text.greaterOrEqual("banana", "apple");
-  /// assert Text.greaterOrEqual("apple", "apple");
-  /// assert not Text.greaterOrEqual("apple", "banana");
+  /// assert "banana".greaterOrEqual("apple");
+  /// assert "apple".greaterOrEqual("apple");
+  /// assert not "apple".greaterOrEqual("banana");
   /// ```
   public func greaterOrEqual(self : Text, other : Text) : Bool { self >= other };
 
   /// Compares `t1` and `t2` lexicographically.
   ///
   /// ```motoko include=import
-  /// assert Text.compare("abc", "abc") == #equal;
-  /// assert Text.compare("abc", "def") == #less;
-  /// assert Text.compare("abc", "ABC") == #greater;
+  /// assert "abc".compare("abc") == #equal;
+  /// assert "abc".compare("def") == #less;
+  /// assert "abc".compare("ABC") == #greater;
   /// ```
   public func compare(self : Text, other : Text) : Order.Order {
     let c = Prim.textCompare(self, other);
@@ -326,10 +325,11 @@ module {
   /// Join an iterator of `Text` values with a given delimiter.
   ///
   /// ```motoko include=import
-  /// let joined = Text.join(["a", "b", "c"].values(), ", ");
+  /// let joined = ["a", "b", "c"].values().join(", ");
   /// assert joined == "a, b, c";
   /// ```
   public func join(self : Iter.Iter<Text>, sep : Text) : Text {
+    // ignore-self-type-check
     var r = "";
     if (sep.size() == 0) {
       for (t in self) {
@@ -381,7 +381,7 @@ module {
   /// // Replace all occurrences of '?' with "!!"
   /// let result = Text.flatMap("Motoko?", func(c) {
   ///   if (c == '?') "!!"
-  ///   else Char.toText(c)
+  ///   else c.toText()
   /// });
   /// assert result == "Motoko!!";
   /// ```
@@ -405,8 +405,8 @@ module {
   /// let charPattern = #char 'A';
   /// let textPattern = #text "phrase";
   /// let predicatePattern : Text.Pattern = #predicate (func(c) { c == 'A' or c == 'B' });
-  /// assert Text.contains("A", predicatePattern);
-  /// assert Text.contains("B", predicatePattern);
+  /// assert "A".contains(predicatePattern);
+  /// assert "B".contains(predicatePattern);
   /// ```
   public type Pattern = Types.Pattern;
 
@@ -502,7 +502,7 @@ module {
 
   private class CharBuffer(cs : Iter.Iter<Char>) : Iter.Iter<Char> = {
 
-    var stack : Stack.Stack<(Iter.Iter<Char>, Char)> = Stack.empty();
+    let stack : Stack.Stack<(Iter.Iter<Char>, Char)> = Stack.empty();
 
     public func pushBack(cs0 : Iter.Iter<Char>, c : Char) {
       Stack.push(stack, (cs0, c))
@@ -533,8 +533,8 @@ module {
   /// Two fields are separated by exactly one match.
   ///
   /// ```motoko include=import
-  /// let words = Text.split("This is a sentence.", #char ' ');
-  /// assert Text.join(words, "|") == "This|is|a|sentence.";
+  /// let words = "This is a sentence.".split(#char ' ');
+  /// assert words.join("|") == "This|is|a|sentence.";
   /// ```
   public func split(self : Text, p : Pattern) : Iter.Iter<Text> {
     let match = matchOfPattern(p);
@@ -596,8 +596,8 @@ module {
   /// Two tokens may be separated by one or more matches of `p`.
   ///
   /// ```motoko include=import
-  /// let tokens = Text.tokens("this needs\n an   example", #predicate (func(c) { c == ' ' or c == '\n' }));
-  /// assert Text.join(tokens, "|") == "this|needs|an|example";
+  /// let tokens = "this needs\n an   example".tokens(#predicate (func(c) { c == ' ' or c == '\n' }));
+  /// assert tokens.join("|") == "this|needs|an|example";
   /// ```
   public func tokens(self : Text, p : Pattern) : Iter.Iter<Text> {
     let fs = split(self, p);
@@ -614,8 +614,8 @@ module {
   /// Returns `true` if the input `Text` contains a match for the specified `Pattern`.
   ///
   /// ```motoko include=import
-  /// assert Text.contains("Motoko", #text "oto");
-  /// assert not Text.contains("Motoko", #text "xyz");
+  /// assert "Motoko".contains(#text "oto");
+  /// assert not "Motoko".contains(#text "xyz");
   /// ```
   public func contains(self : Text, p : Pattern) : Bool {
     let match = matchOfPattern(p);
@@ -644,10 +644,10 @@ module {
   /// Returns `true` if the input `Text` starts with a prefix matching the specified `Pattern`.
   ///
   /// ```motoko include=import
-  /// assert Text.startsWith("Motoko", #text "Mo");
+  /// assert "Motoko".startsWith(#text "Mo");
   /// ```
   public func startsWith(self : Text, p : Pattern) : Bool {
-    var cs = self.chars();
+    let cs = self.chars();
     let match = matchOfPattern(p);
     switch (match(cs)) {
       case (#success) { true };
@@ -658,7 +658,7 @@ module {
   /// Returns `true` if the input `Text` ends with a suffix matching the specified `Pattern`.
   ///
   /// ```motoko include=import
-  /// assert Text.endsWith("Motoko", #char 'o');
+  /// assert "Motoko".endsWith(#char 'o');
   /// ```
   public func endsWith(self : Text, p : Pattern) : Bool {
     let s2 = sizeOfPattern(p);
@@ -666,7 +666,7 @@ module {
     let s1 = self.size();
     if (s2 > s1) return false;
     let match = matchOfPattern(p);
-    var cs1 = self.chars();
+    let cs1 = self.chars();
     var diff : Nat = s1 - s2;
     while (diff > 0) {
       ignore cs1.next();
@@ -681,7 +681,7 @@ module {
   /// Returns the input text `t` with all matches of pattern `p` replaced by text `r`.
   ///
   /// ```motoko include=import
-  /// let result = Text.replace("abcabc", #char 'a', "A");
+  /// let result = "abcabc".replace(#char 'a', "A");
   /// assert result == "AbcAbc";
   /// ```
   public func replace(self : Text, p : Pattern, r : Text) : Text {
@@ -724,16 +724,16 @@ module {
   ///
   /// ```motoko include=import
   /// // Try to strip a nonexistent character
-  /// let none = Text.stripStart("abc", #char '-');
+  /// let none = "abc".stripStart(#char '-');
   /// assert none == null;
   /// // Strip just one '-'
-  /// let one = Text.stripStart("--abc", #char '-');
+  /// let one = "--abc".stripStart(#char '-');
   /// assert one == ?"-abc";
   /// ```
   public func stripStart(self : Text, p : Pattern) : ?Text {
     let s = sizeOfPattern(p);
     if (s == 0) return ?self;
-    var cs = self.chars();
+    let cs = self.chars();
     let match = matchOfPattern(p);
     switch (match(cs)) {
       case (#success) return ?fromIter(cs);
@@ -746,10 +746,10 @@ module {
   ///
   /// ```motoko include=import
   /// // Try to strip a nonexistent character
-  /// let none = Text.stripEnd("xyz", #char '-');
+  /// let none = "xyz".stripEnd(#char '-');
   /// assert none == null;
   /// // Strip just one '-'
-  /// let one = Text.stripEnd("xyz--", #char '-');
+  /// let one = "xyz--".stripEnd(#char '-');
   /// assert one == ?"xyz-";
   /// ```
   public func stripEnd(self : Text, p : Pattern) : ?Text {
@@ -758,7 +758,7 @@ module {
     let s1 = self.size();
     if (s2 > s1) return null;
     let match = matchOfPattern(p);
-    var cs1 = self.chars();
+    let cs1 = self.chars();
     var diff : Nat = s1 - s2;
     while (diff > 0) {
       ignore cs1.next();
@@ -774,7 +774,7 @@ module {
   /// If you only want to remove a single instance of the pattern, use `Text.stripStart()` instead.
   ///
   /// ```motoko include=import
-  /// let trimmed = Text.trimStart("---abc", #char '-');
+  /// let trimmed = "---abc".trimStart(#char '-');
   /// assert trimmed == "abc";
   /// ```
   public func trimStart(self : Text, p : Pattern) : Text {
@@ -810,7 +810,7 @@ module {
   /// If you only want to remove a single instance of the pattern, use `Text.stripEnd()` instead.
   ///
   /// ```motoko include=import
-  /// let trimmed = Text.trimEnd("xyz---", #char '-');
+  /// let trimmed = "xyz---".trimEnd(#char '-');
   /// assert trimmed == "xyz";
   /// ```
   public func trimEnd(self : Text, p : Pattern) : Text {
@@ -843,7 +843,7 @@ module {
   /// Trims the given `Pattern` from both the start and end of the input `Text`.
   ///
   /// ```motoko include=import
-  /// let trimmed = Text.trim("---abcxyz---", #char '-');
+  /// let trimmed = "---abcxyz---".trim(#char '-');
   /// assert trimmed == "abcxyz";
   /// ```
   public func trim(self : Text, p : Pattern) : Text {
@@ -895,7 +895,7 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   ///
-  /// assert Text.compareWith("abc", "ABC", func(c1, c2) { Char.compare(c1, c2) }) == #greater;
+  /// assert "abc".compareWith("ABC", func(c1, c2) { Char.compare(c1, c2) }) == #greater;
   /// ```
   public func compareWith(
     self : Text,
@@ -934,7 +934,7 @@ module {
   /// let text = Text.decodeUtf8("\48\65\6C\6C\6F");
   /// assert text == ?"Hello";
   /// ```
-  public let decodeUtf8 : (self : Blob) -> ?Text = Prim.decodeUtf8;
+  public let decodeUtf8 : (self : Blob) -> ?Text = Prim.decodeUtf8; // ignore-self-type-check
 
   /// Returns the text argument in lowercase.
   /// WARNING: Unicode compliant only when compiled, not interpreted.
@@ -958,7 +958,7 @@ module {
   /// This function is provided for consistency with other modules.
   ///
   /// ```motoko include=import
-  /// assert Text.toText("Hello") == "Hello";
+  /// assert "Hello".toText() == "Hello";
   /// ```
   public func toText(self : Text) : Text = self
 

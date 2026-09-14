@@ -1,6 +1,11 @@
 ## Next
-* Fix: correct List range/slice/get bounds handling (#512).
+* Modernize doc-comment code examples: convert module-function calls to dot notation, strip redundant implicit `compare`/`equal` arguments, and remove unnecessary inline lambda type annotations (#534).
+* Replace all uses of the deprecated `.vals()` array/blob iterator method with `.values()` across `src`, `test`, and `bench` (#530).
+
+## 2.6.1
+* Remove unnecessary allocations in `List` functions. Raise `List` size limit to `2^61` (#515).
 * Fix `Queue` and `pure/Queue` for certain sequences of push + peek (#513).
+* Fix: correct List range/slice/get bounds handling (#512).
 
 ## 2.6.0
 * Add `Base64.decode : Text -> ?Blob`, the inverse of `Base64.encode` (RFC 4648 standard alphabet) (#507).

@@ -36,9 +36,9 @@ const testStatusEmojis: Record<TestResult["status"], string> = {
 
 const rootDirectory = join(__dirname, "../../..");
 
-// Treat redundant type instantiations (M0223) and `@deprecated` usages (M0154)
-// as errors in doc snippets — examples must never use deprecated APIs.
-const mocExtraFlags = ["-E=M0223,M0154"];
+// Treat redundant type instantiations (M0223), `@deprecated` usages (M0154),
+// and module-function calls (M0236) as errors in doc snippets.
+const mocExtraFlags = ["-E=M0223,M0154,M0236"];
 
 // Always use the mops-pinned `moc` so snippets compile against the exact
 // toolchain version the project targets. Never fall back to a dfx-provided moc.
@@ -49,7 +49,7 @@ async function resolveMocPath(): Promise<string> {
   const path = stdout.trim();
   if (!path) {
     throw new Error(
-      "Could not resolve `moc` binary. Run `mops toolchain init`."
+      "Could not resolve `moc` binary. Run `mops install`."
     );
   }
   return path;
@@ -112,10 +112,107 @@ async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
   }
 }
 
+// Extract doc-comment code blocks, preserving source line numbers.
+function codeBlocksIn(content: string): {
+  line: number;
+  language: string | undefined;
+  sourceCode: string;
+  tags: string[];
+}[] {
+  // Empty non-doc-comment lines to preserve line numbers
+  const docComments = content.replace(/^[ \t]*\/\/\/ ?/gm, "");
+
+  const getLineNumber = (text: string, charIndex: number): number => {
+    if (!text || charIndex < 0 || charIndex >= text.length) {
+      return -1;
+    }
+    let line = 1;
+    for (let i = 0; i < charIndex; i++) {
+      if (text[i] === "\n") {
+        line++;
+      }
+    }
+    return line;
+  };
+
+  const codeBlocks: {
+    line: number;
+    language: string | undefined;
+    sourceCode: string;
+    tags: string[];
+  }[] = [];
+
+  for (const match of docComments.matchAll(
+    /```(\S*)?(?:[ \t]+([^\n]+)?)?\n([\s\S]*?)\n[ \t]*```/g
+  )) {
+    const [_, language, tags, sourceCode] = match;
+    codeBlocks.push({
+      line: getLineNumber(docComments, match.index),
+      language,
+      tags: tags?.trim() ? tags.trim().split(/\s+/) : [],
+      sourceCode: sourceCode.trim(),
+    });
+  }
+  return codeBlocks;
+}
+
+// Split the modules across `total` shards, balanced by code-block count so each
+// shard does comparable work. Derived from the sources at runtime rather than a
+// checked-in module list, so a new module is validated without touching CI.
+function assignShards(
+  entries: { path: string; count: number }[],
+  total: number
+): Set<string>[] {
+  const bins = Array.from({ length: total }, () => ({
+    count: 0,
+    paths: [] as string[],
+  }));
+  // Longest-processing-time-first: heaviest module first, into the lightest bin.
+  // Ties break on the sorted input order, so the split is deterministic.
+  for (const entry of entries) {
+    const bin = bins.reduce((a, b) => (b.count < a.count ? b : a));
+    bin.paths.push(entry.path);
+    bin.count += entry.count;
+  }
+  return bins.map((bin) => new Set(bin.paths));
+}
+
 async function main() {
-  const testFilters = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const shardArg = args.find((arg) => arg.startsWith("--shard="));
+  const testFilters = args.filter((arg) => !arg.startsWith("--shard="));
 
   const sourcePaths = (await glob(join(rootDirectory, "src/**/*.mo"))).sort();
+  const contents = new Map(
+    await Promise.all(
+      sourcePaths.map(
+        async (path) => [path, await readFile(path, "utf8")] as const
+      )
+    )
+  );
+
+  let shardPaths: Set<string> | undefined;
+  if (shardArg) {
+    const match = shardArg.match(/^--shard=(\d+)\/(\d+)$/);
+    if (!match) {
+      throw new Error(`Expected --shard=<index>/<total>, got: ${shardArg}`);
+    }
+    const index = Number(match[1]);
+    const total = Number(match[2]);
+    if (total < 1 || index >= total) {
+      throw new Error(`Invalid shard: ${shardArg}`);
+    }
+    shardPaths = assignShards(
+      sourcePaths.map((path) => ({
+        path,
+        count: codeBlocksIn(contents.get(path)!).length,
+      })),
+      total
+    )[index];
+    console.log(
+      `Shard ${index}/${total}: ${shardPaths.size} of ${sourcePaths.length} modules.`
+    );
+  }
 
   let skippable = true;
   const snippets: Snippet[] = (
@@ -131,47 +228,17 @@ async function main() {
           return [];
         }
 
+        // Require membership in this shard, when sharded
+        if (shardPaths && !shardPaths.has(path)) {
+          return [];
+        }
+
         // Skip internal modules
         if (skippable && !virtualPath.startsWith("src/internal/")) {
           skippable = false;
         }
 
-        const content = await readFile(path, "utf8");
-
-        // Empty non-doc-comment lines to preserve line numbers
-        const docComments = content.replace(/^[ \t]*\/\/\/ ?/gm, "");
-
-        const codeBlocks: {
-          line: number;
-          language: string | undefined;
-          sourceCode: string;
-          tags: string[];
-        }[] = [];
-
-        const getLineNumber = (text: string, charIndex: number): number => {
-          if (!text || charIndex < 0 || charIndex >= text.length) {
-            return -1;
-          }
-          let line = 1;
-          for (let i = 0; i < charIndex; i++) {
-            if (text[i] === "\n") {
-              line++;
-            }
-          }
-          return line;
-        };
-
-        for (const match of docComments.matchAll(
-          /```(\S*)?(?:[ \t]+([^\n]+)?)?\n([\s\S]*?)\n[ \t]*```/g
-        )) {
-          const [_, language, tags, sourceCode] = match;
-          codeBlocks.push({
-            line: getLineNumber(docComments, match.index),
-            language,
-            tags: tags?.trim() ? tags.trim().split(/\s+/) : [],
-            sourceCode: sourceCode.trim(),
-          });
-        }
+        const codeBlocks = codeBlocksIn(contents.get(path)!);
 
         const snippets: Snippet[] = [];
         const snippetMap = new Map<string, Snippet>();

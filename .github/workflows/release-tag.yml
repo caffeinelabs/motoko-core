@@ -1,0 +1,133 @@
+# Release PRs are identified by a change to the [package] version in mops.toml.
+# Before merge this validates the bump; on merge it tags the merge commit, which
+# triggers mops-publish.yml.
+
+name: release tag
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, closed]
+    branches:
+      - main
+    paths:
+      - mops.toml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.versions.outputs.version }}
+      bumped: ${{ steps.versions.outputs.bumped }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Compare the package version against the base branch
+        id: versions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+
+          # Only the version in the [package] section counts, not one in a dependency section.
+          package_version() {
+            awk '
+              /^\[/ { in_pkg = ($0 ~ /^\[package\][[:space:]]*$/); next }
+              in_pkg && /^[[:space:]]*version[[:space:]]*=/ {
+                match($0, /"[^"]*"/); print substr($0, RSTART + 1, RLENGTH - 2); exit
+              }
+            ' "$1"
+          }
+
+          gh api "repos/${{ github.repository }}/contents/mops.toml?ref=$BASE_SHA" \
+            -H 'Accept: application/vnd.github.raw' > base-mops.toml
+
+          BASE=$(package_version base-mops.toml)
+          HEAD=$(package_version mops.toml)
+          echo "base=$BASE head=$HEAD"
+
+          if [[ "$BASE" == "$HEAD" ]]; then
+            echo "bumped=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::mops.toml version unchanged ($BASE) - not a release PR"
+            exit 0
+          fi
+
+          if [[ ! "$HEAD" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::'$HEAD' is not a x.y.z version"
+            exit 1
+          fi
+
+          echo "bumped=true" >> "$GITHUB_OUTPUT"
+          echo "version=$HEAD" >> "$GITHUB_OUTPUT"
+
+      - name: Fail if the tag already exists
+        if: steps.versions.outputs.bumped == 'true'
+        env:
+          VERSION: ${{ steps.versions.outputs.version }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag v$VERSION already exists"
+            exit 1
+          fi
+
+      # tests.yml runs this too, but with continue-on-error. A release must not
+      # go out on a changelog that only warned.
+      - uses: ./.github/actions/setup
+        if: steps.versions.outputs.bumped == 'true'
+        with:
+          setup-mops: false
+
+      - name: Require the changelog to match the new version
+        if: steps.versions.outputs.bumped == 'true'
+        run: npm run validate:changelog
+
+  tag:
+    needs: validate
+    # action == 'closed' keeps this off the label/edit events of an already-merged PR.
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && needs.validate.outputs.bumped == 'true'
+    runs-on: ubuntu-latest
+    permissions: {} # the tag push uses the GitHub App token, not GITHUB_TOKEN
+    env:
+      VERSION: ${{ needs.validate.outputs.version }}
+    steps:
+      # A tag pushed with GITHUB_TOKEN would not trigger mops-publish.yml.
+      - name: Create GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3
+        with:
+          app-id: ${{ vars.GENERIC_CI_RW_APP_ID }}
+          private-key: ${{ secrets.GENERIC_CI_RW_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v6
+        with:
+          # Check out the merge commit so the tag points at the right SHA
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Sanity check the merged version
+        run: |
+          set -euo pipefail
+          MERGED=$(awk '
+            /^\[/ { in_pkg = ($0 ~ /^\[package\][[:space:]]*$/); next }
+            in_pkg && /^[[:space:]]*version[[:space:]]*=/ {
+              match($0, /"[^"]*"/); print substr($0, RSTART + 1, RLENGTH - 2); exit
+            }
+          ' mops.toml)
+          if [[ "$MERGED" != "$VERSION" ]]; then
+            echo "::error::Merge commit has version $MERGED, expected $VERSION"
+            exit 1
+          fi
+
+      - name: Push the release tag to start the Mops publish
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "core $VERSION"
+          git push origin "v$VERSION"

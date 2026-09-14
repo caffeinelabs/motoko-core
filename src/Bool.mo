@@ -35,8 +35,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert not Bool.logicalAnd(true, false);
-  /// assert Bool.logicalAnd(true, true);
+  /// assert not true.logicalAnd(false);
+  /// assert true.logicalAnd(true);
   /// ```
   public func logicalAnd(self : Bool, other : Bool) : Bool = self and other;
 
@@ -44,8 +44,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Bool.logicalOr(true, false);
-  /// assert Bool.logicalOr(false, true);
+  /// assert true.logicalOr(false);
+  /// assert false.logicalOr(true);
   /// ```
   public func logicalOr(self : Bool, other : Bool) : Bool = self or other;
 
@@ -53,9 +53,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Bool.logicalXor(true, false);
-  /// assert not Bool.logicalXor(true, true);
-  /// assert not Bool.logicalXor(false, false);
+  /// assert true.logicalXor(false);
+  /// assert not true.logicalXor(true);
+  /// assert not false.logicalXor(false);
   /// ```
   public func logicalXor(self : Bool, other : Bool) : Bool = self != other;
 
@@ -63,8 +63,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Bool.logicalNot(false);
-  /// assert not Bool.logicalNot(true);
+  /// assert false.logicalNot();
+  /// assert not true.logicalNot();
   /// ```
   public func logicalNot(self : Bool) : Bool = not self;
 
@@ -72,8 +72,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Bool.equal(true, true);
-  /// assert not Bool.equal(true, false);
+  /// assert true.equal(true);
+  /// assert not true.equal(false);
   /// ```
   public func equal(self : Bool, other : Bool) : Bool { self == other };
 
@@ -84,9 +84,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Bool.compare(true, false) == #greater;
-  /// assert Bool.compare(true, true) == #equal;
-  /// assert Bool.compare(false, true) == #less;
+  /// assert true.compare(false) == #greater;
+  /// assert true.compare(true) == #equal;
+  /// assert false.compare(true) == #less;
   /// ```
   public func compare(self : Bool, other : Bool) : Order.Order {
     if (self == other) #equal else if self #greater else #less
@@ -96,8 +96,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Bool.toText(true) == "true";
-  /// assert Bool.toText(false) == "false";
+  /// assert true.toText() == "true";
+  /// assert false.toText() == "false";
   /// ```
   public func toText(self : Bool) : Text {
     if self "true" else "false"

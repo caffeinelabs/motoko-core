@@ -20,8 +20,8 @@
 /// let char : Char = 'A';
 /// let unicodeChar = '漢';
 /// let digit = '7';
-/// assert Char.isDigit(digit);
-/// assert Char.toText(char) == "A";
+/// assert digit.isDigit();
+/// assert char.toText() == "A";
 /// ```
 
 import Prim "mo:⛔";
@@ -36,7 +36,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let char = 'A';
-  /// let unicode = Char.toNat32(char);
+  /// let unicode = char.toNat32();
   /// assert unicode == 65;
   /// ```
   public let toNat32 : (self : Char) -> Nat32 = Prim.charToNat32;
@@ -52,7 +52,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let char = '漢';
-  /// let text = Char.toText(char);
+  /// let text = char.toText();
   /// assert text == "漢";
   /// ```
   public let toText : (self : Char) -> Text = Prim.charToText;
@@ -67,8 +67,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.isDigit('5');
-  /// assert not Char.isDigit('A');
+  /// assert '5'.isDigit();
+  /// assert not 'A'.isDigit();
   /// ```
   public func isDigit(self : Char) : Bool {
     Prim.charToNat32(self) -% Prim.charToNat32('0') <= (9 : Nat32)
@@ -107,9 +107,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.isAlphabetic('A');
-  /// assert Char.isAlphabetic('漢');
-  /// assert not Char.isAlphabetic('1');
+  /// assert 'A'.isAlphabetic();
+  /// assert '漢'.isAlphabetic();
+  /// assert not '1'.isAlphabetic();
   /// ```
   public func isAlphabetic(self : Char) : Bool = Prim.charIsAlphabetic(self);
 
@@ -117,8 +117,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.equal('A', 'A');
-  /// assert not Char.equal('A', 'B');
+  /// assert 'A'.equal('A');
+  /// assert not 'A'.equal('B');
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -130,8 +130,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.notEqual('A', 'B');
-  /// assert not Char.notEqual('A', 'A');
+  /// assert 'A'.notEqual('B');
+  /// assert not 'A'.notEqual('A');
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -143,8 +143,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.less('A', 'B');
-  /// assert not Char.less('B', 'A');
+  /// assert 'A'.less('B');
+  /// assert not 'B'.less('A');
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -156,9 +156,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.lessOrEqual('A', 'A');
-  /// assert Char.lessOrEqual('A', 'B');
-  /// assert not Char.lessOrEqual('B', 'A');
+  /// assert 'A'.lessOrEqual('A');
+  /// assert 'A'.lessOrEqual('B');
+  /// assert not 'B'.lessOrEqual('A');
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -170,8 +170,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.greater('B', 'A');
-  /// assert not Char.greater('A', 'B');
+  /// assert 'B'.greater('A');
+  /// assert not 'A'.greater('B');
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -183,9 +183,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.greaterOrEqual('B', 'A');
-  /// assert Char.greaterOrEqual('A', 'A');
-  /// assert not Char.greaterOrEqual('A', 'B');
+  /// assert 'B'.greaterOrEqual('A');
+  /// assert 'A'.greaterOrEqual('A');
+  /// assert not 'A'.greaterOrEqual('B');
   /// ```
   ///
   /// Note: The reason why this function is defined in this library (in addition
@@ -197,9 +197,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Char.compare('A', 'B') == #less;
-  /// assert Char.compare('B', 'A') == #greater;
-  /// assert Char.compare('A', 'A') == #equal;
+  /// assert 'A'.compare('B') == #less;
+  /// assert 'B'.compare('A') == #greater;
+  /// assert 'A'.compare('A') == #equal;
   /// ```
   public func compare(self : Char, other : Char) : { #less; #equal; #greater } {
     if (self < other) { #less } else if (self == other) { #equal } else {

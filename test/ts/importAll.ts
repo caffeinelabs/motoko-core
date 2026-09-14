@@ -27,7 +27,12 @@ const source = moFiles
 writeFileSync(outFile, source, "utf8");
 
 (async () => {
-  const mocPath = process.env.DFX_MOC_PATH || "moc";
+  // moc is not on PATH; it lives in the toolchain version mops.toml pins.
+  const { stdout: mocPath } = await execa(
+    "npx",
+    ["mops", "toolchain", "bin", "moc"],
+    { cwd: resolve(__dirname, "../..") },
+  );
   const wasmFile = join(outDir, `${baseFilename}.wasm`);
   const { stdout, stderr } = await execa(
     mocPath,

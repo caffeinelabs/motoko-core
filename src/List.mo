@@ -2,6 +2,21 @@
 /// `List` provides O(1) access time and O(sqrt(n)) memory overhead. In contrast, `pure/List` is a purely functional linked list.
 /// Can be declared `stable` for orthogonal persistence.
 ///
+/// The List size is in practice limited only by available memory. The
+/// theoretical limit is 2^61 elements.
+///
+/// Performance note: on a 64-bit build (enhanced orthogonal persistence, the
+/// compiler default) all index and size arithmetic in this module operates on
+/// unboxed values, so there are no boxing-related performance cliffs or
+/// hidden allocations.
+/// On a 32-bit build (deprecated legacy persistence) `Nat` values >= 2^30 are
+/// boxed, so an operation receiving such an index, or internally computing
+/// such a size, would take slower bignum code paths and allocate a few dozen
+/// bytes per call. This is theoretical only: a 32-bit heap is limited to
+/// 4 GB and a list occupies at least 4 bytes per element, so a list can
+/// never actually grow to 2^30 elements there, and indices >= 2^30 can only
+/// occur as out-of-range arguments.
+///
 /// This implementation is adapted with permission from the `vector` Mops package created by Research AG.
 ///
 /// Copyright: 2023 MR Research AG
@@ -15,6 +30,7 @@
 import PureList "pure/List";
 import Prim "mo:⛔";
 import Nat32 "Nat32";
+import Nat64 "Nat64";
 import Array "Array";
 import Nat "Nat";
 import Option "Option";
@@ -28,7 +44,8 @@ module {
   /// will naturally be 2x slower than Buffer and Array. However, Array is not resizable and Buffer
   /// has `O(size)` memory waste.
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   public type List<T> = Types.List<T>;
 
   let INTERNAL_ERROR = "List: internal error";
@@ -55,7 +72,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.singleton<Nat>(1);
-  /// assert List.toText<Nat>(list, Nat.toText) == "List[1]";
+  /// assert list.toText(Nat.toText) == "List[1]";
   /// ```
   ///
   /// Runtime: `O(1)`
@@ -74,14 +91,14 @@ module {
     let dataBlocks = VarArray.repeat<[var ?T]>([var], blocks);
     var i = 1;
     while (i < blockIndex) {
-      dataBlocks[i] := VarArray.repeat<?T>(initValue, dataBlockSize(i));
+      dataBlocks[i] := VarArray.repeat(initValue, dataBlockSize(i));
       i += 1
     };
     if (elementIndex != 0) {
-      dataBlocks[blockIndex] := if (Option.isNull(initValue)) VarArray.repeat<?T>(
+      dataBlocks[blockIndex] := if (Option.isNull(initValue)) VarArray.repeat(
         null,
         dataBlockSize(blockIndex)
-      ) else VarArray.tabulate<?T>(
+      ) else VarArray.tabulate(
         dataBlockSize(blockIndex),
         func i = if (i < elementIndex) initValue else null
       )
@@ -99,21 +116,21 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.repeat<Nat>(2, 4);
-  /// assert List.toArray(list) == [2, 2, 2, 2];
+  /// assert list.toArray() == [2, 2, 2, 2];
   /// ```
   ///
   /// Runtime: `O(size)`
   ///
   /// Space: `O(size)`
-  public func repeat<T>(initValue : T, size : Nat) : List<T> = repeatInternal<T>(?initValue, size);
+  public func repeat<T>(initValue : T, size : Nat) : List<T> = repeatInternal(?initValue, size);
 
   /// Fills all elements in the list with the given value.
   ///
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3]);
-  /// List.fill(list, 0); // fills the list with 0
-  /// assert List.toArray(list) == [0, 0, 0];
+  /// list.fill(0); // fills the list with 0
+  /// assert list.toArray() == [0, 0, 0];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -145,7 +162,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3]);
-  /// let pureList = List.toPure(list); // converts to immutable PureList
+  /// let pureList = list.toPure(); // converts to immutable PureList
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -195,7 +212,7 @@ module {
   /// @deprecated M0235
   public func fromPure<T>(pure : PureList.List<T>) : List<T> {
     var p = pure;
-    var list = empty<T>();
+    let list = empty<T>();
     loop {
       switch (p) {
         case (?(x, xs)) {
@@ -232,12 +249,12 @@ module {
       if (blocks[blockIndex].size() == 0) {
         let dbSize = dataBlockSize(blockIndex);
         if (cnt >= dbSize) {
-          blocks[blockIndex] := VarArray.repeat<?T>(initValue, dbSize);
+          blocks[blockIndex] := VarArray.repeat(initValue, dbSize);
           blockIndex += 1;
           cnt -= dbSize;
           continue L
         };
-        blocks[blockIndex] := VarArray.repeat<?T>(null, dbSize)
+        blocks[blockIndex] := VarArray.repeat(null, dbSize)
       };
 
       let block = blocks[blockIndex];
@@ -264,7 +281,7 @@ module {
     let blockIndex = list.blockIndex;
     let elementIndex = list.elementIndex;
 
-    addRepeatInternal<T>(list, null, size);
+    addRepeatInternal(list, null, size);
 
     list.blockIndex := blockIndex;
     list.elementIndex := elementIndex
@@ -274,13 +291,14 @@ module {
   ///
   /// ```motoko include=import
   /// let list = List.repeat<Nat>(2, 4); // [2, 2, 2, 2]
-  /// List.addRepeat(list, 2, 1); // [2, 2, 2, 2, 1, 1]
+  /// list.addRepeat(2, 1); // [2, 2, 2, 2, 1, 1]
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(count)`
-  public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal<T>(self, ?initValue, count);
+  public func addRepeat<T>(self : List<T>, initValue : T, count : Nat) = addRepeatInternal(self, ?initValue, count);
 
   /// Truncates the list to the specified size.
   /// If the new size is larger than the current size, it will do nothing.
@@ -289,8 +307,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3, 4, 5]);
-  /// List.truncate(list, 3); // list is now [1, 2, 3]
-  /// assert List.toArray(list) == [1, 2, 3];
+  /// list.truncate(3); // list is now [1, 2, 3]
+  /// assert list.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -307,7 +325,7 @@ module {
 
     let newBlocks = if (newBlocksCount < self.blocks.size()) {
       let oldDataBlocks = self.blocks;
-      self.blocks := VarArray.tabulate<[var ?T]>(newBlocksCount, func(i) = oldDataBlocks[i]);
+      self.blocks := VarArray.tabulate(newBlocksCount, func(i) = oldDataBlocks[i]);
       self.blocks
     } else self.blocks;
 
@@ -319,7 +337,7 @@ module {
     if (elementIndex != 0) {
       let block = newBlocks[blockIndex];
       var i = elementIndex;
-      var to = block.size();
+      let to = block.size();
       while (i < to) {
         block[i] := null;
         i += 1
@@ -332,11 +350,11 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// List.add(list, 12);
-  /// List.clear(list); // list is now empty
-  /// assert List.toArray(list) == [];
+  /// list.add(10);
+  /// list.add(11);
+  /// list.add(12);
+  /// list.clear(); // list is now empty
+  /// assert list.toArray() == [];
   /// ```
   ///
   /// Runtime: `O(1)`
@@ -353,7 +371,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.tabulate<Nat>(4, func i = i * 2);
-  /// assert List.toArray(list) == [0, 2, 4, 6];
+  /// assert list.toArray() == [0, 2, 4, 6];
   /// ```
   ///
   /// Runtime: O(size)
@@ -372,12 +390,12 @@ module {
 
     while (i < blockIndex) {
       let len = dataBlockSize(i);
-      dataBlocks[i] := VarArray.tabulate<?T>(len, func i = ?generator(pos + i));
+      dataBlocks[i] := VarArray.tabulate(len, func i = ?generator(pos + i));
       pos += len;
       i += 1
     };
     if (elementIndex != 0 and blockIndex < blocks) {
-      dataBlocks[i] := VarArray.tabulate<?T>(
+      dataBlocks[i] := VarArray.tabulate(
         dataBlockSize(blockIndex),
         func i = if (i < elementIndex) ?generator(pos + i) else null
       )
@@ -399,10 +417,10 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let lists = List.fromArray<List.List<Nat>>([
-  ///   List.fromArray<Nat>([0, 1, 2]), List.fromArray<Nat>([2, 3]), List.fromArray<Nat>([]), List.fromArray<Nat>([4])
+  ///   List.fromArray([0, 1, 2]), List.fromArray([2, 3]), List.fromArray([]), List.fromArray([4])
   /// ]);
-  /// let flatList = List.flatten(lists);
-  /// assert List.equal<Nat>(flatList, List.fromArray<Nat>([0, 1, 2, 2, 3, 4]), Nat.equal);
+  /// let flatList = lists.flatten();
+  /// assert flatList.equal(List.fromArray<Nat>([0, 1, 2, 2, 3, 4]), Nat.equal);
   /// ```
   ///
   /// Runtime: O(number of elements in list)
@@ -410,16 +428,16 @@ module {
   /// Space: O(number of elements in list)
   public func flatten<T>(self : List<List<T>>) : List<T> {
     var sz = 0;
-    forEach<List<T>>(self, func(sublist) = sz += size(sublist));
+    forEach(self, func(sublist) = sz += size(sublist));
 
     let result = repeatInternal<T>(null, sz);
     result.blockIndex := 1;
     result.elementIndex := 0;
 
-    forEach<List<T>>(
+    forEach(
       self,
       func(sublist) {
-        forEach<T>(
+        forEach(
           sublist,
           func(item) {
             add(result, item)
@@ -439,18 +457,19 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let lists = [List.fromArray<Nat>([0, 1, 2]), List.fromArray<Nat>([2, 3]), List.fromArray<Nat>([]), List.fromArray<Nat>([4])];
-  /// let joinedList = List.join(lists.vals());
-  /// assert List.equal<Nat>(joinedList, List.fromArray<Nat>([0, 1, 2, 2, 3, 4]), Nat.equal);
+  /// let joinedList = lists.values().join();
+  /// assert joinedList.equal(List.fromArray<Nat>([0, 1, 2, 2, 3, 4]), Nat.equal);
   /// ```
   ///
   /// Runtime: O(number of elements in list)
   ///
   /// Space: O(number of elements in list)
   public func join<T>(self : Types.Iter<List<T>>) : List<T> {
-    var result = empty<T>();
+    // ignore-self-type-check
+    let result = empty<T>();
     for (list in self) {
       reserve(result, size(list));
-      forEach<T>(list, func item = addUnsafe(result, item))
+      forEach(list, func item = addUnsafe(result, item))
     };
     result
   };
@@ -460,20 +479,20 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 1);
+  /// list.add(1);
   ///
-  /// let clone = List.clone(list);
-  /// assert List.toArray(clone) == [1];
+  /// let clone = list.clone();
+  /// assert clone.toArray() == [1];
   /// ```
   ///
   /// Runtime: `O(size)`
   public func clone<T>(self : List<T>) : List<T> = {
-    var blocks = VarArray.tabulate<[var ?T]>(
+    var blocks = VarArray.tabulate(
       Nat.min(
         newIndexBlockLength(Nat.toNat32(if (self.elementIndex == 0) self.blockIndex - 1 else self.blockIndex)),
         self.blocks.size()
       ),
-      func(i) = VarArray.clone<?T>(self.blocks[i])
+      func(i) = VarArray.clone(self.blocks[i])
     );
     var blockIndex = self.blockIndex;
     var elementIndex = self.elementIndex
@@ -487,8 +506,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.singleton<Nat>(123);
-  /// let textList = List.map(list, Nat.toText);
-  /// assert List.toArray(textList) == ["123"];
+  /// let textList = list.map(Nat.toText);
+  /// assert textList.toArray() == ["123"];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -532,8 +551,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([0, 1, 2, 3]);
-  /// List.mapInPlace<Nat>(list, func x = x * 3);
-  /// assert List.equal(list, List.fromArray<Nat>([0, 3, 6, 9]), Nat.equal);
+  /// list.mapInPlace(func x = x * 3);
+  /// assert list.equal(List.fromArray<Nat>([0, 3, 6, 9]), Nat.equal);
   /// ```
   ///
   /// Runtime: O(size)
@@ -570,8 +589,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([10, 10, 10, 10]);
-  /// let newList = List.mapEntries<Nat, Nat>(list, func (x, i) = i * x);
-  /// assert List.equal(newList, List.fromArray<Nat>([0, 10, 20, 30]), Nat.equal);
+  /// let newList = list.mapEntries<Nat, Nat>(func (x, i) = i * x);
+  /// assert newList.equal(List.fromArray<Nat>([0, 10, 20, 30]), Nat.equal);
   /// ```
   ///
   /// Runtime: O(size)
@@ -620,7 +639,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([4, 3, 2, 1, 0]);
   /// // divide 100 by every element in the list
-  /// let result = List.mapResult<Nat, Nat, Text>(list, func x {
+  /// let result = list.mapResult<Nat, Nat, Text>(func x {
   ///   if (x > 0) {
   ///     #ok(100 / x)
   ///   } else {
@@ -690,8 +709,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3, 4]);
-  /// let evenNumbers = List.filter(list, func x = x % 2 == 0);
-  /// assert List.toArray(evenNumbers) == [2, 4];
+  /// let evenNumbers = list.filter(func x = x % 2 == 0);
+  /// assert evenNumbers.toArray() == [2, 4];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -731,8 +750,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3, 4]);
-  /// List.retain<Nat>(list, func x = x % 2 == 0);
-  /// assert List.toArray(list) == [2, 4];
+  /// list.retain(func x = x % 2 == 0);
+  /// assert list.toArray() == [2, 4];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -771,8 +790,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3, 4]);
-  /// let doubled = List.filterMap<Nat, Nat>(list, func x = if (x % 2 == 0) ?(x * 2) else null);
-  /// assert List.toArray(doubled) == [4, 8];
+  /// let doubled = list.filterMap<Nat, Nat>(func x = if (x % 2 == 0) ?(x * 2) else null);
+  /// assert doubled.toArray() == [4, 8];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -816,8 +835,8 @@ module {
   /// import Int "mo:core/Int"
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3, 4]);
-  /// let newList = List.flatMap(list, func x = [x, -x].vals());
-  /// assert List.equal(newList, List.fromArray<Int>([1, -1, 2, -2, 3, -3, 4, -4]), Int.equal);
+  /// let newList = list.flatMap(func x = [x, -x].values());
+  /// assert newList.equal(List.fromArray([1, -1, 2, -2, 3, -3, 4, -4]), Int.equal);
   /// ```
   /// Runtime: O(size)
   ///
@@ -850,29 +869,33 @@ module {
   };
 
   func indexByBlockElement<T>(blockIndex : Nat, elementIndex : Nat) : Nat {
-    let d = Nat.toNat32(blockIndex);
+    let d = blockIndex.toNat64();
 
     // We call all data blocks of the same capacity an "epoch". We number the epochs 0,1,2,...
     // A data block is in epoch e iff the data block has capacity 2 ** e.
     // Each epoch starting with epoch 1 spans exactly two super blocks.
     // Super block s falls in epoch ceil(s/2).
 
-    // epoch of last data block
-    // e = 32 - lz
-    let lz = Nat32.bitcountLeadingZero(d / 3);
+    // epoch of position's data block
+    // e = 64 - lz
+    let lz = Nat64.bitcountLeadingZero(d / 3);
 
     // capacity of all prior epochs combined
-    // capacity_before_e = 2 * 4 ** (e - 1) - 1
+    // capacity_before_e = 2 * 4 ** (e - 1)
 
-    // data blocks in all prior epochs combined
-    // blocks_before_e = 3 * 2 ** (e - 1) - 2
+    // data block indices before epoch e (counting the dummy block 0)
+    // blocks_before_e = 3 * 2 ** (e - 1)
 
     // then size = d * 2 ** e + i - c
-    // where c = blocks_before_e * 2 ** e - capacity_before_e
+    // where c = blocks_before_e * 2 ** e - capacity_before_e = 4 ** e
+    // i.e. size = (d - 2 ** e) * 2 ** e + i, which is the line below
 
-    // there can be overflows, but the result is without overflows, so use addWrap and subWrap
-    // we don't erase bits by >>, so to use <>> is ok
-    Nat32.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat32(elementIndex))
+    // Intermediate values may exceed 2^64; that is harmless because every
+    // operation used (-%, +%, <>>) is a bijection mod 2^64, so the final
+    // value is exact whenever the true result fits in 64 bits. A plain >>
+    // would erase the shifted-out bits and break this argument, which is
+    // why the rotation <>> is used.
+    ((d -% (1 <>> lz)) <>> lz +% elementIndex.toNat64()).toNat()
   };
 
   /// Returns the current number of elements in the list.
@@ -880,7 +903,7 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// assert List.size(list) == 0
+  /// assert list.size() == 0
   /// ```
   ///
   /// Runtime: `O(1)` (with some internal calculations)
@@ -888,17 +911,23 @@ module {
     // due to the design of List (blockIndex, elementIndex) pair points
     // exactly to the place where size-th element should be added
     // so, it's the inlined version of indexByBlockElement
-    let d = Nat.toNat32(self.blockIndex);
-    let lz = Nat32.bitcountLeadingZero(d / 3);
-    Nat32.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat32(self.elementIndex))
+    let d = Nat.toNat64(self.blockIndex);
+    let lz = Nat64.bitcountLeadingZero(d / 3);
+    Nat64.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat64(self.elementIndex))
   };
 
+  // Returns the size of data block blockIndex, i.e. 2^e where e is the
+  // epoch of the block. Do not call it for blockIndex == 0.
   func dataBlockSize(blockIndex : Nat) : Nat {
-    // formula for the size of given blockIndex
-    // don't call it for blockIndex == 0
     Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat.toNat32(blockIndex) / 3))
   };
 
+  // Returns the length of the index block needed to accommodate data
+  // block blockIndex: the smallest length in the ladder {2^j, 3 * 2^j}
+  // that is strictly greater than blockIndex. Correct for
+  // blockIndex < 3 * 2^30. For blockIndex >= 3 * 2^30 the true result
+  // 2^32 does not fit in Nat32: the round-up 4 << 30 wraps and 0 is
+  // returned (see the size limit section at the end of this file).
   func newIndexBlockLength(blockIndex : Nat32) : Nat {
     if (blockIndex <= 1) 2 else {
       let s = 30 - Nat32.bitcountLeadingZero(blockIndex);
@@ -906,6 +935,8 @@ module {
     }
   };
 
+  // If the index block is exactly full then grow it to the next ladder
+  // length, otherwise do nothing.
   func growIndexBlockIfNeeded<T>(list : List<T>) {
     if (list.blocks.size() == list.blockIndex) {
       let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(Nat.toNat32(list.blockIndex)));
@@ -920,7 +951,14 @@ module {
 
   func shrinkIndexBlockIfNeeded<T>(list : List<T>) {
     let blockIndex = Nat.toNat32(list.blockIndex);
-    // kind of index of the first block in the super block
+    // No shrink is possible for blockIndex >= 2^31: the only rung there
+    // is the top rung 3 * 2^30 (the completely full 2^61 List), where
+    // the index block is at its exactly-full maximal length -- but
+    // newIndexBlockLength would wrap to 0 there and shrink the index
+    // block to nothing, so return early.
+    if (blockIndex >> 31 != 0) return;
+    // only when blockIndex is the first block of a super block (i.e. of
+    // the form 2^j or 3 * 2^j, the index block ladder) can a shrink be due
     if ((blockIndex << Nat32.bitcountLeadingZero(blockIndex)) << 2 == 0) {
       let newLength = newIndexBlockLength(blockIndex);
       if (newLength < list.blocks.size()) {
@@ -942,14 +980,15 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 0); // add 0 to list
-  /// List.add(list, 1);
-  /// List.add(list, 2);
-  /// List.add(list, 3);
-  /// assert List.toArray(list) == [0, 1, 2, 3];
+  /// list.add(0); // add 0 to list
+  /// list.add(1);
+  /// list.add(2);
+  /// list.add(3);
+  /// assert list.toArray() == [0, 1, 2, 3];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements, beyond which `add` traps.
   ///
   /// Amortized Runtime: `O(1)`, Worst Case Runtime: `O(sqrt(n))`
   public func add<T>(self : List<T>, element : T) {
@@ -960,7 +999,7 @@ module {
 
       // When removing last we keep one more data block, so can be not empty
       if (self.blocks[blockIndex].size() == 0) {
-        self.blocks[blockIndex] := VarArray.repeat<?T>(
+        self.blocks[blockIndex] := VarArray.repeat(
           null,
           dataBlockSize(blockIndex)
         )
@@ -999,11 +1038,11 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// assert List.removeLast(list) == ?11;
-  /// assert List.removeLast(list) == ?10;
-  /// assert List.removeLast(list) == null;
+  /// list.add(10);
+  /// list.add(11);
+  /// assert list.removeLast() == ?11;
+  /// assert list.removeLast() == ?10;
+  /// assert list.removeLast() == null;
   /// ```
   ///
   /// Amortized Runtime: `O(1)`, Worst Case Runtime: `O(sqrt(n))`
@@ -1038,15 +1077,23 @@ module {
     return element
   };
 
+  // Returns the (blockIndex, elementIndex) position of the element with
+  // the given index. For example, locate(2^32) = (131_072, 0).
+  // Also often used with a size-valued argument, in which case the next
+  // next insertion position is returned (see prevIndexOf, truncate,
+  // repeat/tabulate/addRepeat).
   func locate(index : Nat) : (Nat, Nat) {
-    // see comments in tests
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // For the derivation of the bit arithmetic see locate_readable64
+    // and locate_optimal64 in test/List.test.mo; the latter is a
+    // verbatim copy of this function and tests its arithmetic across
+    // the full supported range.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     if (lz & 1 == 0) {
-      (Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2)), Nat32.toNat(i & (0xFFFF >> lz2)))
+      ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
     } else {
-      (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
+      ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
     }
   };
 
@@ -1056,9 +1103,9 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// assert List.at(list, 0) == 10;
+  /// list.add(10);
+  /// list.add(11);
+  /// assert list.at(0) == 10;
   /// ```
   ///
   /// Runtime: `O(1)`
@@ -1069,14 +1116,16 @@ module {
     //     case (?element) element;
     //     case (null) Prim.trap "";
     //   };
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // for index >= size the block lookup or the null slot check
+    // below traps as required.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     switch (
       if (lz & 1 == 0) {
-        self.blocks[Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2))][Nat32.toNat(i & (0xFFFF >> lz2))]
+        self.blocks[(((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat()][(i & (0xFFFF_FFFF >> lz2)).toNat()]
       } else {
-        self.blocks[Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2))][Nat32.toNat(i & (0x7FFF >> lz2))]
+        self.blocks[(((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat()][(i & (0x7FFF_FFFF >> lz2)).toNat()]
       }
     ) {
       case (?result) return result;
@@ -1090,30 +1139,36 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// assert List.get(list, 0) == ?10;
-  /// assert List.get(list, 2) == null;
+  /// list.add(10);
+  /// list.add(11);
+  /// assert list.get(0) == ?10;
+  /// assert list.get(2) == null;
   /// ```
   ///
   /// Runtime: `O(1)`
   ///
   /// Space: `O(1)`
   public func get<T>(self : List<T>, index : Nat) : ?T {
-    if (index >= 0x1_0000_0000) return null;
+    // The guard only rejects index >= 2^64. Any index in `[size, 2^64)` falls
+    // through to the physical checks below: a block index beyond blocks.size()
+    // or a null slot, so null is returned.
+    if (Prim.shiftRight(index, 64) != 0) return null;
     // inlined version of locate
     let (a, b) = do {
-      let i = Nat.toNat32(index);
-      let lz = Nat32.bitcountLeadingZero(i);
+      // the guard above ensures index < 2^64, so the wrap cannot trigger
+      let i = Nat64.fromIntWrap(index);
+      let lz = Nat64.bitcountLeadingZero(i);
       let lz2 = lz >> 1;
       if (lz & 1 == 0) {
-        (Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2)), Nat32.toNat(i & (0xFFFF >> lz2)))
+        ((((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat(), (i & (0xFFFF_FFFF >> lz2)).toNat())
       } else {
-        (Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2)), Nat32.toNat(i & (0x7FFF >> lz2)))
+        ((((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat(), (i & (0x7FFF_FFFF >> lz2)).toNat())
       }
     };
-    if (a < self.blockIndex or self.elementIndex != 0 and a == self.blockIndex) {
-      self.blocks[a][b]
+    let blocks = self.blocks;
+    if (a < blocks.size()) {
+      let db = blocks[a];
+      if (b < db.size()) db[b] else null
     } else null
   };
 
@@ -1123,20 +1178,23 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.put(list, 0, 20); // overwrites 10 at index 0 with 20
-  /// assert List.toArray(list) == [20];
+  /// list.add(10);
+  /// list.put(0, 20); // overwrites 10 at index 0 with 20
+  /// assert list.toArray() == [20];
   /// ```
   ///
   /// Runtime: `O(1)`
   public func put<T>(self : List<T>, index : Nat, value : T) {
-    let i = Nat.toNat32(index);
-    let lz = Nat32.bitcountLeadingZero(i);
+    // inlined version of locate.
+    // for index >= size the block lookup or the null slot check
+    // below traps as required.
+    let i = index.toNat64();
+    let lz = Nat64.bitcountLeadingZero(i);
     let lz2 = lz >> 1;
     let (block, element) = if (lz & 1 == 0) {
-      (self.blocks[Nat32.toNat(((i << lz2) >> 16) ^ (0x10000 >> lz2))], Nat32.toNat(i & (0xFFFF >> lz2)))
+      (self.blocks[(((i << lz2) >> 32) ^ (0x1_0000_0000 >> lz2)).toNat()], (i & (0xFFFF_FFFF >> lz2)).toNat())
     } else {
-      (self.blocks[Nat32.toNat(((i << lz2) >> 15) ^ (0x18000 >> lz2))], Nat32.toNat(i & (0x7FFF >> lz2)))
+      (self.blocks[(((i << lz2) >> 31) ^ (0x1_8000_0000 >> lz2)).toNat()], (i & (0x7FFF_FFFF >> lz2)).toNat())
     };
 
     switch (block[element]) {
@@ -1153,11 +1211,11 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 3);
-  /// List.add(list, 1);
-  /// List.add(list, 2);
-  /// List.sortInPlace(list, Nat.compare);
-  /// assert List.toArray(list) == [1, 2, 3];
+  /// list.add(3);
+  /// list.add(1);
+  /// list.add(2);
+  /// list.sortInPlace();
+  /// assert list.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: O(size * log(size))
@@ -1202,11 +1260,11 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 3);
-  /// List.add(list, 1);
-  /// List.add(list, 2);
-  /// let sorted = List.sort(list, Nat.compare);
-  /// assert List.toArray(sorted) == [1, 2, 3];
+  /// list.add(3);
+  /// list.add(1);
+  /// list.add(2);
+  /// let sorted = list.sort();
+  /// assert sorted.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: O(size * log(size))
@@ -1226,7 +1284,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
-  /// assert List.isSorted(list, Nat.compare);
+  /// assert list.isSorted();
   /// ```
   ///
   /// Runtime: O(size)
@@ -1271,8 +1329,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([1, 1, 2, 2, 3]);
-  /// List.deduplicate(list, Nat.equal);
-  /// assert List.equal(list, List.fromArray<Nat>([1, 2, 3]), Nat.equal);
+  /// list.deduplicate();
+  /// assert list.equal(List.fromArray<Nat>([1, 2, 3]), Nat.equal);
   /// ```
   ///
   /// Runtime: O(size)
@@ -1323,13 +1381,13 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 1);
-  /// List.add(list, 2);
-  /// List.add(list, 3);
-  /// List.add(list, 4);
+  /// list.add(1);
+  /// list.add(2);
+  /// list.add(3);
+  /// list.add(4);
   ///
-  /// assert List.indexOf<Nat>(list, Nat.equal, 3) == ?2;
-  /// assert List.indexOf<Nat>(list, Nat.equal, 5) == null;
+  /// assert list.indexOf(3) == ?2;
+  /// assert list.indexOf(5) == null;
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1337,19 +1395,21 @@ module {
   /// *Runtime and space assumes that `equal` runs in `O(1)` time and space.
   public func indexOf<T>(self : List<T>, equal : (implicit : (T, T) -> Bool), element : T) : ?Nat {
     if (isEmpty(self)) return null;
-    nextIndexOf<T>(self, equal, element, 0)
+    nextIndexOf(self, equal, element, 0)
   };
 
   /// Returns the index of the next occurence of `element` in the `list` starting from the `from` index (inclusive).
   ///
+  /// Traps if `fromInclusive >= size(list)`.
+  ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let list = List.fromArray(['c', 'o', 'f', 'f', 'e', 'e']);
-  /// assert List.nextIndexOf<Char>(list, Char.equal, 'c', 0) == ?0;
-  /// assert List.nextIndexOf<Char>(list, Char.equal, 'f', 0) == ?2;
-  /// assert List.nextIndexOf<Char>(list, Char.equal, 'f', 2) == ?2;
-  /// assert List.nextIndexOf<Char>(list, Char.equal, 'f', 3) == ?3;
-  /// assert List.nextIndexOf<Char>(list, Char.equal, 'f', 4) == null;
+  /// assert list.nextIndexOf('c', 0) == ?0;
+  /// assert list.nextIndexOf('f', 0) == ?2;
+  /// assert list.nextIndexOf('f', 2) == ?2;
+  /// assert list.nextIndexOf('f', 3) == ?3;
+  /// assert list.nextIndexOf('f', 4) == null;
   /// ```
   ///
   /// Runtime: O(size)
@@ -1393,14 +1453,14 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3, 4, 2, 2]);
   ///
-  /// assert List.lastIndexOf<Nat>(list, Nat.equal, 2) == ?5;
-  /// assert List.lastIndexOf<Nat>(list, Nat.equal, 5) == null;
+  /// assert list.lastIndexOf(2) == ?5;
+  /// assert list.lastIndexOf(5) == null;
   /// ```
   ///
   /// Runtime: `O(size)`
   ///
   /// *Runtime and space assumes that `equal` runs in `O(1)` time and space.
-  public func lastIndexOf<T>(self : List<T>, equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf<T>(
+  public func lastIndexOf<T>(self : List<T>, equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf(
     self,
     equal,
     element,
@@ -1409,13 +1469,16 @@ module {
 
   /// Returns the index of the previous occurence of `element` in the `list` starting from the `from` index (exclusive).
   ///
+  /// Traps if `fromExclusive > size(list)`. Note that `fromExclusive = size(list)`
+  /// is valid and starts the search from the end of the list.
+  ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let list = List.fromArray(['c', 'o', 'f', 'f', 'e', 'e']);
-  /// assert List.prevIndexOf<Char>(list, Char.equal, 'c', List.size(list)) == ?0;
-  /// assert List.prevIndexOf<Char>(list, Char.equal, 'e', List.size(list)) == ?5;
-  /// assert List.prevIndexOf<Char>(list, Char.equal, 'e', 5) == ?4;
-  /// assert List.prevIndexOf<Char>(list, Char.equal, 'e', 4) == null;
+  /// assert list.prevIndexOf('c', list.size()) == ?0;
+  /// assert list.prevIndexOf('e', list.size()) == ?5;
+  /// assert list.prevIndexOf('e', 5) == ?4;
+  /// assert list.prevIndexOf('e', 4) == null;
   /// ```
   ///
   /// Runtime: O(size)
@@ -1452,7 +1515,7 @@ module {
   ///
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 9, 4, 8]);
-  /// let found = List.find(list, func(x) { x > 8 });
+  /// let found = list.find(func(x) { x > 8 });
   /// assert found == ?9;
   /// ```
   /// Runtime: O(size)
@@ -1461,7 +1524,10 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
   public func find<T>(self : List<T>, predicate : T -> Bool) : ?T {
-    Option.map<Nat, T>(findIndex<T>(self, predicate), func(i) = at(self, i))
+    switch (findIndex(self, predicate)) {
+      case (?i) ?at(self, i);
+      case null null
+    }
   };
 
   /// Finds the index of the first element in `list` for which `predicate` is true.
@@ -1470,13 +1536,13 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 1);
-  /// List.add(list, 2);
-  /// List.add(list, 3);
-  /// List.add(list, 4);
+  /// list.add(1);
+  /// list.add(2);
+  /// list.add(3);
+  /// list.add(4);
   ///
-  /// assert List.findIndex<Nat>(list, func(i) { i % 2 == 0 }) == ?1;
-  /// assert List.findIndex<Nat>(list, func(i) { i > 5 }) == null;
+  /// assert list.findIndex(func(i) { i % 2 == 0 }) == ?1;
+  /// assert list.findIndex(func(i) { i > 5 }) == null;
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1511,13 +1577,13 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 1);
-  /// List.add(list, 2);
-  /// List.add(list, 3);
-  /// List.add(list, 4);
+  /// list.add(1);
+  /// list.add(2);
+  /// list.add(3);
+  /// list.add(4);
   ///
-  /// assert List.findLastIndex<Nat>(list, func(i) { i % 2 == 0 }) == ?3;
-  /// assert List.findLastIndex<Nat>(list, func(i) { i > 5 }) == null;
+  /// assert list.findLastIndex(func(i) { i % 2 == 0 }) == ?3;
+  /// assert list.findLastIndex(func(i) { i > 5 }) == null;
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1560,8 +1626,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([1, 3, 5, 7, 9, 11]);
-  /// assert List.binarySearch<Nat>(list, Nat.compare, 5) == #found(2);
-  /// assert List.binarySearch<Nat>(list, Nat.compare, 6) == #insertionIndex(3);
+  /// assert list.binarySearch(5) == #found(2);
+  /// assert list.binarySearch(6) == #insertionIndex(3);
   /// ```
   ///
   /// Runtime: `O(log(size))`
@@ -1655,11 +1721,11 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 2);
-  /// List.add(list, 3);
-  /// List.add(list, 4);
+  /// list.add(2);
+  /// list.add(3);
+  /// list.add(4);
   ///
-  /// assert List.all<Nat>(list, func x { x > 1 });
+  /// assert list.all(func x { x > 1 });
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1696,11 +1762,11 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 2);
-  /// List.add(list, 3);
-  /// List.add(list, 4);
+  /// list.add(2);
+  /// list.add(3);
+  /// list.add(4);
   ///
-  /// assert List.any<Nat>(list, func x { x > 3 });
+  /// assert list.any(func x { x > 3 });
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1708,7 +1774,7 @@ module {
   /// Space: `O(1)`
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
-  public func any<T>(self : List<T>, predicate : T -> Bool) : Bool = findIndex<T>(self, predicate) != null;
+  public func any<T>(self : List<T>, predicate : T -> Bool) : Bool = findIndex(self, predicate) != null;
 
   /// Returns an Iterator (`Iter`) over the elements of a List.
   /// Iterator provides a single method `next()`, which returns
@@ -1716,12 +1782,12 @@ module {
   ///
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// List.add(list, 12);
+  /// list.add(10);
+  /// list.add(11);
+  /// list.add(12);
   ///
   /// var sum = 0;
-  /// for (element in List.values(list)) {
+  /// for (element in list.values()) {
   ///   sum += element;
   /// };
   /// assert sum == 33;
@@ -1766,10 +1832,10 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// List.add(list, 12);
-  /// assert Iter.toArray(List.enumerate(list)) == [(0, 10), (1, 11), (2, 12)];
+  /// list.add(10);
+  /// list.add(11);
+  /// list.add(12);
+  /// assert list.enumerate().toArray() == [(0, 10), (1, 11), (2, 12)];
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,
@@ -1814,12 +1880,12 @@ module {
   ///
   /// ```motoko include=import
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// List.add(list, 12);
+  /// list.add(10);
+  /// list.add(11);
+  /// list.add(12);
   ///
   /// var sum = 0;
-  /// for (element in List.reverseValues(list)) {
+  /// for (element in list.reverseValues()) {
   ///   sum += element;
   /// };
   /// assert sum == 33;
@@ -1859,10 +1925,10 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 10);
-  /// List.add(list, 11);
-  /// List.add(list, 12);
-  /// assert Iter.toArray(List.reverseEnumerate(list)) == [(2, 12), (1, 11), (0, 10)];
+  /// list.add(10);
+  /// list.add(11);
+  /// list.add(12);
+  /// assert list.reverseEnumerate().toArray() == [(2, 12), (1, 11), (0, 10)];
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,
@@ -1907,10 +1973,10 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let list = List.empty<Text>();
-  /// List.add(list, "A");
-  /// List.add(list, "B");
-  /// List.add(list, "C");
-  /// Iter.toArray(List.keys(list)) // [0, 1, 2]
+  /// list.add("A");
+  /// list.add("B");
+  /// list.add("C");
+  /// list.keys().toArray() // [0, 1, 2]
   /// ```
   ///
   /// Note: This does not create a snapshot. If the returned iterator is not consumed at once,
@@ -1929,10 +1995,10 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let array = [1, 1, 1];
-  /// let iter = array.vals();
+  /// let iter = array.values();
   ///
   /// let list = List.fromIter<Nat>(iter);
-  /// assert Iter.toArray(List.values(list)) == [1, 1, 1];
+  /// assert list.values().toArray() == [1, 1, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -1951,14 +2017,15 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let array = [1, 1, 1];
-  /// let iter = array.vals();
+  /// let iter = array.values();
   ///
   /// let list = iter.toList<Nat>();
-  /// assert Iter.toArray(List.values(list)) == [1, 1, 1];
+  /// assert list.values().toArray() == [1, 1, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
   public func toList<T>(self : Types.Iter<T>) : List<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 
@@ -1967,8 +2034,8 @@ module {
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2]);
   /// let added = List.fromArray<Nat>([3, 4]);
-  /// List.append<Nat>(list, added);
-  /// assert List.toArray(list) == [1, 2, 3, 4];
+  /// list.append(added);
+  /// assert list.toArray() == [1, 2, 3, 4];
   /// ```
   ///
   /// Runtime: `O(size(added))`
@@ -2007,14 +2074,15 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// let array = [1, 1, 1];
-  /// let iter = array.vals();
+  /// let iter = array.values();
   /// let list = List.repeat<Nat>(2, 1);
   ///
-  /// List.addAll<Nat>(list, iter);
-  /// assert Iter.toArray(List.values(list)) == [2, 1, 1, 1];
+  /// list.addAll(iter);
+  /// assert list.values().toArray() == [2, 1, 1, 1];
   /// ```
   ///
-  /// The maximum number of elements in a `List` is 2^32.
+  /// The List size is in practice limited only by available memory; the
+  /// theoretical limit is 2^61 elements.
   ///
   /// Runtime: `O(size)`, where n is the size of iter.
   public func addAll<T>(self : List<T>, iter : Types.Iter<T>) {
@@ -2028,7 +2096,7 @@ module {
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// assert List.toArray<Nat>(list) == [1, 2, 3];
+  /// assert list.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2054,7 +2122,7 @@ module {
       }
     };
 
-    Array.tabulate<T>(size(self), generator)
+    Array.tabulate(size(self), generator)
   };
 
   /// Creates a List containing elements from an Array.
@@ -2066,7 +2134,7 @@ module {
   ///
   /// let array = [2, 3];
   /// let list = List.fromArray<Nat>(array);
-  /// assert Iter.toArray(List.values(list)) == [2, 3];
+  /// assert list.values().toArray() == [2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2081,12 +2149,12 @@ module {
 
     while (i < blockIndex) {
       let len = dataBlockSize(i);
-      dataBlocks[i] := VarArray.tabulate<?T>(len, func i = ?array[pos + i]);
+      dataBlocks[i] := VarArray.tabulate(len, func i = ?array[pos + i]);
       pos += len;
       i += 1
     };
     if (elementIndex != 0 and blockIndex < blocks) {
-      dataBlocks[i] := VarArray.tabulate<?T>(
+      dataBlocks[i] := VarArray.tabulate(
         dataBlockSize(i),
         func i = if (i < elementIndex) ?array[pos + i] else null
       )
@@ -2108,8 +2176,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// let varArray = List.toVarArray(list);
-  /// assert VarArray.toArray(varArray) == [1, 2, 3];
+  /// let varArray = list.toVarArray();
+  /// assert varArray.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2153,7 +2221,7 @@ module {
   ///
   /// let array = [var 2, 3];
   /// let list = List.fromVarArray(array);
-  /// assert Iter.toArray(List.values(list)) == [2, 3];
+  /// assert list.values().toArray() == [2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2199,8 +2267,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert List.first(List.fromArray<Nat>([1, 2, 3])) == ?1;
-  /// assert List.first(List.empty<Nat>()) == null;
+  /// assert List.fromArray<Nat>([1, 2, 3]).first() == ?1;
+  /// assert List.empty<Nat>().first() == null;
   /// ```
   ///
   /// Runtime: `O(1)`
@@ -2214,8 +2282,8 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert List.last(List.fromArray<Nat>([1, 2, 3])) == ?3;
-  /// assert List.last(List.empty<Nat>()) == null;
+  /// assert List.fromArray<Nat>([1, 2, 3]).last() == ?3;
+  /// assert List.empty<Nat>().last() == null;
   /// ```
   ///
   /// Runtime: `O(1)`
@@ -2241,8 +2309,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.forEach<Nat>(list, func(x) {
-  ///   Debug.print(Nat.toText(x)); // prints each element in list
+  /// list.forEach(func(x) {
+  ///   Debug.print(x.toText()); // prints each element in list
   /// });
   /// ```
   ///
@@ -2283,9 +2351,9 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.forEachEntry<Nat>(list, func (i,x) {
+  /// list.forEachEntry(func (i,x) {
   ///   // prints each item (i,x) in list
-  ///   Debug.print(Nat.toText(i) # Nat.toText(x));
+  ///   Debug.print(i.toText() # x.toText());
   /// });
   /// ```
   ///
@@ -2343,16 +2411,16 @@ module {
   ///
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([1, 2, 3, 4, 5]);
-  /// let iter1 = List.range(list, 3, List.size(list));
+  /// let iter1 = list.range(3, list.size());
   /// assert iter1.next() == ?4;
   /// assert iter1.next() == ?5;
   /// assert iter1.next() == null;
   ///
-  /// let iter2 = List.range(list, 3, -1);
+  /// let iter2 = list.range(3, -1);
   /// assert iter2.next() == ?4;
   /// assert iter2.next() == null;
   ///
-  /// let iter3 = List.range(list, 0, 0);
+  /// let iter3 = list.range(0, 0);
   /// assert iter3.next() == null;
   /// ```
   ///
@@ -2427,10 +2495,10 @@ module {
   /// ```motoko include=import
   /// let array = List.fromArray<Nat>([1, 2, 3, 4, 5]);
   ///
-  /// let slice1 = List.sliceToArray(array, 1, 4);
+  /// let slice1 = array.sliceToArray(1, 4);
   /// assert slice1 == [2, 3, 4];
   ///
-  /// let slice2 = List.sliceToArray(array, 1, -1);
+  /// let slice2 = array.sliceToArray(1, -1);
   /// assert slice2 == [2, 3, 4];
   /// ```
   ///
@@ -2439,7 +2507,7 @@ module {
   /// Space: O(toExclusive - fromInclusive)
   public func sliceToArray<T>(self : List<T>, fromInclusive : Int, toExclusive : Int) : [T] {
     let (start, end) = actualInterval(fromInclusive, toExclusive, size(self));
-    Array.tabulate<T>(end - start, sliceToArrayBase(self, start).next)
+    Array.tabulate(end - start, sliceToArrayBase(self, start).next)
   };
 
   /// Returns a new var array containing elements from `list` starting at index `fromInclusive` up to (but not including) index `toExclusive`.
@@ -2451,11 +2519,11 @@ module {
   ///
   /// let array = List.fromArray<Nat>([1, 2, 3, 4, 5]);
   ///
-  /// let slice1 = List.sliceToVarArray(array, 1, 4);
-  /// assert VarArray.equal(slice1, [var 2, 3, 4], Nat.equal);
+  /// let slice1 = array.sliceToVarArray(1, 4);
+  /// assert slice1.equal([var 2, 3, 4], Nat.equal);
   ///
-  /// let slice2 = List.sliceToVarArray(array, 1, -1);
-  /// assert VarArray.equal(slice2, [var 2, 3, 4], Nat.equal);
+  /// let slice2 = array.sliceToVarArray(1, -1);
+  /// assert slice2.equal([var 2, 3, 4], Nat.equal);
   /// ```
   ///
   /// Runtime: O(toExclusive - fromInclusive)
@@ -2463,7 +2531,7 @@ module {
   /// Space: O(toExclusive - fromInclusive)
   public func sliceToVarArray<T>(self : List<T>, fromInclusive : Int, toExclusive : Int) : [var T] {
     let (start, end) = actualInterval(fromInclusive, toExclusive, size(self));
-    VarArray.tabulate<T>(end - start, sliceToArrayBase(self, start).next)
+    VarArray.tabulate(end - start, sliceToArrayBase(self, start).next)
   };
 
   /// Like `forEachEntryRev` but iterates through the list in reverse order,
@@ -2476,9 +2544,9 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.reverseForEachEntry<Nat>(list, func (i,x) {
+  /// list.reverseForEachEntry(func (i,x) {
   ///   // prints each item (i,x) in list
-  ///   Debug.print(Nat.toText(i) # Nat.toText(x));
+  ///   Debug.print(i.toText() # x.toText());
   /// });
   /// ```
   ///
@@ -2522,8 +2590,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// List.reverseForEach<Nat>(list, func (x) {
-  ///   Debug.print(Nat.toText(x)); // prints each element in list in reverse order
+  /// list.reverseForEach(func (x) {
+  ///   Debug.print(x.toText()); // prints each element in list in reverse order
   /// });
   /// ```
   ///
@@ -2562,7 +2630,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3, 4, 5]);
-  /// List.forEachInRange<Nat>(list, func x = Debug.print(Nat.toText(x)), 1, 2); // prints 2 and 3
+  /// list.forEachInRange(func x = Debug.print(x.toText()), 1, 2); // prints 2 and 3
   /// ```
   ///
   /// Runtime: `O(toExclusive - fromExclusive)`
@@ -2613,11 +2681,11 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 2);
-  /// List.add(list, 0);
-  /// List.add(list, 3);
+  /// list.add(2);
+  /// list.add(0);
+  /// list.add(3);
   ///
-  /// assert List.contains<Nat>(list, Nat.equal, 2);
+  /// assert list.contains(2);
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2637,11 +2705,11 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 1);
-  /// List.add(list, 2);
+  /// list.add(1);
+  /// list.add(2);
   ///
-  /// assert List.max<Nat>(list, Nat.compare) == ?2;
-  /// assert List.max<Nat>(List.empty<Nat>(), Nat.compare) == null;
+  /// assert list.max() == ?2;
+  /// assert List.empty<Nat>().max() == null;
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2689,11 +2757,11 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.empty<Nat>();
-  /// List.add(list, 1);
-  /// List.add(list, 2);
+  /// list.add(1);
+  /// list.add(2);
   ///
-  /// assert List.min<Nat>(list, Nat.compare) == ?1;
-  /// assert List.min<Nat>(List.empty<Nat>(), Nat.compare) == null;
+  /// assert list.min() == ?1;
+  /// assert List.empty<Nat>().min() == null;
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2743,10 +2811,10 @@ module {
   ///
   /// let list1 = List.fromArray<Nat>([1,2]);
   /// let list2 = List.empty<Nat>();
-  /// List.add(list2, 1);
-  /// List.add(list2, 2);
+  /// list2.add(1);
+  /// list2.add(2);
   ///
-  /// assert List.equal<Nat>(list1, list2, Nat.equal);
+  /// assert list1.equal(list2, Nat.equal);
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2770,9 +2838,13 @@ module {
 
       var j = 0;
       while (j < sz) {
-        switch (db1[j], db2[j]) {
-          case (?x, ?y) if (not equal(x, y)) return false;
-          case (_, _) return true
+        // nested switches only to avoid allocating a tuple for a pair switch
+        switch (db1[j]) {
+          case (?x) switch (db2[j]) {
+            case (?y) if (not equal(x, y)) return false;
+            case null return true
+          };
+          case null return true
         };
         j += 1
       };
@@ -2793,9 +2865,9 @@ module {
   /// let list2 = List.fromArray<Nat>([2]);
   /// let list3 = List.fromArray<Nat>([0, 1, 2]);
   ///
-  /// assert List.compare<Nat>(list1, list2, Nat.compare) == #less;
-  /// assert List.compare<Nat>(list1, list3, Nat.compare) == #less;
-  /// assert List.compare<Nat>(list2, list3, Nat.compare) == #greater;
+  /// assert list1.compare(list2, Nat.compare) == #less;
+  /// assert list1.compare(list3, Nat.compare) == #less;
+  /// assert list2.compare(list3, Nat.compare) == #greater;
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2817,13 +2889,17 @@ module {
 
       var j = 0;
       while (j < sz) {
-        switch (db1[j], db2[j]) {
-          case (?x, ?y) switch (compare(x, y)) {
-            case (#less) return #less;
-            case (#greater) return #greater;
-            case _ {}
+        // nested switches only to avoid allocating a tuple for a pair switch
+        switch (db1[j]) {
+          case (?x) switch (db2[j]) {
+            case (?y) switch (compare(x, y)) {
+              case (#less) return #less;
+              case (#greater) return #greater;
+              case _ {}
+            };
+            case null break l
           };
-          case (_, _) break l
+          case null break l
         };
         j += 1
       };
@@ -2841,7 +2917,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3,4]);
   ///
-  /// assert List.toText<Nat>(list, Nat.toText) == "List[1, 2, 3, 4]";
+  /// assert list.toText(Nat.toText) == "List[1, 2, 3, 4]";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2888,7 +2964,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
-  /// assert List.foldLeft<Text, Nat>(list, "", func (acc, x) { acc # Nat.toText(x)}) == "123";
+  /// assert list.foldLeft("", func (acc, x) { acc # x.toText()}) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2931,7 +3007,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
-  /// assert List.foldRight<Nat, Text>(list, "", func (x, acc) { Nat.toText(x) # acc }) == "123";
+  /// assert list.foldRight("", func (x, acc) { x.toText() # acc }) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -2975,8 +3051,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
-  /// List.reverseInPlace<Nat>(list);
-  /// assert Iter.toArray(List.values(list)) == [3, 2, 1];
+  /// list.reverseInPlace();
+  /// assert list.values().toArray() == [3, 2, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3032,8 +3108,8 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1,2,3]);
   ///
-  /// let rlist = List.reverse(list);
-  /// assert Iter.toArray(List.values(rlist)) == [3, 2, 1];
+  /// let rlist = list.reverse();
+  /// assert rlist.values().toArray() == [3, 2, 1];
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3081,8 +3157,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// let list = List.fromArray<Nat>([2,0,3]);
-  /// assert not List.isEmpty<Nat>(list);
-  /// assert List.isEmpty<Nat>(List.empty<Nat>());
+  /// assert not list.isEmpty();
+  /// assert List.empty<Nat>().isEmpty();
   /// ```
   ///
   /// Runtime: `O(1)`
@@ -3097,7 +3173,7 @@ module {
   /// Example:
   /// ```
   /// let list = List.fromArray<Nat>([1, 2, 3, 4, 5]);
-  /// let reader = List.reader<Nat>(list, 2);
+  /// let reader = list.reader<Nat>(2);
   /// assert reader() == 3;
   /// assert reader() == 4;
   /// assert reader() == 5;
@@ -3134,5 +3210,24 @@ module {
     };
     next
   };
+
+  // The theoretical size limit of 2^61 elements
+  //
+  // The Nat32 index block arithmetic bounds the List size to exactly
+  // 2^61 elements: newIndexBlockLength is correct up to the top ladder
+  // length 3 * 2^30 (see its contract), and the index block of that
+  // length fills exactly when the List reaches size 2^61 (insertion
+  // state (3 * 2^30, 0)). Growing any further -- add through
+  // growIndexBlockIfNeeded, or constructor and addRepeat targets in
+  // (2^61, 2^62) through their newIndexBlockLength call sites -- builds
+  // the wrapped zero-length index block and traps with "Array index out
+  // of bounds": the effect of a capacity guard, with a less descriptive
+  // message. Targets >= 2^62 trap in the Nat.toNat32 conversions at the
+  // call sites instead. All other operations keep working at size 2^61,
+  // including removeLast, whose shrink path dodges the wrap with the
+  // early return in shrinkIndexBlockIfNeeded. The bound is purely
+  // theoretical: 2^61 elements need at least 16 EiB of data blocks.
+  // test/List.indexBlock.test.mo exercises the machinery at this bound
+  // with width-scaled (Nat8) copies of these functions.
 
 }

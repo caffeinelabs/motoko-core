@@ -51,7 +51,7 @@ module {
   /// import Error "mo:core/Error";
   ///
   /// let error = Error.reject("Example error");
-  /// Error.code(error) // #canister_reject
+  /// error.code() // #canister_reject
   /// ```
   public let code : (self : Error) -> ErrorCode = Prim.errorCode;
 
@@ -62,7 +62,7 @@ module {
   /// import Error "mo:core/Error";
   ///
   /// let error = Error.reject("Example error");
-  /// Error.message(error) // "Example error"
+  /// error.message() // "Example error"
   /// ```
   public let message : (self : Error) -> Text = Prim.errorMessage;
 
@@ -90,8 +90,8 @@ module {
   ///       await (with timeout = 3) callableActor.call();
   ///     }
   ///     catch e {
-  ///       if (Error.isRetryPossible e) {
-  ///         Debug.print(Error.message e);
+  ///       if (e.isRetryPossible()) {
+  ///         Debug.print(e.message());
   ///       }
   ///     }
   ///   }

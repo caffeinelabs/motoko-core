@@ -16,7 +16,7 @@ suite(
       func() {
         let random = Random.seed(0);
         let expected = [false, false, false, true, true, false, true, true, false, false];
-        expect.array(Array.tabulate<Bool>(10, func _ = random.bool()), Bool.toText, Bool.equal).equal(expected)
+        expect.array(Array.tabulate(10, func _ = random.bool()), Bool.toText, Bool.equal).equal(expected)
       }
     );
     test(
@@ -24,7 +24,7 @@ suite(
       func() {
         let random = Random.seed(123456789);
         let expected = [false, false, true, false, true, false, false, true, true, false];
-        expect.array(Array.tabulate<Bool>(10, func _ = random.bool()), Bool.toText, Bool.equal).equal(expected)
+        expect.array(Array.tabulate(10, func _ = random.bool()), Bool.toText, Bool.equal).equal(expected)
       }
     );
     test(
@@ -45,7 +45,7 @@ suite(
       func() {
         let random = Random.seed(0);
         let expected : [Nat8] = [27, 58, 135, 48, 175, 107, 232, 146, 65, 96];
-        expect.array(Array.tabulate<Nat8>(10, func _ = random.nat8()), Nat8.toText, Nat8.equal).equal(expected)
+        expect.array(Array.tabulate(10, func _ = random.nat8()), Nat8.toText, Nat8.equal).equal(expected)
       }
     );
     test(
@@ -53,7 +53,7 @@ suite(
       func() {
         let random = Random.seed(123456789);
         let expected : [Nat8] = [41, 152, 30, 100, 244, 79, 22, 249, 53, 2];
-        expect.array(Array.tabulate<Nat8>(10, func _ = random.nat8()), Nat8.toText, Nat8.equal).equal(expected)
+        expect.array(Array.tabulate(10, func _ = random.nat8()), Nat8.toText, Nat8.equal).equal(expected)
       }
     );
     test(
@@ -67,7 +67,7 @@ suite(
           7033394001090926866,
           15486745063885072907
         ];
-        expect.array(Array.tabulate<Nat64>(5, func _ = random.nat64()), Nat64.toText, Nat64.equal).equal(expected)
+        expect.array(Array.tabulate(5, func _ = random.nat64()), Nat64.toText, Nat64.equal).equal(expected)
       }
     );
     test(
@@ -81,7 +81,7 @@ suite(
           17030162763326561265,
           439678832541472697
         ];
-        expect.array(Array.tabulate<Nat64>(5, func _ = random.nat64()), Nat64.toText, Nat64.equal).equal(expected)
+        expect.array(Array.tabulate(5, func _ = random.nat64()), Nat64.toText, Nat64.equal).equal(expected)
       }
     );
     test(

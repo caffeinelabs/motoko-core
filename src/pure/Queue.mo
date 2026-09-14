@@ -48,7 +48,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.empty<Nat>();
-  ///   assert Queue.isEmpty(queue);
+  ///   assert queue.isEmpty();
   /// }
   /// ```
   ///
@@ -64,7 +64,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.empty<Nat>();
-  ///   assert Queue.isEmpty(queue);
+  ///   assert queue.isEmpty();
   /// }
   /// ```
   ///
@@ -79,7 +79,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.singleton(25);
-  ///   assert Queue.size(queue) == 1;
+  ///   assert queue.size() == 1;
   /// }
   /// ```
   ///
@@ -94,7 +94,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.singleton(42);
-  ///   assert Queue.size(queue) == 1;
+  ///   assert queue.size() == 1;
   /// }
   /// ```
   ///
@@ -117,8 +117,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert Queue.contains(queue, Nat.equal, 2);
-  ///   assert not Queue.contains(queue, Nat.equal, 4);
+  ///   assert queue.contains(Nat.equal, 2);
+  ///   assert not queue.contains(Nat.equal, 4);
   /// }
   /// ```
   ///
@@ -133,8 +133,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.pushFront(Queue.pushFront(Queue.empty(), 2), 1);
-  ///   assert Queue.peekFront(queue) == ?1;
+  ///   let queue = Queue.empty<Nat>().pushFront(2).pushFront(1);
+  ///   assert queue.peekFront() == ?1;
   /// }
   /// ```
   ///
@@ -152,8 +152,8 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.pushBack(Queue.pushBack(Queue.empty(), 1), 2);
-  ///   assert Queue.peekBack(queue) == ?2;
+  ///   let queue = Queue.empty<Nat>().pushBack(1).pushBack(2);
+  ///   assert queue.peekBack() == ?2;
   /// }
   /// ```
   ///
@@ -188,10 +188,10 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.pushFront(Queue.pushFront(Queue.empty(), 2), 1);
-  ///   assert Queue.peekFront(queue) == ?1;
-  ///   assert Queue.peekBack(queue) == ?2;
-  ///   assert Queue.size(queue) == 2;
+  ///   let queue = Queue.empty<Nat>().pushFront(2).pushFront(1);
+  ///   assert queue.peekFront() == ?1;
+  ///   assert queue.peekBack() == ?2;
+  ///   assert queue.size() == 2;
   /// }
   /// ```
   ///
@@ -210,9 +210,9 @@ module {
   /// Example:
   /// ```motoko include=import
   /// persistent actor {
-  ///   let queue = Queue.pushBack(Queue.pushBack(Queue.empty(), 1), 2);
-  ///   assert Queue.peekBack(queue) == ?2;
-  ///   assert Queue.size(queue) == 2;
+  ///   let queue = Queue.empty<Nat>().pushBack(1).pushBack(2);
+  ///   assert queue.peekBack() == ?2;
+  ///   assert queue.size() == 2;
   /// }
   /// ```
   ///
@@ -234,13 +234,13 @@ module {
   /// import Runtime "mo:core/Runtime";
   ///
   /// persistent actor {
-  ///   let initial = Queue.pushBack(Queue.pushBack(Queue.empty(), 1), 2);
+  ///   let initial = Queue.empty<Nat>().pushBack(1).pushBack(2);
   ///   // initial queue with elements [1, 2]
-  ///   switch (Queue.popFront(initial)) {
+  ///   switch (initial.popFront()) {
   ///     case null Runtime.trap "Empty queue impossible";
   ///     case (?(frontElement, remainingQueue)) {
   ///       assert frontElement == 1;
-  ///       assert Queue.size(remainingQueue) == 1
+  ///       assert remainingQueue.size() == 1
   ///     }
   ///   }
   /// }
@@ -269,16 +269,16 @@ module {
   /// import Runtime "mo:core/Runtime";
   ///
   /// persistent actor {
-  ///   let initial = Queue.pushBack(Queue.pushBack(Queue.empty(), 1), 2);
+  ///   let initial = Queue.empty<Nat>().pushBack(1).pushBack(2);
   ///   // initial queue with elements [1, 2]
-  ///   let reduced = Queue.popBack(initial);
+  ///   let reduced = initial.popBack();
   ///   switch reduced {
   ///     case null Runtime.trap("Empty queue impossible");
   ///     case (?result) {
   ///       let reducedQueue = result.0;
   ///       let removedElement = result.1;
   ///       assert removedElement == 2;
-  ///       assert Queue.size(reducedQueue) == 1;
+  ///       assert reducedQueue.size() == 1;
   ///     }
   ///   }
   /// }
@@ -300,7 +300,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2, 3, 4].values());
-  ///   assert Queue.size(queue) == 5;
+  ///   assert queue.size() == 5;
   /// }
   /// ```
   ///
@@ -319,7 +319,7 @@ module {
   ///   transient let iter = [0, 1, 2, 3, 4].values();
   ///
   ///   let queue = iter.toQueue();
-  ///   assert Queue.size(queue) == 5;
+  ///   assert queue.size() == 5;
   /// }
   /// ```
   ///
@@ -327,6 +327,7 @@ module {
   ///
   /// Space: O(size)
   public func toQueue<T>(self : Iter.Iter<T>) : Queue<T> {
+    // ignore-self-type-check
     fromIter(self)
   };
 
@@ -337,8 +338,8 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromArray(["A", "B", "C"]);
-  ///   assert Queue.size(queue) == 3;
-  ///   assert Queue.peekFront(queue) == ?"A";
+  ///   assert queue.size() == 3;
+  ///   assert queue.peekFront() == ?"A";
   /// }
   /// ```
   ///
@@ -359,7 +360,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromArray(["A", "B", "C"]);
-  ///   let array = Queue.toArray(queue);
+  ///   let array = queue.toArray();
   ///   assert array == ["A", "B", "C"];
   /// }
   /// ```
@@ -369,7 +370,7 @@ module {
   /// Space: O(size)
   public func toArray<T>(self : Queue<T>) : [T] {
     let iter = values(self);
-    Array.tabulate<T>(
+    Array.tabulate(
       self.1,
       func(i) {
         switch (iter.next()) {
@@ -392,7 +393,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert Iter.toArray(Queue.values(queue)) == [1, 2, 3];
+  ///   assert queue.values().toArray() == [1, 2, 3];
   /// }
   /// ```
   ///
@@ -411,8 +412,8 @@ module {
   ///   let queue1 = Queue.fromIter([1, 2].values());
   ///   let queue2 = Queue.fromIter([1, 2].values());
   ///   let queue3 = Queue.fromIter([1, 3].values());
-  ///   assert Queue.equal(queue1, queue2, Nat.equal);
-  ///   assert not Queue.equal(queue1, queue3, Nat.equal);
+  ///   assert queue1.equal(queue2, Nat.equal);
+  ///   assert not queue1.equal(queue3, Nat.equal);
   /// }
   /// ```
   ///
@@ -442,7 +443,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let allGreaterThanOne = Queue.all(queue, func n = n > 1);
+  ///   let allGreaterThanOne = queue.all(func n = n > 1);
   ///   assert not allGreaterThanOne; // false because 1 is not > 1
   /// }
   /// ```
@@ -464,7 +465,7 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let hasGreaterThanOne = Queue.any(queue, func n = n > 1);
+  ///   let hasGreaterThanOne = queue.any(func n = n > 1);
   ///   assert hasGreaterThanOne; // true because 2 and 3 are > 1
   /// }
   /// ```
@@ -487,7 +488,7 @@ module {
   /// persistent actor {
   ///   var text = "";
   ///   let queue = Queue.fromIter(["A", "B", "C"].values());
-  ///   Queue.forEach<Text>(queue, func n = text #= n);
+  ///   queue.forEach(func n = text #= n);
   ///   assert text == "ABC";
   /// }
   /// ```
@@ -511,8 +512,8 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2].values());
-  ///   let textQueue = Queue.map(queue, Nat.toText);
-  ///   assert Iter.toArray(Queue.values(textQueue)) == ["0", "1", "2"];
+  ///   let textQueue = queue.map(Nat.toText);
+  ///   assert textQueue.values().toArray() == ["0", "1", "2"];
   /// }
   /// ```
   ///
@@ -535,8 +536,8 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([0, 1, 2, 1].values());
-  ///   let filtered = Queue.filter(queue, func n = n != 1);
-  ///   assert Queue.size(filtered) == 2;
+  ///   let filtered = queue.filter(func n = n != 1);
+  ///   assert filtered.size() == 2;
   /// }
   /// ```
   ///
@@ -561,11 +562,10 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let doubled = Queue.filterMap(
-  ///     queue,
+  ///   let doubled = queue.filterMap(
   ///     func n = if (n > 1) ?(n * 2) else null
   ///   );
-  ///   assert Queue.size(doubled) == 2;
+  ///   assert doubled.size() == 2;
   /// }
   /// ```
   ///
@@ -590,7 +590,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert Queue.toText(queue, Nat.toText) == "PureQueue[1, 2, 3]";
+  ///   assert queue.toText(Nat.toText) == "PureQueue[1, 2, 3]";
   /// }
   /// ```
   ///
@@ -617,7 +617,7 @@ module {
   /// persistent actor {
   ///   let queue1 = Queue.fromIter([1, 2].values());
   ///   let queue2 = Queue.fromIter([1, 3].values());
-  ///   assert Queue.compare(queue1, queue2, Nat.compare) == #less;
+  ///   assert queue1.compare(queue2, Nat.compare) == #less;
   /// }
   /// ```
   ///
@@ -646,9 +646,9 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   let reversed = Queue.reverse(queue);
-  ///   assert Queue.peekFront(reversed) == ?3;
-  ///   assert Queue.peekBack(reversed) == ?1;
+  ///   let reversed = queue.reverse();
+  ///   assert reversed.peekFront() == ?3;
+  ///   assert reversed.peekBack() == ?1;
   /// }
   /// ```
   ///

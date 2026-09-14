@@ -39,7 +39,7 @@ object Random {
   };
 
   public func nextEntries(range : (Nat, Nat), size : Nat) : [Nat] {
-    Array.tabulate<Nat>(
+    Array.tabulate(
       size,
       func(_ix) {
         let key = nextNat(range);
@@ -57,10 +57,10 @@ func setGenN(samples_number : Nat, size : Nat, range : (Nat, Nat), chunkSize : N
       if (n > samples_number) {
         null
       } else {
-        ?Array.tabulate<Set.Set<Nat>>(
+        ?Array.tabulate(
           chunkSize,
           func _ = Set.fromIter(
-            Random.nextEntries(range, size).vals(),
+            Random.nextEntries(range, size).values(),
             c
           )
         )
@@ -200,14 +200,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
               "foldLeft as values()",
               func(m) {
                 let it = Set.values(m);
-                Set.foldLeft<Nat, Bool>(m, true, func(acc, v) { acc and it.next() == ?v })
+                Set.foldLeft(m, true, func(acc, v) { acc and it.next() == ?v })
               }
             ),
             prop(
               "foldRight as valsRev()",
               func(m) {
                 let it = Set.reverseValues(m);
-                Set.foldRight<Nat, Bool>(m, true, func(v, acc) { acc and it.next() == ?v })
+                Set.foldRight(m, true, func(v, acc) { acc and it.next() == ?v })
               }
             )
           ]
@@ -240,14 +240,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
               "all through fold",
               func(s) {
                 let pred = func(k : Nat) : Bool = (k <= range.1 - 2 and range.0 + 2 <= k);
-                Set.all(s, pred) == Set.foldLeft<Nat, Bool>(s, true, func(acc, v) { acc and pred(v) })
+                Set.all(s, pred) == Set.foldLeft(s, true, func(acc, v) { acc and pred(v) })
               }
             ),
             prop(
               "any through fold",
               func(s) {
                 let pred = func(k : Nat) : Bool = (k >= range.1 - 1 or range.0 + 1 >= k);
-                Set.any(s, pred) == Set.foldLeft<Nat, Bool>(s, false, func(acc, v) { acc or pred(v) })
+                Set.any(s, pred) == Set.foldLeft(s, false, func(acc, v) { acc or pred(v) })
               }
             )
           ]
@@ -321,7 +321,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
               func(s) {
                 let a = Array.reverse(Iter.toArray(Set.values(s)));
                 let b = Iter.toArray(Set.reverseValues(s));
-                M.equals(T.array<Nat>(T.natTestable, a)).matches(b)
+                M.equals(T.array(T.natTestable, a)).matches(b)
               }
             )
           ]
@@ -347,7 +347,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
               "not contains(filterMap(s, c, (!=e)), c, e)",
               func(s, e) {
                 not Set.contains(
-                  Set.filterMap<Nat, Nat>(
+                  Set.filterMap(
                     s,
                     c,
                     func(ei) { if (ei != e) { ?ei } else { null } }
@@ -361,7 +361,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
               "contains(filterMap(add(s, c, e), c, (==e)), c, e)",
               func(s, e) {
                 Set.contains(
-                  Set.filterMap<Nat, Nat>(
+                  Set.filterMap(
                     Set.add(s, c, e),
                     c,
                     func(ei) { if (ei == e) { ?ei } else { null } }
@@ -380,7 +380,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
             prop(
               "map(s, id) == s",
               func(s) {
-                SetMatcher(s).matches(Set.map<Nat, Nat>(s, c, func(e) { e }))
+                SetMatcher(s).matches(Set.map(s, c, func(e) { e }))
               }
             )
           ]

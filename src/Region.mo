@@ -66,7 +66,7 @@ module {
   /// persistent actor {
   ///   public func example() : async () {
   ///     let region = Region.new();
-  ///     assert Region.size(region) == 0;
+  ///     assert region.size() == 0;
   ///   }
   /// }
   /// ```
@@ -84,7 +84,7 @@ module {
   /// persistent actor {
   ///   public func example() : async () {
   ///     let region = Region.new();
-  ///     assert Region.id(region) == 16;
+  ///     assert region.id() == 16;
   ///   }
   /// }
   /// ```
@@ -101,9 +101,9 @@ module {
   /// persistent actor {
   ///   public func example() : async () {
   ///     let region = Region.new();
-  ///     let beforeSize = Region.size(region);
-  ///     ignore Region.grow(region, 10);
-  ///     let afterSize = Region.size(region);
+  ///     let beforeSize = region.size();
+  ///     ignore region.grow(10);
+  ///     let afterSize = region.size();
   ///     assert afterSize - beforeSize == 10;
   ///   }
   /// }
@@ -125,11 +125,11 @@ module {
   /// persistent actor {
   ///   public func example() : async () {
   ///     let region = Region.new();
-  ///     let beforeSize = Region.grow(region, 10);
+  ///     let beforeSize = region.grow(10);
   ///     if (beforeSize == 0xFFFF_FFFF_FFFF_FFFF) {
   ///       throw Error.reject("Out of memory");
   ///     };
-  ///     let afterSize = Region.size(region);
+  ///     let afterSize = region.size();
   ///     assert afterSize - beforeSize == 10;
   ///   }
   /// }
@@ -146,8 +146,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat8 = 123;
-  ///     Region.storeNat8(region, offset, value);
-  ///     assert Region.loadNat8(region, offset) == 123;
+  ///     region.storeNat8(offset, value);
+  ///     assert region.loadNat8(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -163,8 +163,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat8 = 123;
-  ///     Region.storeNat8(region, offset, value);
-  ///     assert Region.loadNat8(region, offset) == 123;
+  ///     region.storeNat8(offset, value);
+  ///     assert region.loadNat8(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -180,8 +180,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat16 = 123;
-  ///     Region.storeNat16(region, offset, value);
-  ///     assert Region.loadNat16(region, offset) == 123;
+  ///     region.storeNat16(offset, value);
+  ///     assert region.loadNat16(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -197,8 +197,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat16 = 123;
-  ///     Region.storeNat16(region, offset, value);
-  ///     assert Region.loadNat16(region, offset) == 123;
+  ///     region.storeNat16(offset, value);
+  ///     assert region.loadNat16(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -214,8 +214,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat32 = 123;
-  ///     Region.storeNat32(region, offset, value);
-  ///     assert Region.loadNat32(region, offset) == 123;
+  ///     region.storeNat32(offset, value);
+  ///     assert region.loadNat32(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -231,8 +231,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat32 = 123;
-  ///     Region.storeNat32(region, offset, value);
-  ///     assert Region.loadNat32(region, offset) == 123;
+  ///     region.storeNat32(offset, value);
+  ///     assert region.loadNat32(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -248,8 +248,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat64 = 123;
-  ///     Region.storeNat64(region, offset, value);
-  ///     assert Region.loadNat64(region, offset) == 123;
+  ///     region.storeNat64(offset, value);
+  ///     assert region.loadNat64(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -265,8 +265,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Nat64 = 123;
-  ///     Region.storeNat64(region, offset, value);
-  ///     assert Region.loadNat64(region, offset) == 123;
+  ///     region.storeNat64(offset, value);
+  ///     assert region.loadNat64(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -282,8 +282,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int8 = 123;
-  ///     Region.storeInt8(region, offset, value);
-  ///     assert Region.loadInt8(region, offset) == 123;
+  ///     region.storeInt8(offset, value);
+  ///     assert region.loadInt8(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -299,8 +299,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int8 = 123;
-  ///     Region.storeInt8(region, offset, value);
-  ///     assert Region.loadInt8(region, offset) == 123;
+  ///     region.storeInt8(offset, value);
+  ///     assert region.loadInt8(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -316,8 +316,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int16 = 123;
-  ///     Region.storeInt16(region, offset, value);
-  ///     assert Region.loadInt16(region, offset) == 123;
+  ///     region.storeInt16(offset, value);
+  ///     assert region.loadInt16(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -333,8 +333,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int16 = 123;
-  ///     Region.storeInt16(region, offset, value);
-  ///     assert Region.loadInt16(region, offset) == 123;
+  ///     region.storeInt16(offset, value);
+  ///     assert region.loadInt16(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -350,8 +350,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int32 = 123;
-  ///     Region.storeInt32(region, offset, value);
-  ///     assert Region.loadInt32(region, offset) == 123;
+  ///     region.storeInt32(offset, value);
+  ///     assert region.loadInt32(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -367,8 +367,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int32 = 123;
-  ///     Region.storeInt32(region, offset, value);
-  ///     assert Region.loadInt32(region, offset) == 123;
+  ///     region.storeInt32(offset, value);
+  ///     assert region.loadInt32(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -384,8 +384,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int64 = 123;
-  ///     Region.storeInt64(region, offset, value);
-  ///     assert Region.loadInt64(region, offset) == 123;
+  ///     region.storeInt64(offset, value);
+  ///     assert region.loadInt64(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -401,8 +401,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value : Int64 = 123;
-  ///     Region.storeInt64(region, offset, value);
-  ///     assert Region.loadInt64(region, offset) == 123;
+  ///     region.storeInt64(offset, value);
+  ///     assert region.loadInt64(offset) == 123;
   ///   }
   /// }
   /// ```
@@ -418,8 +418,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value = 1.25;
-  ///     Region.storeFloat(region, offset, value);
-  ///     assert Region.loadFloat(region, offset) == 1.25;
+  ///     region.storeFloat(offset, value);
+  ///     assert region.loadFloat(offset) == 1.25;
   ///   }
   /// }
   /// ```
@@ -435,8 +435,8 @@ module {
   ///     let region = Region.new();
   ///     let offset : Nat64 = 0;
   ///     let value = 1.25;
-  ///     Region.storeFloat(region, offset, value);
-  ///     assert Region.loadFloat(region, offset) == 1.25;
+  ///     region.storeFloat(offset, value);
+  ///     assert region.loadFloat(offset) == 1.25;
   ///   }
   /// }
   /// ```
@@ -456,8 +456,8 @@ module {
   ///     let offset : Nat64 = 0;
   ///     let value = Array.toBlob([1, 2, 3]);
   ///     let size = value.size();
-  ///     Region.storeBlob(region, offset, value);
-  ///     assert Blob.toArray(Region.loadBlob(region, offset, size)) == [1, 2, 3];
+  ///     region.storeBlob(offset, value);
+  ///     assert region.loadBlob(offset, size).toArray() == [1, 2, 3];
   ///   }
   /// }
   /// ```
@@ -477,8 +477,8 @@ module {
   ///     let offset : Nat64 = 0;
   ///     let value = Array.toBlob([1, 2, 3]);
   ///     let size = value.size();
-  ///     Region.storeBlob(region, offset, value);
-  ///     assert Blob.toArray(Region.loadBlob(region, offset, size)) == [1, 2, 3];
+  ///     region.storeBlob(offset, value);
+  ///     assert region.loadBlob(offset, size).toArray() == [1, 2, 3];
   ///   }
   /// }
   /// ```

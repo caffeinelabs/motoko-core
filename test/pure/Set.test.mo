@@ -41,7 +41,7 @@ func concatenateKeys2(accum : Text, key : Nat) : Text {
 };
 
 func containsAll(set : Set.Set<Nat>, elems : [Nat]) {
-  for (elem in elems.vals()) {
+  for (elem in elems.values()) {
     assert (Set.contains(set, Nat.compare, elem))
   }
 };
@@ -80,12 +80,12 @@ run(
       test(
         "values",
         Iter.toArray(Set.values(buildTestSet())),
-        M.equals(T.array<Nat>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "reverseValues",
         Iter.toArray(Set.reverseValues(buildTestSet())),
-        M.equals(T.array<Nat>(entryTestable, []))
+        M.equals(T.array(entryTestable, []))
       ),
       test(
         "empty from iter",
@@ -111,7 +111,7 @@ run(
         "for each",
         do {
           let set = Set.empty<Nat>();
-          Set.forEach<Nat>(
+          Set.forEach(
             set,
             func(_) {
               Runtime.trap("test failed")
@@ -219,12 +219,12 @@ run(
       test(
         "values",
         Iter.toArray(Set.values(buildTestSet())),
-        M.equals(T.array<Nat>(entryTestable, expected))
+        M.equals(T.array(entryTestable, expected))
       ),
       test(
         "reverseValues",
         Iter.toArray(Set.reverseValues(buildTestSet())),
-        M.equals(T.array<Nat>(entryTestable, expected))
+        M.equals(T.array(entryTestable, expected))
       ),
       test(
         "from iter",
@@ -245,7 +245,7 @@ run(
         "for each",
         do {
           let set = buildTestSet();
-          Set.forEach<Nat>(
+          Set.forEach(
             set,
             func(number) {
               assert (number == 0)
@@ -314,12 +314,12 @@ run(
       ),
       test(
         "all",
-        Set.all<Nat>(buildTestSet(), func(k) = (k == 0)),
+        Set.all(buildTestSet(), func(k) = (k == 0)),
         M.equals(T.bool(true))
       ),
       test(
         "any",
-        Set.any<Nat>(buildTestSet(), func(k) = (k == 0)),
+        Set.any(buildTestSet(), func(k) = (k == 0)),
         M.equals(T.bool(true))
       ),
       test(
@@ -362,7 +362,7 @@ run(
           Iter.toArray(Set.values(combined))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [0, 1, 2]
           )
@@ -380,7 +380,7 @@ run(
           Iter.toArray(Set.values(combined))
         },
         M.equals(
-          T.array<Nat>(
+          T.array(
             T.natTestable,
             [0, 1, 2]
           )
@@ -408,12 +408,12 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   test(
     "values",
     Iter.toArray(Set.values(buildTestSet())),
-    M.equals(T.array<Nat>(entryTestable, expected))
+    M.equals(T.array(entryTestable, expected))
   ),
   test(
     "reverseValues",
     Array.reverse(Iter.toArray(Set.reverseValues(buildTestSet()))),
-    M.equals(T.array<Nat>(entryTestable, expected))
+    M.equals(T.array(entryTestable, expected))
   ),
   test(
     "from iter",
@@ -459,7 +459,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let set = buildTestSet();
       var index = 0;
-      Set.forEach<Nat>(
+      Set.forEach(
         set,
         func(element) {
           assert (element == index);
@@ -525,22 +525,22 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   ),
   test(
     "all true",
-    Set.all<Nat>(buildTestSet(), func(k) = (k >= 0)),
+    Set.all(buildTestSet(), func(k) = (k >= 0)),
     M.equals(T.bool(true))
   ),
   test(
     "all false",
-    Set.all<Nat>(buildTestSet(), func(k) = (k > 0)),
+    Set.all(buildTestSet(), func(k) = (k > 0)),
     M.equals(T.bool(false))
   ),
   test(
     "any true",
-    Set.any<Nat>(buildTestSet(), func(k) = (k >= 2)),
+    Set.any(buildTestSet(), func(k) = (k >= 2)),
     M.equals(T.bool(true))
   ),
   test(
     "any false",
-    Set.any<Nat>(buildTestSet(), func(k) = (k > 2)),
+    Set.any(buildTestSet(), func(k) = (k > 2)),
     M.equals(T.bool(false))
   ),
   test(
@@ -586,7 +586,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let size = Set.size(buildTestSet());
       M.equals(
-        T.array<Int>(
+        T.array(
           T.intTestable,
           Array.tabulate<Int>(
             size * 2 - 1 : Nat,
@@ -612,7 +612,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let size = Set.size(buildTestSet());
       M.equals(
-        T.array<Int>(
+        T.array(
           T.intTestable,
           Array.tabulate<Int>(
             size * 2 - 1 : Nat,

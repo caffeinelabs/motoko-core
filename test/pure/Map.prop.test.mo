@@ -41,7 +41,7 @@ object Random {
   };
 
   public func nextEntries(range : (Nat, Nat), size : Nat) : [(Nat, Text)] {
-    Array.tabulate<(Nat, Text)>(
+    Array.tabulate(
       size,
       func(_ix) {
         let key = nextNat(range);
@@ -59,7 +59,7 @@ func mapGen(samples_number : Nat, size : Nat, range : (Nat, Nat)) : Iter.Iter<Ma
       if (n > samples_number) {
         null
       } else {
-        ?Map.fromIter(Random.nextEntries(range, size).vals(), c)
+        ?Map.fromIter(Random.nextEntries(range, size).values(), c)
       }
     }
   }
@@ -292,7 +292,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               func(m) {
                 let a = Iter.toArray(Map.entries(m));
                 let b = Array.reverse(Iter.toArray(Map.reverseEntries(m)));
-                M.equals(T.array<(Nat, Text)>(entryTestable, a)).matches(b)
+                M.equals(T.array(entryTestable, a)).matches(b)
               }
             )
           ]
@@ -305,7 +305,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "get(filterMap(m, c, (!=k)), c, k) == null",
               func(m, k) {
                 Map.get(
-                  Map.filterMap<Nat, Text, Text>(
+                  Map.filterMap(
                     m,
                     c,
                     func(ki, vi) { if (ki != k) { ?vi } else { null } }
@@ -319,7 +319,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "get(filterMap(add(m, c, k, v), c, (==k)), c, k) == ?v",
               func(m, k) {
                 Map.get(
-                  Map.filterMap<Nat, Text, Text>(
+                  Map.filterMap(
                     Map.add(m, c, k, "v"),
                     c,
                     func(ki, vi) { if (ki == k) { ?vi } else { null } }
@@ -338,7 +338,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "map(m, id) == m",
               func(m) {
-                MapMatcher(m).matches(Map.map<Nat, Text, Text>(m, func(k, v) { v }))
+                MapMatcher(m).matches(Map.map(m, func(k, v) { v }))
               }
             )
           ]
@@ -351,14 +351,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "foldLeft as entries()",
               func(m) {
                 let it = Map.entries(m);
-                Map.foldLeft<Nat, Text, Bool>(m, true, func(acc, k, v) { acc and it.next() == ?(k, v) })
+                Map.foldLeft(m, true, func(acc, k, v) { acc and it.next() == ?(k, v) })
               }
             ),
             prop(
               "foldRight as reverseEntries()",
               func(m) {
                 let it = Map.reverseEntries(m);
-                Map.foldRight<Nat, Text, Bool>(m, true, func(k, v, acc) { acc and it.next() == ?(k, v) })
+                Map.foldRight(m, true, func(k, v, acc) { acc and it.next() == ?(k, v) })
               }
             )
           ]
@@ -371,14 +371,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "all through fold",
               func(m) {
                 let pred = func(k : Nat, v : Text) : Bool = (k <= (range.1 - 2 : Nat) and range.0 + 2 <= k);
-                Map.all(m, pred) == Map.foldLeft<Nat, Text, Bool>(m, true, func(acc, k, v) { acc and pred(k, v) })
+                Map.all(m, pred) == Map.foldLeft(m, true, func(acc, k, v) { acc and pred(k, v) })
               }
             ),
             prop(
               "any through fold",
               func(m) {
                 let pred = func(k : Nat, v : Text) : Bool = (k >= (range.1 - 1 : Nat) or range.0 + 1 >= k);
-                Map.any(m, pred) == Map.foldLeft<Nat, Text, Bool>(m, false, func(acc, k, v) { acc or pred(k, v) })
+                Map.any(m, pred) == Map.foldLeft(m, false, func(acc, k, v) { acc or pred(k, v) })
               }
             ),
 

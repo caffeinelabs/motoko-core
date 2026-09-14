@@ -36,7 +36,7 @@ module {
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
   public func empty<T>() : PriorityQueue<T> = {
-    set = Set.empty<(T, Nat)>();
+    set = Set.empty();
     var counter = 0
   };
 

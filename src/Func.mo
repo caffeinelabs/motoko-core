@@ -22,7 +22,7 @@ module {
   /// assert nat32ToText(65) == "A";
   /// ```
   public func compose<A, B, C>(f : B -> C, g : A -> B) : A -> C {
-    func(x : A) : C {
+    func(x) : C {
       f(g(x))
     }
   };
