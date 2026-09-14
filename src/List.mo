@@ -2094,9 +2094,9 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let list = List.fromArray<Nat>([1, 2, 3]);
+  /// let list = List.fromArray([1, 2, 3]);
   ///
-  /// assert list.toArray<Nat>() == [1, 2, 3];
+  /// assert list.toArray() == [1, 2, 3];
   /// ```
   ///
   /// Runtime: `O(size)`
