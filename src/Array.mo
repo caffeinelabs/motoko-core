@@ -43,13 +43,13 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func repeat<T>(item : T, size : Nat) : [T] = Prim.Array_tabulate<T>(size, func _ = item);
+  public func repeat<T>(item : T, size : Nat) : [T] = Prim.Array_tabulate(size, func _ = item);
 
   /// Creates an immutable array of size `size`. Each element at index i
   /// is created by applying `generator` to i.
   ///
   /// ```motoko include=import
-  /// let array : [Nat] = Array.tabulate<Nat>(4, func i = i * 2);
+  /// let array : [Nat] = Array.tabulate(4, func i = i * 2);
   /// assert array == [0, 2, 4, 6];
   /// ```
   ///
@@ -66,7 +66,7 @@ module {
   ///
   /// Space: O(1)
   /// @deprecated Use `VarArray.toArray` instead.
-  public func fromVarArray<T>(varArray : [var T]) : [T] = Prim.Array_tabulate<T>(varArray.size(), func i = varArray[i]);
+  public func fromVarArray<T>(varArray : [var T]) : [T] = Prim.Array_tabulate(varArray.size(), func i = varArray[i]);
 
   /// Transforms an immutable array into a mutable array.
   ///
@@ -203,7 +203,7 @@ module {
   public func concat<T>(self : [T], other : [T]) : [T] {
     let size1 = self.size();
     let size2 = other.size();
-    Prim.Array_tabulate<T>(
+    Prim.Array_tabulate(
       size1 + size2,
       func i {
         if (i < size1) {
@@ -248,7 +248,7 @@ module {
   /// Space: O(1)
   public func reverse<T>(self : [T]) : [T] {
     let size = self.size();
-    Prim.Array_tabulate<T>(size, func i = self[size - i - 1])
+    Prim.Array_tabulate(size, func i = self[size - i - 1])
   };
 
   /// Calls `f` with each element in `array`.
@@ -257,7 +257,7 @@ module {
   /// ```motoko include=import
   /// var sum = 0;
   /// let array = [0, 1, 2, 3];
-  /// Array.forEach<Nat>(array, func(x) {
+  /// Array.forEach(array, func(x) {
   ///   sum += x;
   /// });
   /// assert sum == 6;
@@ -289,7 +289,7 @@ module {
   /// Space: O(size)
   ///
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
-  public func map<T, R>(self : [T], f : T -> R) : [R] = Prim.Array_tabulate<R>(self.size(), func i = f(self[i]));
+  public func map<T, R>(self : [T], f : T -> R) : [R] = Prim.Array_tabulate(self.size(), func i = f(self[i]));
 
   /// Creates a new array by applying `predicate` to every element
   /// in `array`, retaining the elements for which `predicate` returns true.
@@ -317,7 +317,7 @@ module {
       }
     );
     var nextKeep = 0;
-    Prim.Array_tabulate<T>(
+    Prim.Array_tabulate(
       count,
       func _ {
         while (not keep[nextKeep]) {
@@ -366,7 +366,7 @@ module {
     );
 
     var nextSome = 0;
-    Prim.Array_tabulate<R>(
+    Prim.Array_tabulate(
       count,
       func _ {
         while (Option.isNull(options[nextSome])) {
@@ -435,7 +435,7 @@ module {
       case null {
         // unpack the option
         #ok(
-          map<?R, R>(
+          map(
             results,
             func element {
               switch element {
@@ -470,7 +470,7 @@ module {
   /// Space: O(size)
   ///
   /// *Runtime and space assumes that `f` runs in O(1) time and space.
-  public func mapEntries<T, R>(self : [T], f : (T, Nat) -> R) : [R] = Prim.Array_tabulate<R>(self.size(), func i = f(self[i], i));
+  public func mapEntries<T, R>(self : [T], f : (T, Nat) -> R) : [R] = Prim.Array_tabulate(self.size(), func i = f(self[i], i));
 
   /// Creates a new array by applying `k` to each element in `array`,
   /// and concatenating the resulting arrays in order.
@@ -499,7 +499,7 @@ module {
     // but it would require an extra pass (to compute `flatSize`)
     var outer = 0;
     var inner = 0;
-    Prim.Array_tabulate<R>(
+    Prim.Array_tabulate(
       flatSize,
       func _ {
         while (inner == arrays[outer].size()) {
@@ -612,7 +612,7 @@ module {
 
     var outer = 0;
     var inner = 0;
-    Prim.Array_tabulate<T>(
+    Prim.Array_tabulate(
       flatSize,
       func _ {
         while (inner == self[outer].size()) {
@@ -681,7 +681,7 @@ module {
         }
       }
     };
-    Prim.Array_tabulate<T>(size, func i = array[i])
+    Prim.Array_tabulate(size, func i = array[i])
   };
 
   /// Returns an iterator (`Iter`) over the indices of `array`.
@@ -760,7 +760,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4];
-  /// assert array.all<Nat>(func x = x > 0);
+  /// assert array.all(func x = x > 0);
   /// ```
   ///
   /// Runtime: O(size)
@@ -781,7 +781,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [1, 2, 3, 4];
-  /// assert array.any<Nat>(func x = x > 3);
+  /// assert array.any(func x = x > 3);
   /// ```
   ///
   /// Runtime: O(size)
@@ -803,26 +803,26 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.indexOf<Char>('c') == ?0;
-  /// assert array.indexOf<Char>('f') == ?2;
-  /// assert array.indexOf<Char>('g') == null;
+  /// assert array.indexOf('c') == ?0;
+  /// assert array.indexOf('f') == ?2;
+  /// assert array.indexOf('g') == null;
   /// ```
   ///
   /// Runtime: O(array.size())
   ///
   /// Space: O(1)
-  public func indexOf<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = nextIndexOf<T>(self, equal, element, 0);
+  public func indexOf<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = nextIndexOf(self, equal, element, 0);
 
   /// Returns the index of the next occurence of `element` in the `array` starting from the `from` index (inclusive).
   ///
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.nextIndexOf<Char>('c', 0) == ?0;
-  /// assert array.nextIndexOf<Char>('f', 0) == ?2;
-  /// assert array.nextIndexOf<Char>('f', 2) == ?2;
-  /// assert array.nextIndexOf<Char>('f', 3) == ?3;
-  /// assert array.nextIndexOf<Char>('f', 4) == null;
+  /// assert array.nextIndexOf('c', 0) == ?0;
+  /// assert array.nextIndexOf('f', 0) == ?2;
+  /// assert array.nextIndexOf('f', 2) == ?2;
+  /// assert array.nextIndexOf('f', 3) == ?3;
+  /// assert array.nextIndexOf('f', 4) == null;
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -846,16 +846,16 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.lastIndexOf<Char>('c') == ?0;
-  /// assert array.lastIndexOf<Char>('f') == ?3;
-  /// assert array.lastIndexOf<Char>('e') == ?5;
-  /// assert array.lastIndexOf<Char>('g') == null;
+  /// assert array.lastIndexOf('c') == ?0;
+  /// assert array.lastIndexOf('f') == ?3;
+  /// assert array.lastIndexOf('e') == ?5;
+  /// assert array.lastIndexOf('g') == null;
   /// ```
   ///
   /// Runtime: O(array.size())
   ///
   /// Space: O(1)
-  public func lastIndexOf<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf<T>(self, equal, element, self.size());
+  public func lastIndexOf<T>(self : [T], equal : (implicit : (T, T) -> Bool), element : T) : ?Nat = prevIndexOf(self, equal, element, self.size());
 
   /// Returns the index of the previous occurence of `element` in the `array` starting from the `from` index (exclusive).
   ///
@@ -867,10 +867,10 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.prevIndexOf<Char>('c', array.size()) == ?0;
-  /// assert array.prevIndexOf<Char>('e', array.size()) == ?5;
-  /// assert array.prevIndexOf<Char>('e', 5) == ?4;
-  /// assert array.prevIndexOf<Char>('e', 4) == null;
+  /// assert array.prevIndexOf('c', array.size()) == ?0;
+  /// assert array.prevIndexOf('e', array.size()) == ?5;
+  /// assert array.prevIndexOf('e', 5) == ?4;
+  /// assert array.prevIndexOf('e', 4) == null;
   /// ```
   ///
   /// Runtime: O(array.size());
@@ -891,8 +891,8 @@ module {
   /// ```motoko include=import
   /// import Char "mo:core/Char";
   /// let array = ['c', 'o', 'f', 'f', 'e', 'e'];
-  /// assert array.contains<Char>('f');
-  /// assert not array.contains<Char>('g');
+  /// assert array.contains('f');
+  /// assert not array.contains('g');
   /// ```
   ///
   /// Runtime: O(array.size())
@@ -1001,7 +1001,7 @@ module {
     if (start >= end) {
       return []
     };
-    Prim.Array_tabulate<T>(end - start, func i = self[start + i])
+    Prim.Array_tabulate(end - start, func i = self[start + i])
   };
 
   /// Returns a new mutable array containing elements from `array` starting at index `fromInclusive` up to (but not including) index `toExclusive`.
@@ -1044,7 +1044,7 @@ module {
     if (start >= end) {
       return [var]
     };
-    Prim.Array_tabulateVar<T>(end - start, func i = self[start + i])
+    Prim.Array_tabulateVar(end - start, func i = self[start + i])
   };
 
   /// Converts the array to its textual representation using `f` to convert each element to `Text`.
@@ -1090,7 +1090,7 @@ module {
   ///
   /// let array1 = [1, 2, 3];
   /// let array2 = [1, 2, 4];
-  /// assert array1.compare<Nat>(array2, Nat.compare) == #less;
+  /// assert array1.compare(array2, Nat.compare) == #less;
   /// ```
   ///
   /// ```motoko include=import
@@ -1098,7 +1098,7 @@ module {
   ///
   /// let array3 = [1, 2];
   /// let array4 = [1, 2, 3];
-  /// assert array3.compare<Nat>(array4, Nat.compare) == #less;
+  /// assert array3.compare(array4, Nat.compare) == #less;
   /// ```
   ///
   /// Runtime: O(min(size1, size2))
@@ -1135,8 +1135,8 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let sorted = [1, 3, 5, 7, 9, 11];
-  /// assert sorted.binarySearch<Nat>(5) == #found(2);
-  /// assert sorted.binarySearch<Nat>(6) == #insertionIndex(3);
+  /// assert sorted.binarySearch(5) == #found(2);
+  /// assert sorted.binarySearch(6) == #insertionIndex(3);
   /// ```
   ///
   /// Runtime: O(log(size))
@@ -1167,7 +1167,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let array = [1, 2, 3];
-  /// assert array.isSorted<Nat>();
+  /// assert array.isSorted();
   /// ```
   ///
   /// Runtime: O(size)

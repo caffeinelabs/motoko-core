@@ -172,7 +172,7 @@ module {
     let rightRebalanceChildren : [var ?T] =
     // Case 1: if both left and right rebalanced halves were inserted into the left child can just go from the split index onwards
     if (rebalancedChildIndex + 1 <= splitIndex) {
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         children.size(),
         func(i) {
           let adjIndex = i + splitIndex;
@@ -183,7 +183,7 @@ module {
     // Case 2: if both left and right rebalanced halves will be inserted into the right child
     else if (rebalancedChildIndex > splitIndex) {
       var rebalanceOffset = 0;
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         children.size(),
         func(i) {
           let adjIndex = i + splitIndex + 1;
@@ -199,7 +199,7 @@ module {
     // Case 3: if left rebalanced half was in left child, and right rebalanced half will be in right child
     // rebalancedChildIndex == splitIndex
     else {
-      VarArray.tabulate<?T>(
+      VarArray.tabulate(
         children.size(),
         func(i) {
           // first element is the right rebalanced half

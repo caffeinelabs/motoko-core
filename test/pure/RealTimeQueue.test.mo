@@ -67,7 +67,7 @@ suite(
     test(
       "iterate forward",
       func() {
-        expect.array<Nat>(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
       }
     );
 
@@ -387,7 +387,7 @@ suite(
   }
 );
 
-queue := Queue.filter<Nat>(Queue.fromIter([1, 2, 3, 4, 5].values()), func n = n < 3);
+queue := Queue.filter(Queue.fromIter([1, 2, 3, 4, 5].values()), func n = n < 3);
 
 suite(
   "filter invariants",
@@ -596,8 +596,8 @@ suite(
       func() {
         let testAll = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.bool(Queue.all<Nat>(q, func n = n > 0)).isTrue();
-          expect.bool(Queue.all<Nat>(q, func n = n < 3)).isFalse()
+          expect.bool(Queue.all(q, func n = n > 0)).isTrue();
+          expect.bool(Queue.all(q, func n = n < 3)).isFalse()
         };
         testAll([4]);
         testAll([1, 5]);
@@ -617,11 +617,11 @@ suite(
             q,
             func n = if (n % 2 == 0) ?Nat.toText(n) else null
           );
-          expect.array<Text>(
+          expect.array(
             Iter.toArray(Queue.values(mapped)),
             func t = t,
             Text.equal
-          ).equal(Array.filterMap<Nat, Text>(testElements, func n = if (n % 2 == 0) ?Nat.toText(n) else null))
+          ).equal(Array.filterMap(testElements, func n = if (n % 2 == 0) ?Nat.toText(n) else null))
         };
         testFilterMap([]);
         testFilterMap([1]);
@@ -639,13 +639,13 @@ suite(
         let testForEach = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
           var result = "";
-          Queue.forEach<Nat>(
+          Queue.forEach(
             q,
             func n {
               result #= Nat.toText n
             }
           );
-          expect.text(result).equal(Array.foldLeft<Nat, Text>(testElements, "", func(acc, n) = acc # Nat.toText n))
+          expect.text(result).equal(Array.foldLeft(testElements, "", func(acc, n) = acc # Nat.toText n))
         };
         testForEach([]);
         testForEach([1]);
@@ -662,7 +662,7 @@ suite(
       func() {
         let testToText = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.text(Queue.toText(q, Nat.toText)).equal("RealTimeQueue" # Array.toText<Nat>(testElements, Nat.toText))
+          expect.text(Queue.toText(q, Nat.toText)).equal("RealTimeQueue" # Array.toText(testElements, Nat.toText))
         };
         testToText([]);
         testToText([1]);
@@ -698,8 +698,8 @@ suite(
           let q = Queue.fromIter(testElements.values());
           let alwaysThere = 1;
           let neverThere = 123;
-          expect.bool(Queue.contains(q, Nat.equal, alwaysThere)).equal(Array.find<Nat>(testElements, func n = Nat.equal(n, alwaysThere)) != null);
-          expect.bool(Queue.contains(q, Nat.equal, neverThere)).equal(Array.find<Nat>(testElements, func n = Nat.equal(n, neverThere)) != null)
+          expect.bool(Queue.contains(q, Nat.equal, alwaysThere)).equal(Array.find(testElements, func n = Nat.equal(n, alwaysThere)) != null);
+          expect.bool(Queue.contains(q, Nat.equal, neverThere)).equal(Array.find(testElements, func n = Nat.equal(n, neverThere)) != null)
         };
         testContains([]);
         testContains([1]);
@@ -716,8 +716,8 @@ suite(
       func() {
         let testAny = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.bool(Queue.any<Nat>(q, func n = n > 2)).equal(Array.any<Nat>(testElements, func n = n > 2));
-          expect.bool(Queue.any<Nat>(q, func n = n > 3)).equal(Array.any<Nat>(testElements, func n = n > 3))
+          expect.bool(Queue.any(q, func n = n > 2)).equal(Array.any(testElements, func n = n > 2));
+          expect.bool(Queue.any(q, func n = n > 3)).equal(Array.any(testElements, func n = n > 3))
         };
         testAny([]);
         testAny([3]);
@@ -740,7 +740,7 @@ suite(
             Iter.toArray(Queue.values(mapped)),
             Nat.toText,
             Nat.equal
-          ).equal(Array.map<Nat, Nat>(testElements, func n = n * 2))
+          ).equal(Array.map(testElements, func n = n * 2))
         };
         testMap([]);
         testMap([1]);
@@ -781,7 +781,7 @@ suite(
         let testCompare = func(testElements1 : [Nat], testElements2 : [Nat]) {
           let q1 = Queue.fromIter(testElements1.values());
           let q2 = Queue.fromIter(testElements2.values());
-          expect.bool(Queue.compare(q1, q2, Nat.compare) == Array.compare<Nat>(testElements1, testElements2, Nat.compare)).isTrue()
+          expect.bool(Queue.compare(q1, q2, Nat.compare) == Array.compare(testElements1, testElements2, Nat.compare)).isTrue()
         };
 
         testCompare([], []);
@@ -885,7 +885,7 @@ suite(
       Nat.toText,
       Nat.equal
     ).equal(
-      Array.tabulate<Nat>(17_000, func i = i + 1)
+      Array.tabulate(17_000, func i = i + 1)
     )
   }
 )

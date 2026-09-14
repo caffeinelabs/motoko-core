@@ -83,7 +83,7 @@ test(
     var r : [var Nat] = [var];
     let delta = allocDelta(
       func() {
-        r := Prim.Array_init<Nat>(8, 0)
+        r := Prim.Array_init(8, 0)
       }
     );
     assert delta > 0
@@ -104,37 +104,37 @@ assertNoAlloc("List.last", func() { var i = 0; while (i < n) { ignore List.last(
 
 // --- Search (full scans; targets/predicates chosen so no early exit) ---
 
-assertNoAlloc("List.find", func() { ignore List.find<Nat>(list, func x = x == 999) });
-assertNoAlloc("List.find (no hit)", func() { ignore List.find<Nat>(list, func x = x >= n) });
-assertNoAlloc("List.findIndex", func() { ignore List.findIndex<Nat>(list, func x = x == 999) });
-assertNoAlloc("List.findIndex (no hit)", func() { ignore List.findIndex<Nat>(list, func x = x >= n) });
-assertNoAlloc("List.findLastIndex", func() { ignore List.findLastIndex<Nat>(list, func x = x == 0) });
-assertNoAlloc("List.findLastIndex (no hit)", func() { ignore List.findLastIndex<Nat>(list, func x = x >= n) });
-assertNoAlloc("List.indexOf", func() { ignore List.indexOf<Nat>(list, Nat.equal, 999) });
-assertNoAlloc("List.nextIndexOf", func() { ignore List.nextIndexOf<Nat>(list, Nat.equal, 999, 0) });
-assertNoAlloc("List.lastIndexOf", func() { ignore List.lastIndexOf<Nat>(list, Nat.equal, 0) });
-assertNoAlloc("List.prevIndexOf", func() { ignore List.prevIndexOf<Nat>(list, Nat.equal, 0, n) });
-assertNoAlloc("List.contains", func() { ignore List.contains<Nat>(list, Nat.equal, n) });
-assertNoAlloc("List.all", func() { ignore List.all<Nat>(list, func x = x < n) });
-assertNoAlloc("List.any", func() { ignore List.any<Nat>(list, func x = x >= n) });
-assertNoAlloc("List.equal", func() { ignore List.equal<Nat>(list, listCopy, Nat.equal) });
-assertNoAlloc("List.compare", func() { ignore List.compare<Nat>(list, listCopy, Nat.compare) });
+assertNoAlloc("List.find", func() { ignore List.find(list, func x = x == 999) });
+assertNoAlloc("List.find (no hit)", func() { ignore List.find(list, func x = x >= n) });
+assertNoAlloc("List.findIndex", func() { ignore List.findIndex(list, func x = x == 999) });
+assertNoAlloc("List.findIndex (no hit)", func() { ignore List.findIndex(list, func x = x >= n) });
+assertNoAlloc("List.findLastIndex", func() { ignore List.findLastIndex(list, func x = x == 0) });
+assertNoAlloc("List.findLastIndex (no hit)", func() { ignore List.findLastIndex(list, func x = x >= n) });
+assertNoAlloc("List.indexOf", func() { ignore List.indexOf(list, Nat.equal, 999) });
+assertNoAlloc("List.nextIndexOf", func() { ignore List.nextIndexOf(list, Nat.equal, 999, 0) });
+assertNoAlloc("List.lastIndexOf", func() { ignore List.lastIndexOf(list, Nat.equal, 0) });
+assertNoAlloc("List.prevIndexOf", func() { ignore List.prevIndexOf(list, Nat.equal, 0, n) });
+assertNoAlloc("List.contains", func() { ignore List.contains(list, Nat.equal, n) });
+assertNoAlloc("List.all", func() { ignore List.all(list, func x = x < n) });
+assertNoAlloc("List.any", func() { ignore List.any(list, func x = x >= n) });
+assertNoAlloc("List.equal", func() { ignore List.equal(list, listCopy, Nat.equal) });
+assertNoAlloc("List.compare", func() { ignore List.compare(list, listCopy, Nat.compare) });
 
 // --- Aggregation ---
 
-assertNoAlloc("List.max", func() { ignore List.max<Nat>(list, Nat.compare) });
-assertNoAlloc("List.min", func() { ignore List.min<Nat>(list, Nat.compare) });
-assertNoAlloc("List.isSorted", func() { ignore List.isSorted<Nat>(list, Nat.compare) });
-assertNoAlloc("List.foldLeft", func() { ignore List.foldLeft<Nat, Nat>(list, 0, func(a, x) = a + x) });
-assertNoAlloc("List.foldRight", func() { ignore List.foldRight<Nat, Nat>(list, 0, func(x, a) = a + x) });
+assertNoAlloc("List.max", func() { ignore List.max(list, Nat.compare) });
+assertNoAlloc("List.min", func() { ignore List.min(list, Nat.compare) });
+assertNoAlloc("List.isSorted", func() { ignore List.isSorted(list, Nat.compare) });
+assertNoAlloc("List.foldLeft", func() { ignore List.foldLeft(list, 0, func(a, x) = a + x) });
+assertNoAlloc("List.foldRight", func() { ignore List.foldRight(list, 0, func(x, a) = a + x) });
 
 // --- Iteration (callback style; the iterator-returning functions allocate) ---
 
-assertNoAlloc("List.forEach", func() { List.forEach<Nat>(list, func _ = ()) });
-assertNoAlloc("List.forEachEntry", func() { List.forEachEntry<Nat>(list, func(_, _) = ()) });
-assertNoAlloc("List.reverseForEach", func() { List.reverseForEach<Nat>(list, func _ = ()) });
-assertNoAlloc("List.reverseForEachEntry", func() { List.reverseForEachEntry<Nat>(list, func(_, _) = ()) });
-assertNoAlloc("List.forEachInRange", func() { List.forEachInRange<Nat>(list, func _ = (), 0, n) });
+assertNoAlloc("List.forEach", func() { List.forEach(list, func _ = ()) });
+assertNoAlloc("List.forEachEntry", func() { List.forEachEntry(list, func(_, _) = ()) });
+assertNoAlloc("List.reverseForEach", func() { List.reverseForEach(list, func _ = ()) });
+assertNoAlloc("List.reverseForEachEntry", func() { List.reverseForEachEntry(list, func(_, _) = ()) });
+assertNoAlloc("List.forEachInRange", func() { List.forEachInRange(list, func _ = (), 0, n) });
 
 // --- In-place mutation (each on its own list, so the shared read-only
 //     `list` above keeps its distinct sorted elements) ---
@@ -159,7 +159,7 @@ test(
   "List.mapInPlace does not allocate",
   func() {
     let l = List.repeat<Nat>(0, n);
-    assert allocDelta(func() { List.mapInPlace<Nat>(l, func x = x) }) == 0
+    assert allocDelta(func() { List.mapInPlace(l, func x = x) }) == 0
   }
 );
 
@@ -167,7 +167,7 @@ test(
   "List.retain does not allocate",
   func() {
     let l = List.repeat<Nat>(0, n);
-    assert allocDelta(func() { List.retain<Nat>(l, func _ = true) }) == 0
+    assert allocDelta(func() { List.retain(l, func _ = true) }) == 0
   }
 );
 
@@ -176,7 +176,7 @@ test(
   func() {
     // distinct elements, so the workload is idempotent (nothing is removed)
     let l = List.tabulate<Nat>(n, func i = i);
-    assert allocDelta(func() { List.deduplicate<Nat>(l, Nat.equal) }) == 0
+    assert allocDelta(func() { List.deduplicate(l, Nat.equal) }) == 0
   }
 );
 

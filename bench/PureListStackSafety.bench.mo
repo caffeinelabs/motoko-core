@@ -40,19 +40,19 @@ module {
       func(row, col) {
         switch row {
           case "pure/List.split" ignore List.split(list, 99_999);
-          case "pure/List.all" ignore List.all<Nat>(list, func x = 1 == x);
-          case "pure/List.any" ignore not List.any<Nat>(list, func x = 1 != x);
-          case "pure/List.map" ignore List.map<Nat, Nat>(list, func x = x + 1);
-          case "pure/List.filter" ignore List.filter<Nat>(list, func x = x == 1);
-          case "pure/List.filterMap" ignore List.filterMap<Nat, Nat>(list, func x = if (x == 1) ?(x + 1) else null);
-          case "pure/List.partition" ignore List.partition<Nat>(list, func x = x == 1);
+          case "pure/List.all" ignore List.all(list, func x = 1 == x);
+          case "pure/List.any" ignore not List.any(list, func x = 1 != x);
+          case "pure/List.map" ignore List.map(list, func x = x + 1);
+          case "pure/List.filter" ignore List.filter(list, func x = x == 1);
+          case "pure/List.filterMap" ignore List.filterMap(list, func x = if (x == 1) ?(x + 1) else null);
+          case "pure/List.partition" ignore List.partition(list, func x = x == 1);
           case "pure/List.join" ignore List.join(List.values listOfLists);
           case "pure/List.flatten" ignore List.flatten(listOfLists);
-          case "pure/List.take" ignore List.take<Nat>(list, 99_999);
-          case "pure/List.drop" ignore List.drop<Nat>(list, 99_999);
-          case "pure/List.foldRight" ignore List.foldRight<Nat, Nat>(list, 0, Nat.add);
-          case "pure/List.merge" ignore List.merge<Nat>(list, list02, Nat.compare);
-          case "pure/List.chunks" ignore List.chunks<Nat>(list, 1);
+          case "pure/List.take" ignore List.take(list, 99_999);
+          case "pure/List.drop" ignore List.drop(list, 99_999);
+          case "pure/List.foldRight" ignore List.foldRight(list, 0, Nat.add);
+          case "pure/List.merge" ignore List.merge(list, list02, Nat.compare);
+          case "pure/List.chunks" ignore List.chunks(list, 1);
           case "pure/Queue" {
             var q = Queue.empty<Nat>();
             let n = 100_000;

@@ -723,8 +723,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert Map.all<Nat, Text>(map, func (k, v) = v == Nat.toText(k));
-  ///   assert not Map.all<Nat, Text>(map, func (k, v) = k < 2);
+  ///   assert Map.all(map, func (k, v) = v == Nat.toText(k));
+  ///   assert not Map.all(map, func (k, v) = k < 2);
   /// }
   /// ```
   ///
@@ -743,8 +743,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert Map.any<Nat, Text>(map, func (k, v) = (k >= 0));
-  ///   assert not Map.any<Nat, Text>(map, func (k, v) = (k >= 3));
+  ///   assert Map.any(map, func (k, v) = (k >= 0));
+  ///   assert not Map.any(map, func (k, v) = (k >= 3));
   /// }
   /// ```
   ///
@@ -787,7 +787,7 @@ module {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///   var sum = 0;
   ///   var text = "";
-  ///   Map.forEach<Nat, Text>(map, func (key, value) {
+  ///   Map.forEach(map, func (key, value) {
   ///     sum += key;
   ///     text #= value;
   ///   });
@@ -874,7 +874,7 @@ module {
   ///
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
-  ///   assert Map.toText<Nat, Text>(map, Nat.toText, func t { t }) == "PureMap{(0, Zero), (1, One), (2, Two)}";
+  ///   assert Map.toText(map, Nat.toText, func t { t }) == "PureMap{(0, Zero), (1, One), (2, Two)}";
   /// }
   /// ```
   ///

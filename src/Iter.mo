@@ -97,7 +97,7 @@ module {
   ///
   /// ```motoko include=import
   /// var sum = 0;
-  /// Iter.forEach<Nat>([1, 2, 3].values(), func(x) {
+  /// Iter.forEach([1, 2, 3].values(), func(x) {
   ///   sum += x;
   /// });
   /// assert sum == 6;
@@ -182,7 +182,7 @@ module {
   /// ```
   public func size<T>(self : Iter<T>) : Nat {
     var len = 0;
-    forEach<T>(self, func(x) { len += 1 });
+    forEach(self, func(x) { len += 1 });
     len
   };
 
@@ -461,8 +461,8 @@ module {
   /// It stops consuming elements from the original iterator as soon as the predicate returns false.
   ///
   /// ```motoko include=import
-  /// assert [1, 2, 3].values().all<Nat>(func (x) = x < 4);
-  /// assert not [1, 2, 3].values().all<Nat>(func (x) = x < 3);
+  /// assert [1, 2, 3].values().all(func (x) = x < 4);
+  /// assert not [1, 2, 3].values().all(func (x) = x < 3);
   /// ```
   public func all<T>(self : Iter<T>, f : T -> Bool) : Bool {
     for (x in self) {
@@ -475,8 +475,8 @@ module {
   /// It stops consuming elements from the original iterator as soon as the predicate returns true.
   ///
   /// ```motoko include=import
-  /// assert [1, 2, 3].values().any<Nat>(func (x) = x == 2);
-  /// assert not [1, 2, 3].values().any<Nat>(func (x) = x == 4);
+  /// assert [1, 2, 3].values().any(func (x) = x == 2);
+  /// assert not [1, 2, 3].values().any(func (x) = x == 4);
   /// ```
   public func any<T>(self : Iter<T>, f : T -> Bool) : Bool {
     for (x in self) {
@@ -491,7 +491,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4].values();
-  /// assert ?2 == iter.find<Nat>(func (x) = x % 2 == 0);
+  /// assert ?2 == iter.find(func (x) = x % 2 == 0);
   /// ```
   public func find<T>(self : Iter<T>, f : T -> Bool) : ?T {
     for (x in self) {
@@ -529,7 +529,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3, 4].values();
-  /// assert iter.contains<Nat>(2);
+  /// assert iter.contains(2);
   /// ```
   public func contains<T>(self : Iter<T>, equal : (implicit : (T, T) -> Bool), value : T) : Bool {
     for (x in self) {
@@ -569,7 +569,7 @@ module {
   /// assert result == "(A(B(CS)))";
   /// ```
   public func foldRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : R {
-    foldLeft<T, R>(reverse(self), initial, func(acc, x) = combine(x, acc))
+    foldLeft(reverse(self), initial, func(acc, x) = combine(x, acc))
   };
 
   /// Reduces an iterator to a single value by applying a function to each element, starting with the first elements.
@@ -580,7 +580,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// assert ?6 == iter.reduce<Nat>(Nat.add);
+  /// assert ?6 == iter.reduce(Nat.add);
   /// ```
   public func reduce<T>(self : Iter<T>, combine : (T, T) -> T) : ?T {
     let ?first = self.next() else return null;
@@ -630,7 +630,7 @@ module {
   /// assert result == [0, 3, 5, 6];
   /// ```
   public func scanRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : Iter<R> {
-    scanLeft<T, R>(reverse(self), initial, func(x, acc) = combine(acc, x))
+    scanLeft(reverse(self), initial, func(x, acc) = combine(acc, x))
   };
 
   /// Creates an iterator that produces elements using the `step` function starting from the `initial` value.
@@ -659,10 +659,10 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// assert ?3 == iter.max<Nat>();
+  /// assert ?3 == iter.max();
   /// ```
   public func max<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : ?T {
-    reduce<T>(
+    reduce(
       self,
       func(a, b) {
         switch (compare(a, b)) {
@@ -680,10 +680,10 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let iter = [1, 2, 3].values();
-  /// assert ?1 == iter.min<Nat>();
+  /// assert ?1 == iter.min();
   /// ```
   public func min<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : ?T {
-    reduce<T>(
+    reduce(
       self,
       func(a, b) {
         switch (compare(a, b)) {
@@ -778,7 +778,7 @@ module {
       return []
     };
     var current = first;
-    Prim.Array_tabulate<T>(
+    Prim.Array_tabulate(
       count,
       func(_) {
         switch (current) {
@@ -794,14 +794,14 @@ module {
 
   /// Like `toArray` but for Arrays with mutable elements.
   public func toVarArray<T>(self : Iter<T>) : [var T] {
-    Array.toVarArray<T>(toArray<T>(self))
+    Array.toVarArray(toArray(self))
   };
 
   /// Sorted iterator.  Will iterate over *all* elements to sort them, necessarily.
   public func sort<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Iter<T> {
     let array = toVarArray(self);
-    VarArray.sortInPlace<T>(array, compare);
-    fromVarArray<T>(array)
+    VarArray.sortInPlace(array, compare);
+    fromVarArray(array)
   };
 
   /// Creates an iterator that produces a given item a specified number of times.

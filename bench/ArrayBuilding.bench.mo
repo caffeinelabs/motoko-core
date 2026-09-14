@@ -67,7 +67,7 @@ module {
               array[i] := ?i;
               i += 1
             };
-            ignore Array.tabulate<Nat>(
+            ignore Array.tabulate(
               size,
               func i = switch (array[i]) {
                 case (?v) v;
@@ -85,7 +85,7 @@ module {
             ignore array.toArray()
           };
           case "Array (baseline)" {
-            ignore Array.tabulate<Nat>(size, func n = n)
+            ignore Array.tabulate(size, func n = n)
           };
           case _ Runtime.unreachable()
         }

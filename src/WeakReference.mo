@@ -24,7 +24,7 @@ module {
   /// let weakRef = WeakReference.allocate(obj);
   /// ```
   public func allocate<T>(obj : T) : WeakReference<T> {
-    return { ref = Prim.allocWeakRef<T>(obj) }
+    return { ref = Prim.allocWeakRef(obj) }
   };
 
   /// Get the value that the weak reference is pointing to.
@@ -38,7 +38,7 @@ module {
   /// let value = weakRef.get();
   /// ```
   public func get<T>(self : WeakReference<T>) : ?T {
-    return Prim.weakGet<T>(self.ref)
+    return Prim.weakGet(self.ref)
   };
 
   /// Check if the weak reference is still alive.

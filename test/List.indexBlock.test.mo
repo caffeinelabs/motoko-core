@@ -107,7 +107,7 @@ func add<T>(self : List.List<T>, element : T) {
 
     // When removing last we keep one more data block, so can be not empty
     if (self.blocks[blockIndex].size() == 0) {
-      self.blocks[blockIndex] := VarArray.repeat<?T>(
+      self.blocks[blockIndex] := VarArray.repeat(
         null,
         dataBlockSize(blockIndex)
       )

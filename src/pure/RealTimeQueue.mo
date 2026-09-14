@@ -665,8 +665,8 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([2, 4, 6].values());
-  ///   assert Queue.all<Nat>(queue, func n = n % 2 == 0);
-  ///   assert not Queue.all<Nat>(queue, func n = n > 4);
+  ///   assert Queue.all(queue, func n = n % 2 == 0);
+  ///   assert not Queue.all(queue, func n = n > 4);
   /// }
   /// ```
   ///
@@ -692,8 +692,8 @@ module {
   /// ```motoko include=import
   /// persistent actor {
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   assert Queue.any<Nat>(queue, func n = n > 2);
-  ///   assert not Queue.any<Nat>(queue, func n = n > 3);
+  ///   assert Queue.any(queue, func n = n > 2);
+  ///   assert not Queue.any(queue, func n = n > 3);
   /// }
   /// ```
   ///
@@ -721,7 +721,7 @@ module {
   /// persistent actor {
   ///   var text = "";
   ///   let queue = Queue.fromIter([1, 2, 3].values());
-  ///   Queue.forEach<Nat>(queue, func n = text #= Nat.toText(n));
+  ///   Queue.forEach(queue, func n = text #= Nat.toText(n));
   ///   assert text == "123";
   /// }
   /// ```

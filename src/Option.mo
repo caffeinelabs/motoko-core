@@ -46,7 +46,7 @@ module {
   /// Applies a function to the wrapped value. `null`'s are left untouched.
   /// ```motoko
   /// import Option "mo:core/Option";
-  /// assert Option.map<Nat, Nat>(?42, func x = x + 1) == ?43;
+  /// assert Option.map(?42, func x = x + 1) == ?43;
   /// assert Option.map<Nat, Nat>(null, func x = x + 1) == null;
   /// ```
   public func map<T, R>(self : ?T, f : T -> R) : ?R = switch self {
@@ -96,7 +96,7 @@ module {
   /// assert Option.flatten(null) == null;
   /// ```
   public func flatten<T>(self : ??T) : ?T {
-    chain<?T, T>(self, func(x_ : ?T) : ?T = x_)
+    chain(self, func(x_ : ?T) : ?T = x_)
   };
 
   /// Creates an optional value from a definite value.

@@ -217,7 +217,7 @@ module {
   /// persistent actor {
   ///   let list = ?(0, ?(1, ?(2, null)));
   ///   var sum = 0;
-  ///   List.forEach<Nat>(list, func n = sum += n);
+  ///   List.forEach(list, func n = sum += n);
   ///   assert sum == 3;
   /// }
   /// ```
@@ -266,7 +266,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(0, ?(1, ?(2, null)));
-  ///   assert List.filter<Nat>(list, func n = n != 1) == ?(0, ?(2, null));
+  ///   assert List.filter(list, func n = n != 1) == ?(0, ?(2, null));
   /// }
   /// ```
   ///
@@ -289,7 +289,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.filterMap<Nat, Nat>(
+  ///   assert List.filterMap(
   ///     list,
   ///     func n = if (n > 1) ?(n * 2) else null
   ///   ) == ?(4, ?(6, null));
@@ -320,7 +320,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.mapResult<Nat, Nat, Text>(
+  ///   assert List.mapResult(
   ///     list,
   ///     func n = if (n > 0) #ok(n * 2) else #err "Some element is zero"
   ///   ) == #ok(?(2, ?(4, ?(6, null))));
@@ -353,7 +353,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(0, ?(1, ?(2, null)));
-  ///   assert List.partition<Nat>(list, func n = n != 1) == (?(0, ?(2, null)), ?(1, null));
+  ///   assert List.partition(list, func n = n != 1) == (?(0, ?(2, null)), ?(1, null));
   /// }
   /// ```
   ///
@@ -490,7 +490,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.foldLeft<Nat, Text>(
+  ///   assert List.foldLeft(
   ///     list,
   ///     "",
   ///     func (acc, x) = acc # Nat.toText(x)
@@ -519,7 +519,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.foldRight<Nat, Text>(
+  ///   assert List.foldRight(
   ///     list,
   ///     "",
   ///     func (x, acc) = Nat.toText(x) # acc
@@ -548,7 +548,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.find<Nat>(list, func n = n > 1) == ?2;
+  ///   assert List.find(list, func n = n > 1) == ?2;
   /// }
   /// ```
   ///
@@ -599,7 +599,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert not List.all<Nat>(list, func n = n > 1);
+  ///   assert not List.all(list, func n = n > 1);
   /// }
   /// ```
   ///
@@ -622,7 +622,7 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.any<Nat>(list, func n = n > 1);
+  ///   assert List.any(list, func n = n > 1);
   /// }
   /// ```
   ///
@@ -809,7 +809,7 @@ module {
   /// Runtime: O(min(size(xs), size(ys)))
   ///
   /// Space: O(min(size(xs), size(ys)))
-  public func zip<T, U>(self : List<T>, other : List<U>) : List<(T, U)> = zipWith<T, U, (T, U)>(self, other, func(x, y) = (x, y));
+  public func zip<T, U>(self : List<T>, other : List<U>) : List<(T, U)> = zipWith(self, other, func(x, y) = (x, y));
 
   /// Create a list in which elements are created by applying function `f` to each pair `(x, y)` of elements
   /// occuring at the same position in list `xs` and list `ys`.
@@ -826,7 +826,7 @@ module {
   /// persistent actor {
   ///   let list1 = ?(0, ?(1, ?(2, null)));
   ///   let list2 = ?('a', ?('b', null));
-  ///   assert List.zipWith<Nat, Char, Text>(
+  ///   assert List.zipWith(
   ///     list1,
   ///     list2,
   ///     func (n, c) = Nat.toText(n) # Char.toText(c)
@@ -988,7 +988,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray<T>(VarArray.toArray<T>(array));
+  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray(VarArray.toArray(array));
 
   /// Create an array from a list.
   /// Example:
@@ -1008,7 +1008,7 @@ module {
   /// Space: O(size)
   public func toArray<T>(self : List<T>) : [T] {
     var l = self;
-    Array_tabulate<T>(size self, func _ { let ?(h, t) = l else Runtime.trap("List.toArray(): unreachable"); l := t; h })
+    Array_tabulate(size self, func _ { let ?(h, t) = l else Runtime.trap("List.toArray(): unreachable"); l := t; h })
   };
 
   /// Create a mutable array from a list.
@@ -1027,7 +1027,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func toVarArray<T>(self : List<T>) : [var T] = Array.toVarArray<T>(toArray<T>(self));
+  public func toVarArray<T>(self : List<T>) : [var T] = Array.toVarArray(toArray(self));
 
   /// Create a list from an iterator, consuming the iterator.
   /// Example:

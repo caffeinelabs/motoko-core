@@ -45,58 +45,58 @@ module {
 
     bench.runner(
       func(row, col) = switch (col, row) {
-        case ("pure/RealTimeQueue", "Initialize with 2 elements") newQ := NewQueue.fromIter<Nat>(init.values());
-        case ("pure/Queue", "Initialize with 2 elements") oldQ := OldQueue.fromIter<Nat>(init.values());
-        case ("mutable Queue", "Initialize with 2 elements") mutQ := MutQueue.fromIter<Nat>(init.values());
+        case ("pure/RealTimeQueue", "Initialize with 2 elements") newQ := NewQueue.fromIter(init.values());
+        case ("pure/Queue", "Initialize with 2 elements") oldQ := OldQueue.fromIter(init.values());
+        case ("mutable Queue", "Initialize with 2 elements") mutQ := MutQueue.fromIter(init.values());
         case ("pure/RealTimeQueue", "Push 500 elements") {
           for (i in toPush.values()) {
-            newQ := NewQueue.pushBack<Nat>(newQ, i)
+            newQ := NewQueue.pushBack(newQ, i)
           }
         };
         case ("pure/Queue", "Push 500 elements") {
           for (i in toPush.values()) {
-            oldQ := OldQueue.pushBack<Nat>(oldQ, i)
+            oldQ := OldQueue.pushBack(oldQ, i)
           }
         };
         case ("mutable Queue", "Push 500 elements") {
           for (i in toPush.values()) {
-            MutQueue.pushBack<Nat>(mutQ, i)
+            MutQueue.pushBack(mutQ, i)
           }
         };
         case ("pure/RealTimeQueue", "Pop front 2 elements") Option.unwrap(
           do ? {
-            newQ := NewQueue.popFront<Nat>(NewQueue.popFront<Nat>(newQ)!.1)!.1
+            newQ := NewQueue.popFront(NewQueue.popFront(newQ)!.1)!.1
           }
         );
         case ("pure/Queue", "Pop front 2 elements") Option.unwrap(
           do ? {
-            oldQ := OldQueue.popFront<Nat>(OldQueue.popFront<Nat>(oldQ)!.1)!.1
+            oldQ := OldQueue.popFront(OldQueue.popFront(oldQ)!.1)!.1
           }
         );
         case ("mutable Queue", "Pop front 2 elements") Option.unwrap(
           do ? {
-            ignore MutQueue.popFront<Nat>(mutQ);
-            ignore MutQueue.popFront<Nat>(mutQ)
+            ignore MutQueue.popFront(mutQ);
+            ignore MutQueue.popFront(mutQ)
           }
         );
         case ("pure/RealTimeQueue", "Pop 150 front&back") {
           for (i in Nat.range(0, 150)) Option.unwrap(
             do ? {
-              newQ := NewQueue.popBack<Nat>(NewQueue.popFront<Nat>(newQ)!.1)!.0
+              newQ := NewQueue.popBack(NewQueue.popFront(newQ)!.1)!.0
             }
           )
         };
         case ("pure/Queue", "Pop 150 front&back") {
           for (i in Nat.range(0, 150)) Option.unwrap(
             do ? {
-              oldQ := OldQueue.popBack<Nat>(OldQueue.popFront<Nat>(oldQ)!.1)!.0
+              oldQ := OldQueue.popBack(OldQueue.popFront(oldQ)!.1)!.0
             }
           )
         };
         case ("mutable Queue", "Pop 150 front&back") {
           for (i in Nat.range(0, 150)) {
-            ignore MutQueue.popFront<Nat>(mutQ);
-            ignore MutQueue.popBack<Nat>(mutQ)
+            ignore MutQueue.popFront(mutQ);
+            ignore MutQueue.popBack(mutQ)
           }
         };
         case _ Runtime.unreachable()

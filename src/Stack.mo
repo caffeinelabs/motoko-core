@@ -493,7 +493,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([2, 4, 6].values());
-  ///   assert stack.all<Nat>(func(n) = n % 2 == 0);
+  ///   assert stack.all(func(n) = n % 2 == 0);
   /// }
   /// ```
   ///
@@ -518,7 +518,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromIter<Nat>([3, 2, 1].values());
-  ///   assert stack.any<Nat>(func(n) = n == 2);
+  ///   assert stack.any(func(n) = n == 2);
   /// }
   /// ```
   ///
@@ -549,7 +549,7 @@ module {
   ///   stack.push(2);
   ///   stack.push(1);
   ///   var text = "";
-  ///   stack.forEach<Nat>(func(n) = text #= Nat.toText(n));
+  ///   stack.forEach(func(n) = text #= Nat.toText(n));
   ///   assert text == "123";
   /// }
   /// ```
@@ -687,7 +687,7 @@ module {
   ///
   /// persistent actor {
   ///   let stack = Stack.fromPure<Nat>(?(1, ?(2, ?(3, null))));
-  ///   assert stack.find<Nat>(func n = n > 1) == ?2;
+  ///   assert stack.find(func n = n > 1) == ?2;
   /// }
   /// ```
   ///

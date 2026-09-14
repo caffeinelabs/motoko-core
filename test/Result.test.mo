@@ -16,21 +16,21 @@ suite(
     test(
       "ok -> ok",
       func() {
-        assert Result.chain<Nat, Nat, Text>(makeNatural(11), largerThan10) == #ok(11)
+        assert Result.chain(makeNatural(11), largerThan10) == #ok(11)
       }
     );
 
     test(
       "ok -> err",
       func() {
-        assert Result.chain<Nat, Nat, Text>(makeNatural(5), largerThan10) == #err("5 is not larger than 10.")
+        assert Result.chain(makeNatural(5), largerThan10) == #err("5 is not larger than 10.")
       }
     );
 
     test(
       "err",
       func() {
-        assert Result.chain<Nat, Nat, Text>(makeNatural(-5), largerThan10) == #err("-5 is not a natural number.")
+        assert Result.chain(makeNatural(-5), largerThan10) == #err("-5 is not a natural number.")
       }
     )
   }

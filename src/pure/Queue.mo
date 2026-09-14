@@ -370,7 +370,7 @@ module {
   /// Space: O(size)
   public func toArray<T>(self : Queue<T>) : [T] {
     let iter = values(self);
-    Array.tabulate<T>(
+    Array.tabulate(
       self.1,
       func(i) {
         switch (iter.next()) {
@@ -488,7 +488,7 @@ module {
   /// persistent actor {
   ///   var text = "";
   ///   let queue = Queue.fromIter(["A", "B", "C"].values());
-  ///   Queue.forEach<Text>(queue, func n = text #= n);
+  ///   Queue.forEach(queue, func n = text #= n);
   ///   assert text == "ABC";
   /// }
   /// ```
