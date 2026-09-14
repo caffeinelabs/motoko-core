@@ -66,7 +66,7 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Validate doc examples (group ${{ matrix.group }})
         run: |
-          MODULES=$(node -e "console.log(require('./validation/doc-groups.json')[process.env.GROUP].join(' '))")
+          MODULES=$(node -e "console.log(require('./validation/docs/doc-groups.json')[process.env.GROUP].join(' '))")
           npm run validate:docs -- $MODULES
         env:
           GROUP: ${{ matrix.group }}
