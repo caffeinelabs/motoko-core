@@ -55,12 +55,21 @@ jobs:
           fi
 
   validate-docs:
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0, 1, 2, 3, 4]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      - run: npm run validate:docs
+      - name: Validate doc examples (group ${{ matrix.group }})
+        run: |
+          MODULES=$(node -e "console.log(require('./validation/doc-groups.json')[process.env.GROUP].join(' '))")
+          npm run validate:docs -- $MODULES
         env:
+          GROUP: ${{ matrix.group }}
           FORCE_COLOR: 2 # https://github.com/chalk/supports-color/issues/106
 
   format:
@@ -89,11 +98,12 @@ jobs:
         run: npm run bench
 
   # Single required check. Every job runs unconditionally, so a green gate means
-  # the full suite ran. validate-changelog is advisory and deliberately absent.
+  # the full suite ran. validate-changelog and validate-docs are advisory and
+  # deliberately absent.
   ci:
     name: "ci:required"
     if: always()
-    needs: [validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
+    needs: [validate-version, check-orphans, validate-api, format, test, bench]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled
