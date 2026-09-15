@@ -2,6 +2,15 @@ name: publish on Mops
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: >
+          Existing release tag to publish (e.g. v1.2.3). Use this to re-run a
+          publish that failed for a reason fixed on main since the tag was
+          pushed: the workflow file comes from the dispatched branch, the
+          package contents from the tag.
+        required: true
+        type: string
   push:
     tags:
       - preview-*
@@ -10,10 +19,31 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      PUBLISH_REF: ${{ inputs.tag || github.ref_name }}
 
     steps:
       - uses: actions/checkout@v6
-      - uses: caffeinelabs/setup-mops@5424732c5bb709eb6195b1ed1d351fa98f6c8aad # v1.1
+        with:
+          ref: ${{ env.PUBLISH_REF }}
+
+      # Guards a dispatch against publishing the wrong tree.
+      - name: Check the package version against the tag
+        if: startsWith(env.PUBLISH_REF, 'v')
+        run: |
+          set -euo pipefail
+          VERSION=$(awk '
+            /^\[/ { in_pkg = ($0 ~ /^\[package\][[:space:]]*$/); next }
+            in_pkg && /^[[:space:]]*version[[:space:]]*=/ {
+              match($0, /"[^"]*"/); print substr($0, RSTART + 1, RLENGTH - 2); exit
+            }
+          ' mops.toml)
+          if [[ "v$VERSION" != "$PUBLISH_REF" ]]; then
+            echo "::error::mops.toml has version $VERSION but the tag is $PUBLISH_REF"
+            exit 1
+          fi
+
+      - uses: caffeinelabs/setup-mops@d2c135befc4edfae4b90058e5d00c81d89ecfdeb # v1.4.1 + sub-actions pinned by digest
         with:
           # Keep in step with the ic-mops devDependency in package.json.
           mops-version: "3.1.0"

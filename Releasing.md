@@ -10,3 +10,16 @@ Steps to publish a new version of the `core` package:
 4. Open a PR with the above changes.
 5. The CI workflow (`.github/workflows/release-tag.yml`) automatically creates and pushes a git tag when the PR is merged. No manual tagging is required.
 6. Verify that the [`core` Mops package](https://mops.one/core) was published successfully after the tag is pushed.
+
+## Re-running a failed publish
+
+`mops-publish.yml` runs from the tagged commit, so re-running the failed run
+re-uses the broken workflow file. Instead, fix the workflow on `main`, then
+dispatch it from `main` with the existing tag as the `tag` input:
+
+```bash
+gh workflow run mops-publish.yml --ref main -f tag=v1.2.3
+```
+
+The workflow checks out the tag, so the published package is exactly the
+tagged tree; only the workflow definition comes from `main`.
