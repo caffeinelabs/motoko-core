@@ -1,5 +1,4 @@
 import Bench "mo:bench";
-import Buffer "mo:base-0-14-13/Buffer";
 
 import List "../src/List";
 import PureList "../src/pure/List";
@@ -9,13 +8,12 @@ module {
   public func init() : Bench.Bench {
     let bench = Bench.Bench();
 
-    bench.name("List vs. Buffer for creating known-size arrays");
-    bench.description("Performance comparison between List and Buffer for creating a new array.");
+    bench.name("List vs. pure/List for creating known-size arrays");
+    bench.description("Performance comparison between List and pure/List for creating a new array.");
 
     bench.rows([
       "List",
-      "pure/List",
-      "Buffer"
+      "pure/List"
     ]);
     bench.cols([
       "0 (baseline)",
@@ -116,52 +114,6 @@ module {
                   i += 1
                 };
                 ignore PureList.toArray(list)
-              };
-              case _ Runtime.unreachable()
-            }
-          };
-          case "Buffer" {
-            switch col {
-              case "0 (baseline)" {
-                let buffer = Buffer.Buffer<Nat>(0);
-                ignore Buffer.toArray(buffer)
-              };
-              case "1" {
-                let buffer = Buffer.Buffer<Nat>(1);
-                buffer.add(0);
-                ignore Buffer.toArray(buffer)
-              };
-              case "5" {
-                let buffer = Buffer.Buffer<Nat>(5);
-                buffer.add(0);
-                buffer.add(1);
-                buffer.add(2);
-                buffer.add(3);
-                buffer.add(4);
-                ignore Buffer.toArray(buffer)
-              };
-              case "10" {
-                let buffer = Buffer.Buffer<Nat>(10);
-                buffer.add(0);
-                buffer.add(1);
-                buffer.add(2);
-                buffer.add(3);
-                buffer.add(4);
-                buffer.add(5);
-                buffer.add(6);
-                buffer.add(7);
-                buffer.add(8);
-                buffer.add(9);
-                ignore Buffer.toArray(buffer)
-              };
-              case "100 (for loop)" {
-                let buffer = Buffer.Buffer<Nat>(100);
-                var i = 0;
-                while (i < 100) {
-                  buffer.add(i);
-                  i += 1
-                };
-                ignore Buffer.toArray(buffer)
               };
               case _ Runtime.unreachable()
             }

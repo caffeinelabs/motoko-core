@@ -1,10 +1,11 @@
 import Bench "mo:bench";
-import Fuzz "mo:fuzz";
 
 import Array "../src/Array";
 import Iter "../src/Iter";
 import Nat "../src/Nat";
+import Nat64 "../src/Nat64";
 import List "../src/pure/List";
+import Random "../src/Random";
 import Runtime "../src/Runtime";
 
 module {
@@ -25,9 +26,12 @@ module {
       "100_000"
     ]);
 
-    let fuzz = Fuzz.fromSeed(27850937); // fix seed for reproducibility
+    let rng = Random.seed(27850937); // fix seed for reproducibility
 
-    func input(n : Nat) : [Nat] = fuzz.array.randomArray(n, fuzz.nat.random);
+    // 128-bit draws, so the inputs are boxed bignums rather than compact Nats
+    func randomNat() : Nat = Nat64.toNat(rng.nat64()) * 2 ** 64 + Nat64.toNat(rng.nat64());
+
+    func input(n : Nat) : [Nat] = Array.tabulate(n, func _ = randomNat());
 
     let array1 = input(100);
     let array2 = input(10_000);

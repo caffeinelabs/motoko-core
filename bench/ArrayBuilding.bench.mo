@@ -1,5 +1,4 @@
 import Bench "mo:bench";
-import Buffer "mo:base-0-14-13/Buffer";
 
 import List "../src/List";
 import PureList "../src/pure/List";
@@ -17,7 +16,6 @@ module {
 
     bench.rows([
       "List",
-      "Buffer",
       "pure/List",
       "VarArray ?T",
       "VarArray T",
@@ -50,15 +48,6 @@ module {
               i += 1
             };
             ignore PureList.toArray(list)
-          };
-          case "Buffer" {
-            let buffer = Buffer.Buffer<Nat>(size);
-            var i = 0;
-            while (i < size) {
-              buffer.add(i);
-              i += 1
-            };
-            ignore Buffer.toArray(buffer)
           };
           case "VarArray ?T" {
             var array = VarArray.repeat<?Nat>(null, size);
