@@ -386,7 +386,7 @@ func genOpsNatAllSeqs(
   let allowedOps = Array.flatten([
     Array.tabulate<PriorityQueueUpdateOperation<Nat>>(maxValueExclusive, func i = #Push(i)),
     [#Pop],
-    if useClear[#Clear] else []
+    if useClear { [#Clear] } else []
   ]);
   let shorterSeqs = genOpsNatAllSeqs(operationsCount - 1, maxValueExclusive, useClear);
   Array.flatMap(
