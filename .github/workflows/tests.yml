@@ -91,6 +91,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
+      # `npm run bench` demotes M0236 because the canister wrapper `mops bench`
+      # generates calls `Region.grow` in module style; enforce it here instead.
+      - name: Type-check benchmarks
+        run: npm run check:bench
       - name: Run benchmarks (same replica path as mops publish)
         run: npm run bench
 

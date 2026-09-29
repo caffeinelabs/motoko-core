@@ -19,7 +19,7 @@
     "validate:api": "cd test/ts/validate && tsx api",
     "validate:docs": "cd test/ts/validate && tsx docs",
     "docs": "\"$(dirname \"$(mops toolchain bin moc)\")/mo-doc\"",
-    "bench": "mops bench"
+    "bench": "mops bench -- -W=M0236"
   },
   "repository": {
     "type": "git",
