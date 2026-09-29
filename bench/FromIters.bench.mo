@@ -29,7 +29,7 @@ module {
     let rng = Random.seed(27850937); // fix seed for reproducibility
 
     // 128-bit draws, so the inputs are boxed bignums rather than compact Nats
-    func randomNat() : Nat = Nat64.toNat(rng.nat64()) * 2 ** 64 + Nat64.toNat(rng.nat64());
+    func randomNat() : Nat = rng.nat64().toNat() * 2 ** 64 + rng.nat64().toNat();
 
     func input(n : Nat) : [Nat] = Array.tabulate(n, func _ = randomNat());
 
@@ -47,7 +47,7 @@ module {
         };
         switch row {
           case "List.fromIter" ignore List.fromIter(array.values());
-          case "List.fromIter . Iter.reverse" ignore List.fromIter(Iter.reverse(array.values()));
+          case "List.fromIter . Iter.reverse" ignore List.fromIter(array.values().reverse());
           case "Iter.toArray" ignore array.values().toArray();
           case _ Runtime.unreachable()
         }

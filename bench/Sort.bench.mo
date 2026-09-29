@@ -114,11 +114,11 @@ module {
 
         switch (row) {
           case (0) {
-            let varSource = Array.toVarArray(sourceArrays[col]);
+            let varSource = sourceArrays[col].toVarArray();
             func() = sortInPlace(varSource, Nat32.compare)
           };
           case (1) {
-            let varSource = Array.toVarArray(sourceArrays[col]);
+            let varSource = sourceArrays[col].toVarArray();
             func() = VarArray.sortInPlace(varSource, Nat32.compare)
           };
           case (_) Prim.trap("Row not implemented")
@@ -128,8 +128,8 @@ module {
 
     bench.runner(
       func(row, col) {
-        let ?ri = Array.indexOf(rows, Text.equal, row) else Prim.trap("Unknown row");
-        let ?ci = Array.indexOf(cols, Text.equal, col) else Prim.trap("Unknown column");
+        let ?ri = rows.indexOf(Text.equal, row) else Prim.trap("Unknown row");
+        let ?ci = cols.indexOf(Text.equal, col) else Prim.trap("Unknown column");
         routines[ci * rows.size() + ri]()
       }
     );
