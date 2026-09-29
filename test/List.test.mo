@@ -2038,7 +2038,7 @@ Test.suite(
         let list = List.empty<Nat>();
 
         var blockSize = list.blocks.size();
-        var sizes = List.empty<(Nat, Nat)>();
+        let sizes = List.empty<(Nat, Nat)>();
         sizes.add((blockSize, 0));
 
         let expectedSize = 100_000;
@@ -2320,7 +2320,7 @@ Test.suite(
         // phase 2 probes: replicate the bisection index arithmetic,
         // outcome is #less (left := mid) at every step
         var left = 98_304;
-        var right = 131_072;
+        let right = 131_072;
         while (right - left : Nat > 1) {
           let mid = (left + right) / 2;
           dataBlocks[mid] := [var ?0];
@@ -2333,7 +2333,7 @@ Test.suite(
         let lastBlock = VarArray.repeat<?Nat>(null, 65_536);
         lastBlock[0] := ?0; // probed by phase 2 (its final mid is 131_071)
         var l = 0;
-        var r = 65_536;
+        let r = 65_536;
         label sim while (l != r) {
           let mid = (l + r) / 2;
           if (mid == 65_535) break sim;

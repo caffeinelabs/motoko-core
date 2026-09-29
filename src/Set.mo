@@ -1554,7 +1554,7 @@ module {
     object {
       public func next() : ?T {
         // pop the next node cursor off the stack
-        var nodeCursor = nodeCursorStack.pop();
+        let nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; elementIndex }) {
@@ -1639,7 +1639,7 @@ module {
     object {
       public func next() : ?T {
         // pop the next node cursor off the stack
-        var nodeCursor = nodeCursorStack.pop();
+        let nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; elementIndex }) {

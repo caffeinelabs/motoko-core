@@ -50,7 +50,7 @@ module {
             ignore list.toArray()
           };
           case "VarArray ?T" {
-            var array = VarArray.repeat<?Nat>(null, size);
+            let array = VarArray.repeat<?Nat>(null, size);
             var i = 0;
             while (i < size) {
               array[i] := ?i;
@@ -65,7 +65,7 @@ module {
             )
           };
           case "VarArray T" {
-            var array = VarArray.repeat<Nat>(0, size);
+            let array = VarArray.repeat<Nat>(0, size);
             var i = 0;
             while (i < size) {
               array[i] := i;

@@ -7,7 +7,6 @@ import Array "../src/Array";
 import Types "../src/Types";
 import VarArray "../src/VarArray";
 import Random "../src/Random";
-import { Tuple2 } "../src/Tuples";
 import Order "../src/Order";
 import Debug "../src/Debug";
 import Text "../src/Text";
@@ -235,7 +234,7 @@ suite(
         // To check this, each element is paired with a unique tag (its insertion id),
         // and we verify that all tags are recovered exactly once after popping.
         let priorityQueue = PriorityQueue.empty<(Nat, Nat)>();
-        func compareValue((tag1, v1) : (Nat, Nat), (tag2, v2) : (Nat, Nat)) : Order.Order = Nat.compare(v1, v2);
+        func compareValue((_, v1) : (Nat, Nat), (_, v2) : (Nat, Nat)) : Order.Order = Nat.compare(v1, v2);
         for ((tag, v) in values.values().enumerate()) {
           priorityQueue.push(compareValue, (tag, v))
         };

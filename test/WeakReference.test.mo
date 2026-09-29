@@ -1,5 +1,5 @@
 import WeakReference "../src/WeakReference";
-import { suite; test; expect } "mo:test"
+import { test; expect } "mo:test"
 
 test(
   "allocateWeakRef",

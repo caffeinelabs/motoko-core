@@ -60,7 +60,6 @@ let positiveInfinity : Float32 = 1.0 / 0.0;
 let negativeInfinity : Float32 = -1.0 / 0.0;
 
 let positiveNaN : Float32 = Float32.copySign(0.0 / 0.0, 1.0);
-let negativeNaN : Float32 = Float32.copySign(0.0 / 0.0, -1.0);
 
 let noEpsilon : Float32 = 0.0;
 let smallEpsilon : Float32 = 1e-5;

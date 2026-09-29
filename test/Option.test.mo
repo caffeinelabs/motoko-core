@@ -144,9 +144,9 @@ test(
   "forEach",
   func() {
     var witness = 0;
-    Option.forEach(?(1), func(x : Nat) { witness += 1 });
+    Option.forEach(?(1), func(_ : Nat) { witness += 1 });
     assert (witness == 1);
-    Option.forEach<Nat>(null, func(x : Nat) { witness += 1 });
+    Option.forEach<Nat>(null, func(_ : Nat) { witness += 1 });
     assert (witness == 1)
   }
 );
