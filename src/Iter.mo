@@ -794,13 +794,13 @@ module {
 
   /// Like `toArray` but for Arrays with mutable elements.
   public func toVarArray<T>(self : Iter<T>) : [var T] {
-    Array.toVarArray(toArray(self))
+    toArray(self).toVarArray()
   };
 
   /// Sorted iterator.  Will iterate over *all* elements to sort them, necessarily.
   public func sort<T>(self : Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : Iter<T> {
     let array = toVarArray(self);
-    VarArray.sortInPlace(array, compare);
+    array.sortInPlace(compare);
     fromVarArray(array)
   };
 

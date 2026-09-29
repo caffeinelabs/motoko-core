@@ -75,7 +75,7 @@ module {
   /// Returns the number of elements in the priority queue.
   ///
   /// Runtime: `O(1)`.
-  public func size<T>(self : PriorityQueue<T>) : Nat = List.size(self.heap);
+  public func size<T>(self : PriorityQueue<T>) : Nat = self.heap.size();
 
   /// Returns `true` iff the priority queue is empty.
   ///
@@ -91,7 +91,7 @@ module {
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
-  public func isEmpty<T>(self : PriorityQueue<T>) : Bool = List.isEmpty(self.heap);
+  public func isEmpty<T>(self : PriorityQueue<T>) : Bool = self.heap.isEmpty();
 
   /// Removes all elements from the priority queue.
   ///
@@ -110,7 +110,7 @@ module {
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
-  public func clear<T>(self : PriorityQueue<T>) = List.clear(self.heap);
+  public func clear<T>(self : PriorityQueue<T>) = self.heap.clear();
 
   /// Inserts a new element into the priority queue.
   ///
@@ -134,20 +134,20 @@ module {
     element : T
   ) {
     let heap = self.heap;
-    List.add(heap, element);
-    var index : Nat = List.size(heap) - 1;
+    heap.add(element);
+    var index : Nat = heap.size() - 1;
     while (index > 0) {
       let parentId = (index - 1) : Nat / 2;
-      let parentVal = List.at(heap, parentId);
+      let parentVal = heap.at(parentId);
       if (compare(element, parentVal) == #greater) {
-        List.put(heap, index, parentVal);
+        heap.put(index, parentVal);
         index := parentId
       } else {
-        List.put(heap, index, element);
+        heap.put(index, element);
         return
       }
     };
-    List.put(heap, 0, element)
+    heap.put(0, element)
   };
 
   /// Returns the element with the highest priority, without removing it.
@@ -162,7 +162,7 @@ module {
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
-  public func peek<T>(self : PriorityQueue<T>) : ?T = List.get(self.heap, 0);
+  public func peek<T>(self : PriorityQueue<T>) : ?T = self.heap.get(0);
 
   /// Removes and returns the element with the highest priority.
   /// Returns `null` if the queue is empty.
@@ -186,12 +186,12 @@ module {
     compare : (implicit : (T, T) -> Order.Order)
   ) : ?T {
     let heap = self.heap;
-    if (List.isEmpty(heap)) {
+    if (heap.isEmpty()) {
       return null
     };
-    let top = List.get(heap, 0);
-    let lastIndex : Nat = List.size(heap) - 1;
-    let lastElem = List.at(heap, lastIndex);
+    let top = heap.get(0);
+    let lastIndex : Nat = heap.size() - 1;
+    let lastElem = heap.at(lastIndex);
 
     var index = 0;
     loop {
@@ -199,7 +199,7 @@ module {
       let left = 2 * index + 1;
       var bestElem = lastElem;
       if (left < lastIndex) {
-        let leftElem = List.at(heap, left);
+        let leftElem = heap.at(left);
         if (compare(leftElem, lastElem) == #greater) {
           best := left;
           bestElem := leftElem
@@ -207,18 +207,18 @@ module {
       };
       let right = left + 1;
       if (right < lastIndex) {
-        let rightElem = List.at(heap, right);
+        let rightElem = heap.at(right);
         if (compare(rightElem, bestElem) == #greater) {
           best := right;
           bestElem := rightElem
         }
       };
       if (best == lastIndex) {
-        List.put(heap, index, lastElem);
-        ignore List.removeLast(heap);
+        heap.put(index, lastElem);
+        ignore heap.removeLast();
         return top
       };
-      List.put(heap, index, bestElem);
+      heap.put(index, bestElem);
       index := best
     }
   };
@@ -264,7 +264,7 @@ module {
   /// Runtime: `O(n)`. Space: `O(n)`.
   /// `n` denotes the number of elements in the priority queue.
   public func clone<T>(self : PriorityQueue<T>) : PriorityQueue<T> = {
-    heap = List.clone(self.heap)
+    heap = self.heap.clone()
   };
 
   /// Returns an iterator that yields elements in descending priority order

@@ -40,15 +40,15 @@ suite(
       func() {
         // 3 bytes — no padding
         let b3 : [Nat8] = [0, 255, 170]; // 0x00 0xFF 0xAA
-        expect.text(Base64.encode(Array.toBlob(b3))).equal("AP+q");
+        expect.text(Base64.encode(b3.toBlob())).equal("AP+q");
 
         // 2 bytes — one '=' padding
         let b2 : [Nat8] = [1, 2]; // 0x01 0x02
-        expect.text(Base64.encode(Array.toBlob(b2))).equal("AQI=");
+        expect.text(Base64.encode(b2.toBlob())).equal("AQI=");
 
         // 1 byte — two '=' padding
         let b1 : [Nat8] = [255]; // 0xFF
-        expect.text(Base64.encode(Array.toBlob(b1))).equal("/w==")
+        expect.text(Base64.encode(b1.toBlob())).equal("/w==")
       }
     );
 
@@ -56,21 +56,21 @@ suite(
     test(
       "encodes 256 sequential bytes (0..255)",
       func() {
-        let bytes : [Nat8] = Array.tabulate(256, func i = Nat.toNat8(i));
-        let encoded = Base64.encode(Array.toBlob(bytes));
+        let bytes : [Nat8] = Array.tabulate(256, func i = i.toNat8());
+        let encoded = Base64.encode(bytes.toBlob());
 
         // Output length should be ceil(256/3)*4 = 344
         expect.nat(Text.size(encoded)).equal(344);
 
         // Known prefix: Base64 of bytes 0..15 is AAECAwQFBgcICQoLDA0ODxAREhMUFRYX
-        expect.bool(Text.startsWith(encoded, #text "AAECAwQFBgcICQoLDA0ODxAREhMUFRYX")).equal(true);
+        expect.bool(encoded.startsWith(#text "AAECAwQFBgcICQoLDA0ODxAREhMUFRYX")).equal(true);
 
         // Trailing single byte 0xFF encodes as '/w=='
-        expect.bool(Text.endsWith(encoded, #text "/w==")).equal(true);
+        expect.bool(encoded.endsWith(#text "/w==")).equal(true);
 
         // All characters must be in the Base64 alphabet or '='
         var ok = true;
-        label scan for (c in Text.toIter(encoded)) {
+        label scan for (c in encoded.toIter()) {
           if (
             not (
               ('A' <= c and c <= 'Z') or
@@ -127,15 +127,15 @@ suite(
       func() {
         // 3-byte group → no padding
         let b3 : [Nat8] = [0, 255, 170];
-        expect.option(Base64.decode("AP+q"), blobToText, Blob.equal).equal(?Array.toBlob(b3));
+        expect.option(Base64.decode("AP+q"), blobToText, Blob.equal).equal(?b3.toBlob());
 
         // 2-byte group → one '=' padding
         let b2 : [Nat8] = [1, 2];
-        expect.option(Base64.decode("AQI="), blobToText, Blob.equal).equal(?Array.toBlob(b2));
+        expect.option(Base64.decode("AQI="), blobToText, Blob.equal).equal(?b2.toBlob());
 
         // 1-byte group → two '=' paddings
         let b1 : [Nat8] = [255];
-        expect.option(Base64.decode("/w=="), blobToText, Blob.equal).equal(?Array.toBlob(b1))
+        expect.option(Base64.decode("/w=="), blobToText, Blob.equal).equal(?b1.toBlob())
       }
     );
 
@@ -174,8 +174,8 @@ suite(
     test(
       "round-trips 256 sequential bytes",
       func() {
-        let bytes : [Nat8] = Array.tabulate(256, func i = Nat.toNat8(i));
-        let b = Array.toBlob(bytes);
+        let bytes : [Nat8] = Array.tabulate(256, func i = i.toNat8());
+        let b = bytes.toBlob();
         expect.option(Base64.decode(Base64.encode(b)), blobToText, Blob.equal).equal(?b)
       }
     );

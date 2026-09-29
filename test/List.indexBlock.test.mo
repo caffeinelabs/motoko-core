@@ -51,7 +51,7 @@ test(
 // ---- 1-1 copies from src/List.mo, narrowed: Nat32 -> Nat8 ----
 
 func dataBlockSize(blockIndex : Nat) : Nat {
-  Nat8.toNat(1 <>> Nat8.bitcountLeadingZero(Nat.toNat8(blockIndex) / 3))
+  Nat8.toNat(1 <>> Nat8.bitcountLeadingZero(blockIndex.toNat8() / 3))
 };
 
 func newIndexBlockLength(blockIndex : Nat8) : Nat {
@@ -63,7 +63,7 @@ func newIndexBlockLength(blockIndex : Nat8) : Nat {
 
 func growIndexBlockIfNeeded<T>(list : List.List<T>) {
   if (list.blocks.size() == list.blockIndex) {
-    let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(Nat.toNat8(list.blockIndex)));
+    let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(list.blockIndex.toNat8()));
     var i = 0;
     while (i < list.blockIndex) {
       newBlocks[i] := list.blocks[i];
@@ -74,7 +74,7 @@ func growIndexBlockIfNeeded<T>(list : List.List<T>) {
 };
 
 func shrinkIndexBlockIfNeeded<T>(list : List.List<T>) {
-  let blockIndex = Nat.toNat8(list.blockIndex);
+  let blockIndex = list.blockIndex.toNat8();
   // (comment verbatim from src/List.mo; in this Nat8-scaled copy the
   // threshold is 2^7, the top rung 3 * 2^6 and the full size 2^13)
   // No shrink is possible for blockIndex >= 2^31: the only rung there
@@ -171,12 +171,12 @@ test(
   "the maximum size is reached intact",
   func() {
     let l = fullList();
-    assert List.size(l) == maxSize;
+    assert l.size() == maxSize;
     assert l.blockIndex == 192;
     assert l.elementIndex == 0;
     assert l.blocks.size() == 192; // exactly full at the top rung
-    assert List.at(l, 0) == 0;
-    assert List.at(l, maxSize - 1) == maxSize - 1
+    assert l.at(0) == 0;
+    assert l.at(maxSize - 1) == maxSize - 1
   }
 );
 
@@ -185,7 +185,7 @@ test(
   func() {
     let l = fullList();
     assert removeLast(l) == ?(maxSize - 1);
-    assert List.size(l) == maxSize - 1;
+    assert l.size() == maxSize - 1;
     assert l.blocks.size() == 192 // untouched: no shrink possible at the top
   }
 );
@@ -195,7 +195,7 @@ test(
   func() {
     let l = fullList();
     var expected = maxSize - 1 : Nat;
-    while (List.size(l) > 0) {
+    while (l.size() > 0) {
       assert removeLast(l) == ?expected;
       if (expected > 0) expected -= 1
     };
@@ -214,7 +214,7 @@ test(
       add(l, maxSize - 1);
       k += 1
     };
-    assert List.size(l) == maxSize;
-    assert List.at(l, maxSize - 1) == maxSize - 1
+    assert l.size() == maxSize;
+    assert l.at(maxSize - 1) == maxSize - 1
   }
 )

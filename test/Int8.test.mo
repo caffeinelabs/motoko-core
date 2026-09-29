@@ -59,12 +59,12 @@ run(
     [
       test(
         "maximum number",
-        Int8.toInt(Int8.maxValue),
+        Int8.maxValue.toInt(),
         M.equals(T.int(maximumInt8asInt))
       ),
       test(
         "minimum number",
-        Int8.toInt(Int8.minValue),
+        Int8.minValue.toInt(),
         M.equals(T.int(minimumInt8asInt))
       ),
       test(
@@ -94,12 +94,12 @@ run(
     [
       test(
         "maximum number",
-        Int.toInt8(maximumInt8asInt),
+        maximumInt8asInt.toInt8(),
         M.equals(Int8Testable(Int8.maxValue))
       ),
       test(
         "minimum number",
-        Int.toInt8(minimumInt8asInt),
+        minimumInt8asInt.toInt8(),
         M.equals(Int8Testable(Int8.minValue))
       ),
       test(
@@ -204,7 +204,7 @@ run(
     [
       test(
         "maximum number",
-        Int8.toNat8(Int8.maxValue),
+        Int8.maxValue.toNat8(),
         M.equals(Nat8Testable(maximumInt8asNat8))
       ),
       test(
@@ -249,12 +249,12 @@ run(
       ),
       test(
         "maximum number",
-        Int8.toText(Int8.maxValue),
+        Int8.maxValue.toText(),
         M.equals(T.text("127"))
       ),
       test(
         "minimum number",
-        Int8.toText(Int8.minValue),
+        Int8.minValue.toText(),
         M.equals(T.text("-128"))
       )
     ]
@@ -2293,12 +2293,12 @@ run(
     [
       test(
         "maximum number",
-        Int8.toInt32(Int8.maxValue),
+        Int8.maxValue.toInt32(),
         M.equals(Int32Testable(127))
       ),
       test(
         "minimum number",
-        Int8.toInt32(Int8.minValue),
+        Int8.minValue.toInt32(),
         M.equals(Int32Testable(-128))
       ),
       test(
@@ -2359,12 +2359,12 @@ run(
     [
       test(
         "maximum number",
-        Int8.toInt64(Int8.maxValue),
+        Int8.maxValue.toInt64(),
         M.equals(Int64Testable(127))
       ),
       test(
         "minimum number",
-        Int8.toInt64(Int8.minValue),
+        Int8.minValue.toInt64(),
         M.equals(Int64Testable(-128))
       ),
       test(
@@ -2427,12 +2427,12 @@ run(
     [
       test(
         "maximum number",
-        Int8.toInt16(Int8.maxValue),
+        Int8.maxValue.toInt16(),
         M.equals(Int16Testable(127))
       ),
       test(
         "minimum number",
-        Int8.toInt16(Int8.minValue),
+        Int8.minValue.toInt16(),
         M.equals(Int16Testable(-128))
       ),
       test(

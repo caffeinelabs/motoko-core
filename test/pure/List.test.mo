@@ -50,13 +50,13 @@ func opnatEq(a : ?Nat, b : ?Nat) : Bool {
 
 // ## Construction
 let l1 = List.empty<X>();
-let l2 = List.pushFront(l1, 2);
-let l3 = List.pushFront(l2, 3);
+let l2 = l1.pushFront(2);
+let l3 = l2.pushFront(3);
 
 // ## Projection -- use nth
-assert (opnatEq(List.get(l3, 0), ?3));
-assert (opnatEq(List.get(l3, 1), ?2));
-assert (opnatEq(List.get(l3, 2), null));
+assert (opnatEq(l3.get(0), ?3));
+assert (opnatEq(l3.get(1), ?2));
+assert (opnatEq(l3.get(2), null));
 //assert (opnatEq (hd<X>(l3), ?3));
 //assert (opnatEq (hd<X>(l2), ?2));
 //assert (opnat_isnull(hd<X>(l1)));
@@ -72,18 +72,18 @@ assert (opnatEq(List.get(l3, 2), null));
    */
 
 // ## Deconstruction
-let (a1, _t1) = List.popFront(l3);
+let (a1, _t1) = l3.popFront();
 assert (opnatEq(a1, ?3));
-let (a2, _t2) = List.popFront(l2);
+let (a2, _t2) = l2.popFront();
 assert (opnatEq(a2, ?2));
-let (a3, t3) = List.popFront(l1);
+let (a3, t3) = l1.popFront();
 assert (opnatEq(a3, null));
-assert (List.isEmpty(t3));
+assert (t3.isEmpty());
 
 // ## List functions
-assert (List.size(l1) == 0);
-assert (List.size(l2) == 1);
-assert (List.size(l3) == 2);
+assert (l1.size() == 0);
+assert (l2.size() == 1);
+assert (l3.size() == 2);
 
 do {
   Debug.print("  flatten");
@@ -91,9 +91,9 @@ do {
   let expected : List.List<Nat> = ?(1, ?(2, ?(3, null)));
   // [[1, 2], [3]]
   let nested : List.List<List.List<Nat>> = ?(?(1, ?(2, null)), ?(?(3, null), null));
-  let actual = List.flatten(nested);
+  let actual = nested.flatten();
 
-  assert List.equal(expected, actual, func(x1, x2) = x1 == x2);
+  assert expected.equal(actual, func(x1, x2) = x1 == x2);
 
 };
 
@@ -104,7 +104,7 @@ do {
   let array = [1, 2, 3];
   let actual = List.fromArray(array);
 
-  assert List.equal(expected, actual, func(x1, x2) = x1 == x2)
+  assert expected.equal(actual, func(x1, x2) = x1 == x2)
 };
 
 do {
@@ -114,7 +114,7 @@ do {
   let array = [var 1, 2, 3];
   let actual = List.fromVarArray(array);
 
-  assert List.equal(expected, actual, func(x1, x2) = x1 == x2)
+  assert expected.equal(actual, func(x1, x2) = x1 == x2)
 };
 
 do {
@@ -122,7 +122,7 @@ do {
 
   let expected = [1, 2, 3];
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let actual = List.toArray(list);
+  let actual = list.toArray();
 
   assert (actual.size() == expected.size());
 
@@ -136,7 +136,7 @@ do {
 
   let expected = [var 1, 2, 3];
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let actual = List.toVarArray<Nat>(list);
+  let actual = list.toVarArray<Nat>();
 
   assert (actual.size() == expected.size());
 
@@ -149,7 +149,7 @@ do {
   Debug.print("  values");
 
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let vals = List.values(list);
+  let vals = list.values();
   let actual = [var 0, 0, 0];
   let expected = [1, 2, 3];
 
@@ -168,7 +168,7 @@ do {
   Debug.print("  enumerate");
 
   let list : List.List<Nat> = ?(1, ?(2, ?(3, List.empty<Nat>())));
-  let items = List.enumerate(list);
+  let items = list.enumerate();
   let actual = [var 0, 0, 0];
   let expected = [1, 2, 3];
 
@@ -186,7 +186,7 @@ do {
 
 func makeNatural(x : Int) : Result.Result<Nat, Text> = if (x >= 0) {
   #ok(Int.abs(x))
-} else { #err(Int.toText(x) # " is not a natural number.") };
+} else { #err(x.toText() # " is not a natural number.") };
 
 func listRes(itm : Result.Result<List.List<Nat>, Text>) : T.TestableItem<Result.Result<List.List<Nat>, Text>> {
   let resT = T.resultTestable(T.linkedListTestable<Nat>(T.intTestable), T.textTestable);
@@ -220,8 +220,8 @@ let mapResult = suite(
     ),
     test(
       "large",
-      List.mapResult<Char, (), ()>(hugeList, func _ = #ok)
-      |> Result.mapOk<List.List<()>, List.List<()>, ()>(_, func _ = null),
+      hugeList.mapResult<Char, (), ()>(func _ = #ok)
+      |> _.mapOk<List.List<()>, List.List<()>, ()>(func _ = null),
       M.equals(T.result<List.List<()>, ()>(T.linkedListTestable(T.unit), T.unit, #ok null))
     )
   ]
@@ -281,8 +281,7 @@ let concat = suite(
   [
     test(
       "small-list",
-      List.concat(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).concat(
         List.tabulate(10, func i = i + 10)
       ),
       M.equals(
@@ -291,8 +290,7 @@ let concat = suite(
     ),
     test(
       "large-list",
-      List.concat(
-        List.tabulate(10000, func i = i),
+      List.tabulate(10000, func i = i).concat(
         List.tabulate(10000, func i = i + 10000)
       ),
       M.equals(
@@ -301,7 +299,7 @@ let concat = suite(
     ),
     test(
       "huge-list",
-      List.concat(hugeList, List.singleton 'N') |> List.last _,
+      hugeList.concat(List.singleton 'N') |> _.last(),
       M.equals(T.optional(T.charTestable, ?'N'))
     )
   ]
@@ -312,7 +310,7 @@ let isEmpty = suite(
   [
     test(
       "empty",
-      List.isEmpty(List.empty<Nat>()),
+      List.empty<Nat>().isEmpty(),
       M.equals(T.bool(true))
     ),
     test(
@@ -333,17 +331,17 @@ let push = suite(
   [
     test(
       "empty",
-      List.pushFront(List.empty<Nat>(), 0),
+      List.empty<Nat>().pushFront(0),
       M.equals(T.linkedList(T.natTestable, ?(0, null)))
     ),
     test(
       "singleton",
-      List.pushFront(List.pushFront(List.empty<Nat>(), 0), 1),
+      List.empty<Nat>().pushFront(0).pushFront(1),
       M.equals(T.linkedList(T.natTestable, ?(1, ?(0, null))))
     ),
     test(
       "nary",
-      List.pushFront(List.pushFront(List.pushFront(List.empty<Nat>(), 0), 1), 2),
+      List.empty<Nat>().pushFront(0).pushFront(1).pushFront(2),
       M.equals(T.linkedList(T.natTestable, ?(2, ?(1, ?(0, null)))))
     )
   ]
@@ -354,7 +352,7 @@ let last = suite(
   [
     test(
       "empty list",
-      List.last(List.empty<Nat>()),
+      List.empty<Nat>().last(),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     test(
@@ -375,7 +373,7 @@ let pop = suite(
   [
     test(
       "empty list",
-      List.popFront(List.empty<Nat>()),
+      List.empty<Nat>().popFront(),
       M.equals(
         T.tuple2(
           T.optionalTestable(T.natTestable),
@@ -414,7 +412,7 @@ let size = suite(
   [
     test(
       "empty list",
-      List.size(List.empty<Nat>()),
+      List.empty<Nat>().size(),
       M.equals(T.nat(0))
     ),
     test(
@@ -429,7 +427,7 @@ let size = suite(
     ),
     test(
       "many",
-      List.size hugeList,
+      hugeList.size(),
       M.equals(T.nat 100_000)
     )
   ]
@@ -440,7 +438,7 @@ let get = suite(
   [
     test(
       "empty list",
-      List.get(List.empty<Nat>(), 0),
+      List.empty<Nat>().get(0),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     test(
@@ -480,12 +478,12 @@ let get = suite(
     ),
     test(
       "many",
-      List.get(hugeList, 99_999),
+      hugeList.get(99_999),
       M.equals(T.optional(T.charTestable, ?'Y'))
     ),
     test(
       "past many",
-      List.get(hugeList, 100_000),
+      hugeList.get(100_000),
       M.equals(T.optional(T.charTestable, null : ?Char))
     )
   ]
@@ -496,7 +494,7 @@ let reverse = suite(
   [
     test(
       "empty list",
-      List.reverse(List.empty<Nat>()),
+      List.empty<Nat>().reverse(),
       M.equals(T.linkedList(T.natTestable, null : List.List<Nat>))
     ),
     test(
@@ -511,7 +509,7 @@ let reverse = suite(
     ),
     test(
       "many",
-      List.reverse hugeList |> List.size _,
+      hugeList.reverse() |> _.size(),
       M.equals(T.nat 100_000)
     )
   ]
@@ -524,7 +522,7 @@ let forEach = suite(
       "empty list",
       do {
         var t = "";
-        List.forEach(List.empty<Nat>(), func n = t #= debug_show n);
+        List.empty<Nat>().forEach(func n = t #= debug_show n);
         t
       },
       M.equals(T.text(""))
@@ -551,7 +549,7 @@ let forEach = suite(
       "many",
       do {
         var c = 0;
-        List.forEach(hugeList, func _ = c += 1);
+        hugeList.forEach(func _ = c += 1);
         c
       },
       M.equals(T.nat 100_000)
@@ -564,8 +562,7 @@ let map = suite(
   [
     test(
       "empty list",
-      List.map(
-        List.empty<Nat>(),
+      List.empty<Nat>().map(
         func n { n + 1 }
       ),
       M.equals(T.linkedList(T.natTestable, null : List.List<Nat>))
@@ -594,8 +591,7 @@ let filter = suite(
   [
     test(
       "empty list",
-      List.filter(
-        List.empty<Nat>(),
+      List.empty<Nat>().filter(
         func n { n % 2 == 0 }
       ),
       M.equals(T.linkedList(T.natTestable, null : List.List<Nat>))
@@ -632,8 +628,7 @@ let partition = suite(
   [
     test(
       "empty list",
-      List.partition(
-        List.empty<Nat>(),
+      List.empty<Nat>().partition(
         func n { n % 2 == 0 }
       ),
       M.equals(
@@ -712,8 +707,7 @@ let filterMap = suite(
   [
     test(
       "empty list",
-      List.filterMap(
-        List.empty<Nat>(),
+      List.empty<Nat>().filterMap(
         func n { if (n % 2 == 0) ?(debug_show n) else null }
       ),
       M.equals(T.linkedList(T.textTestable, null : List.List<Text>))
@@ -750,18 +744,14 @@ let flatten = suite(
   [
     test(
       "small-list",
-      List.flatten(
-        List.tabulate(10, func i = List.tabulate(10, func j = i * 10 + j))
-      ),
+      List.tabulate(10, func i = List.tabulate(10, func j = i * 10 + j)).flatten(),
       M.equals(
         T.linkedList(T.natTestable, List.tabulate(100, func i = i))
       )
     ),
     test(
       "small-nulls",
-      List.flatten(
-        List.tabulate(10, func i = null : List.List<Nat>)
-      ),
+      List.tabulate(10, func i = null : List.List<Nat>).flatten(),
       M.equals(
         T.linkedList(T.natTestable, null : List.List<Nat>)
       )
@@ -859,7 +849,7 @@ let take = suite(
   [
     test(
       "empty list",
-      List.take(List.empty<Nat>(), 0),
+      List.empty<Nat>().take(0),
       M.equals(T.linkedList(T.natTestable, null))
     ),
     test(
@@ -905,7 +895,7 @@ let drop = suite(
   [
     test(
       "empty list",
-      List.drop(List.empty<Nat>(), 0),
+      List.empty<Nat>().drop(0),
       M.equals(T.linkedList(T.natTestable, null))
     ),
     test(
@@ -1045,7 +1035,7 @@ let all = suite(
     ),
     test(
       "many",
-      List.all(hugeList, func c = c == 'Y'),
+      hugeList.all(func c = c == 'Y'),
       M.equals(T.bool true)
     )
   ]
@@ -1071,7 +1061,7 @@ let any = suite(
     ),
     test(
       "many",
-      List.any(hugeList, func c = c != 'Y'),
+      hugeList.any(func c = c != 'Y'),
       M.equals(T.bool false)
     )
   ]
@@ -1082,8 +1072,7 @@ let merge = suite(
   [
     test(
       "small-list",
-      List.merge(
-        List.tabulate(10, func i = 2 * i),
+      List.tabulate(10, func i = 2 * i).merge(
         List.tabulate(10, func i = 2 * i + 1),
         Nat.compare
       ),
@@ -1117,8 +1106,7 @@ let merge = suite(
 
     test(
       "small-list-equal",
-      List.merge(
-        List.tabulate(10, func i = 2 * i),
+      List.tabulate(10, func i = 2 * i).merge(
         List.tabulate(10, func i = 2 * i),
         Nat.compare
       ),
@@ -1129,8 +1117,7 @@ let merge = suite(
 
     test(
       "large-list",
-      List.merge(
-        List.tabulate(1000, func i = 2 * i),
+      List.tabulate(1000, func i = 2 * i).merge(
         List.tabulate(1000, func i = 2 * i + 1),
         Nat.compare
       ),
@@ -1146,8 +1133,7 @@ let compare = suite(
   [
     test(
       "small-list-equal",
-      List.compare(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).compare(
         List.tabulate(10, func i = i),
         Nat.compare
       ),
@@ -1155,8 +1141,7 @@ let compare = suite(
     ),
     test(
       "small-list-less",
-      List.compare(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).compare(
         List.tabulate(11, func i = i),
         Nat.compare
       ),
@@ -1164,8 +1149,7 @@ let compare = suite(
     ),
     test(
       "small-list-less",
-      List.compare(
-        List.tabulate(11, func i = i),
+      List.tabulate(11, func i = i).compare(
         List.tabulate(10, func i = i),
         Nat.compare
       ),
@@ -1182,8 +1166,7 @@ let compare = suite(
     ),
     test(
       "small-list-less",
-      List.compare(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).compare(
         List.tabulate(10, func i = if (i < 9) i else i + 1),
         Nat.compare
       ),
@@ -1191,8 +1174,7 @@ let compare = suite(
     ),
     test(
       "small-list-greater",
-      List.compare(
-        List.tabulate(10, func i = if (i < 9) i else i + 1),
+      List.tabulate(10, func i = if (i < 9) i else i + 1).compare(
         List.tabulate(10, func i = i),
         Nat.compare
       ),
@@ -1206,8 +1188,7 @@ let equal = suite(
   [
     test(
       "small-list-equal",
-      List.equal(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).equal(
         List.tabulate(10, func i = i),
         Nat.equal
       ),
@@ -1215,8 +1196,7 @@ let equal = suite(
     ),
     test(
       "small-list-less",
-      List.equal(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).equal(
         List.tabulate(11, func i = i),
         Nat.equal
       ),
@@ -1224,8 +1204,7 @@ let equal = suite(
     ),
     test(
       "small-list-less",
-      List.equal(
-        List.tabulate(11, func i = i),
+      List.tabulate(11, func i = i).equal(
         List.tabulate(10, func i = i),
         Nat.equal
       ),
@@ -1242,8 +1221,7 @@ let equal = suite(
     ),
     test(
       "small-list-less",
-      List.equal(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).equal(
         List.tabulate(10, func i = if (i < 9) i else i + 1),
         Nat.equal
       ),
@@ -1251,8 +1229,7 @@ let equal = suite(
     ),
     test(
       "small-list-greater",
-      List.equal(
-        List.tabulate(10, func i = if (i < 9) i else i + 1),
+      List.tabulate(10, func i = if (i < 9) i else i + 1).equal(
         List.tabulate(10, func i = i),
         Nat.equal
       ),
@@ -1266,8 +1243,7 @@ let zipWith = suite(
   [
     test(
       "small-list-equal-len",
-      List.zipWith(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).zipWith(
         List.tabulate(10, func i = i),
         func(i, j) { i * j }
       ),
@@ -1277,8 +1253,7 @@ let zipWith = suite(
     ),
     test(
       "small-list-shorter",
-      List.zipWith(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).zipWith(
         List.tabulate(11, func i = i),
         func(i, j) { i * j }
       ),
@@ -1288,8 +1263,7 @@ let zipWith = suite(
     ),
     test(
       "small-list-longer",
-      List.zipWith(
-        List.tabulate(11, func i = i),
+      List.tabulate(11, func i = i).zipWith(
         List.tabulate(10, func i = i),
         func(i, j) { i * j }
       ),
@@ -1310,8 +1284,7 @@ let zipWith = suite(
     ),
     test(
       "small-list-empty-right",
-      List.zipWith<Nat, Nat, Nat>(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).zipWith<Nat, Nat, Nat>(
         null,
         func(i, j) { i * j }
       ),
@@ -1338,8 +1311,7 @@ let zip = suite(
   [
     test(
       "small-list-equal-len",
-      List.zip(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).zip(
         List.tabulate(10, func i = i)
       ),
       M.equals(
@@ -1351,8 +1323,7 @@ let zip = suite(
     ),
     test(
       "small-list-shorter",
-      List.zip(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).zip(
         List.tabulate(11, func i = i)
       ),
       M.equals(
@@ -1364,8 +1335,7 @@ let zip = suite(
     ),
     test(
       "small-list-longer",
-      List.zip(
-        List.tabulate(11, func i = i),
+      List.tabulate(11, func i = i).zip(
         List.tabulate(10, func i = i)
       ),
       M.equals(
@@ -1390,8 +1360,7 @@ let zip = suite(
     ),
     test(
       "small-list-empty-right",
-      List.zip<Nat, Nat>(
-        List.tabulate(10, func i = i),
+      List.tabulate(10, func i = i).zip<Nat, Nat>(
         null
       ),
       M.equals(
@@ -1422,7 +1391,7 @@ let split = suite(
   [
     test(
       "split-zero-nonempty",
-      List.split(List.tabulate(10, func i = i), 0),
+      List.tabulate(10, func i = i).split(0),
       M.equals(
         T.tuple2(
           T.linkedListTestable(T.natTestable),
@@ -1467,7 +1436,7 @@ let split = suite(
 
     test(
       "split-too-few",
-      List.split(List.tabulate(10, func i = i), 15),
+      List.tabulate(10, func i = i).split(15),
       M.equals(
         T.tuple2(
           T.linkedListTestable(T.natTestable),
@@ -1482,7 +1451,7 @@ let split = suite(
 
     test(
       "split-too-many",
-      List.split(List.tabulate(15, func i = i), 10),
+      List.tabulate(15, func i = i).split(10),
       M.equals(
         T.tuple2(
           T.linkedListTestable(T.natTestable),
@@ -1497,7 +1466,7 @@ let split = suite(
 
     test(
       "split-one",
-      List.split(List.tabulate(15, func i = i), 1),
+      List.tabulate(15, func i = i).split(1),
       M.equals(
         T.tuple2(
           T.linkedListTestable(T.natTestable),
@@ -1518,7 +1487,7 @@ let chunks = suite(
   [
     test(
       "five-even-split",
-      List.chunks(List.tabulate(10, func i = i), 5),
+      List.tabulate(10, func i = i).chunks(5),
       M.equals(
         T.linkedList(
           T.linkedListTestable(T.natTestable),
@@ -1535,7 +1504,7 @@ let chunks = suite(
     ),
     test(
       "five-remainder",
-      List.chunks(List.tabulate(13, func i = i), 5),
+      List.tabulate(13, func i = i).chunks(5),
       M.equals(
         T.linkedList(
           T.linkedListTestable(T.natTestable),
@@ -1552,7 +1521,7 @@ let chunks = suite(
     ),
     test(
       "five-too-few",
-      List.chunks(List.tabulate(3, func i = i), 5),
+      List.tabulate(3, func i = i).chunks(5),
       M.equals(
         T.linkedList(
           T.linkedListTestable(T.natTestable),
@@ -1595,7 +1564,7 @@ let fromIter = suite(
     ),
     test(
       "large",
-      List.fromIter(Nat.range(0, 100_000)) |> List.size _,
+      List.fromIter(Nat.range(0, 100_000)) |> _.size(),
       M.equals(T.nat 100_000)
     )
   ]
@@ -1663,9 +1632,9 @@ Test.suite(
   "join",
   func() {
     func t(input : [[Nat]], expected : [Nat]) : () -> () = func() {
-      let inputIter = Iter.map(input.values(), func x = List.fromArray(x));
+      let inputIter = input.values().map(func x = List.fromArray(x));
       let result = List.join(inputIter);
-      Test.expect.array(List.toArray(result), Nat.toText, Nat.equal).equal(expected)
+      Test.expect.array(result.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     Test.test("empty", t([], []));
     Test.test("one", t([[1, 2, 3]], [1, 2, 3]));
@@ -1677,9 +1646,9 @@ Test.suite(
   "flatten",
   func() {
     func t(input : [[Nat]], expected : [Nat]) : () -> () = func() {
-      let inputList = List.fromIter(Iter.map(input.values(), func x = List.fromArray(x)));
-      let result = List.flatten(inputList);
-      Test.expect.array(List.toArray(result), Nat.toText, Nat.equal).equal(expected)
+      let inputList = List.fromIter(input.values().map(func x = List.fromArray(x)));
+      let result = inputList.flatten();
+      Test.expect.array(result.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     Test.test("empty", t([], []));
     Test.test("one", t([[1, 2, 3]], [1, 2, 3]));

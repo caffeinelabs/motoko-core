@@ -44,7 +44,7 @@ module {
     };
     var n = 0;
     for (c in text.chars()) {
-      if (Char.isDigit(c)) {
+      if (c.isDigit()) {
         let charAsNat = Prim.nat32ToNat(Prim.charToNat32(c) -% Prim.charToNat32('0'));
         n := n * 10 + charAsNat
       } else {

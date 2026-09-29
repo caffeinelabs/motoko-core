@@ -97,7 +97,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   /// @deprecated M0235
   public func fromPure<T>(set : PureSet.Set<T>, compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
-    fromIter(PureSet.values(set), compare)
+    fromIter(set.values(), compare)
   };
 
   public func fromArray<T>(array : [T], compare : (implicit : (T, T) -> Order.Order)) : Set<T> {
@@ -568,7 +568,7 @@ module {
   };
 
   public func toArray<T>(self : Set<T>) : [T] {
-    Iter.toArray(values(self))
+    values(self).toArray()
   };
 
   /// Returns an iterator over the elements in the set,
@@ -984,11 +984,11 @@ module {
   /// }
   /// ```
   public func retainAll<T>(self : Set<T>, compare : (implicit : (T, T) -> Order.Order), predicate : T -> Bool) : Bool {
-    let array = Iter.toArray(values(self));
+    let array = values(self).toArray();
     deleteAll(
       self,
       compare,
-      Iter.filter(array.values(), func(element) : Bool = not predicate(element))
+      array.values().filter(func(element) : Bool = not predicate(element))
     )
   };
 
@@ -1554,7 +1554,7 @@ module {
     object {
       public func next() : ?T {
         // pop the next node cursor off the stack
-        var nodeCursor = Stack.pop(nodeCursorStack);
+        var nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; elementIndex }) {
@@ -1577,13 +1577,10 @@ module {
                 };
                 // if not at the last element, push the next element index of the leaf onto the stack and return the current element
                 if (elementIndex < lastIndex) {
-                  Stack.push(
-                    nodeCursorStack,
-                    {
-                      node = #leaf(leafNode);
-                      elementIndex = elementIndex + 1 : Nat
-                    }
-                  )
+                  nodeCursorStack.push({
+                    node = #leaf(leafNode);
+                    elementIndex = elementIndex + 1 : Nat
+                  })
                 };
 
                 ?currentElement
@@ -1612,7 +1609,7 @@ module {
                 };
                 // if not the last element, push the next element of the internal node onto the stack
                 if (elementIndex < lastIndex) {
-                  Stack.push(nodeCursorStack, nextCursor)
+                  nodeCursorStack.push(nextCursor)
                 };
                 // traverse the next child's min subtree and push the resulting node cursors onto the stack
                 // then return the current element of the internal node
@@ -1642,7 +1639,7 @@ module {
     object {
       public func next() : ?T {
         // pop the next node cursor off the stack
-        var nodeCursor = Stack.pop(nodeCursorStack);
+        var nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; elementIndex }) {
@@ -1662,13 +1659,10 @@ module {
                 };
                 // if not at the last element, push the previous element index of the leaf onto the stack and return the current element
                 if (elementIndex - 1 : Nat > firstIndex) {
-                  Stack.push(
-                    nodeCursorStack,
-                    {
-                      node = #leaf(leafNode);
-                      elementIndex = elementIndex - 1 : Nat
-                    }
-                  )
+                  nodeCursorStack.push({
+                    node = #leaf(leafNode);
+                    elementIndex = elementIndex - 1 : Nat
+                  })
                 };
 
                 // return the current element
@@ -1692,7 +1686,7 @@ module {
                 };
                 // if not the first element, push the previous element index of the internal node onto the stack
                 if (elementIndex - 1 : Nat > firstIndex) {
-                  Stack.push(nodeCursorStack, previousCursor)
+                  nodeCursorStack.push(previousCursor)
                 };
                 // traverse the previous child's max subtree and push the resulting node cursors onto the stack
                 // then return the current element of the internal node
@@ -1714,7 +1708,7 @@ module {
     };
 
     // push the initial cursor to the stack
-    Stack.push(nodeCursorStack, nodeCursor);
+    nodeCursorStack.push(nodeCursor);
     // then traverse left
     traverseMinSubtreeIter(nodeCursorStack, nodeCursor);
     nodeCursorStack
@@ -1739,7 +1733,7 @@ module {
     };
 
     // push the initial cursor to the stack
-    Stack.push(nodeCursorStack, nodeCursor);
+    nodeCursorStack.push(nodeCursor);
     // then traverse left
     traverseMaxSubtreeIter(nodeCursorStack, nodeCursor);
     nodeCursorStack
@@ -1775,13 +1769,10 @@ module {
             case (?childNode) {
               childIndex := 0;
               currentNode := childNode;
-              Stack.push(
-                nodeCursorStack,
-                {
-                  node = currentNode;
-                  elementIndex = childIndex
-                }
-              )
+              nodeCursorStack.push({
+                node = currentNode;
+                elementIndex = childIndex
+              })
             };
             case null {
               Runtime.trap("UNREACHABLE_ERROR: file a bug report! In Set.traverseMinSubtreeIter(), null child node error")
@@ -1805,13 +1796,10 @@ module {
         case (#notFound(i)) (i, false)
       };
       if (i < node.data.count) {
-        Stack.push(
-          nodeCursorStack,
-          {
-            node = currentNode;
-            elementIndex = i // greater elements to traverse
-          }
-        )
+        nodeCursorStack.push({
+          node = currentNode;
+          elementIndex = i // greater elements to traverse
+        })
       };
       if isFound return;
       let ?children = childrenOption else return;
@@ -1843,13 +1831,10 @@ module {
                 case (#leaf(leafNode)) leafNode.data.count
               };
               currentNode := childNode;
-              Stack.push(
-                nodeCursorStack,
-                {
-                  node = currentNode;
-                  elementIndex = childIndex
-                }
-              )
+              nodeCursorStack.push({
+                node = currentNode;
+                elementIndex = childIndex
+              })
             };
             case null {
               Runtime.trap("UNREACHABLE_ERROR: file a bug report! In Set.traverseMaxSubtreeIter(), null child node error")
@@ -1873,13 +1858,10 @@ module {
         case (#notFound(i)) (i, false) // i is the index of the first element less than the search element, or 0 if all elements are greater than the search element
       };
       if (i > 0) {
-        Stack.push(
-          nodeCursorStack,
-          {
-            node = currentNode;
-            elementIndex = i
-          }
-        )
+        nodeCursorStack.push({
+          node = currentNode;
+          elementIndex = i
+        })
       };
       if isFound return;
       let ?children = childrenOption else return;
@@ -2390,7 +2372,7 @@ module {
 
   func cloneData<T>(data : Data<T>) : Data<T> {
     {
-      elements = VarArray.clone(data.elements);
+      elements = data.elements.clone();
       var count = data.count
     }
   };
@@ -2402,8 +2384,7 @@ module {
       };
       case (#internal { data; children }) {
         let clonedData = cloneData(data);
-        let clonedChildren = VarArray.map<?Node<T>, ?Node<T>>(
-          children,
+        let clonedChildren = children.map<?Node<T>, ?Node<T>>(
           func child {
             switch child {
               case null null;

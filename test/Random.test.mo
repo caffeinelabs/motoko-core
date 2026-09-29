@@ -91,10 +91,10 @@ suite(
         let trials = 10000;
         var sum = 0;
         for (_ in Nat.range(0, trials)) {
-          sum += Nat64.toNat(random.nat64())
+          sum += random.nat64().toNat()
         };
         let avg = sum / trials;
-        let expectedAvg = Nat64.toNat(Nat64.maxValue) / 2;
+        let expectedAvg = Nat64.maxValue.toNat() / 2;
         assert Int.abs(avg - expectedAvg : Int) < expectedAvg / 100
       }
     );
@@ -172,8 +172,8 @@ suite(
         let random = Random.seed(0);
 
         let rangeFunctions : [(Nat, Nat) -> Int] = [
-          func(a, b) = Nat64.toNat(random.nat64Range(Nat.toNat64(a), Nat.toNat64(b))),
-          func(a, b) = Nat.toInt(random.natRange(a, b)),
+          func(a, b) = random.nat64Range(a.toNat64(), b.toNat64()).toNat(),
+          func(a, b) = random.natRange(a, b).toInt(),
           random.intRange
         ];
         for (f in rangeFunctions.values()) {

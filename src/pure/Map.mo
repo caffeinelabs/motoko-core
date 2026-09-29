@@ -544,7 +544,7 @@ module {
   /// where `n` denotes the number of key-value entries stored in the map.
   ///
   /// Note: Full map iteration creates `O(n)` temporary objects that will be collected as garbage.
-  public func keys<K, V>(self : Map<K, V>) : Iter.Iter<K> = Iter.map(entries(self), func(kv : (K, V)) : K { kv.0 });
+  public func keys<K, V>(self : Map<K, V>) : Iter.Iter<K> = entries(self).map(func(kv : (K, V)) : K { kv.0 });
 
   /// Given a `map`, returns an Iterator (`Iter`) over the values of the map.
   /// Iterator provides a single method `next()`, which returns
@@ -568,7 +568,7 @@ module {
   /// where `n` denotes the number of key-value entries stored in the map.
   ///
   /// Note: Full map iteration creates `O(n)` temporary objects that will be collected as garbage.
-  public func values<K, V>(self : Map<K, V>) : Iter.Iter<V> = Iter.map(entries(self), func(kv : (K, V)) : V { kv.1 });
+  public func values<K, V>(self : Map<K, V>) : Iter.Iter<V> = entries(self).map(func(kv : (K, V)) : V { kv.1 });
 
   /// Returns a new map, containing all entries given by the iterator `i`.
   /// If there are multiple entries with the same key the last one is taken.

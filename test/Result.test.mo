@@ -4,7 +4,7 @@ import { suite; test } "mo:test";
 
 func makeNatural(x : Int) : Result.Result<Nat, Text> = if (x >= 0) {
   #ok(Int.abs(x))
-} else { #err(Int.toText(x) # " is not a natural number.") };
+} else { #err(x.toText() # " is not a natural number.") };
 
 func largerThan10(x : Nat) : Result.Result<Nat, Text> = if (x > 10) { #ok(x) } else {
   #err(Int.toText(x) # " is not larger than 10.")
@@ -16,21 +16,21 @@ suite(
     test(
       "ok -> ok",
       func() {
-        assert Result.chain(makeNatural(11), largerThan10) == #ok(11)
+        assert makeNatural(11).chain(largerThan10) == #ok(11)
       }
     );
 
     test(
       "ok -> err",
       func() {
-        assert Result.chain(makeNatural(5), largerThan10) == #err("5 is not larger than 10.")
+        assert makeNatural(5).chain(largerThan10) == #err("5 is not larger than 10.")
       }
     );
 
     test(
       "err",
       func() {
-        assert Result.chain(makeNatural(-5), largerThan10) == #err("-5 is not a natural number.")
+        assert makeNatural(-5).chain(largerThan10) == #err("-5 is not a natural number.")
       }
     )
   }
@@ -70,7 +70,7 @@ suite(
     test(
       "ok",
       func() {
-        Result.forOk(makeNatural(5), func(x : Nat) { counter += x });
+        makeNatural(5).forOk(func(x : Nat) { counter += x });
         assert counter == 5
       }
     );
@@ -78,7 +78,7 @@ suite(
     test(
       "err",
       func() {
-        Result.forOk(makeNatural(-10), func(x : Nat) { counter += x });
+        makeNatural(-10).forOk(func(x : Nat) { counter += x });
         assert counter == 5
       }
     )

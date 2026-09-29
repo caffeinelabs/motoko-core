@@ -77,7 +77,7 @@ module {
   /// let timerId = Timer.setTimer<system>(#minutes 30, runIn30Minutes);
   /// ```
   public func setTimer<system>(duration : Time.Duration, job : () -> async ()) : TimerId {
-    setTimerNano<system>(Nat.toNat64(Time.toNanoseconds duration), false, job)
+    setTimerNano<system>(Time.toNanoseconds duration.toNat64(), false, job)
   };
 
   /// Installs a recurring timer that upon expiration after given duration `d`
@@ -92,7 +92,7 @@ module {
   /// let timerId = Timer.recurringTimer<system>(#minutes 30, runEvery30Minutes);
   /// ```
   public func recurringTimer<system>(duration : Time.Duration, job : () -> async ()) : TimerId {
-    setTimerNano<system>(Nat.toNat64(Time.toNanoseconds duration), true, job)
+    setTimerNano<system>(Time.toNanoseconds duration.toNat64(), true, job)
   };
 
   /// Cancels a still active timer with `(id : TimerId)`. For expired timers

@@ -47,11 +47,11 @@ let positiveNaN = Float.copySign(0.0 / 0.0, 1.0);
 let negativeNaN = Float.copySign(0.0 / 0.0, -1.0);
 
 func isPositiveNaN(number : Float) : Bool {
-  Float.isNaN(number) and Float.copySign(1.0, number) == 1.0
+  number.isNaN() and Float.copySign(1.0, number) == 1.0
 };
 
 func isNegativeNaN(number : Float) : Bool {
-  Float.isNaN(number) and Float.copySign(1.0, number) == -1.0
+  number.isNaN() and Float.copySign(1.0, number) == -1.0
 };
 
 let positiveZero = 0.0;
@@ -94,7 +94,7 @@ class NaNMatcher() : M.Matcher<Float> {
   };
 
   public func matches(number : Float) : Bool {
-    Float.isNaN(number)
+    number.isNaN()
   }
 };
 
@@ -149,7 +149,7 @@ class TextPrefixMatcher(prefix : Text) : M.Matcher<Text> {
   };
 
   public func matches(text : Text) : Bool {
-    Text.startsWith(text, #text prefix)
+    text.startsWith(#text prefix)
   }
 };
 
@@ -183,12 +183,12 @@ run(
     [
       test(
         "positive NaN",
-        Float.isNaN(positiveNaN),
+        positiveNaN.isNaN(),
         M.equals(T.bool(true))
       ),
       test(
         "negative NaN",
-        Float.isNaN(negativeNaN),
+        negativeNaN.isNaN(),
         M.equals(T.bool(true))
       ),
       test(
@@ -208,22 +208,22 @@ run(
       ),
       test(
         "positive zero",
-        Float.isNaN(positiveZero),
+        positiveZero.isNaN(),
         M.equals(T.bool(false))
       ),
       test(
         "negative zero",
-        Float.isNaN(negativeZero),
+        negativeZero.isNaN(),
         M.equals(T.bool(false))
       ),
       test(
         "positive infinity",
-        Float.isNaN(positiveInfinity),
+        positiveInfinity.isNaN(),
         M.equals(T.bool(false))
       ),
       test(
         "negative infinity",
-        Float.isNaN(negativeInfinity),
+        negativeInfinity.isNaN(),
         M.equals(T.bool(false))
       )
     ]
@@ -1478,32 +1478,32 @@ run(
       ),
       test(
         "exact positive zero",
-        Float.format(positiveZero, #exact),
+        positiveZero.format(#exact),
         M.anyOf([M.equals(T.text("0")), M.equals(T.text("0.00000000000000000"))])
       ),
       test(
         "exact negative zero",
-        Float.format(negativeZero, #exact),
+        negativeZero.format(#exact),
         M.anyOf([M.equals(T.text("-0")), M.equals(T.text("-0.00000000000000000"))])
       ),
       test(
         "exact positive infinity",
-        Float.format(positiveInfinity, #exact),
+        positiveInfinity.format(#exact),
         M.equals(T.text("inf"))
       ),
       test(
         "exact negative infinity",
-        Float.format(negativeInfinity, #exact),
+        negativeInfinity.format(#exact),
         M.equals(T.text("-inf"))
       ),
       test(
         "exact positive NaN",
-        Float.format(positiveNaN, #exact),
+        positiveNaN.format(#exact),
         PositiveNaNTextMatcher()
       ),
       test(
         "exact negative NaN",
-        Float.format(negativeNaN, #exact),
+        negativeNaN.format(#exact),
         NegativeNaNTextMatcher()
       ),
       test(
@@ -1518,32 +1518,32 @@ run(
       ),
       test(
         "fix positive zero",
-        Float.format(positiveZero, #fix 6),
+        positiveZero.format(#fix 6),
         M.equals(T.text("0.000000"))
       ),
       test(
         "fix negative zero",
-        Float.format(negativeZero, #fix 6),
+        negativeZero.format(#fix 6),
         M.equals(T.text("-0.000000"))
       ),
       test(
         "fix positive infinity",
-        Float.format(positiveInfinity, #fix 6),
+        positiveInfinity.format(#fix 6),
         M.equals(T.text("inf"))
       ),
       test(
         "fix negative infinity",
-        Float.format(negativeInfinity, #fix 6),
+        negativeInfinity.format(#fix 6),
         M.equals(T.text("-inf"))
       ),
       test(
         "fix positive NaN",
-        Float.format(positiveNaN, #fix 6),
+        positiveNaN.format(#fix 6),
         PositiveNaNTextMatcher()
       ),
       test(
         "fix negative NaN",
-        Float.format(negativeNaN, #fix 6),
+        negativeNaN.format(#fix 6),
         NegativeNaNTextMatcher()
       ),
       test(
@@ -1558,32 +1558,32 @@ run(
       ),
       test(
         "exp positive zero",
-        Float.format(positiveZero, #exp 9),
+        positiveZero.format(#exp 9),
         M.anyOf([M.equals(T.text("0.000000000e0")), M.equals(T.text("0.000000000e+00"))])
       ),
       test(
         "exp negative zero",
-        Float.format(negativeZero, #exp 9),
+        negativeZero.format(#exp 9),
         M.anyOf([M.equals(T.text("-0.000000000e0")), M.equals(T.text("-0.000000000e+00"))])
       ),
       test(
         "exp positive infinity",
-        Float.format(positiveInfinity, #exp 9),
+        positiveInfinity.format(#exp 9),
         M.equals(T.text("inf"))
       ),
       test(
         "exp negative infinity",
-        Float.format(negativeInfinity, #exp 9),
+        negativeInfinity.format(#exp 9),
         M.equals(T.text("-inf"))
       ),
       test(
         "exp positive NaN",
-        Float.format(positiveNaN, #exp 9),
+        positiveNaN.format(#exp 9),
         PositiveNaNTextMatcher()
       ),
       test(
         "exp negative NaN",
-        Float.format(negativeNaN, #exp 9),
+        negativeNaN.format(#exp 9),
         NegativeNaNTextMatcher()
       ),
       test(
@@ -1598,32 +1598,32 @@ run(
       ),
       test(
         "gen positive zero",
-        Float.format(positiveZero, #gen 12),
+        positiveZero.format(#gen 12),
         M.anyOf([M.equals(T.text("0")), M.equals(T.text("0.000000000000"))])
       ),
       test(
         "gen negative zero",
-        Float.format(negativeZero, #gen 12),
+        negativeZero.format(#gen 12),
         M.anyOf([M.equals(T.text("-0")), M.equals(T.text("-0.000000000000"))])
       ),
       test(
         "gen positive infinity",
-        Float.format(positiveInfinity, #gen 12),
+        positiveInfinity.format(#gen 12),
         M.equals(T.text("inf"))
       ),
       test(
         "gen negative infinity",
-        Float.format(negativeInfinity, #gen 12),
+        negativeInfinity.format(#gen 12),
         M.equals(T.text("-inf"))
       ),
       test(
         "gen positive NaN",
-        Float.format(positiveNaN, #gen 12),
+        positiveNaN.format(#gen 12),
         PositiveNaNTextMatcher()
       ),
       test(
         "gen negative NaN",
-        Float.format(negativeNaN, #gen 12),
+        negativeNaN.format(#gen 12),
         NegativeNaNTextMatcher()
       ),
       // hex float formatting was only supported with Musl
@@ -1650,32 +1650,32 @@ run(
       ),
       test(
         "positive zero",
-        Float.toText(positiveZero),
+        positiveZero.toText(),
         M.equals(T.text("0.000000"))
       ),
       test(
         "negative zero",
-        Float.toText(negativeZero),
+        negativeZero.toText(),
         M.equals(T.text("-0.000000"))
       ),
       test(
         "positive infinity",
-        Float.toText(positiveInfinity),
+        positiveInfinity.toText(),
         M.equals(T.text("inf"))
       ),
       test(
         "negative infinity",
-        Float.toText(negativeInfinity),
+        negativeInfinity.toText(),
         M.equals(T.text("-inf"))
       ),
       test(
         "positive NaN",
-        Float.toText(positiveNaN),
+        positiveNaN.toText(),
         PositiveNaNTextMatcher()
       ),
       test(
         "negative NaN",
-        Float.toText(negativeNaN),
+        negativeNaN.toText(),
         NegativeNaNTextMatcher()
       )
     ]
@@ -1715,12 +1715,12 @@ run(
       ),
       test(
         "positive zero",
-        Float.toInt64(positiveZero),
+        positiveZero.toInt64(),
         M.equals(Int64Testable(0))
       ),
       test(
         "negative zero",
-        Float.toInt64(negativeZero),
+        negativeZero.toInt64(),
         M.equals(Int64Testable(0))
       )
     ]
@@ -1788,7 +1788,7 @@ run(
       ),
       test(
         "positive big integer",
-        Float.toInt(arbitraryBigIntAsFloat),
+        arbitraryBigIntAsFloat.toInt(),
         M.equals(T.int(arbitraryBigInt))
       ),
       test(
@@ -1798,12 +1798,12 @@ run(
       ),
       test(
         "positive zero",
-        Float.toInt(positiveZero),
+        positiveZero.toInt(),
         M.equals(T.int(0))
       ),
       test(
         "negative zero",
-        Float.toInt(negativeZero),
+        negativeZero.toInt(),
         M.equals(T.int(0))
       )
     ]

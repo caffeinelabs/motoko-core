@@ -102,7 +102,7 @@ module {
   ///
   /// Space: `O(1)`.
   public func size<T>(self : Queue<T>) : Nat {
-    debug assert self.1 == List.size(self.0) + List.size(self.2);
+    debug assert self.1 == self.0.size() + self.2.size();
     self.1
   };
 
@@ -125,7 +125,7 @@ module {
   /// Runtime: `O(size)`
   ///
   /// Space: `O(1)`
-  public func contains<T>(self : Queue<T>, equal : (implicit : (T, T) -> Bool), item : T) : Bool = List.contains(self.0, equal, item) or List.contains(self.2, equal, item);
+  public func contains<T>(self : Queue<T>, equal : (implicit : (T, T) -> Bool), item : T) : Bool = self.0.contains(equal, item) or self.2.contains(equal, item);
 
   /// Inspect the optional element on the front end of a queue.
   /// Returns `null` if `queue` is empty. Otherwise, the front element of `queue`.
@@ -143,7 +143,7 @@ module {
   /// Space: `O(1)`.
   public func peekFront<T>(self : Queue<T>) : ?T = switch self {
     case ((?(x, _), _, _) or (_, _, ?(x, null))) ?x;
-    case _ { debug assert List.isEmpty(self.2); null }
+    case _ { debug assert self.2.isEmpty(); null }
   };
 
   /// Inspect the optional element on the back end of a queue.
@@ -162,19 +162,19 @@ module {
   /// Space: `O(1)`.
   public func peekBack<T>(self : Queue<T>) : ?T = switch self {
     case ((_, _, ?(x, _)) or (?(x, null), _, _)) ?x;
-    case _ { debug assert List.isEmpty(self.0); null }
+    case _ { debug assert self.0.isEmpty(); null }
   };
 
   // helper to rebalance the queue after getting lopsided
   func check<T>(q : Queue<T>) : Queue<T> {
     switch q {
       case (null, n, r) {
-        let (a, b) = List.split(r, n / 2);
-        (List.reverse b, n, a)
+        let (a, b) = r.split(n / 2);
+        (b.reverse(), n, a)
       };
       case (f, n, null) {
-        let (a, b) = List.split(f, n / 2);
-        (a, n, List.reverse b)
+        let (a, b) = f.split(n / 2);
+        (a, n, b.reverse())
       };
       case q q
     }
@@ -309,7 +309,7 @@ module {
   /// Space: O(size)
   public func fromIter<T>(iter : Iter.Iter<T>) : Queue<T> {
     let list = List.fromIter iter;
-    check(list, List.size list, null)
+    check(list, list.size(), null)
   };
 
   /// Convert an iterator to a queue, consuming it.
@@ -400,7 +400,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func values<T>(self : Queue<T>) : Iter.Iter<T> = Iter.concat(List.values(self.0), List.values(List.reverse(self.2)));
+  public func values<T>(self : Queue<T>) : Iter.Iter<T> = self.0.values().concat(self.2.reverse().values());
 
   /// Compare two queues for equality using the provided equality function.
   ///
@@ -524,7 +524,7 @@ module {
   /// *Runtime and space assumes that `f` runs in `O(1)` time and space.
   public func map<T1, T2>(self : Queue<T1>, f : T1 -> T2) : Queue<T2> {
     let (fr, n, b) = self;
-    (List.map(fr, f), n, List.map(b, f))
+    (fr.map(f), n, b.map(f))
   };
 
   /// Create a new queue with only those elements of the original queue for which
@@ -548,9 +548,9 @@ module {
   /// *Runtime and space assumes that `predicate` runs in `O(1)` time and space.
   public func filter<T>(self : Queue<T>, predicate : T -> Bool) : Queue<T> {
     let (fr, _, b) = self;
-    let front = List.filter(fr, predicate);
-    let back = List.filter(b, predicate);
-    check(front, List.size front + List.size back, back)
+    let front = fr.filter(predicate);
+    let back = b.filter(predicate);
+    check(front, front.size() + back.size(), back)
   };
 
   /// Call the given function on each queue element, and collect the non-null results
@@ -576,9 +576,9 @@ module {
   /// *Runtime and space assumes that `f` runs in `O(1)` time and space.
   public func filterMap<T, U>(self : Queue<T>, f : T -> ?U) : Queue<U> {
     let (fr, _n, b) = self;
-    let front = List.filterMap(fr, f);
-    let back = List.filterMap(b, f);
-    check(front, List.size front + List.size back, back)
+    let front = fr.filterMap(f);
+    let back = b.filterMap(f);
+    check(front, front.size() + back.size(), back)
   };
 
   /// Convert a queue to its text representation using the provided conversion function.
@@ -603,8 +603,8 @@ module {
       if (text.size() > 10) text #= ", ";
       text #= f(item)
     };
-    List.forEach(self.0, add);
-    List.forEach(List.reverse(self.2), add);
+    self.0.forEach(add);
+    self.2.reverse().forEach(add);
     text # "]"
   };
 

@@ -59,12 +59,12 @@ run(
     [
       test(
         "maximum number",
-        Int64.toInt(Int64.maxValue),
+        Int64.maxValue.toInt(),
         M.equals(T.int(maximumInt64asInt))
       ),
       test(
         "minimum number",
-        Int64.toInt(Int64.minValue),
+        Int64.minValue.toInt(),
         M.equals(T.int(minimumInt64asInt))
       ),
       test(
@@ -94,12 +94,12 @@ run(
     [
       test(
         "maximum number",
-        Int.toInt64(maximumInt64asInt),
+        maximumInt64asInt.toInt64(),
         M.equals(Int64Testable(Int64.maxValue))
       ),
       test(
         "minimum number",
-        Int.toInt64(minimumInt64asInt),
+        minimumInt64asInt.toInt64(),
         M.equals(Int64Testable(Int64.minValue))
       ),
       test(
@@ -204,7 +204,7 @@ run(
     [
       test(
         "maximum number",
-        Int64.toNat64(Int64.maxValue),
+        Int64.maxValue.toNat64(),
         M.equals(Nat64Testable(maximumInt64asNat64))
       ),
       test(
@@ -249,12 +249,12 @@ run(
       ),
       test(
         "maximum number",
-        Int64.toText(Int64.maxValue),
+        Int64.maxValue.toText(),
         M.equals(T.text("9223372036854775807"))
       ),
       test(
         "minimum number",
-        Int64.toText(Int64.minValue),
+        Int64.minValue.toText(),
         M.equals(T.text("-9223372036854775808"))
       )
     ]

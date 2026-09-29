@@ -32,68 +32,68 @@ test(
 test(
   "range",
   func() {
-    assert Iter.toArray(Nat.range(0, 3)) == [0, 1, 2];
-    assert Iter.toArray(Nat.range(1, 3)) == [1, 2];
-    assert Iter.toArray(Nat.range(1, 2)) == [1];
-    assert Iter.toArray(Nat.range(3, 0)) == [];
-    assert Iter.toArray(Nat.range(1, 0)) == [];
-    assert Iter.toArray(Nat.range(0, 0)) == []
+    assert Nat.range(0, 3).toArray() == [0, 1, 2];
+    assert Nat.range(1, 3).toArray() == [1, 2];
+    assert Nat.range(1, 2).toArray() == [1];
+    assert Nat.range(3, 0).toArray() == [];
+    assert Nat.range(1, 0).toArray() == [];
+    assert Nat.range(0, 0).toArray() == []
   }
 );
 
 test(
   "rangeBy",
   func() {
-    assert Iter.toArray(Nat.rangeBy(0, 3, 1)) == [0, 1, 2];
-    assert Iter.toArray(Nat.rangeBy(0, 3, 2)) == [0, 2];
-    assert Iter.toArray(Nat.rangeBy(0, 3, 3)) == [0];
-    assert Iter.toArray(Nat.rangeBy(1, 4, 2)) == [1, 3];
-    assert Iter.toArray(Nat.rangeBy(1, 3, 2)) == [1];
-    assert Iter.toArray(Nat.rangeBy(3, 0, -1)) == [3, 2, 1];
-    assert Iter.toArray(Nat.rangeBy(3, 1, -1)) == [3, 2];
-    assert Iter.toArray(Nat.rangeBy(3, 0, -2)) == [3, 1];
-    assert Iter.toArray(Nat.rangeBy(3, 1, -2)) == [3];
-    assert Iter.toArray(Nat.rangeBy(1, 3, -1)) == [];
-    assert Iter.toArray(Nat.rangeBy(0, 1, 0)) == [];
-    assert Iter.toArray(Nat.rangeBy(1, 0, 0)) == [];
+    assert Nat.rangeBy(0, 3, 1).toArray() == [0, 1, 2];
+    assert Nat.rangeBy(0, 3, 2).toArray() == [0, 2];
+    assert Nat.rangeBy(0, 3, 3).toArray() == [0];
+    assert Nat.rangeBy(1, 4, 2).toArray() == [1, 3];
+    assert Nat.rangeBy(1, 3, 2).toArray() == [1];
+    assert Nat.rangeBy(3, 0, -1).toArray() == [3, 2, 1];
+    assert Nat.rangeBy(3, 1, -1).toArray() == [3, 2];
+    assert Nat.rangeBy(3, 0, -2).toArray() == [3, 1];
+    assert Nat.rangeBy(3, 1, -2).toArray() == [3];
+    assert Nat.rangeBy(1, 3, -1).toArray() == [];
+    assert Nat.rangeBy(0, 1, 0).toArray() == [];
+    assert Nat.rangeBy(1, 0, 0).toArray() == [];
 
-    assert Iter.toArray(Nat.rangeBy(4, 4, 1)) == [];
-    assert Iter.toArray(Nat.rangeBy(3, 4, 1)) == [3];
-    assert Iter.toArray(Nat.rangeBy(4, 3, -1)) == [4]
+    assert Nat.rangeBy(4, 4, 1).toArray() == [];
+    assert Nat.rangeBy(3, 4, 1).toArray() == [3];
+    assert Nat.rangeBy(4, 3, -1).toArray() == [4]
   }
 );
 
 test(
   "rangeInclusive",
   func() {
-    assert Iter.toArray(Nat.rangeInclusive(0, 2)) == [0, 1, 2];
-    assert Iter.toArray(Nat.rangeInclusive(1, 2)) == [1, 2];
-    assert Iter.toArray(Nat.rangeInclusive(1, 1)) == [1];
-    assert Iter.toArray(Nat.rangeInclusive(1, 0)) == [];
-    assert Iter.toArray(Nat.rangeInclusive(0, 0)) == [0];
-    assert Iter.toArray(Nat.rangeInclusive(0, 1)) == [0, 1]
+    assert Nat.rangeInclusive(0, 2).toArray() == [0, 1, 2];
+    assert Nat.rangeInclusive(1, 2).toArray() == [1, 2];
+    assert Nat.rangeInclusive(1, 1).toArray() == [1];
+    assert Nat.rangeInclusive(1, 0).toArray() == [];
+    assert Nat.rangeInclusive(0, 0).toArray() == [0];
+    assert Nat.rangeInclusive(0, 1).toArray() == [0, 1]
   }
 );
 
 test(
   "rangeByInclusive",
   func() {
-    assert Iter.toArray(Nat.rangeByInclusive(1, 7, 2)) == [1, 3, 5, 7];
-    assert Iter.toArray(Nat.rangeByInclusive(1, 6, 2)) == [1, 3, 5];
-    assert Iter.toArray(Nat.rangeByInclusive(1, 3, 1)) == [1, 2, 3];
+    assert Nat.rangeByInclusive(1, 7, 2).toArray() == [1, 3, 5, 7];
+    assert Nat.rangeByInclusive(1, 6, 2).toArray() == [1, 3, 5];
+    assert Nat.rangeByInclusive(1, 3, 1).toArray() == [1, 2, 3];
 
-    assert Iter.toArray(Nat.rangeByInclusive(7, 1, -2)) == [7, 5, 3, 1];
-    assert Iter.toArray(Nat.rangeByInclusive(6, 1, -2)) == [6, 4, 2];
-    assert Iter.toArray(Nat.rangeByInclusive(3, 1, -1)) == [3, 2, 1];
+    assert Nat.rangeByInclusive(7, 1, -2).toArray() == [7, 5, 3, 1];
+    assert Nat.rangeByInclusive(6, 1, -2).toArray() == [6, 4, 2];
+    assert Nat.rangeByInclusive(3, 1, -1).toArray() == [3, 2, 1];
 
-    assert Iter.toArray(Nat.rangeByInclusive(1, 1, 1)) == [1];
-    assert Iter.toArray(Nat.rangeByInclusive(1, 1, -1)) == [1];
-    assert Iter.toArray(Nat.rangeByInclusive(1, 2, 0)) == [];
-    assert Iter.toArray(Nat.rangeByInclusive(2, 1, 1)) == [];
-    assert Iter.toArray(Nat.rangeByInclusive(1, 2, -1)) == [];
+    assert Nat.rangeByInclusive(1, 1, 1).toArray() == [1];
+    assert Nat.rangeByInclusive(1, 1, -1).toArray() == [1];
+    assert Nat.rangeByInclusive(1, 2, 0).toArray() == [];
+    assert Nat.rangeByInclusive(2, 1, 1).toArray() == [];
+    assert Nat.rangeByInclusive(1, 2, -1).toArray() == [];
 
-    assert Iter.toArray(Nat.rangeByInclusive(3, 0, -1)) == [3, 2, 1, 0];
-    assert Iter.toArray(Nat.rangeByInclusive(3, 0, 0)) == [];
-    assert Iter.toArray(Nat.rangeByInclusive(3, 3, 0)) == [3]
+    assert Nat.rangeByInclusive(3, 0, -1).toArray() == [3, 2, 1, 0];
+    assert Nat.rangeByInclusive(3, 0, 0).toArray() == [];
+    assert Nat.rangeByInclusive(3, 3, 0).toArray() == [3]
   }
 )

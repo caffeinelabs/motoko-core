@@ -95,7 +95,7 @@ module {
     // hashBlob is a CRC32 implementation
     let crc32Bytes = nat32ToByteArray(Prim.hashBlob hashSum);
 
-    Array.concat(crc32Bytes, Blob.toArray(hashSum)).toBlob()
+    crc32Bytes.concat(hashSum.toArray()).toBlob()
   };
 
   /// Convert a `Principal` to its `Blob` (bytes) representation.
@@ -215,7 +215,7 @@ module {
   /// let principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
   /// assert principal.hash() == 2_742_573_646;
   /// ```
-  public func hash(self : Principal) : Types.Hash = Blob.hash(Prim.blobOfPrincipal(self));
+  public func hash(self : Principal) : Types.Hash = Prim.blobOfPrincipal(self).hash();
 
   /// General purpose comparison function for `Principal`. Returns the `Order` (
   /// either `#less`, `#equal`, or `#greater`) of comparing `principal1` with
@@ -496,10 +496,10 @@ module {
     reset();
 
     private func writeByte(val : Nat8) : () {
-      word := (word << 8) ^ Nat32.fromIntWrap(Nat8.toNat(val));
+      word := (word << 8) ^ Nat32.fromIntWrap(val.toNat());
       i_byte -%= 1;
       if (i_byte == 0) {
-        msg[Nat8.toNat(i_msg)] := word;
+        msg[i_msg.toNat()] := word;
         word := 0;
         i_byte := 4;
         i_msg +%= 1;
@@ -1226,7 +1226,7 @@ module {
       // p = length of padding (1-64)
       var p : Nat8 = if (t < 56) (56 -% t) else (120 -% t);
       // n_bits = length of message in bits
-      let n_bits : Nat64 = ((i_block << 6) +% Nat64.fromIntWrap(Nat8.toNat(t))) << 3;
+      let n_bits : Nat64 = ((i_block << 6) +% Nat64.fromIntWrap(t.toNat())) << 3;
 
       // write padding
       writeByte(0x80);
@@ -1284,12 +1284,12 @@ module {
 
   func nat32ToByteArray(n : Nat32) : [Nat8] {
     func byte(n : Nat32) : Nat8 {
-      Nat.toNat8(Nat32.toNat(n & 0xff))
+      Nat32.toNat(n & 0xff).toNat8()
     };
     [byte(n >> 24), byte(n >> 16), byte(n >> 8), byte(n)]
   };
 
-  func toByteArray(p : Principal) : [Nat8] = Blob.toArray(toBlob(p));
+  func toByteArray(p : Principal) : [Nat8] = toBlob(p).toArray();
 
   func isLastByte(byteArray : [Nat8], byte : Nat8) : Bool {
     let size = byteArray.size();

@@ -106,7 +106,7 @@ module {
   /// assert Nat64.toText(1234) == ("1234" : Text);
   /// ```
   public func toText(self : Nat64) : Text {
-    Nat.toText(toNat(self))
+    toNat(self).toText()
   };
 
   /// Returns the minimum of `x` and `y`.

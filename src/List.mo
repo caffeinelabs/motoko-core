@@ -492,7 +492,7 @@ module {
         newIndexBlockLength(Nat.toNat32(if (self.elementIndex == 0) self.blockIndex - 1 else self.blockIndex)),
         self.blocks.size()
       ),
-      func(i) = VarArray.clone(self.blocks[i])
+      func(i) = self.blocks[i].clone()
     );
     var blockIndex = self.blockIndex;
     var elementIndex = self.elementIndex
@@ -911,15 +911,15 @@ module {
     // due to the design of List (blockIndex, elementIndex) pair points
     // exactly to the place where size-th element should be added
     // so, it's the inlined version of indexByBlockElement
-    let d = Nat.toNat64(self.blockIndex);
+    let d = self.blockIndex.toNat64();
     let lz = Nat64.bitcountLeadingZero(d / 3);
-    Nat64.toNat((d -% (1 <>> lz)) <>> lz +% Nat.toNat64(self.elementIndex))
+    Nat64.toNat((d -% (1 <>> lz)) <>> lz +% self.elementIndex.toNat64())
   };
 
   // Returns the size of data block blockIndex, i.e. 2^e where e is the
   // epoch of the block. Do not call it for blockIndex == 0.
   func dataBlockSize(blockIndex : Nat) : Nat {
-    Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(Nat.toNat32(blockIndex) / 3))
+    Nat32.toNat(1 <>> Nat32.bitcountLeadingZero(blockIndex.toNat32() / 3))
   };
 
   // Returns the length of the index block needed to accommodate data
@@ -939,7 +939,7 @@ module {
   // length, otherwise do nothing.
   func growIndexBlockIfNeeded<T>(list : List<T>) {
     if (list.blocks.size() == list.blockIndex) {
-      let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(Nat.toNat32(list.blockIndex)));
+      let newBlocks = VarArray.repeat<[var ?T]>([var], newIndexBlockLength(list.blockIndex.toNat32()));
       var i = 0;
       while (i < list.blockIndex) {
         newBlocks[i] := list.blocks[i];
@@ -950,7 +950,7 @@ module {
   };
 
   func shrinkIndexBlockIfNeeded<T>(list : List<T>) {
-    let blockIndex = Nat.toNat32(list.blockIndex);
+    let blockIndex = list.blockIndex.toNat32();
     // No shrink is possible for blockIndex >= 2^31: the only rung there
     // is the top rung 3 * 2^30 (the completely full 2^61 List), where
     // the index block is at its exactly-full maximal length -- but
@@ -1226,7 +1226,7 @@ module {
     if (size(self) < 2) return;
     let array = toVarArray(self);
 
-    VarArray.sortInPlace(array, compare);
+    array.sortInPlace(compare);
 
     var index = 0;
 
@@ -1273,7 +1273,7 @@ module {
   /// *Runtime and space assumes that `compare` runs in O(1) time and space.
   public func sort<T>(self : List<T>, compare : (implicit : (T, T) -> Types.Order)) : List<T> {
     let array = toVarArray(self);
-    VarArray.sortInPlace(array, compare);
+    array.sortInPlace(compare);
     fromVarArray(array)
   };
 
@@ -1651,14 +1651,14 @@ module {
     // block index x such that blocks[x][0] <= element
     let lessOrEqual = do {
       // epoch of the last data block
-      let epoch = 32 - Nat32.bitcountLeadingZero(Nat.toNat32(b) / 3);
+      let epoch = 32 - Nat32.bitcountLeadingZero(b.toNat32() / 3);
       // initially block index is the first in the epoch
       var lessOrEqual = Nat32.toNat((1 << epoch) / 2);
 
       // lessOrEqual * 3 is always the first data block in an epoch
       // while the first element of the first data block in an epoch is actually grater then element go to the previous epoch
       // as the last epoch is half of the array we each iteration of the search divides the interval in four
-      while (lessOrEqual != 0 and compare(Option.unwrap(blocks[lessOrEqual * 3][0]), element) == #greater) {
+      while (lessOrEqual != 0 and compare(blocks[lessOrEqual * 3][0].unwrap(), element) == #greater) {
         lessOrEqual /= 2
       };
 
@@ -1687,7 +1687,7 @@ module {
       var right = Nat.min(b + 1, lessOrEqual * 2);
       while (right - left : Nat > 1) {
         let mid = (left + right) / 2;
-        switch (compare(Option.unwrap(blocks[mid][0]), element)) {
+        switch (compare(blocks[mid][0].unwrap(), element)) {
           case (#less) left := mid;
           case (#greater) right := mid;
           case (#equal) return #found(indexByBlockElement(mid, 0))
@@ -1703,7 +1703,7 @@ module {
       var right = if (blockIndex == self.blockIndex) self.elementIndex else block.size();
       while (left != right) {
         let mid = (left + right) / 2;
-        switch (compare(Option.unwrap(block[mid]), element)) {
+        switch (compare(block[mid].unwrap(), element)) {
           case (#less) left := mid + 1;
           case (#greater) right := mid;
           case (#equal) return #found(indexByBlockElement(blockIndex, mid))

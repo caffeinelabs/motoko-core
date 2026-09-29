@@ -11,56 +11,56 @@ suite(
     test(
       "size",
       func() {
-        assert Queue.size(Queue.empty<Nat>()) == 0
+        assert Queue.empty<Nat>().size() == 0
       }
     );
 
     test(
       "is empty",
       func() {
-        assert Queue.isEmpty(Queue.empty<Nat>())
+        assert Queue.empty<Nat>().isEmpty()
       }
     );
 
     test(
       "peek front",
       func() {
-        assert Queue.peekFront(Queue.empty<Nat>()) == null
+        assert Queue.empty<Nat>().peekFront() == null
       }
     );
 
     test(
       "peek back",
       func() {
-        assert Queue.peekBack(Queue.empty<Nat>()) == null
+        assert Queue.empty<Nat>().peekBack() == null
       }
     );
 
     test(
       "pop front",
       func() {
-        assert Queue.popFront(Queue.empty<Nat>()) == null
+        assert Queue.empty<Nat>().popFront() == null
       }
     );
 
     test(
       "pop back",
       func() {
-        assert Queue.popBack(Queue.empty<Nat>()) == null
+        assert Queue.empty<Nat>().popBack() == null
       }
     );
 
     test(
       "contains",
       func() {
-        assert not Queue.contains(Queue.empty<Nat>(), Nat.equal, 0)
+        assert not Queue.empty<Nat>().contains(Nat.equal, 0)
       }
     );
 
     test(
       "clone",
       func() {
-        assert Queue.size(Queue.clone(Queue.empty<Nat>())) == 0
+        assert Queue.empty<Nat>().clone().size() == 0
       }
     );
 
@@ -68,43 +68,43 @@ suite(
       "clear",
       func() {
         let queue = Queue.empty<Nat>();
-        Queue.clear(queue);
-        assert Queue.size(queue) == 0
+        queue.clear();
+        assert queue.size() == 0
       }
     );
 
     test(
       "from iter",
       func() {
-        assert Queue.size(Queue.fromIter<Nat>(Iter.empty<Nat>())) == 0
+        assert Queue.fromIter<Nat>(Iter.empty<Nat>()).size() == 0
       }
     );
 
     test(
       "values",
       func() {
-        assert Iter.toArray(Queue.values(Queue.empty<Nat>())) == []
+        assert Queue.empty<Nat>().values().toArray() == []
       }
     );
 
     test(
       "equal",
       func() {
-        assert Queue.equal(Queue.empty<Nat>(), Queue.empty<Nat>(), Nat.equal)
+        assert Queue.empty<Nat>().equal(Queue.empty<Nat>(), Nat.equal)
       }
     );
 
     test(
       "compare",
       func() {
-        assert Queue.compare(Queue.empty<Nat>(), Queue.empty<Nat>(), Nat.compare) == #equal
+        assert Queue.empty<Nat>().compare(Queue.empty<Nat>(), Nat.compare) == #equal
       }
     );
 
     test(
       "to text",
       func() {
-        assert Queue.toText(Queue.empty<Nat>(), Nat.toText) == "Queue[]"
+        assert Queue.empty<Nat>().toText(Nat.toText) == "Queue[]"
       }
     )
   }
@@ -116,28 +116,28 @@ suite(
     test(
       "size",
       func() {
-        expect.nat(Queue.size(Queue.singleton<Nat>(0))).equal(1)
+        expect.nat(Queue.singleton<Nat>(0).size()).equal(1)
       }
     );
 
     test(
       "is empty",
       func() {
-        assert not Queue.isEmpty(Queue.singleton<Nat>(0))
+        assert not Queue.singleton<Nat>(0).isEmpty()
       }
     );
 
     test(
       "peek front",
       func() {
-        assert Queue.peekFront(Queue.singleton<Nat>(0)) == ?0
+        assert Queue.singleton<Nat>(0).peekFront() == ?0
       }
     );
 
     test(
       "peek back",
       func() {
-        assert Queue.peekBack(Queue.singleton<Nat>(0)) == ?0
+        assert Queue.singleton<Nat>(0).peekBack() == ?0
       }
     );
 
@@ -145,8 +145,8 @@ suite(
       "pop front",
       func() {
         let queue = Queue.singleton<Nat>(0);
-        let front = Queue.popFront(queue);
-        assert Queue.isEmpty(queue);
+        let front = queue.popFront();
+        assert queue.isEmpty();
         assert front == ?0
       }
     );
@@ -155,8 +155,8 @@ suite(
       "pop back",
       func() {
         let queue = Queue.singleton<Nat>(0);
-        let back = Queue.popBack(queue);
-        assert Queue.isEmpty(queue);
+        let back = queue.popBack();
+        assert queue.isEmpty();
         assert back == ?0
       }
     );
@@ -164,14 +164,14 @@ suite(
     test(
       "contains present",
       func() {
-        assert Queue.contains(Queue.singleton<Nat>(0), Nat.equal, 0)
+        assert Queue.singleton<Nat>(0).contains(Nat.equal, 0)
       }
     );
 
     test(
       "contains absent",
       func() {
-        assert not Queue.contains(Queue.singleton<Nat>(0), Nat.equal, 1)
+        assert not Queue.singleton<Nat>(0).contains(Nat.equal, 1)
       }
     );
 
@@ -179,9 +179,9 @@ suite(
       "clone",
       func() {
         let original = Queue.singleton<Nat>(0);
-        let clone = Queue.clone(original);
-        assert Queue.popFront(original) == ?0;
-        expect.nat(Queue.size(clone)).equal(1)
+        let clone = original.clone();
+        assert original.popFront() == ?0;
+        expect.nat(clone.size()).equal(1)
       }
     );
 
@@ -189,57 +189,57 @@ suite(
       "clear",
       func() {
         let queue = Queue.singleton<Nat>(0);
-        Queue.clear(queue);
-        expect.nat(Queue.size(queue)).equal(0)
+        queue.clear();
+        expect.nat(queue.size()).equal(0)
       }
     );
 
     test(
       "vals",
       func() {
-        assert Iter.toArray(Queue.values(Queue.singleton<Nat>(0))) == [0]
+        assert Queue.singleton<Nat>(0).values().toArray() == [0]
       }
     );
 
     test(
       "equal same",
       func() {
-        assert Queue.equal(Queue.singleton<Nat>(0), Queue.singleton<Nat>(0), Nat.equal)
+        assert Queue.singleton<Nat>(0).equal(Queue.singleton<Nat>(0), Nat.equal)
       }
     );
 
     test(
       "equal different",
       func() {
-        assert not Queue.equal(Queue.singleton<Nat>(0), Queue.singleton<Nat>(1), Nat.equal)
+        assert not Queue.singleton<Nat>(0).equal(Queue.singleton<Nat>(1), Nat.equal)
       }
     );
 
     test(
       "compare less",
       func() {
-        assert Queue.compare(Queue.singleton<Nat>(0), Queue.singleton<Nat>(1), Nat.compare) == #less
+        assert Queue.singleton<Nat>(0).compare(Queue.singleton<Nat>(1), Nat.compare) == #less
       }
     );
 
     test(
       "compare equal",
       func() {
-        assert Queue.compare(Queue.singleton<Nat>(1), Queue.singleton<Nat>(1), Nat.compare) == #equal
+        assert Queue.singleton<Nat>(1).compare(Queue.singleton<Nat>(1), Nat.compare) == #equal
       }
     );
 
     test(
       "compare greater",
       func() {
-        assert Queue.compare(Queue.singleton<Nat>(2), Queue.singleton<Nat>(1), Nat.compare) == #greater
+        assert Queue.singleton<Nat>(2).compare(Queue.singleton<Nat>(1), Nat.compare) == #greater
       }
     );
 
     test(
       "to text",
       func() {
-        assert Queue.toText(Queue.singleton<Nat>(123), Nat.toText) == "Queue[123]"
+        assert Queue.singleton<Nat>(123).toText(Nat.toText) == "Queue[123]"
       }
     )
   }
@@ -252,10 +252,10 @@ suite(
       "push front",
       func() {
         let queue = Queue.empty<Nat>();
-        Queue.pushFront(queue, 1);
-        Queue.pushFront(queue, 2);
-        Queue.pushFront(queue, 3);
-        assert Iter.toArray(Queue.values(queue)) == [3, 2, 1]
+        queue.pushFront(1);
+        queue.pushFront(2);
+        queue.pushFront(3);
+        assert queue.values().toArray() == [3, 2, 1]
       }
     );
 
@@ -263,10 +263,10 @@ suite(
       "push back",
       func() {
         let queue = Queue.empty<Nat>();
-        Queue.pushBack(queue, 1);
-        Queue.pushBack(queue, 2);
-        Queue.pushBack(queue, 3);
-        assert Iter.toArray(Queue.values(queue)) == [1, 2, 3]
+        queue.pushBack(1);
+        queue.pushBack(2);
+        queue.pushBack(3);
+        assert queue.values().toArray() == [1, 2, 3]
       }
     );
 
@@ -274,10 +274,10 @@ suite(
       "mixed push",
       func() {
         let queue = Queue.empty<Nat>();
-        Queue.pushFront(queue, 2);
-        Queue.pushBack(queue, 3);
-        Queue.pushFront(queue, 1);
-        assert Iter.toArray(Queue.values(queue)) == [1, 2, 3]
+        queue.pushFront(2);
+        queue.pushBack(3);
+        queue.pushFront(1);
+        assert queue.values().toArray() == [1, 2, 3]
       }
     )
   }
@@ -291,12 +291,12 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         let results = [
-          Queue.popFront(queue),
-          Queue.popFront(queue),
-          Queue.popFront(queue),
-          Queue.popFront(queue)
+          queue.popFront(),
+          queue.popFront(),
+          queue.popFront(),
+          queue.popFront()
         ];
-        assert Queue.isEmpty(queue);
+        assert queue.isEmpty();
         assert results == [?1, ?2, ?3, null]
       }
     );
@@ -306,12 +306,12 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         let results = [
-          Queue.popBack(queue),
-          Queue.popBack(queue),
-          Queue.popBack(queue),
-          Queue.popBack(queue)
+          queue.popBack(),
+          queue.popBack(),
+          queue.popBack(),
+          queue.popBack()
         ];
-        assert Queue.isEmpty(queue);
+        assert queue.isEmpty();
         assert results == [?3, ?2, ?1, null]
       }
     );
@@ -321,13 +321,13 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
         let results = [
-          Queue.popFront(queue),
-          Queue.popBack(queue),
-          Queue.popFront(queue),
-          Queue.popBack(queue),
-          Queue.popFront(queue)
+          queue.popFront(),
+          queue.popBack(),
+          queue.popFront(),
+          queue.popBack(),
+          queue.popFront()
         ];
-        assert Queue.isEmpty(queue);
+        assert queue.isEmpty();
         assert results == [?1, ?4, ?2, ?3, null]
       }
     )
@@ -341,8 +341,8 @@ suite(
       "map",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-        let mapped = Queue.map(queue, Nat.toText);
-        assert Iter.toArray(Queue.values(mapped)) == ["1", "2", "3"]
+        let mapped = queue.map(Nat.toText);
+        assert mapped.values().toArray() == ["1", "2", "3"]
       }
     );
 
@@ -350,8 +350,8 @@ suite(
       "filter",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
-        let filtered = Queue.filter(queue, func n = n % 2 == 0);
-        assert Iter.toArray(Queue.values(filtered)) == [2, 4]
+        let filtered = queue.filter(func n = n % 2 == 0);
+        assert filtered.values().toArray() == [2, 4]
       }
     );
 
@@ -359,11 +359,10 @@ suite(
       "filter map",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
-        let result = Queue.filterMap(
-          queue,
-          func n = if (n % 2 == 0) ?Nat.toText(n) else null
+        let result = queue.filterMap(
+          func n = if (n % 2 == 0) ?n.toText() else null
         );
-        assert Iter.toArray(Queue.values(result)) == ["2", "4"]
+        assert result.values().toArray() == ["2", "4"]
       }
     );
 
@@ -372,7 +371,7 @@ suite(
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
         var sum = 0;
-        Queue.forEach(queue, func n { sum += n });
+        queue.forEach(func n { sum += n });
         assert sum == 6
       }
     )
@@ -386,7 +385,7 @@ suite(
       "all true",
       func() {
         let queue = Queue.fromIter<Nat>([2, 4, 6].values());
-        assert Queue.all(queue, func n = n % 2 == 0)
+        assert queue.all(func n = n % 2 == 0)
       }
     );
 
@@ -394,7 +393,7 @@ suite(
       "all false",
       func() {
         let queue = Queue.fromIter<Nat>([2, 3, 4].values());
-        assert not Queue.all(queue, func n = n % 2 == 0)
+        assert not queue.all(func n = n % 2 == 0)
       }
     );
 
@@ -402,7 +401,7 @@ suite(
       "any true",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-        assert Queue.any(queue, func n = n % 2 == 0)
+        assert queue.any(func n = n % 2 == 0)
       }
     );
 
@@ -410,7 +409,7 @@ suite(
       "any false",
       func() {
         let queue = Queue.fromIter<Nat>([1, 3, 5].values());
-        assert not Queue.any(queue, func n = n % 2 == 0)
+        assert not queue.any(func n = n % 2 == 0)
       }
     )
   }
@@ -423,8 +422,8 @@ suite(
       "empty to pure",
       func() {
         let queue = Queue.empty<Nat>();
-        let pureQueue = Queue.toPure(queue);
-        assert PureQueue.isEmpty(pureQueue)
+        let pureQueue = queue.toPure();
+        assert pureQueue.isEmpty()
       }
     );
 
@@ -433,7 +432,7 @@ suite(
       func() {
         let pureQueue = PureQueue.empty<Nat>();
         let queue = Queue.fromPure<Nat>(pureQueue);
-        assert Queue.isEmpty(queue)
+        assert queue.isEmpty()
       }
     );
 
@@ -441,8 +440,8 @@ suite(
       "singleton to pure",
       func() {
         let queue = Queue.singleton<Nat>(1);
-        let pureQueue = Queue.toPure(queue);
-        assert Iter.toArray(PureQueue.values(pureQueue)) == [1]
+        let pureQueue = queue.toPure();
+        assert pureQueue.values().toArray() == [1]
       }
     );
 
@@ -451,7 +450,7 @@ suite(
       func() {
         let pureQueue = PureQueue.pushBack(PureQueue.empty(), 1);
         let queue = Queue.fromPure<Nat>(pureQueue);
-        assert Iter.toArray(Queue.values(queue)) == [1]
+        assert queue.values().toArray() == [1]
       }
     );
 
@@ -459,8 +458,8 @@ suite(
       "multiple elements to pure",
       func() {
         let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-        let pureQueue = Queue.toPure(queue);
-        assert Iter.toArray(PureQueue.values(pureQueue)) == [1, 2, 3]
+        let pureQueue = queue.toPure();
+        assert pureQueue.values().toArray() == [1, 2, 3]
       }
     );
 
@@ -468,11 +467,11 @@ suite(
       "multiple elements from pure",
       func() {
         var pureQueue = PureQueue.empty<Nat>();
-        pureQueue := PureQueue.pushBack(pureQueue, 1);
-        pureQueue := PureQueue.pushBack(pureQueue, 2);
-        pureQueue := PureQueue.pushBack(pureQueue, 3);
+        pureQueue := pureQueue.pushBack(1);
+        pureQueue := pureQueue.pushBack(2);
+        pureQueue := pureQueue.pushBack(3);
         let queue = Queue.fromPure<Nat>(pureQueue);
-        assert Iter.toArray(Queue.values(queue)) == [1, 2, 3]
+        assert queue.values().toArray() == [1, 2, 3]
       }
     );
 
@@ -480,9 +479,9 @@ suite(
       "round trip mutable to pure to mutable",
       func() {
         let original = Queue.fromIter<Nat>([1, 2, 3].values());
-        let pureQueue = Queue.toPure(original);
+        let pureQueue = original.toPure();
         let roundTrip = Queue.fromPure<Nat>(pureQueue);
-        assert Iter.toArray(Queue.values(roundTrip)) == [1, 2, 3]
+        assert roundTrip.values().toArray() == [1, 2, 3]
       }
     );
 
@@ -490,12 +489,12 @@ suite(
       "round trip pure to mutable to pure",
       func() {
         var original = PureQueue.empty<Nat>();
-        original := PureQueue.pushBack(original, 1);
-        original := PureQueue.pushBack(original, 2);
-        original := PureQueue.pushBack(original, 3);
+        original := original.pushBack(1);
+        original := original.pushBack(2);
+        original := original.pushBack(3);
         let mutableQueue = Queue.fromPure<Nat>(original);
-        let roundTrip = Queue.toPure(mutableQueue);
-        assert Iter.toArray(PureQueue.values(roundTrip)) == [1, 2, 3]
+        let roundTrip = mutableQueue.toPure();
+        assert roundTrip.values().toArray() == [1, 2, 3]
       }
     )
   }
@@ -530,11 +529,11 @@ suite(
         let random = Random(randomSeed);
         for (_ in Nat.range(0, numberOfSteps)) {
           if (random.next() % 2 == 0) {
-            Queue.pushBack(queue, nextInsert);
+            queue.pushBack(nextInsert);
             nextInsert += 1
           } else {
-            assert Queue.size(queue) == (nextInsert - nextRemove : Nat);
-            switch (Queue.popFront(queue)) {
+            assert queue.size() == (nextInsert - nextRemove : Nat);
+            switch (queue.popFront()) {
               case null {
                 assert nextInsert == nextRemove
               };
@@ -546,7 +545,7 @@ suite(
           }
         };
         while (nextRemove < nextInsert) {
-          switch (Queue.popFront(queue)) {
+          switch (queue.popFront()) {
             case null Runtime.trap("Should not be empty");
             case (?number) {
               assert number == nextRemove;
@@ -554,14 +553,14 @@ suite(
             }
           }
         };
-        switch (Queue.popFront(queue)) {
+        switch (queue.popFront()) {
           case null {
-            assert Queue.isEmpty(queue);
+            assert queue.isEmpty();
             assert nextInsert == nextRemove
           };
           case (?_) Runtime.trap("Should be empty")
         };
-        assert Queue.size(queue) == 0
+        assert queue.size() == 0
       }
     );
 
@@ -571,14 +570,14 @@ suite(
         let queue = Queue.empty<Nat>();
         for (_ in Nat.range(0, 2)) {
           for (number in Nat.range(0, numberOfSteps)) {
-            Queue.pushBack(queue, number)
+            queue.pushBack(number)
           };
           for (number in Nat.range(0, numberOfSteps)) {
-            assert Queue.popFront(queue) == ?number
+            assert queue.popFront() == ?number
           };
-          assert Queue.isEmpty(queue)
+          assert queue.isEmpty()
         };
-        expect.nat(Queue.size(queue)).equal(0)
+        expect.nat(queue.size()).equal(0)
       }
     );
 
@@ -587,24 +586,24 @@ suite(
       func() {
         let queue = Queue.empty<Nat>();
         for (number in Nat.range(0, numberOfSteps)) {
-          Queue.pushBack(queue, number)
+          queue.pushBack(number)
         };
         var counter = 0;
-        for (number in Queue.values(queue)) {
+        for (number in queue.values()) {
           assert number == counter;
           counter += 1
         };
         assert counter == numberOfSteps;
         for (number in Nat.range(0, numberOfSteps / 2)) {
-          assert Queue.popFront(queue) == ?number
+          assert queue.popFront() == ?number
         };
         counter := numberOfSteps / 2;
-        for (number in Queue.values(queue)) {
+        for (number in queue.values()) {
           assert number == counter;
           counter += 1
         };
         assert counter == numberOfSteps;
-        expect.nat(Queue.size(queue)).equal((numberOfSteps + 1) / 2)
+        expect.nat(queue.size()).equal((numberOfSteps + 1) / 2)
       }
     )
   }
@@ -617,8 +616,8 @@ suite(
       "empty array",
       func() {
         let queue = Queue.fromArray<Nat>([]);
-        assert Queue.isEmpty(queue);
-        assert Queue.size(queue) == 0
+        assert queue.isEmpty();
+        assert queue.size() == 0
       }
     );
 
@@ -626,9 +625,9 @@ suite(
       "single element",
       func() {
         let queue = Queue.fromArray<Nat>([42]);
-        assert Queue.size(queue) == 1;
-        assert Queue.peekFront(queue) == ?42;
-        assert Queue.peekBack(queue) == ?42
+        assert queue.size() == 1;
+        assert queue.peekFront() == ?42;
+        assert queue.peekBack() == ?42
       }
     );
 
@@ -636,13 +635,13 @@ suite(
       "multiple elements",
       func() {
         let queue = Queue.fromArray<Nat>([1, 2, 3]);
-        assert Queue.size(queue) == 3;
-        assert Queue.peekFront(queue) == ?1;
-        assert Queue.peekBack(queue) == ?3;
-        assert Queue.popFront(queue) == ?1;
-        assert Queue.popFront(queue) == ?2;
-        assert Queue.popFront(queue) == ?3;
-        assert Queue.isEmpty(queue)
+        assert queue.size() == 3;
+        assert queue.peekFront() == ?1;
+        assert queue.peekBack() == ?3;
+        assert queue.popFront() == ?1;
+        assert queue.popFront() == ?2;
+        assert queue.popFront() == ?3;
+        assert queue.isEmpty()
       }
     )
   }
@@ -655,7 +654,7 @@ suite(
       "empty queue",
       func() {
         let queue = Queue.empty<Nat>();
-        let array = Queue.toArray(queue);
+        let array = queue.toArray();
         assert array == []
       }
     );
@@ -664,7 +663,7 @@ suite(
       "single element",
       func() {
         let queue = Queue.singleton<Nat>(42);
-        let array = Queue.toArray(queue);
+        let array = queue.toArray();
         assert array == [42]
       }
     );
@@ -673,7 +672,7 @@ suite(
       "multiple elements",
       func() {
         let queue = Queue.fromArray<Nat>([1, 2, 3]);
-        let array = Queue.toArray(queue);
+        let array = queue.toArray();
         assert array == [1, 2, 3]
       }
     );
@@ -683,7 +682,7 @@ suite(
       func() {
         let original = [1, 2, 3, 4, 5];
         let queue = Queue.fromArray<Nat>(original);
-        let result = Queue.toArray(queue);
+        let result = queue.toArray();
         assert result == original
       }
     )

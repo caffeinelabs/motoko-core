@@ -231,7 +231,7 @@ module {
   /// *Runtime and space assumes that `compare` runs in O(1) time and space.
   public func sort<T>(self : [T], compare : (implicit : (T, T) -> Order.Order)) : [T] {
     let varArray : [var T] = toVarArray(self);
-    VarArray.sortInPlace(varArray, compare);
+    varArray.sortInPlace(compare);
     fromVarArray(varArray)
   };
 

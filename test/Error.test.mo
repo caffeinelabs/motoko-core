@@ -23,12 +23,12 @@ run(
     [
       test(
         "error code",
-        Error.code(Error.reject(testMessage)),
+        Error.reject(testMessage).code(),
         M.equals({ { item = #canister_reject } and ErrorCodeTestable() })
       ),
       test(
         "error message",
-        Error.message(Error.reject(testMessage)),
+        Error.reject(testMessage).message(),
         M.equals(T.text(testMessage))
       )
     ]

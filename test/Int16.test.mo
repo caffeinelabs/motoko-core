@@ -59,12 +59,12 @@ run(
     [
       test(
         "maximum number",
-        Int16.toInt(Int16.maxValue),
+        Int16.maxValue.toInt(),
         M.equals(T.int(maximumInt16asInt))
       ),
       test(
         "minimum number",
-        Int16.toInt(Int16.minValue),
+        Int16.minValue.toInt(),
         M.equals(T.int(minimumInt16asInt))
       ),
       test(
@@ -94,12 +94,12 @@ run(
     [
       test(
         "maximum number",
-        Int.toInt16(maximumInt16asInt),
+        maximumInt16asInt.toInt16(),
         M.equals(Int16Testable(Int16.maxValue))
       ),
       test(
         "minimum number",
-        Int.toInt16(minimumInt16asInt),
+        minimumInt16asInt.toInt16(),
         M.equals(Int16Testable(Int16.minValue))
       ),
       test(
@@ -204,7 +204,7 @@ run(
     [
       test(
         "maximum number",
-        Int16.toNat16(Int16.maxValue),
+        Int16.maxValue.toNat16(),
         M.equals(Nat16Testable(maximumInt16asNat16))
       ),
       test(
@@ -249,12 +249,12 @@ run(
       ),
       test(
         "maximum number",
-        Int16.toText(Int16.maxValue),
+        Int16.maxValue.toText(),
         M.equals(T.text("32767"))
       ),
       test(
         "minimum number",
-        Int16.toText(Int16.minValue),
+        Int16.minValue.toText(),
         M.equals(T.text("-32768"))
       )
     ]
@@ -2293,12 +2293,12 @@ run(
     [
       test(
         "maximum number",
-        Int16.toInt64(Int16.maxValue),
+        Int16.maxValue.toInt64(),
         M.equals(Int64Testable(32_767))
       ),
       test(
         "minimum number",
-        Int16.toInt64(Int16.minValue),
+        Int16.minValue.toInt64(),
         M.equals(Int64Testable(-32_768))
       ),
       test(
@@ -2361,12 +2361,12 @@ run(
     [
       test(
         "maximum number",
-        Int16.toInt32(Int16.maxValue),
+        Int16.maxValue.toInt32(),
         M.equals(Int32Testable(32_767))
       ),
       test(
         "minimum number",
-        Int16.toInt32(Int16.minValue),
+        Int16.minValue.toInt32(),
         M.equals(Int32Testable(-32_768))
       ),
       test(

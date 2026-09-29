@@ -368,7 +368,7 @@ module {
         self.root,
         func(x : T) {
           if (Internal.contains(other.root, compare, x)) {
-            List.add(elems, x)
+            elems.add(x)
           }
         }
       )
@@ -377,12 +377,12 @@ module {
         other.root,
         func(x : T) {
           if (Internal.contains(self.root, compare, x)) {
-            List.add(elems, x)
+            elems.add(x)
           }
         }
       )
     };
-    { root = Internal.buildFromSorted(elems); size = List.size(elems) }
+    { root = Internal.buildFromSorted(elems); size = elems.size() }
   };
 
   /// Returns a new set that is the difference between `set1` and `other` (`set1` minus `set2`),
@@ -415,11 +415,11 @@ module {
         self.root,
         func(x : T) {
           if (not Internal.contains(other.root, compare, x)) {
-            List.add(elems, x)
+            elems.add(x)
           }
         }
       );
-      { root = Internal.buildFromSorted(elems); size = List.size(elems) }
+      { root = Internal.buildFromSorted(elems); size = elems.size() }
     } else {
       foldLeft(
         other,
@@ -1149,7 +1149,7 @@ module {
     public func buildFromSorted<V>(buf : List.List<V>) : Tree<V> {
       var maxDepth = 0;
       var maxSize = 1;
-      while (maxSize < List.size(buf)) {
+      while (maxSize < buf.size()) {
         maxDepth += 1;
         maxSize += maxSize + 1
       };
@@ -1157,9 +1157,9 @@ module {
       func buildFromSortedHelper(l : Nat, r : Nat, depth : Nat) : Tree<V> {
         if (l + 1 == r) {
           if (depth == maxDepth) {
-            return #red(#leaf, List.at(buf, l), #leaf)
+            return #red(#leaf, buf.at(l), #leaf)
           } else {
-            return #black(#leaf, List.at(buf, l), #leaf)
+            return #black(#leaf, buf.at(l), #leaf)
           }
         };
         if (l >= r) {
@@ -1168,11 +1168,11 @@ module {
         let m = (l + r) / 2;
         return #black(
           buildFromSortedHelper(l, m, depth + 1),
-          List.at(buf, m),
+          buf.at(m),
           buildFromSortedHelper(m + 1, r, depth + 1)
         )
       };
-      buildFromSortedHelper(0, List.size(buf), 0)
+      buildFromSortedHelper(0, buf.size(), 0)
     };
 
     type IterRep<T> = Types.Pure.List<{ #tr : Tree<T>; #x : T }>;

@@ -223,7 +223,7 @@ module {
   /// Runtime: O(t.size())
   /// Space: O(t.size())
   public func reverse(self : Text) : Text {
-    fromIter(Iter.reverse(self.chars()))
+    fromIter(self.chars().reverse())
   };
 
   /// Returns true if two text values are equal.
@@ -505,15 +505,15 @@ module {
     let stack : Stack.Stack<(Iter.Iter<Char>, Char)> = Stack.empty();
 
     public func pushBack(cs0 : Iter.Iter<Char>, c : Char) {
-      Stack.push(stack, (cs0, c))
+      stack.push((cs0, c))
     };
 
     public func next() : ?Char {
-      switch (Stack.peek(stack)) {
+      switch (stack.peek()) {
         case (?(buff, c)) {
           switch (buff.next()) {
             case null {
-              ignore Stack.pop(stack);
+              ignore stack.pop();
               return ?c
             };
             case oc {

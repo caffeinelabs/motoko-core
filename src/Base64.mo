@@ -99,7 +99,7 @@ module {
         alphabet[(m & 0x3F).toNat()]
       ].toBlob();
 
-      switch (Text.decodeUtf8(bytes)) {
+      switch (bytes.decodeUtf8()) {
         case (?t) result := result # t;
         case (_) {
           Prim.trap("Cannot happen: Utf8 decode error in Base64.encode().")
@@ -126,7 +126,7 @@ module {
         if (i +% 2 < sz) alphabet[(n & 0x3F).toNat()] else 61
       ]);
 
-      switch (Text.decodeUtf8(bytes)) {
+      switch (bytes.decodeUtf8()) {
         case (?t) result := result # t;
         case (_) {
           Prim.trap("Cannot happen: Utf8 decode error in Base64.encode().")
@@ -187,11 +187,11 @@ module {
         nbits += 6;
         if (nbits >= 8) {
           nbits -= 8;
-          List.add(out, Nat.toNat8(Nat32.toNat((acc >> nbits) & 0xFF)))
+          out.add(Nat32.toNat((acc >> nbits) & 0xFF).toNat8())
         }
       }
     };
-    ?Array.toBlob(List.toArray(out))
+    ?out.toArray().toBlob()
   };
 
 }
