@@ -615,9 +615,11 @@ suite(
                   case null assert false;
                   case (?(3, rest3)) {
                     assert rest3.isEmpty()
-                  }
+                  };
+                  case _ assert false
                 }
-              }
+              };
+              case _ assert false
             }
           };
           case _ assert false
