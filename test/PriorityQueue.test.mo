@@ -8,7 +8,6 @@ import Types "../src/Types";
 import VarArray "../src/VarArray";
 import Random "../src/Random";
 import Order "../src/Order";
-import Debug "../src/Debug";
 import Text "../src/Text";
 
 import { suite; test; expect } "mo:test";
@@ -263,31 +262,6 @@ type PriorityQueueUpdateOperation<T> = {
   #Clear
 };
 
-func opToText<T>(op : PriorityQueueUpdateOperation<T>, toText : T -> Text) : Text {
-  switch (op) {
-    case (#Push element) { "#Push(" # toText(element) # ")" };
-    case (#Pop) { "#Pop" };
-    case (#Clear) { "#Clear" }
-  }
-};
-
-/// Returns Text like "[#Push(1), #Pop, ...]"; capped at 10 elements.
-func opsToText<T>(ops : [PriorityQueueUpdateOperation<T>], toText : T -> Text) : Text {
-  let cap : Nat = 10;
-  let n = ops.size();
-  let shown = Array.tabulate(
-    Nat.min(ops.size(), cap),
-    func i {
-      opToText(ops[i], toText)
-    }
-  );
-
-  let body = shown.toText(func x = x); // join with ", "
-
-  let ?stripped = body.stripEnd(#char ']');
-  stripped # (if (n > cap) "...]" else "]")
-};
-
 // Runs a sequence of PriorityQueueUpdateOperations on two data structures in parallel:
 // - PriorityQueue
 // - PriorityQueueSet
@@ -413,7 +387,6 @@ suite(
               /* useClear = */ useClear
             ).values()
           ) {
-            //Debug.print("ops = " # opsToText(ops, Nat.toText));
             runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
           }
         }
@@ -436,7 +409,6 @@ suite(
           /* wPop = */ 1,
           /* wClear = */ 0
         );
-        //Debug.print("ops = " # opsToText(ops, Nat.toText));
         runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
@@ -451,7 +423,6 @@ suite(
           /* wPop = */ 1,
           /* wClear = */ 1
         );
-        //Debug.print("ops = " # opsToText(ops, Nat.toText));
         runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
@@ -466,7 +437,6 @@ suite(
           /* wPop = */ 1,
           /* wClear = */ 0
         );
-        //Debug.print("ops = " # opsToText(ops, Nat.toText));
         runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
@@ -481,7 +451,6 @@ suite(
           /* wPop = */ 10,
           /* wClear = */ 1
         );
-        //Debug.print("ops = " # opsToText(ops, Nat.toText));
         runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
@@ -496,7 +465,6 @@ suite(
           /* wPop = */ 1,
           /* wClear = */ 0
         );
-        //Debug.print("ops = " # opsToText(ops, Nat.toText));
         runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     );
@@ -511,7 +479,6 @@ suite(
           /* wPop = */ 0,
           /* wClear = */ 0
         );
-        //Debug.print("ops = " # opsToText(ops, Nat.toText));
         runOpsTwoQueues(ops, Nat.compare, Nat.equal, Nat.toText)
       }
     )
