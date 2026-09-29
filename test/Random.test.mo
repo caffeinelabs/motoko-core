@@ -3,7 +3,6 @@ import Int "../src/Int";
 import Nat "../src/Nat";
 import Nat8 "../src/Nat8";
 import Nat64 "../src/Nat64";
-import Float "../src/Float";
 import Bool "../src/Bool";
 import Array "../src/Array";
 import { suite; test; expect } = "mo:test";

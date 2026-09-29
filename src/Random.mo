@@ -258,7 +258,7 @@ module {
       let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / toExclusive.toNat());
       loop {
         // Build up a random Nat64 from bytes
-        var number = nat64();
+        let number = nat64();
         // If number is below cutoff, we can use it
         if (number < cutoff) {
           // Scale down to desired range
@@ -373,7 +373,7 @@ module {
       let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / toExclusive.toNat());
       loop {
         // Build up a random Nat64 from bytes
-        var number = await* nat64();
+        let number = await* nat64();
         // If number is below cutoff, we can use it
         if (number < cutoff) {
           // Scale down to desired range

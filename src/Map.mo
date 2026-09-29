@@ -1461,7 +1461,7 @@ module {
     object {
       public func next() : ?(K, V) {
         // pop the next node cursor off the stack
-        var nodeCursor = nodeCursorStack.pop();
+        let nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; kvIndex }) {
@@ -1547,7 +1547,7 @@ module {
     object {
       public func next() : ?(K, V) {
         // pop the next node cursor off the stack
-        var nodeCursor = nodeCursorStack.pop();
+        let nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; kvIndex }) {

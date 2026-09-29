@@ -75,7 +75,7 @@ module {
           case "pure/List" {
             switch col {
               case "0 (baseline)" {
-                var list = PureList.empty<Nat>();
+                let list = PureList.empty<Nat>();
                 ignore list.toArray()
               };
               case "1" {

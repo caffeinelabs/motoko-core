@@ -1,12 +1,10 @@
 import Bench "mo:bench";
 
 import Array "../src/Array";
-import Nat "../src/Nat";
 import Nat8 "../src/Nat8";
 import Nat16 "../src/Nat16";
 import Nat32 "../src/Nat32";
 import Nat64 "../src/Nat64";
-import Int "../src/Int";
 import Int8 "../src/Int8";
 import Int16 "../src/Int16";
 import Int32 "../src/Int32";
@@ -36,15 +34,15 @@ module {
       "Nat8.fromNat16",
       "Nat8.fromNat32",
       "Nat8.fromNat64",
-      "Nat16.fromNat32",
-      "Nat16.fromNat64",
-      "Nat32.fromNat64",
-      "Int8.fromInt16",
-      "Int8.fromInt32",
-      "Int8.fromInt64",
-      "Int16.fromInt32",
-      "Int16.fromInt64",
-      "Int32.fromInt64"
+      "Nat32.toNat16",
+      "Nat64.toNat16",
+      "Nat64.toNat32",
+      "Int16.toInt8",
+      "Int32.toInt8",
+      "Int64.toInt8",
+      "Int32.toInt16",
+      "Int64.toInt16",
+      "Int64.toInt32"
     ]);
     bench.cols([
       "1000"
@@ -168,66 +166,66 @@ module {
               i += 1
             }
           };
-          case "Nat16.fromNat32" {
+          case "Nat32.toNat16" {
             var i = 0;
             while (i < size) {
-              ignore Nat16.fromNat32(source32[i] >> 16);
+              ignore (source32[i] >> 16).toNat16();
               i += 1
             }
           };
-          case "Nat16.fromNat64" {
+          case "Nat64.toNat16" {
             var i = 0;
             while (i < size) {
-              ignore Nat16.fromNat64(source64[i] >> 48);
+              ignore (source64[i] >> 48).toNat16();
               i += 1
             }
           };
-          case "Nat32.fromNat64" {
+          case "Nat64.toNat32" {
             var i = 0;
             while (i < size) {
-              ignore Nat32.fromNat64(source64[i] >> 32);
+              ignore (source64[i] >> 32).toNat32();
               i += 1
             }
           };
-          case "Int8.fromInt16" {
+          case "Int16.toInt8" {
             var i = 0;
             while (i < size) {
-              ignore Int8.fromInt16(source16int[i] & 0x7f);
+              ignore (source16int[i] & 0x7f).toInt8();
               i += 1
             }
           };
-          case "Int8.fromInt32" {
+          case "Int32.toInt8" {
             var i = 0;
             while (i < size) {
-              ignore Int8.fromInt32(source32int[i] & 0x7f);
+              ignore (source32int[i] & 0x7f).toInt8();
               i += 1
             }
           };
-          case "Int8.fromInt64" {
+          case "Int64.toInt8" {
             var i = 0;
             while (i < size) {
-              ignore Int8.fromInt64(source64int[i] & 0x7f);
+              ignore (source64int[i] & 0x7f).toInt8();
               i += 1
             }
           };
-          case "Int16.fromInt32" {
+          case "Int32.toInt16" {
             var i = 0;
             while (i < size) {
-              ignore Int16.fromInt32(source32int[i] & 0x7fff);
+              ignore (source32int[i] & 0x7fff).toInt16();
               i += 1
             }
           };
-          case "Int16.fromInt64" {
+          case "Int64.toInt16" {
             var i = 0;
             while (i < size) {
-              ignore Int16.fromInt64(source64int[i] & 0x7fff);
+              ignore (source64int[i] & 0x7fff).toInt16();
               i += 1
             }
           };
-          case "Int32.fromInt64" {
+          case "Int64.toInt32" {
             var i = 0;
             while (i < size) {
-              ignore Int32.fromInt64(source64int[i] & 0x7fffffff);
+              ignore (source64int[i] & 0x7fffffff).toInt32();
               i += 1
             }
           };
