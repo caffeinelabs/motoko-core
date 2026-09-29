@@ -27,8 +27,8 @@ func joinWith(xs : [var Text], sep : Text) : Text {
 
 func varArrayTestable<A>(testableA : T.Testable<A>) : T.Testable<[var A]> {
   {
-    display = func(xs : [var A]) : Text = "[var " # joinWith(VarArray.map(xs, testableA.display), ", ") # "]";
-    equals = func(xs1 : [var A], xs2 : [var A]) : Bool = VarArray.equal(xs1, xs2, testableA.equals)
+    display = func(xs : [var A]) : Text = "[var " # joinWith(xs.map(testableA.display), ", ") # "]";
+    equals = func(xs1 : [var A], xs2 : [var A]) : Bool = xs1.equal(xs2, testableA.equals)
   }
 };
 
@@ -43,7 +43,7 @@ func varArray<A>(testableA : T.Testable<A>, xs : [var A]) : T.TestableItem<[var 
 
 // used to test sort
 func bubbleSort<T>(array : [var T], compare : (T, T) -> Order.Order) : [var T] {
-  let a = VarArray.clone(array);
+  let a = array.clone();
   let n = a.size();
   var i = 0;
   while (i < n) {
@@ -111,12 +111,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "find",
-      VarArray.find([var 1, 9, 4, 8], func x = x == 9),
+      [var 1, 9, 4, 8].find(func x = x == 9),
       M.equals(T.optional(T.natTestable, ?9))
     ),
     Suite.test(
       "find fail",
-      VarArray.find([var 1, 9, 4, 8], func _ = false),
+      [var 1, 9, 4, 8].find(func _ = false),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
@@ -126,12 +126,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "findIndex",
-      VarArray.findIndex([var 1, 9, 4, 8], func x = x == 9),
+      [var 1, 9, 4, 8].findIndex(func x = x == 9),
       M.equals(T.optional(T.natTestable, ?1))
     ),
     Suite.test(
       "findIndex fail",
-      VarArray.findIndex([var 1, 9, 4, 8], func _ = false),
+      [var 1, 9, 4, 8].findIndex(func _ = false),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
@@ -141,12 +141,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "contains",
-      VarArray.contains([var 1, 9, 4, 8], Nat.equal, 9),
+      [var 1, 9, 4, 8].contains(Nat.equal, 9),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "contains not found",
-      VarArray.contains([var 1, 9, 4, 8], Nat.equal, 5),
+      [var 1, 9, 4, 8].contains(Nat.equal, 5),
       M.equals(T.bool(false))
     ),
     Suite.test(
@@ -156,12 +156,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "contains first element",
-      VarArray.contains([var 1, 2, 3], Nat.equal, 1),
+      [var 1, 2, 3].contains(Nat.equal, 1),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "contains last element",
-      VarArray.contains([var 1, 2, 3], Nat.equal, 3),
+      [var 1, 2, 3].contains(Nat.equal, 3),
       M.equals(T.bool(true))
     ),
     Suite.test(
@@ -186,7 +186,7 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "sort",
-      VarArray.sort(VarArray.tabulate<Int>(30, func i = (i * 123) % 100 - 50), Int.compare),
+      VarArray.tabulate<Int>(30, func i = (i * 123) % 100 - 50).sort(Int.compare),
       M.equals(
         varArray(
           T.intTestable,
@@ -199,22 +199,22 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "sort",
-      VarArray.sort([var 1], Nat.compare),
+      [var 1].sort(Nat.compare),
       M.equals(varArray(T.natTestable, [var 1]))
     ),
     Suite.test(
       "sort",
-      VarArray.sort([var 2, 3, 1], Nat.compare),
+      [var 2, 3, 1].sort(Nat.compare),
       M.equals(varArray(T.natTestable, [var 1, 2, 3]))
     ),
     Suite.test(
       "sort",
-      VarArray.sort([var 7, 6, 5, 4, 3, 2, 1], Nat.compare),
+      [var 7, 6, 5, 4, 3, 2, 1].sort(Nat.compare),
       M.equals(varArray(T.natTestable, [var 1, 2, 3, 4, 5, 6, 7]))
     ),
     Suite.test(
       "sort",
-      VarArray.sort([var 7, 6, 5, 4, 3, 2, 1, 0], Nat.compare),
+      [var 7, 6, 5, 4, 3, 2, 1, 0].sort(Nat.compare),
       M.equals(varArray(T.natTestable, [var 0, 1, 2, 3, 4, 5, 6, 7]))
     ),
     Suite.test(
@@ -224,17 +224,17 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "sort already sorted",
-      VarArray.sort([var 1, 2, 3, 4, 5], Nat.compare),
+      [var 1, 2, 3, 4, 5].sort(Nat.compare),
       M.equals(varArray(T.natTestable, [var 1, 2, 3, 4, 5]))
     ),
     Suite.test(
       "sort repeated elements",
-      VarArray.sort([var 2, 2, 2, 2, 2], Nat.compare),
+      [var 2, 2, 2, 2, 2].sort(Nat.compare),
       M.equals(varArray(T.natTestable, [var 2, 2, 2, 2, 2]))
     ),
     Suite.test(
       "reverse",
-      VarArray.reverse([var 0, 1, 2, 2, 3]),
+      [var 0, 1, 2, 2, 3].reverse(),
       M.equals(varArray(T.natTestable, [var 3, 2, 2, 1, 0]))
     ),
     Suite.test(
@@ -244,12 +244,12 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "reverse singleton",
-      VarArray.reverse([var 0]),
+      [var 0].reverse(),
       M.equals(varArray(T.natTestable, [var 0]))
     ),
     Suite.test(
       "map",
-      VarArray.map([var 1, 2, 3], func x = x % 2 == 0),
+      [var 1, 2, 3].map(func x = x % 2 == 0),
       M.equals(varArray(T.boolTestable, [var false, true, false]))
     ),
     Suite.test(
@@ -259,7 +259,7 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "filter",
-      VarArray.filter([var 1, 2, 3, 4, 5, 6], func x = x % 2 == 0),
+      [var 1, 2, 3, 4, 5, 6].filter(func x = x % 2 == 0),
       M.equals(varArray(T.natTestable, [var 2, 4, 6]))
     ),
     Suite.test(
@@ -269,7 +269,7 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "mapEntries",
-      VarArray.mapEntries<Nat, Nat>([var 1, 2, 3], func(x, i) = x + i),
+      [var 1, 2, 3].mapEntries<Nat, Nat>(func(x, i) = x + i),
       M.equals(varArray(T.natTestable, [var 1, 3, 5]))
     ),
     Suite.test(
@@ -279,17 +279,17 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "filterMap",
-      VarArray.filterMap<Nat, Nat>([var 1, 2, 3, 4, 5, 6], func x { if (x % 2 == 0) ?x else null }),
+      [var 1, 2, 3, 4, 5, 6].filterMap<Nat, Nat>(func x { if (x % 2 == 0) ?x else null }),
       M.equals(varArray(T.natTestable, [var 2, 4, 6]))
     ),
     Suite.test(
       "filterMap keep all",
-      VarArray.filterMap<Nat, Nat>([var 1, 2, 3], func x = ?x),
+      [var 1, 2, 3].filterMap<Nat, Nat>(func x = ?x),
       M.equals(varArray(T.natTestable, [var 1, 2, 3]))
     ),
     Suite.test(
       "filterMap keep none",
-      VarArray.filterMap<Nat, Nat>([var 1, 2, 3], func _ = null),
+      [var 1, 2, 3].filterMap<Nat, Nat>(func _ = null),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
     Suite.test(
@@ -307,16 +307,14 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "mapResult fail first",
-      VarArray.mapResult<Int, Nat, Text>(
-        [var -1, 2, 3],
+      [var -1, 2, 3].mapResult<Int, Nat, Text>(
         func x { if (x >= 0) { #ok(Int.abs x) } else { #err "error message" } }
       ),
       M.equals(T.result(varArrayTestable(T.natTestable), T.textTestable, #err "error message"))
     ),
     Suite.test(
       "mapResult fail last",
-      VarArray.mapResult<Int, Nat, Text>(
-        [var 1, 2, -3],
+      [var 1, 2, -3].mapResult<Int, Nat, Text>(
         func x { if (x >= 0) { #ok(Int.abs x) } else { #err "error message" } }
       ),
       M.equals(T.result(varArrayTestable(T.natTestable), T.textTestable, #err "error message"))
@@ -341,56 +339,49 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "flatMap mix",
-      VarArray.flatMap<Nat, Nat>(
-        [var 1, 2, 1, 2, 3],
+      [var 1, 2, 1, 2, 3].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
     Suite.test(
       "flatMap mix empty right",
-      VarArray.flatMap<Nat, Nat>(
-        [var 0, 1, 2, 0, 1, 2, 3, 0],
+      [var 0, 1, 2, 0, 1, 2, 3, 0].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
     Suite.test(
       "flatMap mix empties right",
-      VarArray.flatMap<Nat, Nat>(
-        [var 0, 1, 2, 0, 1, 2, 3, 0, 0, 0],
+      [var 0, 1, 2, 0, 1, 2, 3, 0, 0, 0].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
     Suite.test(
       "flatMap mix empty left",
-      VarArray.flatMap<Nat, Nat>(
-        [var 0, 1, 2, 0, 1, 2, 3],
+      [var 0, 1, 2, 0, 1, 2, 3].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
     Suite.test(
       "flatMap mix empties left",
-      VarArray.flatMap<Nat, Nat>(
-        [var 0, 0, 0, 1, 2, 0, 1, 2, 3],
+      [var 0, 0, 0, 1, 2, 0, 1, 2, 3].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
     Suite.test(
       "flatMap mix empties middle",
-      VarArray.flatMap<Nat, Nat>(
-        [var 0, 1, 2, 0, 0, 0, 1, 2, 3],
+      [var 0, 1, 2, 0, 0, 0, 1, 2, 3].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray(T.natTestable, [var 0, 0, 1, 0, 0, 1, 0, 1, 2]))
     ),
     Suite.test(
       "flatMap mix empties",
-      VarArray.flatMap<Nat, Nat>(
-        [var 0, 0, 0],
+      [var 0, 0, 0].flatMap<Nat, Nat>(
         func n = VarArray.tabulate<Nat>(n, func i = i).values()
       ),
       M.equals(varArray<Nat>(T.natTestable, [var]))
@@ -405,7 +396,7 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "foldLeft",
-      VarArray.foldLeft([var "a", "b", "c"], "", Text.concat),
+      [var "a", "b", "c"].foldLeft("", Text.concat),
       M.equals(T.text("abc"))
     ),
     Suite.test(
@@ -415,7 +406,7 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "foldRight",
-      VarArray.foldRight([var "a", "b", "c"], "", func(x, acc) = acc # x),
+      [var "a", "b", "c"].foldRight("", func(x, acc) = acc # x),
       M.equals(T.text("cba"))
     ),
     Suite.test(
@@ -504,193 +495,193 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "sliceToArray if including entire array",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], 0, 5),
+      [var 2, 4, 6, 8, 10].sliceToArray(0, 5),
       M.equals(T.array(T.natTestable, [2, 4, 6, 8, 10]))
     ),
     Suite.test(
       "sliceToArray if including all but last index",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], 0, -1),
+      [var 2, 4, 6, 8, 10].sliceToArray(0, -1),
       M.equals(T.array(T.natTestable, [2, 4, 6, 8]))
     ),
     Suite.test(
       "sliceToArray if including all but first index",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], 1, 5),
+      [var 2, 4, 6, 8, 10].sliceToArray(1, 5),
       M.equals(T.array(T.natTestable, [4, 6, 8, 10]))
     ),
     Suite.test(
       "sliceToArray if including middle of array",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], 1, 4),
+      [var 2, 4, 6, 8, 10].sliceToArray(1, 4),
       M.equals(T.array(T.natTestable, [4, 6, 8]))
     ),
     Suite.test(
       "sliceToArray if including middle of array (negative indices)",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], -4, -1),
+      [var 2, 4, 6, 8, 10].sliceToArray(-4, -1),
       M.equals(T.array(T.natTestable, [4, 6, 8]))
     ),
     Suite.test(
       "sliceToArray if including start, but not end of array",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], 0, -2),
+      [var 2, 4, 6, 8, 10].sliceToArray(0, -2),
       M.equals(T.array(T.natTestable, [2, 4, 6]))
     ),
     Suite.test(
       "sliceToArray if including end, but not start of array",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], 2, 5),
+      [var 2, 4, 6, 8, 10].sliceToArray(2, 5),
       M.equals(T.array(T.natTestable, [6, 8, 10]))
     ),
     Suite.test(
       "sliceToArray if including end, but not start of array (negative indices)",
-      VarArray.sliceToArray([var 2, 4, 6, 8, 10], -3, 5),
+      [var 2, 4, 6, 8, 10].sliceToArray(-3, 5),
       M.equals(T.array(T.natTestable, [6, 8, 10]))
     ),
     Suite.test(
       "sliceToArray with empty result when start >= end",
-      VarArray.sliceToArray([var 1, 2, 3, 4, 5], 3, 2),
+      [var 1, 2, 3, 4, 5].sliceToArray(3, 2),
       M.equals(T.array(T.natTestable, []))
     ),
     Suite.test(
       "sliceToArray with negative fromInclusive and positive toExclusive",
-      VarArray.sliceToArray([var 1, 2, 3, 4, 5], -2, 4),
+      [var 1, 2, 3, 4, 5].sliceToArray(-2, 4),
       M.equals(T.array(T.natTestable, [4]))
     ),
     Suite.test(
       "sliceToArray with negative fromInclusive and zero toExclusive",
-      VarArray.sliceToArray([var 1, 2, 3, 4, 5], -2, 0),
+      [var 1, 2, 3, 4, 5].sliceToArray(-2, 0),
       M.equals(T.array(T.natTestable, []))
     ),
     Suite.test(
       "sliceToArray with both negative indices where start > end",
-      VarArray.sliceToArray([var 1, 2, 3, 4, 5], -1, -3),
+      [var 1, 2, 3, 4, 5].sliceToArray(-1, -3),
       M.equals(T.array(T.natTestable, []))
     ),
     Suite.test(
       "sliceToVarArray if including entire array",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], 0, 5),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(0, 5),
       M.equals(varArray(T.natTestable, [var 2, 4, 6, 8, 10]))
     ),
     Suite.test(
       "sliceToVarArray if including all but last index",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], 0, -1),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(0, -1),
       M.equals(varArray(T.natTestable, [var 2, 4, 6, 8]))
     ),
     Suite.test(
       "sliceToVarArray if including all but first index",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], 1, 5),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(1, 5),
       M.equals(varArray(T.natTestable, [var 4, 6, 8, 10]))
     ),
     Suite.test(
       "sliceToVarArray if including middle of array",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], 1, 4),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(1, 4),
       M.equals(varArray(T.natTestable, [var 4, 6, 8]))
     ),
     Suite.test(
       "sliceToVarArray if including middle of array (negative indices)",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], -4, -1),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(-4, -1),
       M.equals(varArray(T.natTestable, [var 4, 6, 8]))
     ),
     Suite.test(
       "sliceToVarArray if including start, but not end of array",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], 0, -2),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(0, -2),
       M.equals(varArray(T.natTestable, [var 2, 4, 6]))
     ),
     Suite.test(
       "sliceToVarArray if including end, but not start of array",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], 2, 5),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(2, 5),
       M.equals(varArray(T.natTestable, [var 6, 8, 10]))
     ),
     Suite.test(
       "sliceToVarArray if including end, but not start of array (negative indices)",
-      VarArray.sliceToVarArray([var 2, 4, 6, 8, 10], -3, 5),
+      [var 2, 4, 6, 8, 10].sliceToVarArray(-3, 5),
       M.equals(varArray(T.natTestable, [var 6, 8, 10]))
     ),
     Suite.test(
       "sliceToVarArray with empty result when start >= end",
-      VarArray.sliceToVarArray([var 1, 2, 3, 4, 5], 3, 2),
+      [var 1, 2, 3, 4, 5].sliceToVarArray(3, 2),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
     Suite.test(
       "sliceToVarArray with negative fromInclusive and positive toExclusive",
-      VarArray.sliceToVarArray([var 1, 2, 3, 4, 5], -2, 4),
+      [var 1, 2, 3, 4, 5].sliceToVarArray(-2, 4),
       M.equals(varArray(T.natTestable, [var 4]))
     ),
     Suite.test(
       "sliceToVarArray with negative fromInclusive and zero toExclusive",
-      VarArray.sliceToVarArray([var 1, 2, 3, 4, 5], -2, 0),
+      [var 1, 2, 3, 4, 5].sliceToVarArray(-2, 0),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
     Suite.test(
       "sliceToVarArray with both negative indices where start > end",
-      VarArray.sliceToVarArray([var 1, 2, 3, 4, 5], -1, -3),
+      [var 1, 2, 3, 4, 5].sliceToVarArray(-1, -3),
       M.equals(varArray<Nat>(T.natTestable, [var]))
     ),
     Suite.test(
       "nextIndexOf start",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'c', 0),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'c', 0),
       M.equals(T.optional(T.natTestable, ?0))
     ),
     Suite.test(
       "nextIndexOf not found from offset",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'c', 1),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'c', 1),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
       "nextIndexOf middle",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 0),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'f', 0),
       M.equals(T.optional(T.natTestable, ?2))
     ),
     Suite.test(
       "nextIndexOf repeat",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 2),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'f', 2),
       M.equals(T.optional(T.natTestable, ?2))
     ),
     Suite.test(
       "nextIndexOf start from the middle",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 3),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'f', 3),
       M.equals(T.optional(T.natTestable, ?3))
     ),
     Suite.test(
       "nextIndexOf not found",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'g', 0),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'g', 0),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
       "nextIndexOf index out of bounds",
-      VarArray.nextIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 100),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].nextIndexOf(Char.equal, 'f', 100),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
 
     Suite.test(
       "prevIndexOf first",
-      VarArray.prevIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'c', 6),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].prevIndexOf(Char.equal, 'c', 6),
       M.equals(T.optional(T.natTestable, ?0))
     ),
     Suite.test(
       "prevIndexOf last",
-      VarArray.prevIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'e', 6),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].prevIndexOf(Char.equal, 'e', 6),
       M.equals(T.optional(T.natTestable, ?5))
     ),
     Suite.test(
       "prevIndexOf middle",
-      VarArray.prevIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 6),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].prevIndexOf(Char.equal, 'f', 6),
       M.equals(T.optional(T.natTestable, ?3))
     ),
     Suite.test(
       "prevIndexOf start from the middle",
-      VarArray.prevIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 3),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].prevIndexOf(Char.equal, 'f', 3),
       M.equals(T.optional(T.natTestable, ?2))
     ),
     Suite.test(
       "prevIndexOf existing not found",
-      VarArray.prevIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'f', 2),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].prevIndexOf(Char.equal, 'f', 2),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
       "prevIndexOf not found",
-      VarArray.prevIndexOf([var 'c', 'o', 'f', 'f', 'e', 'e'], Char.equal, 'g', 6),
+      [var 'c', 'o', 'f', 'f', 'e', 'e'].prevIndexOf(Char.equal, 'g', 6),
       M.equals(T.optional(T.natTestable, null : ?Nat))
     ),
     Suite.test(
       "Iter conversions",
-      Iter.toVarArray<Nat>(VarArray.values([var 1, 2, 3])),
+      VarArray.values([var 1, 2, 3]).toVarArray<Nat>(),
       M.equals(varArray(T.natTestable, [var 1, 2, 3]))
     ),
     Suite.test(
@@ -702,7 +693,7 @@ let suite = Suite.suite(
       "enumerate empty array",
       do {
         var hasItem = false;
-        for (_ in VarArray.enumerate([var])) {
+        for (_ in [var].enumerate()) {
           hasItem := true
         };
         hasItem
@@ -713,7 +704,7 @@ let suite = Suite.suite(
       "enumerate non-empty array",
       do {
         var sum = 0;
-        for ((i, x) in VarArray.enumerate([var 10, 20, 30])) {
+        for ((i, x) in [var 10, 20, 30].enumerate()) {
           sum += i + x
         };
         sum // Should be (0+10) + (1+20) + (2+30) = 63
@@ -724,8 +715,8 @@ let suite = Suite.suite(
       "enumerate preserves indices",
       do {
         var indices = "";
-        for ((i, _) in VarArray.enumerate([var 'a', 'b', 'c'])) {
-          indices #= Nat.toText(i)
+        for ((i, _) in [var 'a', 'b', 'c'].enumerate()) {
+          indices #= i.toText()
         };
         indices
       },
@@ -735,8 +726,8 @@ let suite = Suite.suite(
       "enumerate preserves values",
       do {
         var values = "";
-        for ((_, x) in VarArray.enumerate([var 'a', 'b', 'c'])) {
-          values #= Char.toText(x)
+        for ((_, x) in [var 'a', 'b', 'c'].enumerate()) {
+          values #= x.toText()
         };
         values
       },
@@ -744,25 +735,25 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "binarySearch found",
-      VarArray.binarySearch([var 1, 3, 5, 7, 9, 11], Nat.compare, 5) == #found(2),
+      [var 1, 3, 5, 7, 9, 11].binarySearch(Nat.compare, 5) == #found(2),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch not found",
-      VarArray.binarySearch([var 1, 3, 5, 7, 9, 11], Nat.compare, 6) == #insertionIndex(3),
+      [var 1, 3, 5, 7, 9, 11].binarySearch(Nat.compare, 6) == #insertionIndex(3),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch first element",
       do {
-        VarArray.binarySearch([var 1, 3, 5, 7, 9, 11], Nat.compare, 1) == #found(0)
+        [var 1, 3, 5, 7, 9, 11].binarySearch(Nat.compare, 1) == #found(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch last element",
       do {
-        VarArray.binarySearch([var 1, 3, 5, 7, 9, 11], Nat.compare, 11) == #found(5)
+        [var 1, 3, 5, 7, 9, 11].binarySearch(Nat.compare, 11) == #found(5)
       },
       M.equals(T.bool(true))
     ),
@@ -776,21 +767,21 @@ let suite = Suite.suite(
     Suite.test(
       "binarySearch single element found",
       do {
-        VarArray.binarySearch([var 42], Nat.compare, 42) == #found(0)
+        [var 42].binarySearch(Nat.compare, 42) == #found(0)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch single element not found",
       do {
-        VarArray.binarySearch([var 42], Nat.compare, 43) == #insertionIndex(1)
+        [var 42].binarySearch(Nat.compare, 43) == #insertionIndex(1)
       },
       M.equals(T.bool(true))
     ),
     Suite.test(
       "binarySearch duplicates",
       do {
-        let result = VarArray.binarySearch([var 1, 2, 2, 2, 3], Nat.compare, 2);
+        let result = [var 1, 2, 2, 2, 3].binarySearch(Nat.compare, 2);
         switch result {
           case (#found index) { index >= 1 and index <= 3 };
           case _ { false }
@@ -805,27 +796,27 @@ let suite = Suite.suite(
     ),
     Suite.test(
       "isSorted single element",
-      VarArray.isSorted([var 42], Nat.compare),
+      [var 42].isSorted(Nat.compare),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted already sorted",
-      VarArray.isSorted([var 1, 2, 3, 4, 5], Nat.compare),
+      [var 1, 2, 3, 4, 5].isSorted(Nat.compare),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted with duplicates",
-      VarArray.isSorted([var 1, 2, 2, 3, 3, 3], Nat.compare),
+      [var 1, 2, 2, 3, 3, 3].isSorted(Nat.compare),
       M.equals(T.bool(true))
     ),
     Suite.test(
       "isSorted not sorted",
-      VarArray.isSorted([var 1, 3, 2, 4, 5], Nat.compare),
+      [var 1, 3, 2, 4, 5].isSorted(Nat.compare),
       M.equals(T.bool(false))
     ),
     Suite.test(
       "isSorted reverse sorted",
-      VarArray.isSorted([var 5, 4, 3, 2, 1], Nat.compare),
+      [var 5, 4, 3, 2, 1].isSorted(Nat.compare),
       M.equals(T.bool(false))
     )
   ]

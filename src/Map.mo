@@ -104,7 +104,7 @@ module {
   /// assuming that the `compare` function implements an `O(1)` comparison.
   /// @deprecated M0235
   public func fromPure<K, V>(map : PureMap.Map<K, V>, compare : (implicit : (K, K) -> Order.Order)) : Map<K, V> {
-    fromIter(PureMap.entries(map), compare)
+    fromIter(map.entries(), compare)
   };
 
   /// Create a copy of the mutable key-value map.
@@ -660,11 +660,11 @@ module {
   };
 
   public func toArray<K, V>(self : Map<K, V>) : [(K, V)] {
-    Iter.toArray(entries(self))
+    entries(self).toArray()
   };
 
   public func toVarArray<K, V>(self : Map<K, V>) : [var (K, V)] {
-    Iter.toVarArray(entries(self))
+    entries(self).toVarArray()
   };
 
   /// Retrieves the key-value pair from the map with the maximum key.
@@ -1461,7 +1461,7 @@ module {
     object {
       public func next() : ?(K, V) {
         // pop the next node cursor off the stack
-        var nodeCursor = Stack.pop(nodeCursorStack);
+        var nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; kvIndex }) {
@@ -1484,13 +1484,10 @@ module {
                 };
                 // if not at the last key-value pair, push the next key-value index of the leaf onto the stack and return the current key-value pair
                 if (kvIndex < lastKV) {
-                  Stack.push(
-                    nodeCursorStack,
-                    {
-                      node = #leaf(leafNode);
-                      kvIndex = kvIndex + 1 : Nat
-                    }
-                  )
+                  nodeCursorStack.push({
+                    node = #leaf(leafNode);
+                    kvIndex = kvIndex + 1 : Nat
+                  })
                 };
 
                 // return the current key-value pair
@@ -1520,7 +1517,7 @@ module {
                 };
                 // if not the last key-value pair, push the next key-value index of the internal node onto the stack
                 if (kvIndex < lastKV) {
-                  Stack.push(nodeCursorStack, nextCursor)
+                  nodeCursorStack.push(nextCursor)
                 };
                 // traverse the next child's min subtree and push the resulting node cursors onto the stack
                 // then return the current key-value pair of the internal node
@@ -1550,7 +1547,7 @@ module {
     object {
       public func next() : ?(K, V) {
         // pop the next node cursor off the stack
-        var nodeCursor = Stack.pop(nodeCursorStack);
+        var nodeCursor = nodeCursorStack.pop();
         switch (nodeCursor) {
           case null { return null };
           case (?{ node; kvIndex }) {
@@ -1570,13 +1567,10 @@ module {
                 };
                 // if not at the last key-value pair, push the previous key-value index of the leaf onto the stack and return the current key-value pair
                 if (kvIndex - 1 : Nat > firstKV) {
-                  Stack.push(
-                    nodeCursorStack,
-                    {
-                      node = #leaf(leafNode);
-                      kvIndex = kvIndex - 1 : Nat
-                    }
-                  )
+                  nodeCursorStack.push({
+                    node = #leaf(leafNode);
+                    kvIndex = kvIndex - 1 : Nat
+                  })
                 };
 
                 // return the current key-value pair
@@ -1600,7 +1594,7 @@ module {
                 };
                 // if not the first key-value pair, push the previous key-value index of the internal node onto the stack
                 if (kvIndex - 1 : Nat > firstKV) {
-                  Stack.push(nodeCursorStack, previousCursor)
+                  nodeCursorStack.push(previousCursor)
                 };
                 // traverse the previous child's max subtree and push the resulting node cursors onto the stack
                 // then return the current key-value pair of the internal node
@@ -1622,7 +1616,7 @@ module {
     };
 
     // push the initial cursor to the stack
-    Stack.push(nodeCursorStack, nodeCursor);
+    nodeCursorStack.push(nodeCursor);
     // then traverse left
     traverseMinSubtreeIter(nodeCursorStack, nodeCursor);
     nodeCursorStack
@@ -1647,7 +1641,7 @@ module {
     };
 
     // push the initial cursor to the stack
-    Stack.push(nodeCursorStack, nodeCursor);
+    nodeCursorStack.push(nodeCursor);
     // then traverse left
     traverseMaxSubtreeIter(nodeCursorStack, nodeCursor);
     nodeCursorStack
@@ -1683,13 +1677,10 @@ module {
             case (?childNode) {
               childIndex := 0;
               currentNode := childNode;
-              Stack.push(
-                nodeCursorStack,
-                {
-                  node = currentNode;
-                  kvIndex = childIndex
-                }
-              )
+              nodeCursorStack.push({
+                node = currentNode;
+                kvIndex = childIndex
+              })
             };
             case null {
               Runtime.trap("UNREACHABLE_ERROR: file a bug report! In Map.traverseMinSubtreeIter(), null child node error")
@@ -1713,13 +1704,10 @@ module {
         case (#notFound(i)) (i, false)
       };
       if (i < node.data.count) {
-        Stack.push(
-          nodeCursorStack,
-          {
-            node = currentNode;
-            kvIndex = i // greater entries to traverse
-          }
-        )
+        nodeCursorStack.push({
+          node = currentNode;
+          kvIndex = i // greater entries to traverse
+        })
       };
       if isFound return;
       let ?children = childrenOption else return;
@@ -1751,13 +1739,10 @@ module {
                 case (#leaf(leafNode)) leafNode.data.count
               };
               currentNode := childNode;
-              Stack.push(
-                nodeCursorStack,
-                {
-                  node = currentNode;
-                  kvIndex = childIndex
-                }
-              )
+              nodeCursorStack.push({
+                node = currentNode;
+                kvIndex = childIndex
+              })
             };
             case null {
               Runtime.trap("UNREACHABLE_ERROR: file a bug report! In Map.traverseMaxSubtreeIter(), null child node error")
@@ -1781,13 +1766,10 @@ module {
         case (#notFound(i)) (i, false) // i is the index of the first key less than the search key, or 0 if all keys are greater than the search key
       };
       if (i > 0) {
-        Stack.push(
-          nodeCursorStack,
-          {
-            node = currentNode;
-            kvIndex = i
-          }
-        )
+        nodeCursorStack.push({
+          node = currentNode;
+          kvIndex = i
+        })
       };
       if isFound return;
       let ?children = childrenOption else return;
@@ -2298,8 +2280,7 @@ module {
 
   func mapData<K, V1, V2>(data : Data<K, V1>, project : (K, V1) -> V2) : Data<K, V2> {
     {
-      kvs = VarArray.map(
-        data.kvs,
+      kvs = data.kvs.map(
         func entry {
           switch entry {
             case (?kv) ?(kv.0, project kv);
@@ -2318,8 +2299,7 @@ module {
       };
       case (#internal { data; children }) {
         let mappedData = mapData(data, project);
-        let mappedChildren = VarArray.map<?Node<K, V1>, ?Node<K, V2>>(
-          children,
+        let mappedChildren = children.map<?Node<K, V1>, ?Node<K, V2>>(
           func child {
             switch child {
               case null null;

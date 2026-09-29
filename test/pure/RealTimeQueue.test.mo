@@ -10,30 +10,30 @@ import Text "../../src/Text";
 
 type Queue<T> = Queue.Queue<T>;
 
-func iterateForward<T>(queue : Queue<T>) : Iter.Iter<T> = Queue.values(queue);
+func iterateForward<T>(queue : Queue<T>) : Iter.Iter<T> = queue.values();
 
-func iterateBackward<T>(queue : Queue<T>) : Iter.Iter<T> = Queue.values(Queue.reverse(queue));
+func iterateBackward<T>(queue : Queue<T>) : Iter.Iter<T> = queue.reverse().values();
 
 func frontToText(t : (Nat, Queue<Nat>)) : Text {
-  "(" # Nat.toText(t.0) # ", " # Queue.toText(t.1, Nat.toText) # ")"
+  "(" # t.0.toText() # ", " # t.1.toText(Nat.toText) # ")"
 };
 
 func frontEqual(t1 : (Nat, Queue<Nat>), t2 : (Nat, Queue<Nat>)) : Bool {
-  t1.0 == t2.0 and Queue.equal(t1.1, t2.1, Nat.equal)
+  t1.0 == t2.0 and t1.1.equal(t2.1, Nat.equal)
 };
 
 func backToText(t : (Queue<Nat>, Nat)) : Text {
-  "(" # Queue.toText(t.0, Nat.toText) # ", " # Nat.toText(t.1) # ")"
+  "(" # t.0.toText(Nat.toText) # ", " # t.1.toText() # ")"
 };
 
 func backEqual(t1 : (Queue<Nat>, Nat), t2 : (Queue<Nat>, Nat)) : Bool {
-  t1.1 == t2.1 and Queue.equal(t1.0, t2.0, Nat.equal)
+  t1.1 == t2.1 and t1.0.equal(t2.0, Nat.equal)
 };
 
 func reduceFront<T>(queue : Queue<T>, amount : Nat) : Queue<T> {
   var current = queue;
   for (_ in Nat.range(0, amount)) {
-    switch (Queue.popFront(current)) {
+    switch (current.popFront()) {
       case null Prim.trap("should not be null");
       case (?result) current := result.1
     }
@@ -44,7 +44,7 @@ func reduceFront<T>(queue : Queue<T>, amount : Nat) : Queue<T> {
 func reduceBack<T>(queue : Queue<T>, amount : Nat) : Queue<T> {
   var current = queue;
   for (_ in Nat.range(0, amount)) {
-    switch (Queue.popBack(current)) {
+    switch (current.popBack()) {
       case null Prim.trap("should not be null");
       case (?result) current := result.0
     }
@@ -60,35 +60,35 @@ suite(
     test(
       "empty",
       func() {
-        expect.bool(Queue.isEmpty(queue)).isTrue()
+        expect.bool(queue.isEmpty()).isTrue()
       }
     );
 
     test(
       "iterate forward",
       func() {
-        expect.array(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array(iterateForward(queue).toArray(), Nat.toText, Nat.equal).size(0)
       }
     );
 
     test(
       "iterate backward",
       func() {
-        expect.array(Iter.toArray(iterateBackward(queue)), Nat.toText, Nat.equal).size(0)
+        expect.array(iterateBackward(queue).toArray(), Nat.toText, Nat.equal).size(0)
       }
     );
 
     test(
       "peek front",
       func() {
-        expect.option(Queue.peekFront(queue), Nat.toText, Nat.equal).isNull()
+        expect.option(queue.peekFront(), Nat.toText, Nat.equal).isNull()
       }
     );
 
     test(
       "peek back",
       func() {
-        expect.option(Queue.peekBack(queue), Nat.toText, Nat.equal).isNull()
+        expect.option(queue.peekBack(), Nat.toText, Nat.equal).isNull()
       }
     );
 
@@ -96,7 +96,7 @@ suite(
       "pop front",
       func() {
         expect.option(
-          Queue.popFront(queue),
+          queue.popFront(),
           frontToText,
           frontEqual
         ).isNull()
@@ -107,7 +107,7 @@ suite(
       "pop back",
       func() {
         expect.option(
-          Queue.popBack(queue),
+          queue.popBack(),
           backToText,
           backEqual
         ).isNull()
@@ -116,7 +116,7 @@ suite(
   }
 );
 
-queue := Queue.pushFront(Queue.empty<Nat>(), 1);
+queue := Queue.empty<Nat>().pushFront(1);
 
 suite(
   "single item",
@@ -124,35 +124,35 @@ suite(
     test(
       "not empty",
       func() {
-        expect.bool(Queue.isEmpty(queue)).isFalse()
+        expect.bool(queue.isEmpty()).isFalse()
       }
     );
 
     test(
       "iterate forward",
       func() {
-        expect.array(Iter.toArray(iterateForward(queue)), Nat.toText, Nat.equal).equal([1])
+        expect.array(iterateForward(queue).toArray(), Nat.toText, Nat.equal).equal([1])
       }
     );
 
     test(
       "iterate backward",
       func() {
-        expect.array(Iter.toArray(iterateBackward(queue)), Nat.toText, Nat.equal).equal([1])
+        expect.array(iterateBackward(queue).toArray(), Nat.toText, Nat.equal).equal([1])
       }
     );
 
     test(
       "peek front",
       func() {
-        expect.option(Queue.peekFront(queue), Nat.toText, Nat.equal).equal(?1)
+        expect.option(queue.peekFront(), Nat.toText, Nat.equal).equal(?1)
       }
     );
 
     test(
       "peek back",
       func() {
-        expect.option(Queue.peekBack(queue), Nat.toText, Nat.equal).equal(?1)
+        expect.option(queue.peekBack(), Nat.toText, Nat.equal).equal(?1)
       }
     );
 
@@ -160,7 +160,7 @@ suite(
       "pop front",
       func() {
         expect.option(
-          Queue.popFront(queue),
+          queue.popFront(),
           frontToText,
           frontEqual
         ).equal(?(1, Queue.empty()))
@@ -171,7 +171,7 @@ suite(
       "pop back",
       func() {
         expect.option(
-          Queue.popBack(queue),
+          queue.popBack(),
           backToText,
           backEqual
         ).equal(?(Queue.empty(), 1))
@@ -185,7 +185,7 @@ let testSize = 100;
 func populateForward(from : Nat, to : Nat) : Queue<Nat> {
   var queue = Queue.empty<Nat>();
   for (number in Nat.range(from, to)) {
-    queue := Queue.pushFront(queue, number)
+    queue := queue.pushFront(number)
   };
   queue
 };
@@ -198,7 +198,7 @@ suite(
     test(
       "not empty",
       func() {
-        expect.bool(Queue.isEmpty(queue)).isFalse()
+        expect.bool(queue.isEmpty()).isFalse()
       }
     );
 
@@ -206,7 +206,7 @@ suite(
       "iterate forward",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          iterateForward(queue).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -224,7 +224,7 @@ suite(
       "iterate backward",
       func() {
         expect.array(
-          Iter.toArray(iterateBackward(queue)),
+          iterateBackward(queue).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -241,14 +241,14 @@ suite(
     test(
       "peek front",
       func() {
-        expect.option(Queue.peekFront(queue), Nat.toText, Nat.equal).equal(?testSize)
+        expect.option(queue.peekFront(), Nat.toText, Nat.equal).equal(?testSize)
       }
     );
 
     test(
       "peek back",
       func() {
-        expect.option(Queue.peekBack(queue), Nat.toText, Nat.equal).equal(?1)
+        expect.option(queue.peekBack(), Nat.toText, Nat.equal).equal(?1)
       }
     );
 
@@ -256,7 +256,7 @@ suite(
       "pop front",
       func() {
         expect.option(
-          Queue.popFront(queue),
+          queue.popFront(),
           frontToText,
           frontEqual
         ).equal(?(testSize, populateForward(1, testSize)))
@@ -266,14 +266,14 @@ suite(
     test(
       "empty after front removal",
       func() {
-        expect.bool(Queue.isEmpty(reduceFront(queue, testSize))).isTrue()
+        expect.bool(reduceFront(queue, testSize).isEmpty()).isTrue()
       }
     );
 
     test(
       "empty after back removal",
       func() {
-        expect.bool(Queue.isEmpty(reduceBack(queue, testSize))).isTrue()
+        expect.bool(reduceBack(queue, testSize).isEmpty()).isTrue()
       }
     )
   }
@@ -282,7 +282,7 @@ suite(
 func populateBackward(from : Nat, to : Nat) : Queue<Nat> {
   var queue = Queue.empty<Nat>();
   for (number in Nat.range(from, to)) {
-    queue := Queue.pushBack(queue, number)
+    queue := queue.pushBack(number)
   };
   queue
 };
@@ -295,7 +295,7 @@ suite(
     test(
       "not empty",
       func() {
-        expect.bool(Queue.isEmpty(queue)).isFalse()
+        expect.bool(queue.isEmpty()).isFalse()
       }
     );
 
@@ -303,7 +303,7 @@ suite(
       "iterate forward",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          iterateForward(queue).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -321,7 +321,7 @@ suite(
       "iterate backward",
       func() {
         expect.array(
-          Iter.toArray(iterateBackward(queue)),
+          iterateBackward(queue).toArray(),
           Nat.toText,
           Nat.equal
         ).equal(
@@ -338,14 +338,14 @@ suite(
     test(
       "peek front",
       func() {
-        expect.option(Queue.peekFront(queue), Nat.toText, Nat.equal).equal(?1)
+        expect.option(queue.peekFront(), Nat.toText, Nat.equal).equal(?1)
       }
     );
 
     test(
       "peek back",
       func() {
-        expect.option(Queue.peekBack(queue), Nat.toText, Nat.equal).equal(?testSize)
+        expect.option(queue.peekBack(), Nat.toText, Nat.equal).equal(?testSize)
       }
     );
 
@@ -353,7 +353,7 @@ suite(
       "pop front",
       func() {
         expect.option(
-          Queue.popFront(queue),
+          queue.popFront(),
           frontToText,
           frontEqual
         ).equal(?(1, populateBackward(2, testSize + 1)))
@@ -364,7 +364,7 @@ suite(
       "pop back",
       func() {
         expect.option(
-          Queue.popBack(queue),
+          queue.popBack(),
           backToText,
           backEqual
         ).equal(?(populateBackward(1, testSize), testSize))
@@ -374,20 +374,20 @@ suite(
     test(
       "empty after front removal",
       func() {
-        expect.bool(Queue.isEmpty(reduceFront(queue, testSize))).isTrue()
+        expect.bool(reduceFront(queue, testSize).isEmpty()).isTrue()
       }
     );
 
     test(
       "empty after back removal",
       func() {
-        expect.bool(Queue.isEmpty(reduceBack(queue, testSize))).isTrue()
+        expect.bool(reduceBack(queue, testSize).isEmpty()).isTrue()
       }
     )
   }
 );
 
-queue := Queue.filter(Queue.fromIter([1, 2, 3, 4, 5].values()), func n = n < 3);
+queue := Queue.fromIter([1, 2, 3, 4, 5].values()).filter(func n = n < 3);
 
 suite(
   "filter invariants",
@@ -395,21 +395,21 @@ suite(
     test(
       "not empty",
       func() {
-        expect.bool(Queue.isEmpty(queue)).isFalse()
+        expect.bool(queue.isEmpty()).isFalse()
       }
     );
 
     test(
       "peek front",
       func() {
-        expect.option(Queue.peekFront(queue), Nat.toText, Nat.equal).equal(?1)
+        expect.option(queue.peekFront(), Nat.toText, Nat.equal).equal(?1)
       }
     );
 
     test(
       "peek back",
       func() {
-        expect.option(Queue.peekBack(queue), Nat.toText, Nat.equal).equal(?2)
+        expect.option(queue.peekBack(), Nat.toText, Nat.equal).equal(?2)
       }
     )
   }
@@ -427,31 +427,31 @@ func randomPopulate(amount : Nat) : Queue<Nat> {
   var current = Queue.empty<Nat>();
   for (number in Nat.range(0, amount)) {
     current := if (Random.next() % 2 == 0) {
-      Queue.pushFront(current, Nat.sub(amount, number))
+      current.pushFront(Nat.sub(amount, number))
     } else {
-      Queue.pushBack(current, amount + number)
+      current.pushBack(amount + number)
     }
   };
   current
 };
 
 func isSorted(queue : Queue<Nat>) : Bool {
-  let array = Iter.toArray(iterateForward(queue));
-  let sorted = Array.sort(array, Nat.compare);
-  Array.equal(array, sorted, Nat.equal)
+  let array = iterateForward(queue).toArray();
+  let sorted = array.sort(Nat.compare);
+  array.equal(sorted, Nat.equal)
 };
 
 func randomRemoval(queue : Queue<Nat>, amount : Nat) : Queue<Nat> {
   var current = queue;
   for (number in Nat.range(0, amount)) {
     current := if (Random.next() % 2 == 0) {
-      let pair = Queue.popFront(current);
+      let pair = current.popFront();
       switch pair {
         case null Prim.trap("should not be null");
         case (?result) result.1
       }
     } else {
-      let pair = Queue.popBack(current);
+      let pair = current.popBack();
       switch pair {
         case null Prim.trap("should not be null");
         case (?result) result.0
@@ -469,7 +469,7 @@ suite(
     test(
       "not empty",
       func() {
-        expect.bool(Queue.isEmpty(queue)).isFalse()
+        expect.bool(queue.isEmpty()).isFalse()
       }
     );
 
@@ -484,10 +484,10 @@ suite(
       "consistent iteration",
       func() {
         expect.array(
-          Iter.toArray(iterateForward(queue)),
+          iterateForward(queue).toArray(),
           Nat.toText,
           Nat.equal
-        ).equal(Array.reverse(Iter.toArray(iterateBackward(queue))))
+        ).equal(iterateBackward(queue).toArray().reverse())
       }
     );
 
@@ -515,7 +515,7 @@ suite(
     test(
       "random total removal",
       func() {
-        expect.bool(Queue.isEmpty(randomRemoval(queue, testSize))).isTrue()
+        expect.bool(randomRemoval(queue, testSize).isEmpty()).isTrue()
       }
     )
   }
@@ -529,14 +529,14 @@ func randomInsertionDeletion(steps : Nat) : Queue<Nat> {
     current := switch (random % 4) {
       case 0 {
         size += 1;
-        Queue.pushFront(current, Nat.sub(steps, number))
+        current.pushFront(Nat.sub(steps, number))
       };
       case 1 {
         size += 1;
-        Queue.pushBack(current, steps + number)
+        current.pushBack(steps + number)
       };
       case 2 {
-        switch (Queue.popFront(current)) {
+        switch (current.popFront()) {
           case null {
             assert (size == 0);
             current
@@ -548,7 +548,7 @@ func randomInsertionDeletion(steps : Nat) : Queue<Nat> {
         }
       };
       case 3 {
-        switch (Queue.popBack(current)) {
+        switch (current.popBack()) {
           case null {
             assert (size == 0);
             current
@@ -585,9 +585,9 @@ suite(
       "singleton",
       func() {
         let q = Queue.singleton(1);
-        expect.bool(Queue.isEmpty(q)).isFalse();
-        expect.option(Queue.peekFront(q), Nat.toText, Nat.equal).equal(?1);
-        expect.option(Queue.peekBack(q), Nat.toText, Nat.equal).equal(?1)
+        expect.bool(q.isEmpty()).isFalse();
+        expect.option(q.peekFront(), Nat.toText, Nat.equal).equal(?1);
+        expect.option(q.peekBack(), Nat.toText, Nat.equal).equal(?1)
       }
     );
 
@@ -596,8 +596,8 @@ suite(
       func() {
         let testAll = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.bool(Queue.all(q, func n = n > 0)).isTrue();
-          expect.bool(Queue.all(q, func n = n < 3)).isFalse()
+          expect.bool(q.all(func n = n > 0)).isTrue();
+          expect.bool(q.all(func n = n < 3)).isFalse()
         };
         testAll([4]);
         testAll([1, 5]);
@@ -613,15 +613,14 @@ suite(
       func() {
         let testFilterMap = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          let mapped = Queue.filterMap(
-            q,
-            func n = if (n % 2 == 0) ?Nat.toText(n) else null
+          let mapped = q.filterMap(
+            func n = if (n % 2 == 0) ?n.toText() else null
           );
           expect.array(
-            Iter.toArray(Queue.values(mapped)),
+            mapped.values().toArray(),
             func t = t,
             Text.equal
-          ).equal(Array.filterMap(testElements, func n = if (n % 2 == 0) ?Nat.toText(n) else null))
+          ).equal(testElements.filterMap(func n = if (n % 2 == 0) ?n.toText() else null))
         };
         testFilterMap([]);
         testFilterMap([1]);
@@ -639,13 +638,12 @@ suite(
         let testForEach = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
           var result = "";
-          Queue.forEach(
-            q,
+          q.forEach(
             func n {
-              result #= Nat.toText n
+              result #= n.toText()
             }
           );
-          expect.text(result).equal(Array.foldLeft(testElements, "", func(acc, n) = acc # Nat.toText n))
+          expect.text(result).equal(testElements.foldLeft("", func(acc, n) = acc # n.toText()))
         };
         testForEach([]);
         testForEach([1]);
@@ -662,7 +660,7 @@ suite(
       func() {
         let testToText = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.text(Queue.toText(q, Nat.toText)).equal("RealTimeQueue" # Array.toText(testElements, Nat.toText))
+          expect.text(q.toText(Nat.toText)).equal("RealTimeQueue" # testElements.toText(Nat.toText))
         };
         testToText([]);
         testToText([1]);
@@ -679,7 +677,7 @@ suite(
       func() {
         let testSize = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.nat(Queue.size(q)).equal(testElements.size())
+          expect.nat(q.size()).equal(testElements.size())
         };
         testSize([]);
         testSize([1]);
@@ -698,8 +696,8 @@ suite(
           let q = Queue.fromIter(testElements.values());
           let alwaysThere = 1;
           let neverThere = 123;
-          expect.bool(Queue.contains(q, Nat.equal, alwaysThere)).equal(Array.find(testElements, func n = Nat.equal(n, alwaysThere)) != null);
-          expect.bool(Queue.contains(q, Nat.equal, neverThere)).equal(Array.find(testElements, func n = Nat.equal(n, neverThere)) != null)
+          expect.bool(q.contains(Nat.equal, alwaysThere)).equal(testElements.find(func n = Nat.equal(n, alwaysThere)) != null);
+          expect.bool(q.contains(Nat.equal, neverThere)).equal(testElements.find(func n = Nat.equal(n, neverThere)) != null)
         };
         testContains([]);
         testContains([1]);
@@ -716,8 +714,8 @@ suite(
       func() {
         let testAny = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          expect.bool(Queue.any(q, func n = n > 2)).equal(Array.any(testElements, func n = n > 2));
-          expect.bool(Queue.any(q, func n = n > 3)).equal(Array.any(testElements, func n = n > 3))
+          expect.bool(q.any(func n = n > 2)).equal(testElements.any(func n = n > 2));
+          expect.bool(q.any(func n = n > 3)).equal(testElements.any(func n = n > 3))
         };
         testAny([]);
         testAny([3]);
@@ -735,12 +733,12 @@ suite(
       func() {
         let testMap = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          let mapped = Queue.map(q, func n = n * 2);
+          let mapped = q.map(func n = n * 2);
           expect.array(
-            Iter.toArray(Queue.values(mapped)),
+            mapped.values().toArray(),
             Nat.toText,
             Nat.equal
-          ).equal(Array.map(testElements, func n = n * 2))
+          ).equal(testElements.map(func n = n * 2))
         };
         testMap([]);
         testMap([1]);
@@ -757,12 +755,12 @@ suite(
       func() {
         let testReverse = func(testElements : [Nat]) {
           let q = Queue.fromIter(testElements.values());
-          let reversed = Queue.reverse(q);
+          let reversed = q.reverse();
           expect.array(
-            Iter.toArray(Queue.values(reversed)),
+            reversed.values().toArray(),
             Nat.toText,
             Nat.equal
-          ).equal(Array.reverse(testElements))
+          ).equal(testElements.reverse())
         };
 
         testReverse([]);
@@ -781,7 +779,7 @@ suite(
         let testCompare = func(testElements1 : [Nat], testElements2 : [Nat]) {
           let q1 = Queue.fromIter(testElements1.values());
           let q2 = Queue.fromIter(testElements2.values());
-          expect.bool(Queue.compare(q1, q2, Nat.compare) == Array.compare(testElements1, testElements2, Nat.compare)).isTrue()
+          expect.bool(q1.compare(q2, Nat.compare) == testElements1.compare(testElements2, Nat.compare)).isTrue()
         };
 
         testCompare([], []);
@@ -811,17 +809,17 @@ suite(
       "empty queue operations",
       func() {
         let q = Queue.empty<Nat>();
-        expect.bool(Queue.isEmpty(q)).isTrue();
-        expect.nat(Queue.size(q)).equal(0);
-        expect.option(Queue.peekFront(q), Nat.toText, Nat.equal).isNull();
-        expect.option(Queue.peekBack(q), Nat.toText, Nat.equal).isNull();
+        expect.bool(q.isEmpty()).isTrue();
+        expect.nat(q.size()).equal(0);
+        expect.option(q.peekFront(), Nat.toText, Nat.equal).isNull();
+        expect.option(q.peekBack(), Nat.toText, Nat.equal).isNull();
         expect.option(
-          Queue.popFront(q),
+          q.popFront(),
           frontToText,
           frontEqual
         ).isNull();
         expect.option(
-          Queue.popBack(q),
+          q.popBack(),
           backToText,
           backEqual
         ).isNull()
@@ -834,19 +832,19 @@ suite(
         // Create a queue that's exactly at the rebalancing threshold
         var q = Queue.empty<Nat>();
         for (i in Nat.range(1, 4)) {
-          q := Queue.pushFront(q, i)
+          q := q.pushFront(i)
         };
         for (i in Nat.range(5, 12)) {
-          q := Queue.pushBack(q, i)
+          q := q.pushBack(i)
         };
         let #rebal(_) = q else Prim.trap "Should be in rebalancing state";
         // Test operations during rebalancing
-        expect.text(Queue.toText(q, Nat.toText)).equal("RealTimeQueue[3, 2, 1, 5, 6, 7, 8, 9, 10, 11]");
-        q := Queue.pushFront(q, 0);
-        q := Queue.pushBack(q, 13);
-        expect.bool(Queue.isEmpty(q)).isFalse();
-        expect.option(Queue.peekFront(q), Nat.toText, Nat.equal).equal(?0);
-        expect.option(Queue.peekBack(q), Nat.toText, Nat.equal).equal(?13)
+        expect.text(q.toText(Nat.toText)).equal("RealTimeQueue[3, 2, 1, 5, 6, 7, 8, 9, 10, 11]");
+        q := q.pushFront(0);
+        q := q.pushBack(13);
+        expect.bool(q.isEmpty()).isFalse();
+        expect.option(q.peekFront(), Nat.toText, Nat.equal).equal(?0);
+        expect.option(q.peekBack(), Nat.toText, Nat.equal).equal(?13)
       }
     );
 
@@ -856,17 +854,17 @@ suite(
         var q = Queue.empty<Nat>();
         // Alternating pushes
         for (i in Nat.range(0, 5)) {
-          q := Queue.pushFront(q, i);
-          q := Queue.pushBack(q, i + 100)
+          q := q.pushFront(i);
+          q := q.pushBack(i + 100)
         };
         // Mixed operations
-        expect.option(Queue.popFront(q), frontToText, frontEqual).equal(?(4, Queue.fromIter([3, 2, 1, 0, 100, 101, 102, 103, 104].values())));
-        q := Queue.pushBack(q, 200);
-        expect.option(Queue.popBack(q), backToText, backEqual).equal(?(Queue.fromIter([4, 3, 2, 1, 0, 100, 101, 102, 103, 104].values()), 200));
-        q := Queue.pushFront(q, 300);
+        expect.option(q.popFront(), frontToText, frontEqual).equal(?(4, Queue.fromIter([3, 2, 1, 0, 100, 101, 102, 103, 104].values())));
+        q := q.pushBack(200);
+        expect.option(q.popBack(), backToText, backEqual).equal(?(Queue.fromIter([4, 3, 2, 1, 0, 100, 101, 102, 103, 104].values()), 200));
+        q := q.pushFront(300);
         // Verify order is maintained
         expect.array(
-          Iter.toArray(Queue.values(q)),
+          q.values().toArray(),
           Nat.toText,
           Nat.equal
         ).equal([300, 4, 3, 2, 1, 0, 100, 101, 102, 103, 104, 200])
@@ -879,7 +877,7 @@ suite(
   "regression: stack overflow should not happen when iterating over large queues",
   func() {
     let queue = populateForward(1, 17_001);
-    let actual = Iter.toArray(iterateBackward(queue));
+    let actual = iterateBackward(queue).toArray();
     expect.array(
       actual,
       Nat.toText,

@@ -964,62 +964,62 @@ run(
 do {
   Debug.print("range()");
 
-  assert Iter.toArray(Int.range(0, 3)) == [0, 1, 2];
-  assert Iter.toArray(Int.range(1, 3)) == [1, 2];
-  assert Iter.toArray(Int.range(1, 2)) == [1];
-  assert Iter.toArray(Int.range(3, 0)) == [];
-  assert Iter.toArray(Int.range(1, 0)) == [];
-  assert Iter.toArray(Int.range(0, 0)) == []
+  assert Int.range(0, 3).toArray() == [0, 1, 2];
+  assert Int.range(1, 3).toArray() == [1, 2];
+  assert Int.range(1, 2).toArray() == [1];
+  assert Int.range(3, 0).toArray() == [];
+  assert Int.range(1, 0).toArray() == [];
+  assert Int.range(0, 0).toArray() == []
 };
 
 do {
   Debug.print("rangeBy()");
 
-  assert Iter.toArray(Int.rangeBy(0, 3, 1)) == [0, 1, 2];
-  assert Iter.toArray(Int.rangeBy(0, 3, 2)) == [0, 2];
-  assert Iter.toArray(Int.rangeBy(0, 3, 3)) == [0];
-  assert Iter.toArray(Int.rangeBy(1, 4, 2)) == [1, 3];
-  assert Iter.toArray(Int.rangeBy(1, 3, 2)) == [1];
-  assert Iter.toArray(Int.rangeBy(3, 0, -1)) == [3, 2, 1];
-  assert Iter.toArray(Int.rangeBy(3, 1, -1)) == [3, 2];
-  assert Iter.toArray(Int.rangeBy(3, 0, -2)) == [3, 1];
-  assert Iter.toArray(Int.rangeBy(3, 1, -2)) == [3];
-  assert Iter.toArray(Int.rangeBy(1, 3, -1)) == [];
-  assert Iter.toArray(Int.rangeBy(0, 1, 0)) == [];
-  assert Iter.toArray(Int.rangeBy(1, 0, 0)) == []
+  assert Int.rangeBy(0, 3, 1).toArray() == [0, 1, 2];
+  assert Int.rangeBy(0, 3, 2).toArray() == [0, 2];
+  assert Int.rangeBy(0, 3, 3).toArray() == [0];
+  assert Int.rangeBy(1, 4, 2).toArray() == [1, 3];
+  assert Int.rangeBy(1, 3, 2).toArray() == [1];
+  assert Int.rangeBy(3, 0, -1).toArray() == [3, 2, 1];
+  assert Int.rangeBy(3, 1, -1).toArray() == [3, 2];
+  assert Int.rangeBy(3, 0, -2).toArray() == [3, 1];
+  assert Int.rangeBy(3, 1, -2).toArray() == [3];
+  assert Int.rangeBy(1, 3, -1).toArray() == [];
+  assert Int.rangeBy(0, 1, 0).toArray() == [];
+  assert Int.rangeBy(1, 0, 0).toArray() == []
 };
 
 do {
   Debug.print("rangeInclusive()");
 
-  assert Iter.toArray(Int.rangeInclusive(0, 2)) == [0, 1, 2];
-  assert Iter.toArray(Int.rangeInclusive(-2, 2)) == [-2, -1, 0, 1, 2];
-  assert Iter.toArray(Int.rangeInclusive(1, 1)) == [1];
-  assert Iter.toArray(Int.rangeInclusive(1, 0)) == [];
-  assert Iter.toArray(Int.rangeInclusive(1, -1)) == []
+  assert Int.rangeInclusive(0, 2).toArray() == [0, 1, 2];
+  assert Int.rangeInclusive(-2, 2).toArray() == [-2, -1, 0, 1, 2];
+  assert Int.rangeInclusive(1, 1).toArray() == [1];
+  assert Int.rangeInclusive(1, 0).toArray() == [];
+  assert Int.rangeInclusive(1, -1).toArray() == []
 };
 
 do {
   Debug.print("rangeByInclusive()");
 
-  assert Iter.toArray(Int.rangeByInclusive(1, 7, 2)) == [1, 3, 5, 7];
-  assert Iter.toArray(Int.rangeByInclusive(1, 6, 2)) == [1, 3, 5];
-  assert Iter.toArray(Int.rangeByInclusive(1, 3, 1)) == [1, 2, 3];
+  assert Int.rangeByInclusive(1, 7, 2).toArray() == [1, 3, 5, 7];
+  assert Int.rangeByInclusive(1, 6, 2).toArray() == [1, 3, 5];
+  assert Int.rangeByInclusive(1, 3, 1).toArray() == [1, 2, 3];
 
-  assert Iter.toArray(Int.rangeByInclusive(7, 1, -2)) == [7, 5, 3, 1];
-  assert Iter.toArray(Int.rangeByInclusive(6, 1, -2)) == [6, 4, 2];
-  assert Iter.toArray(Int.rangeByInclusive(3, 1, -1)) == [3, 2, 1];
+  assert Int.rangeByInclusive(7, 1, -2).toArray() == [7, 5, 3, 1];
+  assert Int.rangeByInclusive(6, 1, -2).toArray() == [6, 4, 2];
+  assert Int.rangeByInclusive(3, 1, -1).toArray() == [3, 2, 1];
 
-  assert Iter.toArray(Int.rangeByInclusive(-3, 3, 2)) == [-3, -1, 1, 3];
-  assert Iter.toArray(Int.rangeByInclusive(3, -3, -2)) == [3, 1, -1, -3];
-  assert Iter.toArray(Int.rangeByInclusive(-7, -1, 2)) == [-7, -5, -3, -1];
+  assert Int.rangeByInclusive(-3, 3, 2).toArray() == [-3, -1, 1, 3];
+  assert Int.rangeByInclusive(3, -3, -2).toArray() == [3, 1, -1, -3];
+  assert Int.rangeByInclusive(-7, -1, 2).toArray() == [-7, -5, -3, -1];
 
-  assert Iter.toArray(Int.rangeByInclusive(1, 1, 1)) == [1];
-  assert Iter.toArray(Int.rangeByInclusive(1, 1, -1)) == [1];
-  assert Iter.toArray(Int.rangeByInclusive(-1, -1, 1)) == [-1];
-  assert Iter.toArray(Int.rangeByInclusive(1, 2, 0)) == [];
-  assert Iter.toArray(Int.rangeByInclusive(2, 1, 1)) == [];
-  assert Iter.toArray(Int.rangeByInclusive(1, 2, -1)) == []
+  assert Int.rangeByInclusive(1, 1, 1).toArray() == [1];
+  assert Int.rangeByInclusive(1, 1, -1).toArray() == [1];
+  assert Int.rangeByInclusive(-1, -1, 1).toArray() == [-1];
+  assert Int.rangeByInclusive(1, 2, 0).toArray() == [];
+  assert Int.rangeByInclusive(2, 1, 1).toArray() == [];
+  assert Int.rangeByInclusive(1, 2, -1).toArray() == []
 };
 
 /* --------------------------------------- */

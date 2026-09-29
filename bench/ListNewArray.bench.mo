@@ -30,44 +30,44 @@ module {
             switch col {
               case "0 (baseline)" {
                 let list = List.empty<Nat>();
-                ignore List.toArray(list)
+                ignore list.toArray()
               };
               case "1" {
                 let list = List.empty<Nat>();
-                List.add(list, 0);
-                ignore List.toArray(list)
+                list.add(0);
+                ignore list.toArray()
               };
               case "5" {
                 let list = List.empty<Nat>();
-                List.add(list, 0);
-                List.add(list, 1);
-                List.add(list, 2);
-                List.add(list, 3);
-                List.add(list, 4);
-                ignore List.toArray(list)
+                list.add(0);
+                list.add(1);
+                list.add(2);
+                list.add(3);
+                list.add(4);
+                ignore list.toArray()
               };
               case "10" {
                 let list = List.empty<Nat>();
-                List.add(list, 0);
-                List.add(list, 1);
-                List.add(list, 2);
-                List.add(list, 3);
-                List.add(list, 4);
-                List.add(list, 5);
-                List.add(list, 6);
-                List.add(list, 7);
-                List.add(list, 8);
-                List.add(list, 9);
-                ignore List.toArray(list)
+                list.add(0);
+                list.add(1);
+                list.add(2);
+                list.add(3);
+                list.add(4);
+                list.add(5);
+                list.add(6);
+                list.add(7);
+                list.add(8);
+                list.add(9);
+                ignore list.toArray()
               };
               case "100 (for loop)" {
                 let list = List.empty<Nat>();
                 var i = 0;
                 while (i < 100) {
-                  List.add(list, i);
+                  list.add(i);
                   i += 1
                 };
-                ignore List.toArray(list)
+                ignore list.toArray()
               };
               case _ Runtime.unreachable()
             }
@@ -76,12 +76,12 @@ module {
             switch col {
               case "0 (baseline)" {
                 var list = PureList.empty<Nat>();
-                ignore PureList.toArray(list)
+                ignore list.toArray()
               };
               case "1" {
                 var list = PureList.empty<Nat>();
                 list := ?(0, list);
-                ignore PureList.toArray(list)
+                ignore list.toArray()
               };
               case "5" {
                 var list = PureList.empty<Nat>();
@@ -90,7 +90,7 @@ module {
                 list := ?(2, list);
                 list := ?(1, list);
                 list := ?(0, list);
-                ignore PureList.toArray(list)
+                ignore list.toArray()
               };
               case "10" {
                 var list = PureList.empty<Nat>();
@@ -104,7 +104,7 @@ module {
                 list := ?(2, list);
                 list := ?(1, list);
                 list := ?(0, list);
-                ignore PureList.toArray(list)
+                ignore list.toArray()
               };
               case "100 (for loop)" {
                 var list = PureList.empty<Nat>();
@@ -113,7 +113,7 @@ module {
                   list := ?(i, list);
                   i += 1
                 };
-                ignore PureList.toArray(list)
+                ignore list.toArray()
               };
               case _ Runtime.unreachable()
             }

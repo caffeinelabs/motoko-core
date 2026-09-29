@@ -64,7 +64,7 @@ module {
     loop {
       switch (iter.next()) {
         case null { return current };
-        case (?val) { current := PureQueue.pushBack(current, val) }
+        case (?val) { current := current.pushBack(val) }
       }
     }
   };
@@ -88,7 +88,7 @@ module {
   /// @deprecated M0235
   public func fromPure<T>(pureQueue : PureQueue.Queue<T>) : Queue<T> {
     let queue = empty<T>();
-    let iter = PureQueue.values(pureQueue);
+    let iter = pureQueue.values();
     loop {
       switch (iter.next()) {
         case null { return queue };
@@ -522,7 +522,7 @@ module {
   };
 
   public func toVarArray<T>(self : Queue<T>) : [var T] {
-    Array.toVarArray(toArray(self))
+    toArray(self).toVarArray()
   };
 
   /// Returns an iterator over the elements in the queue.
@@ -560,7 +560,7 @@ module {
   };
 
   public func reverseValues<T>(self : Queue<T>) : Iter.Iter<T> {
-    Iter.reverse(values(self))
+    values(self).reverse()
   };
 
   /// Tests whether all elements in the queue satisfy the given predicate.

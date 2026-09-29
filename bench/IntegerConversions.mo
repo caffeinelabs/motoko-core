@@ -66,84 +66,84 @@ module {
           case "Nat8.toNat16" {
             var i = 0;
             while (i < size) {
-              ignore Nat8.toNat16(source8[i]);
+              ignore source8[i].toNat16();
               i += 1
             }
           };
           case "Nat8.toNat32" {
             var i = 0;
             while (i < size) {
-              ignore Nat8.toNat32(source8[i]);
+              ignore source8[i].toNat32();
               i += 1
             }
           };
           case "Nat8.toNat64" {
             var i = 0;
             while (i < size) {
-              ignore Nat8.toNat64(source8[i]);
+              ignore source8[i].toNat64();
               i += 1
             }
           };
           case "Nat16.toNat32" {
             var i = 0;
             while (i < size) {
-              ignore Nat16.toNat32(source16[i]);
+              ignore source16[i].toNat32();
               i += 1
             }
           };
           case "Nat16.toNat64" {
             var i = 0;
             while (i < size) {
-              ignore Nat16.toNat64(source16[i]);
+              ignore source16[i].toNat64();
               i += 1
             }
           };
           case "Nat32.toNat64" {
             var i = 0;
             while (i < size) {
-              ignore Nat32.toNat64(source32[i]);
+              ignore source32[i].toNat64();
               i += 1
             }
           };
           case "Int8.toInt16" {
             var i = 0;
             while (i < size) {
-              ignore Int8.toInt16(source8int[i]);
+              ignore source8int[i].toInt16();
               i += 1
             }
           };
           case "Int8.toInt32" {
             var i = 0;
             while (i < size) {
-              ignore Int8.toInt32(source8int[i]);
+              ignore source8int[i].toInt32();
               i += 1
             }
           };
           case "Int8.toInt64" {
             var i = 0;
             while (i < size) {
-              ignore Int8.toInt64(source8int[i]);
+              ignore source8int[i].toInt64();
               i += 1
             }
           };
           case "Int16.toInt32" {
             var i = 0;
             while (i < size) {
-              ignore Int16.toInt32(source16int[i]);
+              ignore source16int[i].toInt32();
               i += 1
             }
           };
           case "Int16.toInt64" {
             var i = 0;
             while (i < size) {
-              ignore Int16.toInt64(source16int[i]);
+              ignore source16int[i].toInt64();
               i += 1
             }
           };
           case "Int32.toInt64" {
             var i = 0;
             while (i < size) {
-              ignore Int32.toInt64(source32int[i]);
+              ignore source32int[i].toInt64();
               i += 1
             }
           };

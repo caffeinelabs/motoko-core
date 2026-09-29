@@ -59,7 +59,7 @@ module {
   /// Returns the number of elements in the priority queue.
   ///
   /// Runtime: `O(1)`.
-  public func size<T>(priorityQueue : PriorityQueue<T>) : Nat = Set.size(priorityQueue.set);
+  public func size<T>(priorityQueue : PriorityQueue<T>) : Nat = priorityQueue.set.size();
 
   /// Returns `true` iff the priority queue is empty.
   ///
@@ -75,7 +75,7 @@ module {
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
-  public func isEmpty<T>(priorityQueue : PriorityQueue<T>) : Bool = Set.isEmpty(priorityQueue.set);
+  public func isEmpty<T>(priorityQueue : PriorityQueue<T>) : Bool = priorityQueue.set.isEmpty();
 
   /// Removes all elements from the priority queue.
   ///
@@ -93,7 +93,7 @@ module {
   /// ```
   ///
   /// Runtime: `O(1)`. Space: `O(1)`.
-  public func clear<T>(priorityQueue : PriorityQueue<T>) = Set.clear(priorityQueue.set);
+  public func clear<T>(priorityQueue : PriorityQueue<T>) = priorityQueue.set.clear();
 
   /// Inserts a new element into the priority queue.
   ///
@@ -112,7 +112,7 @@ module {
   ///
   /// Runtime: `O(log n)`. Space: `O(log n)`.
   public func push<T>(priorityQueue : PriorityQueue<T>, compare : (T, T) -> Order.Order, element : T) {
-    Set.add(priorityQueue.set, Tuple2.makeCompare(compare, Nat.compare), (element, priorityQueue.counter));
+    priorityQueue.set.add(Tuple2.makeCompare(compare, Nat.compare), (element, priorityQueue.counter));
     priorityQueue.counter += 1
   };
 
@@ -130,7 +130,7 @@ module {
   ///
   /// Runtime: `O(log n)`. Space: `O(1)`.
   public func peek<T>(priorityQueue : PriorityQueue<T>) : ?T = do ? {
-    let (element, _) = Set.max(priorityQueue.set)!;
+    let (element, _) = priorityQueue.set.max()!;
     element
   };
 
@@ -152,8 +152,8 @@ module {
   ///
   /// Runtime: `O(log n)`. Space: `O(log n)`.
   public func pop<T>(priorityQueue : PriorityQueue<T>, compare : (T, T) -> Order.Order) : ?T = do ? {
-    let (element, nonce) = Set.max(priorityQueue.set)!;
-    Set.remove(priorityQueue.set, Tuple2.makeCompare(compare, Nat.compare), (element, nonce));
+    let (element, nonce) = priorityQueue.set.max()!;
+    priorityQueue.set.remove(Tuple2.makeCompare(compare, Nat.compare), (element, nonce));
     element
   }
 }

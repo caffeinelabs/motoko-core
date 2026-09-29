@@ -91,7 +91,7 @@ module {
         // Skip character
       } else if (isFirst and c == '-') {
         isNegative := true
-      } else if (Char.isDigit(c)) {
+      } else if (c.isDigit()) {
         hasDigits := true;
         let charAsNat = Prim.nat32ToNat(Prim.charToNat32(c) -% Prim.charToNat32('0'));
         n := n * 10 + charAsNat

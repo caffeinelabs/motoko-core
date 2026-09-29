@@ -59,12 +59,12 @@ run(
     [
       test(
         "maximum number",
-        Int32.toInt(Int32.maxValue),
+        Int32.maxValue.toInt(),
         M.equals(T.int(maximumInt32asInt))
       ),
       test(
         "minimum number",
-        Int32.toInt(Int32.minValue),
+        Int32.minValue.toInt(),
         M.equals(T.int(minimumInt32asInt))
       ),
       test(
@@ -94,12 +94,12 @@ run(
     [
       test(
         "maximum number",
-        Int.toInt32(maximumInt32asInt),
+        maximumInt32asInt.toInt32(),
         M.equals(Int32Testable(Int32.maxValue))
       ),
       test(
         "minimum number",
-        Int.toInt32(minimumInt32asInt),
+        minimumInt32asInt.toInt32(),
         M.equals(Int32Testable(Int32.minValue))
       ),
       test(
@@ -204,7 +204,7 @@ run(
     [
       test(
         "maximum number",
-        Int32.toNat32(Int32.maxValue),
+        Int32.maxValue.toNat32(),
         M.equals(Nat32Testable(maximumInt32asNat32))
       ),
       test(
@@ -249,12 +249,12 @@ run(
       ),
       test(
         "maximum number",
-        Int32.toText(Int32.maxValue),
+        Int32.maxValue.toText(),
         M.equals(T.text("2147483647"))
       ),
       test(
         "minimum number",
-        Int32.toText(Int32.minValue),
+        Int32.minValue.toText(),
         M.equals(T.text("-2147483648"))
       )
     ]
@@ -2429,12 +2429,12 @@ run(
     [
       test(
         "maximum number",
-        Int32.toInt64(Int32.maxValue),
+        Int32.maxValue.toInt64(),
         M.equals(Int64Testable(2_147_483_647))
       ),
       test(
         "minimum number",
-        Int32.toInt64(Int32.minValue),
+        Int32.minValue.toInt64(),
         M.equals(Int64Testable(-2_147_483_648))
       ),
       test(

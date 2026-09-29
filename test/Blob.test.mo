@@ -18,7 +18,7 @@ suite(
     test(
       "isEmpty identifies empty blobs",
       func() {
-        expect.bool(Blob.isEmpty(Blob.empty())).equal(true);
+        expect.bool(Blob.empty().isEmpty()).equal(true);
         expect.bool(Blob.isEmpty("\FF\00" : Blob)).equal(false)
       }
     );
@@ -40,9 +40,9 @@ suite(
       "Array.toBlob creates blob from byte array",
       func() {
         let bytes : [Nat8] = [0, 255, 170];
-        let blob = Array.toBlob(bytes);
+        let blob = bytes.toBlob();
         expect.nat(blob.size()).equal(3);
-        expect.array(Blob.toArray(blob), Nat8.toText, Nat8.equal).equal(bytes)
+        expect.array(blob.toArray(), Nat8.toText, Nat8.equal).equal(bytes)
       }
     );
 
@@ -50,9 +50,9 @@ suite(
       "VarArray.toBlob creates blob from mutable byte array",
       func() {
         let bytes : [var Nat8] = [var 0, 255, 170];
-        let blob = VarArray.toBlob(bytes);
+        let blob = bytes.toBlob();
         expect.nat(blob.size()).equal(3);
-        expect.array(Blob.toArray(blob), Nat8.toText, Nat8.equal).equal([0, 255, 170])
+        expect.array(blob.toArray(), Nat8.toText, Nat8.equal).equal([0, 255, 170])
       }
     );
 
@@ -60,7 +60,7 @@ suite(
       "toArray converts blob to byte array",
       func() {
         let blob = "\00\FF\AA" : Blob;
-        let bytes = Blob.toArray(blob);
+        let bytes = blob.toArray();
         expect.array(bytes, Nat8.toText, Nat8.equal).equal([0, 255, 170])
       }
     );
@@ -69,7 +69,7 @@ suite(
       "toVarArray converts blob to mutable byte array",
       func() {
         let blob = "\00\FF\AA" : Blob;
-        let bytes = Blob.toVarArray(blob);
+        let bytes = blob.toVarArray();
         expect.array([bytes[0], bytes[1], bytes[2]], Nat8.toText, Nat8.equal).equal([0, 255, 170])
       }
     );
@@ -78,7 +78,7 @@ suite(
       "Array.toBlob converts byte array to blob",
       func() {
         let bytes : [Nat8] = [0, 255, 170];
-        expect.blob(Array.toBlob(bytes)).equal("\00\FF\AA");
+        expect.blob(bytes.toBlob()).equal("\00\FF\AA");
         expect.blob(bytes.toBlob()).equal("\00\FF\AA");
         expect.blob(([] : [Nat8]).toBlob()).equal("")
       }
@@ -88,7 +88,7 @@ suite(
       "VarArray.toBlob converts mutable byte array to blob",
       func() {
         let bytes : [var Nat8] = [var 0, 255, 170];
-        expect.blob(VarArray.toBlob(bytes)).equal("\00\FF\AA");
+        expect.blob(bytes.toBlob()).equal("\00\FF\AA");
         expect.blob(bytes.toBlob()).equal("\00\FF\AA");
         expect.blob(([var] : [var Nat8]).toBlob()).equal("")
       }
@@ -104,8 +104,8 @@ suite(
       func() {
         let blob1 = "\00\FF\00" : Blob;
         let blob2 = "\FF\00\FF" : Blob;
-        expect.nat32(Blob.hash(blob1)).equal(1818567776);
-        expect.nat32(Blob.hash(blob2)).equal(1826292338)
+        expect.nat32(blob1.hash()).equal(1818567776);
+        expect.nat32(blob2.hash()).equal(1826292338)
       }
     )
   }
@@ -133,8 +133,8 @@ suite(
         let blob2 = "\00\FF\00" : Blob;
         let blob3 = "\FF\00\FF" : Blob;
 
-        expect.bool(Blob.notEqual(blob1, blob2)).equal(false);
-        expect.bool(Blob.notEqual(blob1, blob3)).equal(true)
+        expect.bool(blob1.notEqual(blob2)).equal(false);
+        expect.bool(blob1.notEqual(blob3)).equal(true)
       }
     );
 
@@ -144,9 +144,9 @@ suite(
         let blob1 = "\00\AA\00" : Blob;
         let blob2 = "\00\FF\00" : Blob;
 
-        expect.bool(Blob.less(blob1, blob2)).equal(true);
-        expect.bool(Blob.less(blob2, blob1)).equal(false);
-        expect.bool(Blob.less(blob1, blob1)).equal(false)
+        expect.bool(blob1.less(blob2)).equal(true);
+        expect.bool(blob2.less(blob1)).equal(false);
+        expect.bool(blob1.less(blob1)).equal(false)
       }
     );
 
@@ -156,9 +156,9 @@ suite(
         let blob1 = "\00\AA\00" : Blob;
         let blob2 = "\00\FF\00" : Blob;
 
-        expect.bool(Blob.lessOrEqual(blob1, blob2)).equal(true);
-        expect.bool(Blob.lessOrEqual(blob1, blob1)).equal(true);
-        expect.bool(Blob.lessOrEqual(blob2, blob1)).equal(false)
+        expect.bool(blob1.lessOrEqual(blob2)).equal(true);
+        expect.bool(blob1.lessOrEqual(blob1)).equal(true);
+        expect.bool(blob2.lessOrEqual(blob1)).equal(false)
       }
     );
 
@@ -168,9 +168,9 @@ suite(
         let blob1 = "\00\FF\00" : Blob;
         let blob2 = "\00\AA\00" : Blob;
 
-        expect.bool(Blob.greater(blob1, blob2)).equal(true);
-        expect.bool(Blob.greater(blob2, blob1)).equal(false);
-        expect.bool(Blob.greater(blob1, blob1)).equal(false)
+        expect.bool(blob1.greater(blob2)).equal(true);
+        expect.bool(blob2.greater(blob1)).equal(false);
+        expect.bool(blob1.greater(blob1)).equal(false)
       }
     );
 
@@ -180,9 +180,9 @@ suite(
         let blob1 = "\00\FF\00" : Blob;
         let blob2 = "\00\AA\00" : Blob;
 
-        expect.bool(Blob.greaterOrEqual(blob1, blob2)).equal(true);
-        expect.bool(Blob.greaterOrEqual(blob1, blob1)).equal(true);
-        expect.bool(Blob.greaterOrEqual(blob2, blob1)).equal(false)
+        expect.bool(blob1.greaterOrEqual(blob2)).equal(true);
+        expect.bool(blob1.greaterOrEqual(blob1)).equal(true);
+        expect.bool(blob2.greaterOrEqual(blob1)).equal(false)
       }
     );
 

@@ -35,10 +35,10 @@ module {
             let list = List.empty<Nat>();
             var i = 0;
             while (i < size) {
-              List.add(list, i);
+              list.add(i);
               i += 1
             };
-            ignore List.toArray(list)
+            ignore list.toArray()
           };
           case "pure/List" {
             var list = PureList.empty<Nat>();
@@ -47,7 +47,7 @@ module {
               list := ?(i, list); // Wrong order, but ignore...
               i += 1
             };
-            ignore PureList.toArray(list)
+            ignore list.toArray()
           };
           case "VarArray ?T" {
             var array = VarArray.repeat<?Nat>(null, size);

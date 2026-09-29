@@ -65,11 +65,11 @@ module {
   };
 
   public func toArray<T>(self : Stack<T>) : [T] {
-    Iter.toArray(values(self))
+    values(self).toArray()
   };
 
   public func toVarArray<T>(self : Stack<T>) : [var T] {
-    Iter.toVarArray(values(self))
+    values(self).toVarArray()
   };
 
   /// Convert an immutable, purely functional list to a mutable stack.
@@ -298,7 +298,7 @@ module {
   };
 
   public func reverseValues<T>(self : Stack<T>) : Iter.Iter<T> {
-    Iter.reverse(values(self))
+    values(self).reverse()
   };
 
   /// Pushes a new element onto the top of the stack.
@@ -697,7 +697,7 @@ module {
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
 
-  public func find<T>(self : Stack<T>, predicate : T -> Bool) : ?T = PureList.find(self.top, predicate);
+  public func find<T>(self : Stack<T>, predicate : T -> Bool) : ?T = self.top.find(predicate);
 
   /// Return the first index for which the given `predicate` is true.
   /// If no element satisfies the predicate, returns null.
@@ -718,7 +718,7 @@ module {
   /// Space: O(1)
   ///
   /// *Runtime and space assumes that `predicate` runs in O(1) time and space.
-  public func findIndex<T>(self : Stack<T>, predicate : T -> Bool) : ?Nat = PureList.findIndex(self.top, predicate);
+  public func findIndex<T>(self : Stack<T>, predicate : T -> Bool) : ?Nat = self.top.findIndex(predicate);
 
   /// Compares two stacks for equality using the provided equality function.
   ///

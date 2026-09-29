@@ -68,7 +68,7 @@ let smallEpsilon : Float32 = 1e-5;
 class NaNMatcher() : M.Matcher<Float32> {
   public func describeMismatch(number : Float32, _description : M.Description) {};
   public func matches(number : Float32) : Bool {
-    Float32.isNaN(number)
+    number.isNaN()
   }
 };
 
@@ -106,7 +106,7 @@ run(
           ),
           test(
             "infinity is not NaN",
-            Float32.isNaN(positiveInfinity),
+            positiveInfinity.isNaN(),
             M.equals(T.bool(false))
           )
         ]

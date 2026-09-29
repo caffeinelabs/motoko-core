@@ -988,7 +988,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray(VarArray.toArray(array));
+  public func fromVarArray<T>(array : [var T]) : List<T> = fromArray(array.toArray());
 
   /// Create an array from a list.
   /// Example:
@@ -1027,7 +1027,7 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func toVarArray<T>(self : List<T>) : [var T] = Array.toVarArray(toArray(self));
+  public func toVarArray<T>(self : List<T>) : [var T] = toArray(self).toVarArray();
 
   /// Create a list from an iterator, consuming the iterator.
   /// Example:

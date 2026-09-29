@@ -176,7 +176,7 @@ module {
       ].values(),
       Text.compare
     );
-    bench.rows(Iter.toArray(Map.keys(testInstances)));
+    bench.rows(testInstances.keys().toArray());
 
     let testRunners : Map.Map<Text, [PriorityQueueUpdateOperation<Nat>] -> ()> = Map.fromIter(
       [
@@ -186,9 +186,9 @@ module {
             let priorityQueue = PriorityQueue.empty<Nat>();
             for (op in ops.values()) {
               switch (op) {
-                case (#Push element) PriorityQueue.push(priorityQueue, Nat.compare, element);
-                case (#Pop) ignore PriorityQueue.pop(priorityQueue, Nat.compare);
-                case (#Clear) PriorityQueue.clear(priorityQueue)
+                case (#Push element) priorityQueue.push(Nat.compare, element);
+                case (#Pop) ignore priorityQueue.pop(Nat.compare);
+                case (#Clear) priorityQueue.clear()
               }
             }
           }
@@ -209,13 +209,13 @@ module {
       ].values(),
       Text.compare
     );
-    bench.cols(Iter.toArray(Map.keys(testRunners)));
+    bench.cols(testRunners.keys().toArray());
 
     bench.runner(
       func(row, col) {
         switch (
-          Map.get(testInstances, Text.compare, row),
-          Map.get(testRunners, Text.compare, col)
+          testInstances.get(Text.compare, row),
+          testRunners.get(Text.compare, col)
         ) {
           case (?ops, ?runner) runner(ops);
           case _ Runtime.trap("Missing test instance or runner")

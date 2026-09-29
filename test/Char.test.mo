@@ -89,11 +89,11 @@ suite(
       "identifies special whitespace characters",
       func() {
         // 12288 (U+3000) = ideographic space
-        expect.bool(Char.isWhitespace(Prim.nat32ToChar(12288))).equal(true);
+        expect.bool(Prim.nat32ToChar(12288).isWhitespace()).equal(true);
         // Vertical tab
-        expect.bool(Char.isWhitespace(Prim.nat32ToChar(0x0B))).equal(true);
+        expect.bool(Prim.nat32ToChar(0x0B).isWhitespace()).equal(true);
         // Form feed
-        expect.bool(Char.isWhitespace(Prim.nat32ToChar(0x0C))).equal(true)
+        expect.bool(Prim.nat32ToChar(0x0C).isWhitespace()).equal(true)
       }
     );
 

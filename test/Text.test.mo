@@ -47,7 +47,7 @@ func iterT(c : [Char]) : T.TestableItem<Iter.Iter<Char>> = {
 // TODO: generalize and move to Iter.mo
 func textIterT(c : [Text]) : T.TestableItem<Iter.Iter<Text>> = {
   item = c.values();
-  display = func(ts : Iter.Iter<Text>) : Text { Text.join(ts, ",") };
+  display = func(ts : Iter.Iter<Text>) : Text { ts.join(",") };
   // not this will only print the remainder of cs1 below
   equals = func(ts1 : Iter.Iter<Text>, ts2 : Iter.Iter<Text>) : Bool {
     loop {
@@ -144,7 +144,7 @@ run(
         let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "fromIter-2",
-          Text.toIter(Text.join(Array.map(a, Char.toText).values(), "")),
+          a.map(Char.toText).values().join("").toIter(),
           M.equals(iterT a)
         )
       }
@@ -176,7 +176,7 @@ run(
         test(
           "fromIter-3",
           Text.fromIter(a.values()),
-          M.equals(T.text(Text.join(Array.map(a, Char.toText).values(), "")))
+          M.equals(T.text(a.map(Char.toText).values().join("")))
         )
       }
     ]
@@ -265,24 +265,24 @@ run(
     [
       test(
         "join-0",
-        Text.join(["", ""].values(), ""),
+        ["", ""].values().join(""),
         M.equals(T.text(""))
       ),
       test(
         "join-1",
-        Text.join(["", "b"].values(), ""),
+        ["", "b"].values().join(""),
         M.equals(T.text "b")
       ),
       test(
         "join-2",
-        Text.join(["a", "bb", "ccc", "dddd"].values(), ""),
+        ["a", "bb", "ccc", "dddd"].values().join(""),
         M.equals(T.text "abbcccdddd")
       ),
       do {
         let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "join-3",
-          Text.join(Array.map(a, Char.toText).values(), ""),
+          a.map(Char.toText).values().join(""),
           M.equals(T.text(Text.fromIter(a.values())))
         )
       },
@@ -293,7 +293,7 @@ run(
       ),
       test(
         "join-5",
-        Text.join(["aaa"].values(), ""),
+        ["aaa"].values().join(""),
         M.equals(T.text "aaa")
       )
     ]
@@ -306,24 +306,24 @@ run(
     [
       test(
         "join-0",
-        Text.join(["", ""].values(), ","),
+        ["", ""].values().join(","),
         M.equals(T.text(","))
       ),
       test(
         "join-1",
-        Text.join(["", "b"].values(), ","),
+        ["", "b"].values().join(","),
         M.equals(T.text ",b")
       ),
       test(
         "join-2",
-        Text.join(["a", "bb", "ccc", "dddd"].values(), ","),
+        ["a", "bb", "ccc", "dddd"].values().join(","),
         M.equals(T.text "a,bb,ccc,dddd")
       ),
       do {
         let a = Array.tabulate(1000, func i = Nat32.toChar(65 +% Nat32.fromIntWrap(i % 26)));
         test(
           "join-3",
-          Text.join(Array.map(a, Char.toText).values(), ""),
+          a.map(Char.toText).values().join(""),
           M.equals(T.text(Text.fromIter(a.values())))
         )
       },
@@ -334,7 +334,7 @@ run(
       ),
       test(
         "join-5",
-        Text.join(["aaa"].values(), ","),
+        ["aaa"].values().join(","),
         M.equals(T.text "aaa")
       )
     ]
@@ -377,19 +377,19 @@ run(
       ),
       do {
         let a = Array.tabulate(1000, func _ = "abc");
-        let t = Text.join(a.values(), ";");
+        let t = a.values().join(";");
         test(
           "split-char-large",
-          Text.split(t, #char ';'),
+          t.split(#char ';'),
           M.equals(textIterT a)
         )
       },
       do {
         let a = Array.tabulate(100000, func _ = "abc");
-        let t = Text.join(a.values(), ";");
+        let t = a.values().join(";");
         test(
           "split-char-very-large",
-          Text.split(t, #char ';'),
+          t.split(#char ';'),
           M.equals(textIterT a)
         )
       }
@@ -435,19 +435,19 @@ do {
         ),
         do {
           let a = Array.tabulate(1000, func _ = "abc");
-          let t = Text.join(a.values(), ";");
+          let t = a.values().join(";");
           test(
             "split-pred-large",
-            Text.split(t, pat),
+            t.split(pat),
             M.equals(textIterT a)
           )
         },
         do {
           let a = Array.tabulate(10000, func _ = "abc");
-          let t = Text.join(a.values(), ";");
+          let t = a.values().join(";");
           test(
             "split-pred-very-large",
-            Text.split(t, pat),
+            t.split(pat),
             M.equals(textIterT a)
           )
         }
@@ -494,19 +494,19 @@ do {
         ),
         do {
           let a = Array.tabulate(1000, func _ = "abc");
-          let t = Text.join(a.values(), "PAT");
+          let t = a.values().join("PAT");
           test(
             "split-pat-large",
-            Text.split(t, pat),
+            t.split(pat),
             M.equals(textIterT a)
           )
         },
         do {
           let a = Array.tabulate(10000, func _ = "abc");
-          let t = Text.join(a.values(), "PAT");
+          let t = a.values().join("PAT");
           test(
             "split-pat-very-large",
-            Text.split(t, pat),
+            t.split(pat),
             M.equals(textIterT a)
           )
         }
@@ -551,19 +551,19 @@ run(
       ),
       do {
         let a = Array.tabulate(1000, func _ = "abc");
-        let t = Text.join(a.values(), ";;");
+        let t = a.values().join(";;");
         test(
           "tokens-char-large",
-          Text.tokens(t, #char ';'),
+          t.tokens(#char ';'),
           M.equals(textIterT a)
         )
       },
       do {
         let a = Array.tabulate(100000, func _ = "abc");
-        let t = Text.join(a.values(), ";;");
+        let t = a.values().join(";;");
         test(
           "tokens-char-very-large",
-          Text.tokens(t, #char ';'),
+          t.tokens(#char ';'),
           M.equals(textIterT a)
         )
       }
@@ -1113,7 +1113,7 @@ run(
       ),
       test(
         "toArray-example",
-        VarArray.toArray(Text.toVarArray("Café")),
+        Text.toVarArray("Café").toArray(),
         M.equals(T.array(T.charTestable, ['C', 'a', 'f', 'é']))
       ),
       test(

@@ -18,17 +18,17 @@ let entryTestable = T.natTestable;
 
 class SetMatcher(expected : [Nat]) : M.Matcher<Set.Set<Nat>> {
   public func describeMismatch(actual : Set.Set<Nat>, _description : M.Description) {
-    Debug.print(debug_show (Iter.toArray(Set.values(actual))) # " should be " # debug_show (expected))
+    Debug.print(debug_show (actual.values().toArray()) # " should be " # debug_show (expected))
   };
 
   public func matches(actual : Set.Set<Nat>) : Bool {
-    Iter.toArray(Set.values(actual)) == expected
+    actual.values().toArray() == expected
   }
 };
 
 func insert(s : Set.Set<Nat>, key : Nat) : Set.Set<Nat> {
-  let s1 = Set.add(s, Nat.compare, key);
-  Set.assertValid(s1, Nat.compare);
+  let s1 = s.add(Nat.compare, key);
+  s1.assertValid(Nat.compare);
   s1
 };
 
@@ -42,16 +42,16 @@ func concatenateKeys2(accum : Text, key : Nat) : Text {
 
 func containsAll(set : Set.Set<Nat>, elems : [Nat]) {
   for (elem in elems.values()) {
-    assert (Set.contains(set, Nat.compare, elem))
+    assert (set.contains(Nat.compare, elem))
   }
 };
 
 func clear(initialSet : Set.Set<Nat>) : Set.Set<Nat> {
   var set = initialSet;
-  for (elem in Set.values(initialSet)) {
-    let newSet = Set.remove(set, Nat.compare, elem);
+  for (elem in initialSet.values()) {
+    let newSet = set.remove(Nat.compare, elem);
     set := newSet;
-    Set.assertValid(set, Nat.compare)
+    set.assertValid(Nat.compare)
   };
   set
 };
@@ -74,17 +74,17 @@ run(
     [
       test(
         "size",
-        Set.size(buildTestSet()),
+        buildTestSet().size(),
         M.equals(T.nat(0))
       ),
       test(
         "values",
-        Iter.toArray(Set.values(buildTestSet())),
+        buildTestSet().values().toArray(),
         M.equals(T.array(entryTestable, []))
       ),
       test(
         "reverseValues",
-        Iter.toArray(Set.reverseValues(buildTestSet())),
+        buildTestSet().reverseValues().toArray(),
         M.equals(T.array(entryTestable, []))
       ),
       test(
@@ -94,30 +94,29 @@ run(
       ),
       test(
         "contains absent",
-        Set.contains(buildTestSet(), Nat.compare, 0),
+        buildTestSet().contains(Nat.compare, 0),
         M.equals(T.bool(false))
       ),
       test(
         "empty right fold",
-        Set.foldRight(buildTestSet(), "", concatenateKeys),
+        buildTestSet().foldRight("", concatenateKeys),
         M.equals(T.text(""))
       ),
       test(
         "empty left fold",
-        Set.foldLeft(buildTestSet(), "", concatenateKeys2),
+        buildTestSet().foldLeft("", concatenateKeys2),
         M.equals(T.text(""))
       ),
       test(
         "for each",
         do {
           let set = Set.empty<Nat>();
-          Set.forEach(
-            set,
+          set.forEach(
             func(_) {
               Runtime.trap("test failed")
             }
           );
-          Set.size(set)
+          set.size()
         },
         M.equals(T.nat(0))
       ),
@@ -125,40 +124,39 @@ run(
         "filter",
         do {
           let input = Set.empty<Nat>();
-          let output = Set.filter(
-            input,
+          let output = input.filter(
             Nat.compare,
             func(_) {
               Runtime.trap("test failed")
             }
           );
-          Set.size(output)
+          output.size()
         },
         M.equals(T.nat(0))
       ),
       test(
         "traverse empty set",
-        Set.map(buildTestSet(), Nat.compare, add1),
+        buildTestSet().map(Nat.compare, add1),
         SetMatcher([])
       ),
       test(
         "empty filter map",
-        Set.filterMap(buildTestSet(), Nat.compare, ifElemLessThan(0, add1)),
+        buildTestSet().filterMap(Nat.compare, ifElemLessThan(0, add1)),
         SetMatcher([])
       ),
       test(
         "is empty",
-        Set.isEmpty(buildTestSet()),
+        buildTestSet().isEmpty(),
         M.equals(T.bool(true))
       ),
       test(
         "max",
-        Set.max(buildTestSet()),
+        buildTestSet().max(),
         M.equals(T.optional(entryTestable, null : ?Nat))
       ),
       test(
         "min",
-        Set.min(buildTestSet()),
+        buildTestSet().min(),
         M.equals(T.optional(entryTestable, null : ?Nat))
       ),
       test(
@@ -166,7 +164,7 @@ run(
         do {
           let set1 = Set.empty<Nat>();
           let set2 = Set.empty<Nat>();
-          assert (Set.compare(set1, set2, Nat.compare) == #equal);
+          assert (set1.compare(set2, Nat.compare) == #equal);
           true
         },
         M.equals(T.bool(true))
@@ -177,8 +175,8 @@ run(
           let set1 = Set.fromIter(Iter.empty<Nat>(), Nat.compare);
           let set2 = set1;
           let set3 = set2;
-          let combined = Set.join([set1, set2, set3].values(), Nat.compare);
-          Set.size(combined)
+          let combined = [set1, set2, set3].values().join(Nat.compare);
+          combined.size()
         },
         M.equals(T.nat(0))
       ),
@@ -189,9 +187,9 @@ run(
           let subSet2 = subSet1;
           let subSet3 = subSet2;
           let iterator = [subSet1, subSet2, subSet3].values();
-          let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
-          let combined = Set.flatten(setOfSets, Nat.compare);
-          Set.size(combined)
+          let setOfSets = Set.fromIter(iterator, func(first, second) { first.compare(second, Nat.compare) });
+          let combined = setOfSets.flatten(Nat.compare);
+          combined.size()
         },
         M.equals(T.nat(0))
       )
@@ -213,17 +211,17 @@ run(
     [
       test(
         "size",
-        Set.size(buildTestSet()),
+        buildTestSet().size(),
         M.equals(T.nat(1))
       ),
       test(
         "values",
-        Iter.toArray(Set.values(buildTestSet())),
+        buildTestSet().values().toArray(),
         M.equals(T.array(entryTestable, expected))
       ),
       test(
         "reverseValues",
-        Iter.toArray(Set.reverseValues(buildTestSet())),
+        buildTestSet().reverseValues().toArray(),
         M.equals(T.array(entryTestable, expected))
       ),
       test(
@@ -233,25 +231,24 @@ run(
       ),
       test(
         "contains",
-        Set.contains(buildTestSet(), Nat.compare, 0),
+        buildTestSet().contains(Nat.compare, 0),
         M.equals(T.bool(true))
       ),
       test(
         "remove",
-        Set.remove(buildTestSet(), Nat.compare, 0),
+        buildTestSet().remove(Nat.compare, 0),
         SetMatcher([])
       ),
       test(
         "for each",
         do {
           let set = buildTestSet();
-          Set.forEach(
-            set,
+          set.forEach(
             func(number) {
               assert (number == 0)
             }
           );
-          Set.size(set)
+          set.size()
         },
         M.equals(T.nat(1))
       ),
@@ -259,67 +256,66 @@ run(
         "filter",
         do {
           let input = buildTestSet();
-          let output = Set.filter(
-            input,
+          let output = input.filter(
             Nat.compare,
             func(number) {
               assert (number == 0);
               true
             }
           );
-          assert (Set.equal(input, output, Nat.compare));
-          Set.size(output)
+          assert (input.equal(output, Nat.compare));
+          output.size()
         },
         M.equals(T.nat(1))
       ),
       test(
         "right fold",
-        Set.foldRight(buildTestSet(), "", concatenateKeys),
+        buildTestSet().foldRight("", concatenateKeys),
         M.equals(T.text("0"))
       ),
       test(
         "left fold",
-        Set.foldLeft(buildTestSet(), "", concatenateKeys2),
+        buildTestSet().foldLeft("", concatenateKeys2),
         M.equals(T.text("0"))
       ),
       test(
         "traverse set",
-        Set.map(buildTestSet(), Nat.compare, add1),
+        buildTestSet().map(Nat.compare, add1),
         SetMatcher([1])
       ),
       test(
         "filterMap / filter all",
-        Set.filterMap(buildTestSet(), Nat.compare, ifElemLessThan(0, add1)),
+        buildTestSet().filterMap(Nat.compare, ifElemLessThan(0, add1)),
         SetMatcher([])
       ),
       test(
         "filterMap / no filter",
-        Set.filterMap(buildTestSet(), Nat.compare, ifElemLessThan(1, add1)),
+        buildTestSet().filterMap(Nat.compare, ifElemLessThan(1, add1)),
         SetMatcher([1])
       ),
       test(
         "is empty",
-        Set.isEmpty(buildTestSet()),
+        buildTestSet().isEmpty(),
         M.equals(T.bool(false))
       ),
       test(
         "max",
-        Set.max(buildTestSet()),
+        buildTestSet().max(),
         M.equals(T.optional(entryTestable, ?0))
       ),
       test(
         "min",
-        Set.min(buildTestSet()),
+        buildTestSet().min(),
         M.equals(T.optional(entryTestable, ?0))
       ),
       test(
         "all",
-        Set.all(buildTestSet(), func(k) = (k == 0)),
+        buildTestSet().all(func(k) = (k == 0)),
         M.equals(T.bool(true))
       ),
       test(
         "any",
-        Set.any(buildTestSet(), func(k) = (k == 0)),
+        buildTestSet().any(func(k) = (k == 0)),
         M.equals(T.bool(true))
       ),
       test(
@@ -327,7 +323,7 @@ run(
         do {
           let set1 = Set.singleton(0);
           let set2 = Set.singleton(1);
-          assert (Set.compare(set1, set2, Nat.compare) == #less);
+          assert (set1.compare(set2, Nat.compare) == #less);
           true
         },
         M.equals(T.bool(true))
@@ -337,7 +333,7 @@ run(
         do {
           let set1 = Set.singleton(0);
           let set2 = Set.singleton(0);
-          assert (Set.compare(set1, set2, Nat.compare) == #equal);
+          assert (set1.compare(set2, Nat.compare) == #equal);
           true
         },
         M.equals(T.bool(true))
@@ -347,7 +343,7 @@ run(
         do {
           let set1 = Set.singleton(1);
           let set2 = Set.singleton(0);
-          assert (Set.compare(set1, set2, Nat.compare) == #greater);
+          assert (set1.compare(set2, Nat.compare) == #greater);
           true
         },
         M.equals(T.bool(true))
@@ -358,8 +354,8 @@ run(
           let set1 = Set.singleton(0);
           let set2 = Set.singleton(1);
           let set3 = Set.singleton(2);
-          let combined = Set.join([set1, set2, set3].values(), Nat.compare);
-          Iter.toArray(Set.values(combined))
+          let combined = [set1, set2, set3].values().join(Nat.compare);
+          combined.values().toArray()
         },
         M.equals(
           T.array(
@@ -375,9 +371,9 @@ run(
           let subSet2 = Set.singleton(1);
           let subSet3 = Set.singleton(2);
           let iterator = [subSet1, subSet2, subSet3].values();
-          let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Nat.compare) });
-          let combined = Set.flatten(setOfSets, Nat.compare);
-          Iter.toArray(Set.values(combined))
+          let setOfSets = Set.fromIter(iterator, func(first, second) { first.compare(second, Nat.compare) });
+          let combined = setOfSets.flatten(Nat.compare);
+          combined.values().toArray()
         },
         M.equals(
           T.array(
@@ -397,7 +393,7 @@ expected := [0, 1, 2];
 func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   test(
     "size",
-    Set.size(buildTestSet()),
+    buildTestSet().size(),
     M.equals(T.nat(3))
   ),
   test(
@@ -407,12 +403,12 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   ),
   test(
     "values",
-    Iter.toArray(Set.values(buildTestSet())),
+    buildTestSet().values().toArray(),
     M.equals(T.array(entryTestable, expected))
   ),
   test(
     "reverseValues",
-    Array.reverse(Iter.toArray(Set.reverseValues(buildTestSet()))),
+    buildTestSet().reverseValues().toArray().reverse(),
     M.equals(T.array(entryTestable, expected))
   ),
   test(
@@ -436,22 +432,22 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   ),
   test(
     "right fold",
-    Set.foldRight(buildTestSet(), "", concatenateKeys),
+    buildTestSet().foldRight("", concatenateKeys),
     M.equals(T.text("210"))
   ),
   test(
     "left fold",
-    Set.foldLeft(buildTestSet(), "", concatenateKeys2),
+    buildTestSet().foldLeft("", concatenateKeys2),
     M.equals(T.text("012"))
   ),
   test(
     "traverse set",
-    Set.map(buildTestSet(), Nat.compare, add1),
+    buildTestSet().map(Nat.compare, add1),
     SetMatcher([1, 2, 3])
   ),
   test(
     "traverse set/reshape",
-    Set.map(buildTestSet(), Nat.compare, func(x : Nat) : Nat { 5 }),
+    buildTestSet().map(Nat.compare, func(x : Nat) : Nat { 5 }),
     SetMatcher([5])
   ),
   test(
@@ -459,96 +455,94 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let set = buildTestSet();
       var index = 0;
-      Set.forEach(
-        set,
+      set.forEach(
         func(element) {
           assert (element == index);
           index += 1
         }
       );
-      Set.size(set)
+      set.size()
     },
-    M.equals(T.nat(Set.size(buildTestSet())))
+    M.equals(T.nat(buildTestSet().size()))
   ),
   test(
     "filter",
     do {
       let input = buildTestSet();
-      let output = Set.filter(
-        input,
+      let output = input.filter(
         Nat.compare,
         func(number) {
           number % 2 == 0
         }
       );
-      for (index in Nat.range(0, Set.size(input))) {
-        let present = Set.contains(output, Nat.compare, index);
+      for (index in Nat.range(0, input.size())) {
+        let present = output.contains(Nat.compare, index);
         if (index % 2 == 0) {
           assert (present)
         } else {
           assert (not present)
         }
       };
-      Set.size(output)
+      output.size()
     },
-    M.equals(T.nat((Set.size(buildTestSet()) + 1) / 2))
+    M.equals(T.nat((buildTestSet().size() + 1) / 2))
   ),
   test(
     "filterMap / filter all",
-    Set.filterMap(buildTestSet(), Nat.compare, ifElemLessThan(0, add1)),
+    buildTestSet().filterMap(Nat.compare, ifElemLessThan(0, add1)),
     SetMatcher([])
   ),
   test(
     "filterMap / filter one",
-    Set.filterMap(buildTestSet(), Nat.compare, ifElemLessThan(1, add1)),
+    buildTestSet().filterMap(Nat.compare, ifElemLessThan(1, add1)),
     SetMatcher([1])
   ),
   test(
     "filterMap / no filer",
-    Set.filterMap(buildTestSet(), Nat.compare, ifElemLessThan(3, add1)),
+    buildTestSet().filterMap(Nat.compare, ifElemLessThan(3, add1)),
     SetMatcher([1, 2, 3])
   ),
   test(
     "is empty",
-    Set.isEmpty(buildTestSet()),
+    buildTestSet().isEmpty(),
     M.equals(T.bool(false))
   ),
   test(
     "max",
-    Set.max(buildTestSet()),
+    buildTestSet().max(),
     M.equals(T.optional(entryTestable, ?2))
   ),
   test(
     "min",
-    Set.min(buildTestSet()),
+    buildTestSet().min(),
     M.equals(T.optional(entryTestable, ?0))
   ),
   test(
     "all true",
-    Set.all(buildTestSet(), func(k) = (k >= 0)),
+    buildTestSet().all(func(k) = (k >= 0)),
     M.equals(T.bool(true))
   ),
   test(
     "all false",
-    Set.all(buildTestSet(), func(k) = (k > 0)),
+    buildTestSet().all(func(k) = (k > 0)),
     M.equals(T.bool(false))
   ),
   test(
     "any true",
-    Set.any(buildTestSet(), func(k) = (k >= 2)),
+    buildTestSet().any(func(k) = (k >= 2)),
     M.equals(T.bool(true))
   ),
   test(
     "any false",
-    Set.any(buildTestSet(), func(k) = (k > 2)),
+    buildTestSet().any(func(k) = (k > 2)),
     M.equals(T.bool(false))
   ),
   test(
     "compare less key",
     do {
-      let set1 = buildTestSet() |> Set.remove(_, Nat.compare, Set.size(_) - 1 : Nat);
+      let set1 = buildTestSet() |> _.remove(Nat.compare, _.size() - 1 : Nat);
       let set2 = buildTestSet();
-      assert (Set.compare(set1, set2, Nat.compare) == #less);
+      assert (set1.compare(set2, Nat.compare) == #less);
       true
     },
     M.equals(T.bool(true))
@@ -558,7 +552,7 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     do {
       let set1 = buildTestSet();
       let set2 = buildTestSet();
-      assert (Set.compare(set1, set2, Nat.compare) == #equal);
+      assert (set1.compare(set2, Nat.compare) == #equal);
       true
     },
     M.equals(T.bool(true))
@@ -567,9 +561,9 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
     "compare greater key",
     do {
       let set1 = buildTestSet();
-      let set2 = buildTestSet() |> Set.remove(_, Nat.compare, Set.size(_) - 1 : Nat);
+      let set2 = buildTestSet() |> _.remove(Nat.compare, _.size() - 1 : Nat);
 
-      assert (Set.compare(set1, set2, Nat.compare) == #greater);
+      assert (set1.compare(set2, Nat.compare) == #greater);
       true
     },
     M.equals(T.bool(true))
@@ -577,14 +571,14 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   test(
     "join",
     do {
-      let set1 = Set.map(buildTestSet(), Int.compare, func(number) { +number });
-      let set2 = Set.map(buildTestSet(), Int.compare, func(number) { -number });
+      let set1 = buildTestSet().map(Int.compare, func(number) { +number });
+      let set2 = buildTestSet().map(Int.compare, func(number) { -number });
       let set3 = Set.fromIter([-1, 1].values(), Int.compare);
-      let combined = Set.join([set1, set2, set3].values(), Int.compare);
-      Iter.toArray(Set.values(combined))
+      let combined = [set1, set2, set3].values().join(Int.compare);
+      combined.values().toArray()
     },
     do {
-      let size = Set.size(buildTestSet());
+      let size = buildTestSet().size();
       M.equals(
         T.array(
           T.intTestable,
@@ -601,16 +595,16 @@ func rebalanceTests(buildTestSet : () -> Set.Set<Nat>) : [Suite.Suite] = [
   test(
     "flatten",
     do {
-      let subSet1 = Set.map(buildTestSet(), Int.compare, func(number) { +number });
-      let subSet2 = Set.map(buildTestSet(), Int.compare, func(number) { -number });
+      let subSet1 = buildTestSet().map(Int.compare, func(number) { +number });
+      let subSet2 = buildTestSet().map(Int.compare, func(number) { -number });
       let subSet3 = Set.fromIter([-1, 1].values(), Int.compare);
       let iterator = [subSet1, subSet2, subSet3].values();
-      let setOfSets = Set.fromIter(iterator, func(first, second) { Set.compare(first, second, Int.compare) });
-      let combined = Set.flatten(setOfSets, Int.compare);
-      Iter.toArray(Set.values(combined))
+      let setOfSets = Set.fromIter(iterator, func(first, second) { first.compare(second, Int.compare) });
+      let combined = setOfSets.flatten(Int.compare);
+      combined.values().toArray()
     },
     do {
-      let size = Set.size(buildTestSet());
+      let size = buildTestSet().size();
       M.equals(
         T.array(
           T.intTestable,
@@ -682,9 +676,9 @@ run(
         "repeated add",
         do {
           var set = buildTestSet();
-          assert (Set.contains(set, Nat.compare, 1));
-          set := Set.add(set, Nat.compare, 1);
-          Set.size(set)
+          assert (set.contains(Nat.compare, 1));
+          set := set.add(Nat.compare, 1);
+          set.size()
         },
         M.equals(T.nat(3))
       ),
@@ -692,8 +686,8 @@ run(
         "repeated remove",
         do {
           var set = buildTestSet();
-          set := Set.remove(set, Nat.compare, 1);
-          Set.remove(set, Nat.compare, 1)
+          set := set.remove(Nat.compare, 1);
+          set.remove(Nat.compare, 1)
         },
         SetMatcher([0, 2])
       ),
@@ -701,8 +695,8 @@ run(
         "repeated insert",
         do {
           var set = buildTestSet();
-          assert (Set.contains(set, Nat.compare, 1));
-          let (_, changed) = Set.insert(set, Nat.compare, 1);
+          assert (set.contains(Nat.compare, 1));
+          let (_, changed) = set.insert(Nat.compare, 1);
           changed
         },
         M.equals(T.bool(false))
@@ -711,8 +705,8 @@ run(
         "repeated delete",
         do {
           var set = buildTestSet();
-          let (set1, true) = Set.delete(set, Nat.compare, 1) else Runtime.unreachable();
-          let (_, changed) = Set.delete(set1, Nat.compare, 1);
+          let (set1, true) = set.delete(Nat.compare, 1) else Runtime.unreachable();
+          let (_, changed) = set1.delete(Nat.compare, 1);
           changed
         },
         M.equals(T.bool(false))
@@ -761,12 +755,12 @@ run(
     [
       test(
         "subset/subset of itself",
-        Set.isSubset(buildTestSet012(), buildTestSet012(), Nat.compare),
+        buildTestSet012().isSubset(buildTestSet012(), Nat.compare),
         M.equals(T.bool(true))
       ),
       test(
         "subset/empty set is subset of itself",
-        Set.isSubset(Set.empty(), Set.empty(), Nat.compare),
+        Set.empty().isSubset(Set.empty(), Nat.compare),
         M.equals(T.bool(true))
       ),
       test(
@@ -776,92 +770,92 @@ run(
       ),
       test(
         "subset/subset",
-        Set.isSubset(buildTestSet01(), buildTestSet012(), Nat.compare),
+        buildTestSet01().isSubset(buildTestSet012(), Nat.compare),
         M.equals(T.bool(true))
       ),
       test(
         "subset/not subset",
-        Set.isSubset(buildTestSet012(), buildTestSet01(), Nat.compare),
+        buildTestSet012().isSubset(buildTestSet01(), Nat.compare),
         M.equals(T.bool(false))
       ),
       test(
         "equal/empty set",
-        Set.equal(Set.empty(), Set.empty(), Nat.compare),
+        Set.empty().equal(Set.empty(), Nat.compare),
         M.equals(T.bool(true))
       ),
       test(
         "equal/equal",
-        Set.equal(buildTestSet012(), buildTestSet012(), Nat.compare),
+        buildTestSet012().equal(buildTestSet012(), Nat.compare),
         M.equals(T.bool(true))
       ),
       test(
         "equal/not equal",
-        Set.equal(buildTestSet012(), buildTestSet01(), Nat.compare),
+        buildTestSet012().equal(buildTestSet01(), Nat.compare),
         M.equals(T.bool(false))
       ),
       test(
         "union/empty set",
-        Set.union(Set.empty(), Set.empty(), Nat.compare),
+        Set.empty().union(Set.empty(), Nat.compare),
         SetMatcher([])
       ),
       test(
         "union/union with empty set",
-        Set.union(buildTestSet012(), Set.empty(), Nat.compare),
+        buildTestSet012().union(Set.empty(), Nat.compare),
         SetMatcher([0, 1, 2])
       ),
       test(
         "union/union with itself",
-        Set.union(buildTestSet012(), buildTestSet012(), Nat.compare),
+        buildTestSet012().union(buildTestSet012(), Nat.compare),
         SetMatcher([0, 1, 2])
       ),
       test(
         "union/union with subset",
-        Set.union(buildTestSet012(), buildTestSet01(), Nat.compare),
+        buildTestSet012().union(buildTestSet01(), Nat.compare),
         SetMatcher([0, 1, 2])
       ),
       test(
         "union/union expand",
-        Set.union(buildTestSet012(), buildTestSet234(), Nat.compare),
+        buildTestSet012().union(buildTestSet234(), Nat.compare),
         SetMatcher([0, 1, 2, 3, 4])
       ),
       test(
         "intersection/empty set",
-        Set.intersection(Set.empty(), Set.empty(), Nat.compare),
+        Set.empty().intersection(Set.empty(), Nat.compare),
         SetMatcher([])
       ),
       test(
         "intersection/intersection with empty set",
-        Set.intersection(buildTestSet012(), Set.empty(), Nat.compare),
+        buildTestSet012().intersection(Set.empty(), Nat.compare),
         SetMatcher([])
       ),
       test(
         "intersection/intersection with itself",
-        Set.intersection(buildTestSet012(), buildTestSet012(), Nat.compare),
+        buildTestSet012().intersection(buildTestSet012(), Nat.compare),
         SetMatcher([0, 1, 2])
       ),
       test(
         "intersection/intersection with subset",
-        Set.intersection(buildTestSet012(), buildTestSet01(), Nat.compare),
+        buildTestSet012().intersection(buildTestSet01(), Nat.compare),
         SetMatcher([0, 1])
       ),
       test(
         "intersection/intersection",
-        Set.intersection(buildTestSet012(), buildTestSet234(), Nat.compare),
+        buildTestSet012().intersection(buildTestSet234(), Nat.compare),
         SetMatcher([2])
       ),
       test(
         "intersection/no intersectionion",
-        Set.intersection(buildTestSet012(), buildTestSet345(), Nat.compare),
+        buildTestSet012().intersection(buildTestSet345(), Nat.compare),
         SetMatcher([])
       ),
       test(
         "difference/empty set",
-        Set.difference(Set.empty(), Set.empty(), Nat.compare),
+        Set.empty().difference(Set.empty(), Nat.compare),
         SetMatcher([])
       ),
       test(
         "difference/difference with empty set",
-        Set.difference(buildTestSet012(), Set.empty(), Nat.compare),
+        buildTestSet012().difference(Set.empty(), Nat.compare),
         SetMatcher([0, 1, 2])
       ),
       test(
@@ -871,22 +865,22 @@ run(
       ),
       test(
         "difference/difference with subset",
-        Set.difference(buildTestSet012(), buildTestSet01(), Nat.compare),
+        buildTestSet012().difference(buildTestSet01(), Nat.compare),
         SetMatcher([2])
       ),
       test(
         "difference/difference with subset 2",
-        Set.difference(buildTestSet01(), buildTestSet012(), Nat.compare),
+        buildTestSet01().difference(buildTestSet012(), Nat.compare),
         SetMatcher([])
       ),
       test(
         "difference/difference",
-        Set.difference(buildTestSet012(), buildTestSet234(), Nat.compare),
+        buildTestSet012().difference(buildTestSet234(), Nat.compare),
         SetMatcher([0, 1])
       ),
       test(
         "difference/difference no intersection",
-        Set.difference(buildTestSet012(), buildTestSet345(), Nat.compare),
+        buildTestSet012().difference(buildTestSet345(), Nat.compare),
         SetMatcher([0, 1, 2])
       )
     ]

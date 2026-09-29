@@ -222,7 +222,7 @@ module {
     /// @deprecated M0235
     public func nat8() : Nat8 {
       if (state.index >= state.bytes.size()) {
-        let newBytes = Blob.toArray(generator());
+        let newBytes = generator().toArray();
         if (newBytes.size() == 0) {
           Runtime.trap("Random: generator produced empty Blob")
         };
@@ -255,7 +255,7 @@ module {
       // 2^64 - (2^64 % toExclusive) = (2^64-1) - (2^64-1 % toExclusive):
       let cutoff = Nat64.maxValue - (Nat64.maxValue % toExclusive);
       // 2^64 / toExclusive, with toExclusive > 1:
-      let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / Nat64.toNat(toExclusive));
+      let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / toExclusive.toNat());
       loop {
         // Build up a random Nat64 from bytes
         var number = nat64();
@@ -277,7 +277,7 @@ module {
     /// ```
     /// @deprecated M0235
     public func nat64() : Nat64 {
-      (Nat.toNat64(Nat8.toNat(nat8())) << 56) | (Nat.toNat64(Nat8.toNat(nat8())) << 48) | (Nat.toNat64(Nat8.toNat(nat8())) << 40) | (Nat.toNat64(Nat8.toNat(nat8())) << 32) | (Nat.toNat64(Nat8.toNat(nat8())) << 24) | (Nat.toNat64(Nat8.toNat(nat8())) << 16) | (Nat.toNat64(Nat8.toNat(nat8())) << 8) | Nat.toNat64(Nat8.toNat(nat8()))
+      (nat8().toNat().toNat64() << 56) | (nat8().toNat().toNat64() << 48) | (nat8().toNat().toNat64() << 40) | (nat8().toNat().toNat64() << 32) | (nat8().toNat().toNat64() << 24) | (nat8().toNat().toNat64() << 16) | (nat8().toNat().toNat64() << 8) | nat8().toNat().toNat64()
     };
 
     /// Random `Nat64` value in the range [fromInclusive, toExclusive).
@@ -307,13 +307,13 @@ module {
       if (fromInclusive >= toExclusive) {
         Runtime.trap("Random.natRange(): fromInclusive >= toExclusive")
       };
-      Nat64.toNat(uniform64(Nat.toNat64(toExclusive - fromInclusive - 1))) + fromInclusive
+      uniform64(Nat.toNat64(toExclusive - fromInclusive - 1)).toNat() + fromInclusive
     };
 
     /// @deprecated M0235
     public func intRange(fromInclusive : Int, toExclusive : Int) : Int {
       let range = Int.toNat(toExclusive - fromInclusive - 1);
-      Nat64.toNat(uniform64(Nat.toNat64(range))) + fromInclusive
+      uniform64(range.toNat64()).toNat() + fromInclusive
     };
 
   };
@@ -370,7 +370,7 @@ module {
       // 2^64 - (2^64 % toExclusive) = (2^64-1) - (2^64-1 % toExclusive):
       let cutoff = Nat64.maxValue - (Nat64.maxValue % toExclusive);
       // 2^64 / toExclusive, with toExclusive > 1:
-      let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / Nat64.toNat(toExclusive));
+      let multiple = Nat.toNat64(/* 2^64 */ 0x10000000000000000 / toExclusive.toNat());
       loop {
         // Build up a random Nat64 from bytes
         var number = await* nat64();
@@ -386,7 +386,7 @@ module {
     /// Random `Nat64` value in the range [0, 2^64).
     /// @deprecated M0235
     public func nat64() : async* Nat64 {
-      (Nat.toNat64(Nat8.toNat(await* nat8())) << 56) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 48) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 40) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 32) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 24) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 16) | (Nat.toNat64(Nat8.toNat(await* nat8())) << 8) | Nat.toNat64(Nat8.toNat(await* nat8()))
+      (Nat8.toNat(await* nat8()).toNat64() << 56) | (Nat8.toNat(await* nat8()).toNat64() << 48) | (Nat8.toNat(await* nat8()).toNat64() << 40) | (Nat8.toNat(await* nat8()).toNat64() << 32) | (Nat8.toNat(await* nat8()).toNat64() << 24) | (Nat8.toNat(await* nat8()).toNat64() << 16) | (Nat8.toNat(await* nat8()).toNat64() << 8) | Nat8.toNat(await* nat8()).toNat64()
     };
 
     /// Random `Nat64` value in the range [fromInclusive, toExclusive).
@@ -411,7 +411,7 @@ module {
     /// @deprecated M0235
     public func intRange(fromInclusive : Int, toExclusive : Int) : async* Int {
       let range = Int.toNat(toExclusive - fromInclusive - 1);
-      Nat64.toNat(await* uniform64(Nat.toNat64(range))) + fromInclusive
+      Nat64.toNat(await* uniform64(range.toNat64())) + fromInclusive
     };
 
   };

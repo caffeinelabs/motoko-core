@@ -11,7 +11,7 @@ await suite(
   func() : async () {
     func mockAsyncGenerator(bytes : [Nat8]) : () -> async* Blob {
       func() : async* Blob {
-        Array.toBlob(bytes)
+        bytes.toBlob()
       }
     };
 
@@ -198,11 +198,11 @@ await suite(
         let bytes : [Nat8] = Array.tabulate(
           16,
           func(i) {
-            counter := Nat.toNat8((Nat8.toNat(counter) + 1) % 256);
+            counter := Nat.toNat8((counter.toNat() + 1) % 256);
             counter
           }
         );
-        Array.toBlob(bytes)
+        bytes.toBlob()
       }
     };
 
@@ -288,8 +288,8 @@ await suite(
       func() : async () {
         let state = Random.emptyState();
         func sequentialGenerator() : async* Blob {
-          let bytes = Array.tabulate(16, func(i) { Nat.toNat8(i) });
-          Array.toBlob(bytes)
+          let bytes = Array.tabulate(16, func(i) { i.toNat8() });
+          bytes.toBlob()
         };
         let random = Random.AsyncRandom(state, sequentialGenerator);
 

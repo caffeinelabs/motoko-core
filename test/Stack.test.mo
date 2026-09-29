@@ -10,28 +10,28 @@ suite(
     test(
       "new stack is empty",
       func() {
-        expect.bool(Stack.isEmpty(Stack.empty<Nat>())).isTrue()
+        expect.bool(Stack.empty<Nat>().isEmpty()).isTrue()
       }
     );
 
     test(
       "new stack has size 0",
       func() {
-        expect.nat(Stack.size(Stack.empty<Nat>())).equal(0)
+        expect.nat(Stack.empty<Nat>().size()).equal(0)
       }
     );
 
     test(
       "peek empty returns null",
       func() {
-        expect.option(Stack.peek(Stack.empty<Nat>()), Nat.toText, Nat.equal).isNull()
+        expect.option(Stack.empty<Nat>().peek(), Nat.toText, Nat.equal).isNull()
       }
     );
 
     test(
       "pop empty returns null",
       func() {
-        expect.option(Stack.pop(Stack.empty<Nat>()), Nat.toText, Nat.equal).isNull()
+        expect.option(Stack.empty<Nat>().pop(), Nat.toText, Nat.equal).isNull()
       }
     )
   }
@@ -44,7 +44,7 @@ suite(
       "creates stack with one element",
       func() {
         let s = Stack.singleton<Nat>(123);
-        expect.bool(Stack.size(s) == 1 and Stack.peek(s) == ?123).isTrue()
+        expect.bool(s.size() == 1 and s.peek() == ?123).isTrue()
       }
     )
   }
@@ -57,8 +57,8 @@ suite(
       "push increases size",
       func() {
         let s = Stack.empty<Nat>();
-        Stack.push(s, 1);
-        expect.nat(Stack.size(s)).equal(1)
+        s.push(1);
+        expect.nat(s.size()).equal(1)
       }
     );
 
@@ -66,13 +66,13 @@ suite(
       "push/pop maintains LIFO order",
       func() {
         let s = Stack.empty<Nat>();
-        Stack.push(s, 1);
-        Stack.push(s, 2);
-        Stack.push(s, 3);
+        s.push(1);
+        s.push(2);
+        s.push(3);
         expect.array(
-          [Stack.pop(s), Stack.pop(s), Stack.pop(s)],
+          [s.pop(), s.pop(), s.pop()],
           func(x : ?Nat) : Text {
-            switch (x) { case (null) "null"; case (?n) Nat.toText(n) }
+            switch (x) { case (null) "null"; case (?n) n.toText() }
           },
           func(a : ?Nat, b : ?Nat) : Bool {
             switch (a, b) {
@@ -82,7 +82,7 @@ suite(
             }
           }
         ).equal([?3, ?2, ?1]);
-        expect.nat(Stack.size(s)).equal(0)
+        expect.nat(s.size()).equal(0)
       }
     );
 
@@ -90,10 +90,10 @@ suite(
       "peek doesn't remove element",
       func() {
         let s = Stack.empty<Nat>();
-        Stack.push(s, 42);
-        let p1 = Stack.peek(s);
-        let p2 = Stack.peek(s);
-        expect.bool(p1 == p2 and p1 == ?42 and Stack.size(s) == 1).isTrue()
+        s.push(42);
+        let p1 = s.peek();
+        let p2 = s.peek();
+        expect.bool(p1 == p2 and p1 == ?42 and s.size() == 1).isTrue()
       }
     )
   }
@@ -106,8 +106,8 @@ suite(
       "clear empties stack",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        Stack.clear(s);
-        expect.bool(Stack.isEmpty(s)).isTrue()
+        s.clear();
+        expect.bool(s.isEmpty()).isTrue()
       }
     );
 
@@ -115,9 +115,9 @@ suite(
       "clone creates independent copy",
       func() {
         let original = Stack.fromIter<Nat>([1, 2, 3].values());
-        let copy = Stack.clone(original);
-        ignore Stack.pop(original);
-        expect.bool(Stack.size(copy) == 3 and Stack.peek(copy) == ?3).isTrue()
+        let copy = original.clone();
+        ignore original.pop();
+        expect.bool(copy.size() == 3 and copy.peek() == ?3).isTrue()
       }
     )
   }
@@ -130,7 +130,7 @@ suite(
       "contains finds element",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.bool(Stack.contains(s, Nat.equal, 2)).isTrue()
+        expect.bool(s.contains(Nat.equal, 2)).isTrue()
       }
     );
 
@@ -138,7 +138,7 @@ suite(
       "get retrieves correct element",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.bool(Stack.get(s, 1) == ?2).isTrue()
+        expect.bool(s.get(1) == ?2).isTrue()
       }
     );
 
@@ -146,7 +146,7 @@ suite(
       "values iterates in LIFO order",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.array(Iter.toArray(Stack.values(s)), Nat.toText, Nat.equal).equal([3, 2, 1])
+        expect.array(s.values().toArray(), Nat.toText, Nat.equal).equal([3, 2, 1])
       }
     )
   }
@@ -159,8 +159,8 @@ suite(
       "reverse changes order",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        Stack.reverse(s);
-        expect.array(Iter.toArray(Stack.values(s)), Nat.toText, Nat.equal).equal([1, 2, 3])
+        s.reverse();
+        expect.array(s.values().toArray(), Nat.toText, Nat.equal).equal([1, 2, 3])
       }
     );
 
@@ -168,8 +168,8 @@ suite(
       "map transforms elements",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        let mapped = Stack.map<Nat, Nat>(s, func(x) { x + 1 });
-        expect.array(Iter.toArray(Stack.values(mapped)), Nat.toText, Nat.equal).equal([4, 3, 2])
+        let mapped = s.map<Nat, Nat>(func(x) { x + 1 });
+        expect.array(mapped.values().toArray(), Nat.toText, Nat.equal).equal([4, 3, 2])
       }
     );
 
@@ -177,8 +177,8 @@ suite(
       "filter keeps matching elements",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3, 4].values());
-        let evens = Stack.filter(s, func(x) { x % 2 == 0 });
-        expect.array(Iter.toArray(Stack.values(evens)), Nat.toText, Nat.equal).equal([4, 2])
+        let evens = s.filter(func(x) { x % 2 == 0 });
+        expect.array(evens.values().toArray(), Nat.toText, Nat.equal).equal([4, 2])
       }
     );
 
@@ -186,13 +186,12 @@ suite(
       "filterMap combines map and filter",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3, 4].values());
-        let evenDoubled = Stack.filterMap<Nat, Nat>(
-          s,
+        let evenDoubled = s.filterMap<Nat, Nat>(
           func(x) {
             if (x % 2 == 0) { ?(x * 2) } else { null }
           }
         );
-        expect.array(Iter.toArray(Stack.values(evenDoubled)), Nat.toText, Nat.equal).equal([8, 4])
+        expect.array(evenDoubled.values().toArray(), Nat.toText, Nat.equal).equal([8, 4])
       }
     )
   }
@@ -205,7 +204,7 @@ suite(
       "all true when all match",
       func() {
         let s = Stack.fromIter<Nat>([2, 4, 6].values());
-        expect.bool(Stack.all(s, func(x) { x % 2 == 0 })).isTrue()
+        expect.bool(s.all(func(x) { x % 2 == 0 })).isTrue()
       }
     );
 
@@ -213,7 +212,7 @@ suite(
       "all false when any doesn't match",
       func() {
         let s = Stack.fromIter<Nat>([2, 3, 4].values());
-        expect.bool(Stack.all(s, func(x) { x % 2 == 0 })).isFalse()
+        expect.bool(s.all(func(x) { x % 2 == 0 })).isFalse()
       }
     );
 
@@ -221,7 +220,7 @@ suite(
       "any true when one matches",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.bool(Stack.any(s, func(x) { x % 2 == 0 })).isTrue()
+        expect.bool(s.any(func(x) { x % 2 == 0 })).isTrue()
       }
     );
 
@@ -229,7 +228,7 @@ suite(
       "any false when none match",
       func() {
         let s = Stack.fromIter<Nat>([1, 3, 5].values());
-        expect.bool(Stack.any(s, func(x) { x % 2 == 0 })).isFalse()
+        expect.bool(s.any(func(x) { x % 2 == 0 })).isFalse()
       }
     )
   }
@@ -243,7 +242,7 @@ suite(
       func() {
         let s1 = Stack.fromIter<Nat>([1, 2, 3].values());
         let s2 = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.bool(Stack.equal(s1, s2, Nat.equal)).isTrue()
+        expect.bool(s1.equal(s2, Nat.equal)).isTrue()
       }
     );
 
@@ -252,7 +251,7 @@ suite(
       func() {
         let s1 = Stack.fromIter<Nat>([1, 2, 3].values());
         let s2 = Stack.fromIter<Nat>([1, 2, 4].values());
-        expect.bool(Stack.equal(s1, s2, Nat.equal)).isFalse()
+        expect.bool(s1.equal(s2, Nat.equal)).isFalse()
       }
     );
 
@@ -261,7 +260,7 @@ suite(
       func() {
         let s1 = Stack.fromIter<Nat>([1, 2].values());
         let s2 = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.bool(Stack.compare(s1, s2, Nat.compare) == #less).isTrue()
+        expect.bool(s1.compare(s2, Nat.compare) == #less).isTrue()
       }
     )
   }
@@ -274,7 +273,7 @@ suite(
       "toText formats correctly",
       func() {
         let s = Stack.fromIter<Nat>([1, 2, 3].values());
-        expect.text(Stack.toText(s, Nat.toText)).equal("Stack[3, 2, 1]")
+        expect.text(s.toText(Nat.toText)).equal("Stack[3, 2, 1]")
       }
     )
   }
@@ -310,20 +309,20 @@ suite(
 
         for (i in Nat.range(0, largeSize)) {
           let value = random.next();
-          Stack.push(s, value);
+          s.push(value);
           expectedSum += value
         };
 
-        expect.nat(Stack.size(s)).equal(largeSize);
+        expect.nat(s.size()).equal(largeSize);
 
-        while (not Stack.isEmpty(s)) {
-          switch (Stack.pop(s)) {
+        while (not s.isEmpty()) {
+          switch (s.pop()) {
             case (?value) { actualSum += value };
             case null { expect.bool(false).isTrue() }; // Should never happen
           }
         };
 
-        expect.bool(Stack.isEmpty(s) and expectedSum == actualSum).isTrue()
+        expect.bool(s.isEmpty() and expectedSum == actualSum).isTrue()
       }
     );
 
@@ -336,15 +335,15 @@ suite(
 
         for (i in Nat.range(0, largeSize)) {
           if (random.next() % 2 == 0) {
-            Stack.push(s, i);
+            s.push(i);
             count += 1
           } else {
-            switch (Stack.pop(s)) {
+            switch (s.pop()) {
               case (?_) { count -= 1 };
               case null {}; // Stack can be empty
             }
           };
-          expect.nat(Stack.size(s)).equal(count)
+          expect.nat(s.size()).equal(count)
         };
 
         expect.bool(true).isTrue()
@@ -355,19 +354,18 @@ suite(
       "large scale transformations",
       func() {
         let original = Stack.tabulate<Nat>(largeSize, func(i) { i });
-        let doubled = Stack.map<Nat, Nat>(original, func(x) { x * 2 });
-        let filtered = Stack.filter(doubled, func(x) { x % 4 == 0 });
-        let mapped = Stack.filterMap<Nat, Nat>(
-          filtered,
+        let doubled = original.map<Nat, Nat>(func(x) { x * 2 });
+        let filtered = doubled.filter(func(x) { x % 4 == 0 });
+        let mapped = filtered.filterMap<Nat, Nat>(
           func(x) {
             if (x % 8 == 0) ?x else null
           }
         );
 
-        expect.nat(Stack.size(original)).equal(largeSize);
-        expect.nat(Stack.size(doubled)).equal(largeSize);
-        expect.nat(Stack.size(filtered)).equal(largeSize / 2);
-        expect.nat(Stack.size(mapped)).equal(largeSize / 4)
+        expect.nat(original.size()).equal(largeSize);
+        expect.nat(doubled.size()).equal(largeSize);
+        expect.nat(filtered.size()).equal(largeSize / 2);
+        expect.nat(mapped.size()).equal(largeSize / 4)
       }
     );
 
@@ -378,7 +376,7 @@ suite(
         var sum = 0;
         var count = 0;
 
-        for (value in Stack.values(s)) {
+        for (value in s.values()) {
           sum += value;
           count += 1
         };
@@ -393,13 +391,13 @@ suite(
       "large scale clone and compare",
       func() {
         let original = Stack.tabulate<Nat>(largeSize, func(i) = i);
-        let clone = Stack.clone(original);
+        let clone = original.clone();
 
-        expect.bool(Stack.equal(original, clone, Nat.equal)).isTrue();
+        expect.bool(original.equal(clone, Nat.equal)).isTrue();
 
-        Stack.push(original, largeSize);
-        expect.bool(Stack.equal(original, clone, Nat.equal)).isFalse();
-        expect.bool(Stack.compare(clone, original, Nat.compare) == #less).isTrue()
+        original.push(largeSize);
+        expect.bool(original.equal(clone, Nat.equal)).isFalse();
+        expect.bool(clone.compare(original, Nat.compare) == #less).isTrue()
       }
     )
   }
@@ -413,18 +411,18 @@ suite(
       func() {
         let stack = Stack.empty<Nat>();
         for (index in Nat.range(0, largeSize)) {
-          Stack.push(stack, index)
+          stack.push(index)
         };
 
-        let pureList = Stack.toPure(stack);
+        let pureList = stack.toPure();
         var index = largeSize;
 
-        for (element in PureList.values(pureList)) {
+        for (element in pureList.values()) {
           index -= 1;
           expect.nat(element).equal(index)
         };
 
-        expect.nat(PureList.size(pureList)).equal(largeSize)
+        expect.nat(pureList.size()).equal(largeSize)
       }
     );
 
@@ -433,18 +431,18 @@ suite(
       func() {
         var pureList = PureList.empty<Nat>();
         for (index in Nat.range(0, largeSize)) {
-          pureList := PureList.pushFront(pureList, index)
+          pureList := pureList.pushFront(index)
         };
 
         let stack = Stack.fromPure<Nat>(pureList);
         var index = largeSize;
 
-        for (element in PureList.values(pureList)) {
+        for (element in pureList.values()) {
           index -= 1;
           expect.nat(element).equal(index)
         };
 
-        expect.nat(Stack.size(stack)).equal(largeSize)
+        expect.nat(stack.size()).equal(largeSize)
       }
     )
   }

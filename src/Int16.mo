@@ -131,7 +131,7 @@ module {
   /// assert Int16.toText(-12345) == "-12345";
   /// ```
   public func toText(self : Int16) : Text {
-    Int.toText(toInt(self))
+    toInt(self).toText()
   };
 
   /// Returns the absolute value of `x`.

@@ -19,11 +19,11 @@ let entryTestable = T.tuple2Testable(T.natTestable, T.textTestable);
 
 class MapMatcher(expected : Map.Map<Nat, Text>) : M.Matcher<Map.Map<Nat, Text>> {
   public func describeMismatch(actual : Map.Map<Nat, Text>, _description : M.Description) {
-    Debug.print(debug_show (Iter.toArray(Map.entries(actual))) # " should be " # debug_show (Iter.toArray(Map.entries(expected))))
+    Debug.print(debug_show (actual.entries().toArray()) # " should be " # debug_show (expected.entries().toArray()))
   };
 
   public func matches(actual : Map.Map<Nat, Text>) : Bool {
-    Iter.toArray(Map.entries(actual)) == Iter.toArray(Map.entries(expected))
+    actual.entries().toArray() == expected.entries().toArray()
   }
 };
 
@@ -75,7 +75,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
         label stop for (map in mapGen(map_samples, size, range)) {
           if (not f(map)) {
             error_msg := "Property \"" # name # "\" failed\n";
-            error_msg #= "\n m: " # debug_show (Iter.toArray(Map.entries(map)));
+            error_msg #= "\n m: " # debug_show (map.entries().toArray());
             break stop
           }
         };
@@ -94,7 +94,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             let key = Random.nextNat(range);
             if (not f(map, key)) {
               error_msg #= "Property \"" # name # "\" failed";
-              error_msg #= "\n m: " # debug_show (Iter.toArray(Map.entries(map)));
+              error_msg #= "\n m: " # debug_show (map.entries().toArray());
               error_msg #= "\n k: " # debug_show (key);
               break stop
             }
@@ -117,7 +117,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               label res : Bool {
                 for (_query_ix in Nat.range(0, query_samples)) {
                   let k = Random.nextNat(range);
-                  if (Map.get(Map.empty<Nat, Text>(), c, k) != null) break res(false)
+                  if (Map.empty<Nat, Text>().get(c, k) != null) break res(false)
                 };
                 true
               },
@@ -132,14 +132,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop_with_key(
               "get(add(m, c, k, v), c,  k) == ?v",
               func(m, k) {
-                Map.get(Map.add(m, c, k, "v"), c, k) == ?"v"
+                m.add(c, k, "v").get(c, k) == ?"v"
               }
             ),
             prop_with_key(
               "get(add(add(m, c, k, v1), c, k, v2), c, k) == ?v2",
               func(m, k) {
                 let (v1, v2) = ("V1", "V2");
-                Map.get(Map.add(Map.add(m, c, k, v1), c, k, v2), c, k) == ?v2
+                m.add(c, k, v1).add(c, k, v2).get(c, k) == ?v2
               }
             )
           ]
@@ -151,20 +151,20 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop_with_key(
               "swap(m, c, k, v).0 == add(m, c, k, v)",
               func(m, k) {
-                Map.swap(m, c, k, "v").0 == Map.add(m, c, k, "v")
+                m.swap(c, k, "v").0 == m.add(c, k, "v")
               }
             ),
             prop_with_key(
               "swap(add(m, c, k, v1), c,  k, v2).1 == ?v1",
               func(m, k) {
-                Map.swap(Map.add(m, c, k, "v1"), c, k, "v2").1 == ?"v1"
+                m.add(c, k, "v1").swap(c, k, "v2").1 == ?"v1"
               }
             ),
             prop_with_key(
               "get(m, c, k) == null ==> swap(m, c, k, v).1 == null",
               func(m, k) {
-                if (Map.get(m, c, k) == null) {
-                  Map.swap(m, c, k, "v").1 == null
+                if (m.get(c, k) == null) {
+                  m.swap(c, k, "v").1 == null
                 } else { true }
               }
             )
@@ -177,24 +177,24 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop_with_key(
               "get(m, c, k) == null ==> remove(m, c, k) == m",
               func(m, k) {
-                if (Map.get(m, c, k) == null) {
-                  MapMatcher(m).matches(Map.remove(m, c, k))
+                if (m.get(c, k) == null) {
+                  MapMatcher(m).matches(m.remove(c, k))
                 } else { true }
               }
             ),
             prop_with_key(
               "remove(add(m, c, k, v), c, k) == m",
               func(m, k) {
-                if (Map.get(m, c, k) == null) {
-                  MapMatcher(m).matches(Map.remove(Map.add(m, c, k, "v"), c, k))
+                if (m.get(c, k) == null) {
+                  MapMatcher(m).matches(m.add(c, k, "v").remove(c, k))
                 } else { true }
               }
             ),
             prop_with_key(
               "remove(remove(m, c, k), c, k)) == remove(m, c, k)",
               func(m, k) {
-                let m1 = Map.remove(Map.remove(m, c, k), c, k);
-                let m2 = Map.remove(m, c, k);
+                let m1 = m.remove(c, k).remove(c, k);
+                let m2 = m.remove(c, k);
                 MapMatcher(m2).matches(m1)
               }
             )
@@ -207,28 +207,28 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop_with_key(
               "take(m, c, k).0 == remove(m, c, k)",
               func(m, k) {
-                let m1 = Map.take(m, c, k).0;
-                let m2 = Map.remove(m, c, k);
+                let m1 = m.take(c, k).0;
+                let m2 = m.remove(c, k);
                 MapMatcher(m2).matches(m1)
               }
             ),
             prop_with_key(
               "take(add(m, c k, v), c, k).1 == ?v",
               func(m, k) {
-                Map.take(Map.add(m, c, k, "v"), c, k).1 == ?"v"
+                m.add(c, k, "v").take(c, k).1 == ?"v"
               }
             ),
             prop_with_key(
               "take(take(m, c, k).0, c, k).1 == null",
               func(m, k) {
-                Map.take(Map.take(m, c, k).0, c, k).1 == null
+                m.take(c, k).0.take(c, k).1 == null
               }
             ),
             prop_with_key(
               "add(take(m, c, k).0, c, k, take(m, c, k).1) == m",
               func(m, k) {
-                if (Map.get(m, c, k) != null) {
-                  MapMatcher(m).matches(Map.add(Map.take(m, c, k).0, c, k, Option.get(Map.take(m, c, k).1, "")))
+                if (m.get(c, k) != null) {
+                  MapMatcher(m).matches(m.take(c, k).0.add(c, k, m.take(c, k).1.get("")))
                 } else { true }
               }
             )
@@ -241,13 +241,13 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop_with_key(
               "size(add(m, c, k, v)) == size(m) + int(get(m, c, k) == null)",
               func(m, k) {
-                Map.size(Map.add(m, c, k, "v")) == Map.size(m) + (if (Map.get(m, c, k) == null) { 1 } else { 0 })
+                m.add(c, k, "v").size() == m.size() + (if (m.get(c, k) == null) { 1 } else { 0 })
               }
             ),
             prop_with_key(
               "size(remove(m, c, k)) + int(get(m, c, k) != null) == size(m)",
               func(m, k) {
-                Map.size(Map.remove(m, c, k)) + (if (Map.get(m, c, k) != null) { 1 } else { 0 }) == Map.size(m)
+                m.remove(c, k).size() + (if (m.get(c, k) != null) { 1 } else { 0 }) == m.size()
               }
             )
           ]
@@ -256,7 +256,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
         prop(
           "search tree invariant",
           func(m) {
-            Map.assertValid(m, c);
+            m.assertValid(c);
             true
           }
         ),
@@ -267,21 +267,21 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "fromIter(entries(m), c) == m",
               func(m) {
-                MapMatcher(m).matches(Map.fromIter(Map.entries(m), c))
+                MapMatcher(m).matches(Map.fromIter(m.entries(), c))
               }
             ),
             prop(
               "fromIter(entriesRev(m)) == m",
               func(m) {
-                MapMatcher(m).matches(Map.fromIter(Map.reverseEntries(m), c))
+                MapMatcher(m).matches(Map.fromIter(m.reverseEntries(), c))
               }
             ),
             prop(
               "entries(m) = zip(key(m), values(m))",
               func(m) {
-                let k = Map.keys(m);
-                let v = Map.values(m);
-                for (e in Map.entries(m)) {
+                let k = m.keys();
+                let v = m.values();
+                for (e in m.entries()) {
                   if (?e.0 != k.next() or ?e.1 != v.next()) return false
                 };
                 return true
@@ -290,8 +290,8 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "Array.fromIter(entries(m)) == Array.fromIter(reverseEntries(m)).reverse()",
               func(m) {
-                let a = Iter.toArray(Map.entries(m));
-                let b = Array.reverse(Iter.toArray(Map.reverseEntries(m)));
+                let a = m.entries().toArray();
+                let b = m.reverseEntries().toArray().reverse();
                 M.equals(T.array(entryTestable, a)).matches(b)
               }
             )
@@ -305,8 +305,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "get(filterMap(m, c, (!=k)), c, k) == null",
               func(m, k) {
                 Map.get(
-                  Map.filterMap(
-                    m,
+                  m.filterMap(
                     c,
                     func(ki, vi) { if (ki != k) { ?vi } else { null } }
                   ),
@@ -319,8 +318,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "get(filterMap(add(m, c, k, v), c, (==k)), c, k) == ?v",
               func(m, k) {
                 Map.get(
-                  Map.filterMap(
-                    Map.add(m, c, k, "v"),
+                  m.add(c, k, "v").filterMap(
                     c,
                     func(ki, vi) { if (ki == k) { ?vi } else { null } }
                   ),
@@ -338,7 +336,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "map(m, id) == m",
               func(m) {
-                MapMatcher(m).matches(Map.map(m, func(k, v) { v }))
+                MapMatcher(m).matches(m.map(func(k, v) { v }))
               }
             )
           ]
@@ -350,15 +348,15 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "foldLeft as entries()",
               func(m) {
-                let it = Map.entries(m);
-                Map.foldLeft(m, true, func(acc, k, v) { acc and it.next() == ?(k, v) })
+                let it = m.entries();
+                m.foldLeft(true, func(acc, k, v) { acc and it.next() == ?(k, v) })
               }
             ),
             prop(
               "foldRight as reverseEntries()",
               func(m) {
-                let it = Map.reverseEntries(m);
-                Map.foldRight(m, true, func(k, v, acc) { acc and it.next() == ?(k, v) })
+                let it = m.reverseEntries();
+                m.foldRight(true, func(k, v, acc) { acc and it.next() == ?(k, v) })
               }
             )
           ]
@@ -371,21 +369,21 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
               "all through fold",
               func(m) {
                 let pred = func(k : Nat, v : Text) : Bool = (k <= (range.1 - 2 : Nat) and range.0 + 2 <= k);
-                Map.all(m, pred) == Map.foldLeft(m, true, func(acc, k, v) { acc and pred(k, v) })
+                m.all(pred) == m.foldLeft(true, func(acc, k, v) { acc and pred(k, v) })
               }
             ),
             prop(
               "any through fold",
               func(m) {
                 let pred = func(k : Nat, v : Text) : Bool = (k >= (range.1 - 1 : Nat) or range.0 + 1 >= k);
-                Map.any(m, pred) == Map.foldLeft(m, false, func(acc, k, v) { acc or pred(k, v) })
+                m.any(pred) == m.foldLeft(false, func(acc, k, v) { acc or pred(k, v) })
               }
             ),
 
             prop(
               "forall k, v in map, v == show_debug(k)",
               func(m) {
-                Map.all(m, func(k : Nat, v : Text) : Bool = (v == debug_show (k)))
+                m.all(func(k : Nat, v : Text) : Bool = (v == debug_show (k)))
               }
             )
           ]
@@ -397,7 +395,7 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop_with_key(
               "containsKey(m, c,  k) == (get(m, c, k) != null)",
               func(m, k) {
-                Map.containsKey(m, c, k) == (Option.isSome(Map.get(m, c, k)))
+                m.containsKey(c, k) == (Option.isSome(m.get(c, k)))
               }
             )
           ]
@@ -409,16 +407,16 @@ func run_all_props(range : (Nat, Nat), size : Nat, map_samples : Nat, query_samp
             prop(
               "max through fold",
               func(m) {
-                let expected = Map.foldLeft(m, null : ?(Nat, Text), func(_, k, v) = ?(k, v));
-                M.equals(T.optional(entryTestable, expected)).matches(Map.maxEntry(m))
+                let expected = m.foldLeft(null : ?(Nat, Text), func(_, k, v) = ?(k, v));
+                M.equals(T.optional(entryTestable, expected)).matches(m.maxEntry())
               }
             ),
 
             prop(
               "min through fold",
               func(m) {
-                let expected = Map.foldRight(m, null : ?(Nat, Text), func(k, v, _) = ?(k, v));
-                M.equals(T.optional(entryTestable, expected)).matches(Map.minEntry(m))
+                let expected = m.foldRight(null : ?(Nat, Text), func(k, v, _) = ?(k, v));
+                M.equals(T.optional(entryTestable, expected)).matches(m.minEntry())
               }
             )
           ]

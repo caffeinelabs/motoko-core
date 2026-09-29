@@ -56,7 +56,7 @@ func assertNoAlloc(name : Text, f : () -> ()) {
     name # " does not allocate",
     func() {
       let delta = allocDelta(f);
-      if (delta != 0) Prim.debugPrint("NONZERO " # name # ": " # Nat.toText(delta));
+      if (delta != 0) Prim.debugPrint("NONZERO " # name # ": " # delta.toText());
       assert delta == 0
     }
   )
@@ -92,49 +92,49 @@ test(
 
 // --- Size queries ---
 
-assertNoAlloc("List.size", func() { var i = 0; while (i < n) { ignore List.size(list); i += 1 } });
-assertNoAlloc("List.isEmpty", func() { var i = 0; while (i < n) { ignore List.isEmpty(list); i += 1 } });
+assertNoAlloc("List.size", func() { var i = 0; while (i < n) { ignore list.size(); i += 1 } });
+assertNoAlloc("List.isEmpty", func() { var i = 0; while (i < n) { ignore list.isEmpty(); i += 1 } });
 
 // --- Element access ---
 
-assertNoAlloc("List.at", func() { var i = 0; while (i < n) { ignore List.at(list, i); i += 1 } });
-assertNoAlloc("List.get", func() { var i = 0; while (i < n) { ignore List.get(list, i); i += 1 } });
-assertNoAlloc("List.first", func() { var i = 0; while (i < n) { ignore List.first(list); i += 1 } });
-assertNoAlloc("List.last", func() { var i = 0; while (i < n) { ignore List.last(list); i += 1 } });
+assertNoAlloc("List.at", func() { var i = 0; while (i < n) { ignore list.at(i); i += 1 } });
+assertNoAlloc("List.get", func() { var i = 0; while (i < n) { ignore list.get(i); i += 1 } });
+assertNoAlloc("List.first", func() { var i = 0; while (i < n) { ignore list.first(); i += 1 } });
+assertNoAlloc("List.last", func() { var i = 0; while (i < n) { ignore list.last(); i += 1 } });
 
 // --- Search (full scans; targets/predicates chosen so no early exit) ---
 
-assertNoAlloc("List.find", func() { ignore List.find(list, func x = x == 999) });
-assertNoAlloc("List.find (no hit)", func() { ignore List.find(list, func x = x >= n) });
-assertNoAlloc("List.findIndex", func() { ignore List.findIndex(list, func x = x == 999) });
-assertNoAlloc("List.findIndex (no hit)", func() { ignore List.findIndex(list, func x = x >= n) });
-assertNoAlloc("List.findLastIndex", func() { ignore List.findLastIndex(list, func x = x == 0) });
-assertNoAlloc("List.findLastIndex (no hit)", func() { ignore List.findLastIndex(list, func x = x >= n) });
-assertNoAlloc("List.indexOf", func() { ignore List.indexOf(list, Nat.equal, 999) });
-assertNoAlloc("List.nextIndexOf", func() { ignore List.nextIndexOf(list, Nat.equal, 999, 0) });
-assertNoAlloc("List.lastIndexOf", func() { ignore List.lastIndexOf(list, Nat.equal, 0) });
-assertNoAlloc("List.prevIndexOf", func() { ignore List.prevIndexOf(list, Nat.equal, 0, n) });
-assertNoAlloc("List.contains", func() { ignore List.contains(list, Nat.equal, n) });
-assertNoAlloc("List.all", func() { ignore List.all(list, func x = x < n) });
-assertNoAlloc("List.any", func() { ignore List.any(list, func x = x >= n) });
-assertNoAlloc("List.equal", func() { ignore List.equal(list, listCopy, Nat.equal) });
-assertNoAlloc("List.compare", func() { ignore List.compare(list, listCopy, Nat.compare) });
+assertNoAlloc("List.find", func() { ignore list.find(func x = x == 999) });
+assertNoAlloc("List.find (no hit)", func() { ignore list.find(func x = x >= n) });
+assertNoAlloc("List.findIndex", func() { ignore list.findIndex(func x = x == 999) });
+assertNoAlloc("List.findIndex (no hit)", func() { ignore list.findIndex(func x = x >= n) });
+assertNoAlloc("List.findLastIndex", func() { ignore list.findLastIndex(func x = x == 0) });
+assertNoAlloc("List.findLastIndex (no hit)", func() { ignore list.findLastIndex(func x = x >= n) });
+assertNoAlloc("List.indexOf", func() { ignore list.indexOf(Nat.equal, 999) });
+assertNoAlloc("List.nextIndexOf", func() { ignore list.nextIndexOf(Nat.equal, 999, 0) });
+assertNoAlloc("List.lastIndexOf", func() { ignore list.lastIndexOf(Nat.equal, 0) });
+assertNoAlloc("List.prevIndexOf", func() { ignore list.prevIndexOf(Nat.equal, 0, n) });
+assertNoAlloc("List.contains", func() { ignore list.contains(Nat.equal, n) });
+assertNoAlloc("List.all", func() { ignore list.all(func x = x < n) });
+assertNoAlloc("List.any", func() { ignore list.any(func x = x >= n) });
+assertNoAlloc("List.equal", func() { ignore list.equal(listCopy, Nat.equal) });
+assertNoAlloc("List.compare", func() { ignore list.compare(listCopy, Nat.compare) });
 
 // --- Aggregation ---
 
-assertNoAlloc("List.max", func() { ignore List.max(list, Nat.compare) });
-assertNoAlloc("List.min", func() { ignore List.min(list, Nat.compare) });
-assertNoAlloc("List.isSorted", func() { ignore List.isSorted(list, Nat.compare) });
-assertNoAlloc("List.foldLeft", func() { ignore List.foldLeft(list, 0, func(a, x) = a + x) });
-assertNoAlloc("List.foldRight", func() { ignore List.foldRight(list, 0, func(x, a) = a + x) });
+assertNoAlloc("List.max", func() { ignore list.max(Nat.compare) });
+assertNoAlloc("List.min", func() { ignore list.min(Nat.compare) });
+assertNoAlloc("List.isSorted", func() { ignore list.isSorted(Nat.compare) });
+assertNoAlloc("List.foldLeft", func() { ignore list.foldLeft(0, func(a, x) = a + x) });
+assertNoAlloc("List.foldRight", func() { ignore list.foldRight(0, func(x, a) = a + x) });
 
 // --- Iteration (callback style; the iterator-returning functions allocate) ---
 
-assertNoAlloc("List.forEach", func() { List.forEach(list, func _ = ()) });
-assertNoAlloc("List.forEachEntry", func() { List.forEachEntry(list, func(_, _) = ()) });
-assertNoAlloc("List.reverseForEach", func() { List.reverseForEach(list, func _ = ()) });
-assertNoAlloc("List.reverseForEachEntry", func() { List.reverseForEachEntry(list, func(_, _) = ()) });
-assertNoAlloc("List.forEachInRange", func() { List.forEachInRange(list, func _ = (), 0, n) });
+assertNoAlloc("List.forEach", func() { list.forEach(func _ = ()) });
+assertNoAlloc("List.forEachEntry", func() { list.forEachEntry(func(_, _) = ()) });
+assertNoAlloc("List.reverseForEach", func() { list.reverseForEach(func _ = ()) });
+assertNoAlloc("List.reverseForEachEntry", func() { list.reverseForEachEntry(func(_, _) = ()) });
+assertNoAlloc("List.forEachInRange", func() { list.forEachInRange(func _ = (), 0, n) });
 
 // --- In-place mutation (each on its own list, so the shared read-only
 //     `list` above keeps its distinct sorted elements) ---
@@ -143,7 +143,7 @@ test(
   "List.put does not allocate",
   func() {
     let l = List.repeat<Nat>(0, n);
-    assert allocDelta(func() { var i = 0; while (i < n) { List.put(l, i, i); i += 1 } }) == 0
+    assert allocDelta(func() { var i = 0; while (i < n) { l.put(i, i); i += 1 } }) == 0
   }
 );
 
@@ -151,7 +151,7 @@ test(
   "List.fill does not allocate",
   func() {
     let l = List.repeat<Nat>(0, n);
-    assert allocDelta(func() { List.fill(l, 7) }) == 0
+    assert allocDelta(func() { l.fill(7) }) == 0
   }
 );
 
@@ -159,7 +159,7 @@ test(
   "List.mapInPlace does not allocate",
   func() {
     let l = List.repeat<Nat>(0, n);
-    assert allocDelta(func() { List.mapInPlace(l, func x = x) }) == 0
+    assert allocDelta(func() { l.mapInPlace(func x = x) }) == 0
   }
 );
 
@@ -167,7 +167,7 @@ test(
   "List.retain does not allocate",
   func() {
     let l = List.repeat<Nat>(0, n);
-    assert allocDelta(func() { List.retain(l, func _ = true) }) == 0
+    assert allocDelta(func() { l.retain(func _ = true) }) == 0
   }
 );
 
@@ -176,7 +176,7 @@ test(
   func() {
     // distinct elements, so the workload is idempotent (nothing is removed)
     let l = List.tabulate<Nat>(n, func i = i);
-    assert allocDelta(func() { List.deduplicate(l, Nat.equal) }) == 0
+    assert allocDelta(func() { l.deduplicate(Nat.equal) }) == 0
   }
 );
 
@@ -184,6 +184,6 @@ test(
   "List.reverseInPlace does not allocate",
   func() {
     let l = List.tabulate<Nat>(n, func i = i);
-    assert allocDelta(func() { List.reverseInPlace(l); List.reverseInPlace(l) }) == 0
+    assert allocDelta(func() { l.reverseInPlace(); l.reverseInPlace() }) == 0
   }
 )

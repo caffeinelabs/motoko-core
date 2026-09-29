@@ -140,7 +140,7 @@ module {
   /// assert Int64.toText(-123456) == "-123456";
   /// ```
   public func toText(self : Int64) : Text {
-    Int.toText(toInt(self))
+    toInt(self).toText()
   };
 
   /// Returns the absolute value of `x`.

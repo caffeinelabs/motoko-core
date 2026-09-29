@@ -162,12 +162,12 @@ module {
     case (#one(x)) equal(x, item);
     case (#two(x, y)) equal(x, item) or equal(y, item);
     case (#three(x, y, z)) equal(x, item) or equal(y, item) or equal(z, item);
-    case (#idles(((l1, l2), _), ((r1, r2), _))) List.contains(l1, equal, item) or List.contains(l2, equal, item) or List.contains(r2, equal, item) or List.contains(r1, equal, item); // note that the order of the right stack is reversed, but for this operation it does not matter
+    case (#idles(((l1, l2), _), ((r1, r2), _))) l1.contains(equal, item) or l2.contains(equal, item) or r2.contains(equal, item) or r1.contains(equal, item); // note that the order of the right stack is reversed, but for this operation it does not matter
     case (#rebal(_, big, small)) {
       let (extraB, _, (oldB1, oldB2), _) = BigState.current(big);
       let (extraS, _, (oldS1, oldS2), _) = SmallState.current(small);
       // note that the order of one of the stacks is reversed (depending on the `direction` field), but for this operation it does not matter
-      List.contains(extraB, equal, item) or List.contains(oldB1, equal, item) or List.contains(oldB2, equal, item) or List.contains(extraS, equal, item) or List.contains(oldS1, equal, item) or List.contains(oldS2, equal, item)
+      extraB.contains(equal, item) or oldB1.contains(equal, item) or oldB2.contains(equal, item) or extraS.contains(equal, item) or oldS1.contains(equal, item) or oldS2.contains(equal, item)
     }
   };
 
@@ -542,7 +542,7 @@ module {
   /// Space: `O(size)`
   public func fromIter<T>(iter : Iter<T>) : Queue<T> {
     var queue = empty<T>();
-    Iter.forEach(iter, func(t : T) = queue := pushBack(queue, t));
+    iter.forEach(func(t : T) = queue := pushBack(queue, t));
     queue
   };
 
@@ -905,12 +905,12 @@ module {
 
     public func unsafeFirst<T>((left, right) : Stacks<T>) : T = switch (left) {
       case (?(h, _)) h;
-      case (null) Option.unwrap(right).0
+      case (null) right.unwrap().0
     };
 
-    public func isEmpty<T>((left, right) : Stacks<T>) : Bool = List.isEmpty(left) and List.isEmpty(right);
+    public func isEmpty<T>((left, right) : Stacks<T>) : Bool = left.isEmpty() and right.isEmpty();
 
-    public func size<T>((left, right) : Stacks<T>) : Nat = List.size(left) + List.size(right);
+    public func size<T>((left, right) : Stacks<T>) : Nat = left.size() + right.size();
 
     public func smallqueue<T>((left, right) : Stacks<T>) : Queue<T> = switch (left, right) {
       case (null, null) #empty;
@@ -1171,6 +1171,6 @@ module {
 
   type List<T> = Types.Pure.List<T>;
   type Iter<T> = Types.Iter<T>;
-  func unsafeHead<T>(l : List<T>) : T = Option.unwrap(l).0;
-  func unsafeTail<T>(l : List<T>) : List<T> = Option.unwrap(l).1
+  func unsafeHead<T>(l : List<T>) : T = l.unwrap().0;
+  func unsafeTail<T>(l : List<T>) : List<T> = l.unwrap().1
 }
