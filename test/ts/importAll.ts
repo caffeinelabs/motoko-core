@@ -40,8 +40,6 @@ writeFileSync(outFile, source, "utf8");
       outFile,
       "--hide-warnings",
       "-r", // Using interpreter in place of "-wasi-system-api" for async expressions in `Random.mo`
-      "--experimental-stable-memory",
-      "1",
       "-o",
       wasmFile,
     ],
