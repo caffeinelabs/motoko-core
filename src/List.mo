@@ -2507,7 +2507,7 @@ module {
   /// Space: O(toExclusive - fromInclusive)
   public func sliceToArray<T>(self : List<T>, fromInclusive : Int, toExclusive : Int) : [T] {
     let (start, end) = actualInterval(fromInclusive, toExclusive, size(self));
-    Array.tabulate(end - start, sliceToArrayBase(self, start).next)
+    Array.tabulate(end - start : Nat, sliceToArrayBase(self, start).next)
   };
 
   /// Returns a new var array containing elements from `list` starting at index `fromInclusive` up to (but not including) index `toExclusive`.
@@ -2531,7 +2531,7 @@ module {
   /// Space: O(toExclusive - fromInclusive)
   public func sliceToVarArray<T>(self : List<T>, fromInclusive : Int, toExclusive : Int) : [var T] {
     let (start, end) = actualInterval(fromInclusive, toExclusive, size(self));
-    VarArray.tabulate(end - start, sliceToArrayBase(self, start).next)
+    VarArray.tabulate(end - start : Nat, sliceToArrayBase(self, start).next)
   };
 
   /// Like `forEachEntryRev` but iterates through the list in reverse order,

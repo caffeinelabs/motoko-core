@@ -830,7 +830,7 @@ suite(
   "unfold",
   func() {
     func mk(n : Nat, expected : [Nat]) {
-      let actual = Iter.unfold(n, func(x) = if (x == 0) null else ?(x, x - 1));
+      let actual = Iter.unfold(n, func(x) = if (x == 0) null else ?(x, x - 1 : Nat));
       expect.array(actual.toArray(), Nat.toText, Nat.equal).equal(expected)
     };
     test("some", func() = mk(5, [5, 4, 3, 2, 1]));

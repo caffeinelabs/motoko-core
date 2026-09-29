@@ -999,7 +999,7 @@ module {
     if (start >= end) {
       return []
     };
-    Prim.Array_tabulate(end - start, func i = self[start + i])
+    Prim.Array_tabulate(end - start : Nat, func i = self[start + i])
   };
 
   /// Returns a new mutable array containing elements from `array` starting at index `fromInclusive` up to (but not including) index `toExclusive`.
@@ -1042,7 +1042,7 @@ module {
     if (start >= end) {
       return [var]
     };
-    Prim.Array_tabulateVar(end - start, func i = self[start + i])
+    Prim.Array_tabulateVar(end - start : Nat, func i = self[start + i])
   };
 
   /// Converts the array to its textual representation using `f` to convert each element to `Text`.
