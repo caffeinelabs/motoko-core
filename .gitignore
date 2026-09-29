@@ -8,6 +8,9 @@ _out
 # IDEs
 .vscode/
 
+# Agents
+.claude/
+
 # Node
 node_modules
 
