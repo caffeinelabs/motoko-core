@@ -93,7 +93,7 @@ module {
     Array.tabulate<PriorityQueueUpdateOperation<Nat>>(
       size + 2 * popPushCount,
       func(i) {
-        if (i < size or (i - size) % 2 == 1) {
+        if (i < size or (i - size : Nat) % 2 == 1) {
           #Push(rng.natRange(0, maxValueExclusive))
         } else {
           #Pop

@@ -1414,7 +1414,7 @@ func testRange(n : Nat) : Bool {
   for (left in Nat.range(0, n)) {
     for (right in Nat.range(left, n + 1)) {
       let range = vec.range(left, right).toArray();
-      let expected = Array.tabulate(right - left, func(i) = left + i);
+      let expected = Array.tabulate(right - left : Nat, func(i) = left + i);
       if (range != expected) {
         Debug.print(
           "Range mismatch for left = " # left.toText() # ", right = " # right.toText() # ": expected " # debug_show (expected) # ", got " # debug_show (range)
@@ -1433,7 +1433,7 @@ func testSliceToArray(n : Nat) : Bool {
     for (right in Nat.range(left, n + 1)) {
       let slice = vec.sliceToArray(left, right);
       let sliceVar = vec.sliceToVarArray(left, right);
-      let expected = Array.tabulate(right - left, func(i) = left + i);
+      let expected = Array.tabulate(right - left : Nat, func(i) = left + i);
       let expectedVar = VarArray.tabulate<Nat>(right - left, func(i) = left + i);
       if (slice != expected or not sliceVar.equal(expectedVar, Nat.equal)) {
         Debug.print(
@@ -1514,8 +1514,8 @@ func testReverse(n : Nat) : Bool {
   vec.reverseInPlace();
   assertValid(vec);
 
-  let inPlaceEqual = vec.equal(List.fromArray<Nat>(Array.tabulate(n, func(i) = n - 1 - i)), Nat.equal);
-  let reversedEqual = reversed.equal(List.fromArray<Nat>(Array.tabulate(n, func(i) = n - 1 - i)), Nat.equal);
+  let inPlaceEqual = vec.equal(List.fromArray<Nat>(Array.tabulate(n, func(i) : Nat = n - 1 - i)), Nat.equal);
+  let reversedEqual = reversed.equal(List.fromArray<Nat>(Array.tabulate(n, func(i) : Nat = n - 1 - i)), Nat.equal);
 
   inPlaceEqual and reversedEqual
 };
@@ -1539,7 +1539,7 @@ func testIsSorted(n : Nat) : Bool {
     return false
   };
 
-  let notSorted = List.fromArray<Nat>(Array.tabulate(n, func i = n - i - 1));
+  let notSorted = List.fromArray<Nat>(Array.tabulate(n, func(i) : Nat = n - i - 1));
   if (notSorted.size() >= 2 and notSorted.isSorted(Nat.compare)) {
     Debug.print("isSorted fails on " # notSorted.toText(Nat.toText));
     return false

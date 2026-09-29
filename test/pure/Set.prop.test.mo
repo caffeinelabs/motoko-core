@@ -34,7 +34,7 @@ object Random {
 
   public func nextNat(range : (Nat, Nat)) : Nat {
     let n = next();
-    let v = n % (range.1 - range.0 + 1) + range.0;
+    let v = n % (range.1 - range.0 + 1 : Nat) + range.0;
     v
   };
 
@@ -239,14 +239,14 @@ func run_all_props(range : (Nat, Nat), size : Nat, set_samples : Nat, query_samp
             prop(
               "all through fold",
               func(s) {
-                let pred = func(k : Nat) : Bool = (k <= range.1 - 2 and range.0 + 2 <= k);
+                let pred = func(k : Nat) : Bool = (k + 2 <= range.1 and range.0 + 2 <= k);
                 s.all(pred) == s.foldLeft(true, func(acc, v) { acc and pred(v) })
               }
             ),
             prop(
               "any through fold",
               func(s) {
-                let pred = func(k : Nat) : Bool = (k >= range.1 - 1 or range.0 + 1 >= k);
+                let pred = func(k : Nat) : Bool = (k + 1 >= range.1 or range.0 + 1 >= k);
                 s.any(pred) == s.foldLeft(false, func(acc, v) { acc or pred(v) })
               }
             )

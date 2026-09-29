@@ -152,7 +152,7 @@ module {
     {
       var root = #leaf({
         data = {
-          kvs = VarArray.repeat(null, btreeOrder - 1);
+          kvs = VarArray.repeat(null, btreeOrder - 1 : Nat);
           var count = 0
         }
       });
@@ -1934,7 +1934,7 @@ module {
                     let kvPairToBePushedToChild = internalNode.data.kvs[childIndex];
                     internalNode.data.kvs[childIndex] := ?borrowedKVPair;
 
-                    let deletedKV = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
+                    let deletedKV = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1 : Nat, leafDeleteIndex);
                     #delete(?deletedKV.1)
                   };
 
@@ -1990,7 +1990,7 @@ module {
                           let kvPairToBePushedToChild = internalNode.data.kvs[childIndex];
                           internalNode.data.kvs[childIndex] := ?borrowedKVPair;
                           // insert the successor at the very last element
-                          let kvDelete = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1, leafDeleteIndex);
+                          let kvDelete = BTreeHelper.insertAtPostionAndDeleteAtPosition(leafChild.data.kvs, kvPairToBePushedToChild, leafChild.data.count - 1 : Nat, leafDeleteIndex);
                           return #delete(?kvDelete.1)
                         };
                         // if cannot borrow, from left or right, merge (see below)
@@ -2013,9 +2013,9 @@ module {
                       #right
                     );
                     // delete the right most internal node kv, since was merging from a deletion in the right most child and the parent kv was pushed into the mergedLeaf
-                    ignore BTreeHelper.deleteAndShift(internalNode.data.kvs, childIndex - 1);
+                    ignore BTreeHelper.deleteAndShift(internalNode.data.kvs, childIndex - 1 : Nat);
                     // update internal node children
-                    BTreeHelper.replaceTwoWithElementAndShift(internalNode.children, #leaf(mergedLeaf), childIndex - 1);
+                    BTreeHelper.replaceTwoWithElementAndShift(internalNode.children, #leaf(mergedLeaf), childIndex - 1 : Nat);
                     internalNode.data.count -= 1;
 
                     if (internalNode.data.count < minKeys) {

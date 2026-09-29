@@ -159,6 +159,7 @@ func removeLast<T>(self : List.List<T>) : ?T {
 
 // the scaled maximum size: end of epoch 6, insertion state (192, 0)
 let maxSize = 8_192;
+let lastIndex : Nat = maxSize - 1;
 
 func fullList() : List.List<Nat> {
   let l = List.empty<Nat>();
@@ -176,7 +177,7 @@ test(
     assert l.elementIndex == 0;
     assert l.blocks.size() == 192; // exactly full at the top rung
     assert l.at(0) == 0;
-    assert l.at(maxSize - 1) == maxSize - 1
+    assert l.at(lastIndex) == lastIndex
   }
 );
 
@@ -184,8 +185,8 @@ test(
   "removeLast at the maximum size works via the early return",
   func() {
     let l = fullList();
-    assert removeLast(l) == ?(maxSize - 1);
-    assert l.size() == maxSize - 1;
+    assert removeLast(l) == ?(lastIndex);
+    assert l.size() == lastIndex;
     assert l.blocks.size() == 192 // untouched: no shrink possible at the top
   }
 );
@@ -194,7 +195,7 @@ test(
   "full drain from the maximum size shrinks the index block",
   func() {
     let l = fullList();
-    var expected = maxSize - 1 : Nat;
+    var expected = lastIndex;
     while (l.size() > 0) {
       assert removeLast(l) == ?expected;
       if (expected > 0) expected -= 1
@@ -210,11 +211,11 @@ test(
     let l = fullList();
     var k = 0;
     while (k < 3) {
-      assert removeLast(l) == ?(maxSize - 1);
-      add(l, maxSize - 1);
+      assert removeLast(l) == ?(lastIndex);
+      add(l, lastIndex);
       k += 1
     };
     assert l.size() == maxSize;
-    assert l.at(maxSize - 1) == maxSize - 1
+    assert l.at(lastIndex) == lastIndex
   }
 )
