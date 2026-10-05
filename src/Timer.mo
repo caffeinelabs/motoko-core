@@ -19,7 +19,7 @@
 ///
 /// ```motoko include=import
 /// persistent actor {
-///   func job() : async () = async {};
+///   func job() : async () {};
 ///
 ///   transient let daily = Timer.recurringTimer<system>(#seconds 86400, job);
 /// }
@@ -33,7 +33,7 @@
 /// import Nat "mo:core/Nat";
 ///
 /// persistent actor {
-///   func fire() : async () = async {};
+///   func fire() : async () {};
 ///   var pending = Map.empty<Nat, Nat>(); // delay in nanoseconds per timer
 ///
 ///   do {
