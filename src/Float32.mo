@@ -83,7 +83,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Float32.isNaN(0.0/0.0);
+  /// assert Float32.isNaN(0.0 / 0.0);
   /// ```
   public func isNaN(self : Float32) : Bool {
     self != self

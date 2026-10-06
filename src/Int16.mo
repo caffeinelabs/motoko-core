@@ -652,7 +652,6 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  ///
   /// assert Int16.powWrap(2, 15) == -32_768; // overflow
   /// ```
   ///

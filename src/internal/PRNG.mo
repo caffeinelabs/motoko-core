@@ -36,7 +36,6 @@ module {
     /// Initializes the PRNG state with a particular seed
     ///
     /// Example:
-    /// ```motoko
     public func init(seed : Nat64) = init3(seed, seed, seed);
 
     /// Initializes the PRNG state with a hardcoded seed.

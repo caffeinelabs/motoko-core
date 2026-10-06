@@ -15,7 +15,7 @@
 ///     lastTime := now;
 ///     return "Hello, " # name # "!" #
 ///       " I was last called " # elapsedSeconds.toText() # " seconds ago";
-///    };
+///   };
 /// };
 /// ```
 ///

@@ -113,7 +113,7 @@ module {
   /// Allows sequencing of Result values and functions that return
   /// Results themselves.
   /// ```motoko include=import
-  /// type Result<Ok,Err> = Result.Result<Ok, Err>;
+  /// type Result<Ok, Err> = Result.Result<Ok, Err>;
   /// func largerThan10(x : Nat) : Result<Nat, Text> =
   ///   if (x > 10) { #ok(x) } else { #err("Not larger than 10.") };
   ///

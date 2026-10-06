@@ -96,7 +96,6 @@ module {
   ///     }
   ///   }
   /// }
-  ///
   /// ```
   public func isRetryPossible(self : Error) : Bool = switch (code(self)) {
     case (#system_transient or #system_unknown) true;

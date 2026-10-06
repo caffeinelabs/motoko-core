@@ -6,7 +6,7 @@
 
 - Requires Node.js 24 (CI uses `node-version: 24`).
 - Run `npm ci`. The `postinstall` script runs `mops install`, which fetches Motoko dependencies and the pinned toolchain declared in `mops.toml`.
-- The Motoko toolchain versions (`moc`, `wasmtime`, `pocket-ic`) are pinned under `[toolchain]` in `mops.toml`; do not assume system-installed versions. `[requirements] moc` is a minimum floor; `[toolchain] moc` is what CI pins and runs on.
+- The Motoko toolchain versions (`moc`, `wasmtime`, `pocket-ic`, `mo-fmt`) are pinned under `[toolchain]` in `mops.toml`; do not assume system-installed versions. `[requirements] moc` is a minimum floor; `[toolchain] moc` is what CI pins and runs on.
 
 ## Build, test, lint, format
 
@@ -17,14 +17,14 @@ Use the `package.json` scripts:
 - `npm run test:ts` — TypeScript integration tests (`test/ts`).
 - `npm run bench` — benchmarks (`mops bench`); run in CI by the `bench` job.
 - `npm run check:orphans` — type-checks Motoko modules not otherwise imported.
-- `npm run format:check` — Prettier check on `**/*.mo` files. `npm run format` rewrites them.
+- `npm run format:check` — checks every `.mo` file (`mops format --check`) and the `motoko` code blocks in `src/` doc comments (`format:docs`). `npm run format` rewrites both; `npm run format:docs` only the doc examples.
 - `npm run validate` — runs `validate:changelog`, `validate:version`, `validate:api`.
 - `npm run validate:docs [Module ...]` — runs doc-comment code examples for the named `src/*.mo` modules (or all when no argument). Pass `--shard=<index>/<total>` to run one balanced slice of the modules, as CI does across a matrix.
 - `npm run check:bench` — type-checks `bench/*.bench.mo`.
 - `npm run docs` — generates `docs/` via mo-doc (run manually; there is no CI pages deploy).
 - `npm run check:mo` — runs `test:mops`, `bench`, and `check:orphans` together.
 
-Formatting is enforced by the `prettier-plugin-motoko` plugin with the `*.mo` overrides in `.prettierrc` (2-space indent, no semicolons, no trailing commas).
+Formatting is enforced by `mo-fmt`, pinned under `[toolchain]` in `mops.toml`, with its defaults (2-space indent, `syntax = "preserve"`). It keeps line breaks as written and only partly normalises spacing within a line. `// mo-fmt-ignore` leaves the next item as written.
 
 ## Layout
 

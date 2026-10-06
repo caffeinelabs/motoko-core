@@ -249,13 +249,13 @@ module {
   ///   let map0 = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   do {
-  ///      let (map1, old1) = map0.swap(0, "Nil");
-  ///      assert map1.entries().toArray() == [(0, "Nil"), (1, "One"), (2, "Two")];
-  ///      assert old1 == ?"Zero";
+  ///     let (map1, old1) = map0.swap(0, "Nil");
+  ///     assert map1.entries().toArray() == [(0, "Nil"), (1, "One"), (2, "Two")];
+  ///     assert old1 == ?"Zero";
   ///
-  ///      let (map2, old2) = map0.swap(3, "Three");
-  ///      assert map2.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two"), (3, "Three")];
-  ///      assert old2 == null;
+  ///     let (map2, old2) = map0.swap(3, "Three");
+  ///     assert map2.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two"), (3, "Three")];
+  ///     assert old2 == null;
   ///   }
   /// }
   /// ```
@@ -291,10 +291,10 @@ module {
   ///     assert prev1 == ?"Zero";
   ///     assert map1.get(0) == ?"Nil";
   ///
-  ///     let (map2, prev2) = map1.replace(1, "One");  // no effect, key is absent
+  ///     let (map2, prev2) = map1.replace(1, "One"); // no effect, key is absent
   ///     assert prev2 == null;
   ///     assert map2.get(1) == null;
-  ///  }
+  ///   }
   /// }
   /// ```
   ///
@@ -557,7 +557,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  /// let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
+  ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   assert map.values().toArray() == ["Zero", "One", "Two"];
   /// }
@@ -844,8 +844,8 @@ module {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   func f(key : Nat, val : Text) : ?Text {
-  ///     if(key == 0) {null}
-  ///     else { ?("Twenty " # val)}
+  ///     if(key == 0) { null }
+  ///     else { ?("Twenty " # val) }
   ///   };
   ///
   ///   let newMap = map.filterMap(f);

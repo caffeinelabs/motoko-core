@@ -394,8 +394,10 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   let lists = [ ?(0, ?(1, ?(2, null))),
-  ///                 ?(3, ?(4, ?(5, null))) ];
+  ///   let lists = [
+  ///     ?(0, ?(1, ?(2, null))),
+  ///     ?(3, ?(4, ?(5, null)))
+  ///   ];
   ///   assert List.join(lists.values()) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```
@@ -418,9 +420,13 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   let lists = ?(?(0, ?(1, ?(2, null))),
-  ///                ?(?(3, ?(4, ?(5, null))),
-  ///                  null));
+  ///   let lists = ?(
+  ///     ?(0, ?(1, ?(2, null))),
+  ///     ?(
+  ///       ?(3, ?(4, ?(5, null))),
+  ///       null
+  ///     )
+  ///   );
   ///   assert List.flatten(lists) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```

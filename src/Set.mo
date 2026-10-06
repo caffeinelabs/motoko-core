@@ -584,7 +584,7 @@ module {
   ///
   ///   var tmp = "";
   ///   for (number in set.values()) {
-  ///      tmp #= " " # number.toText();
+  ///     tmp #= " " # number.toText();
   ///   };
   ///   assert tmp == " 0 1 2 3";
   /// }
@@ -647,7 +647,7 @@ module {
   ///
   ///   var tmp = "";
   ///   for (number in set.reverseValues()) {
-  ///      tmp #= " " # number.toText();
+  ///     tmp #= " " # number.toText();
   ///   };
   ///   assert tmp == " 3 2 1 0";
   /// }
@@ -1108,9 +1108,9 @@ module {
   ///
   ///   let evenTextNumbers = numbers.filterMap(Text.compare, func (number) {
   ///     if (number % 2 == 0) {
-  ///        ?number.toText()
+  ///       ?number.toText()
   ///     } else {
-  ///        null // discard odd numbers
+  ///       null // discard odd numbers
   ///     }
   ///   });
   ///   assert evenTextNumbers.values().toArray() == ["0", "2"];
@@ -1145,10 +1145,10 @@ module {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
   ///   let text = set.foldLeft(
-  ///      "",
-  ///      func (accumulator, element) {
-  ///        accumulator # " " # element.toText()
-  ///      }
+  ///     "",
+  ///     func (accumulator, element) {
+  ///       accumulator # " " # element.toText()
+  ///     }
   ///   );
   ///   assert text == " 0 1 2 3";
   /// }
@@ -1183,10 +1183,10 @@ module {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
   ///   let text = set.foldRight(
-  ///      "",
-  ///      func (element, accumulator) {
-  ///         accumulator # " " # element.toText()
-  ///      }
+  ///     "",
+  ///     func (element, accumulator) {
+  ///       accumulator # " " # element.toText()
+  ///     }
   ///   );
   ///   assert text == " 3 2 1 0";
   /// }
@@ -1261,7 +1261,7 @@ module {
   ///
   /// persistent actor {
   ///   func setCompare(first: Set.Set<Nat>, second: Set.Set<Nat>) : Order.Order {
-  ///      first.compare(second, Nat.compare)
+  ///     first.compare(second, Nat.compare)
   ///   };
   ///
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);

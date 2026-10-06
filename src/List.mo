@@ -417,7 +417,10 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let lists = List.fromArray<List.List<Nat>>([
-  ///   List.fromArray([0, 1, 2]), List.fromArray([2, 3]), List.fromArray([]), List.fromArray([4])
+  ///   List.fromArray([0, 1, 2]),
+  ///   List.fromArray([2, 3]),
+  ///   List.fromArray([]),
+  ///   List.fromArray([4])
   /// ]);
   /// let flatList = lists.flatten();
   /// assert flatList.equal(List.fromArray<Nat>([0, 1, 2, 2, 3, 4]), Nat.equal);
@@ -2351,7 +2354,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// list.forEachEntry(func (i,x) {
+  /// list.forEachEntry(func (i, x) {
   ///   // prints each item (i,x) in list
   ///   Debug.print(i.toText() # x.toText());
   /// });
@@ -2544,7 +2547,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// list.reverseForEachEntry(func (i,x) {
+  /// list.reverseForEachEntry(func (i, x) {
   ///   // prints each item (i,x) in list
   ///   Debug.print(i.toText() # x.toText());
   /// });
@@ -2809,7 +2812,7 @@ module {
   /// ```motoko include=import
   /// import Nat "mo:core/Nat";
   ///
-  /// let list1 = List.fromArray<Nat>([1,2]);
+  /// let list1 = List.fromArray<Nat>([1, 2]);
   /// let list2 = List.empty<Nat>();
   /// list2.add(1);
   /// list2.add(2);
@@ -2915,7 +2918,7 @@ module {
   /// ```motoko include=import
   /// import Nat "mo:core/Nat";
   ///
-  /// let list = List.fromArray<Nat>([1,2,3,4]);
+  /// let list = List.fromArray<Nat>([1, 2, 3, 4]);
   ///
   /// assert list.toText(Nat.toText) == "List[1, 2, 3, 4]";
   /// ```
@@ -2962,9 +2965,9 @@ module {
   /// ```motoko include=import
   /// import Nat "mo:core/Nat";
   ///
-  /// let list = List.fromArray<Nat>([1,2,3]);
+  /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// assert list.foldLeft("", func (acc, x) { acc # x.toText()}) == "123";
+  /// assert list.foldLeft("", func (acc, x) { acc # x.toText() }) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3005,7 +3008,7 @@ module {
   /// ```motoko include=import
   /// import Nat "mo:core/Nat";
   ///
-  /// let list = List.fromArray<Nat>([1,2,3]);
+  /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
   /// assert list.foldRight("", func (x, acc) { x.toText() # acc }) == "123";
   /// ```
@@ -3049,7 +3052,7 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Iter "mo:core/Iter";
   ///
-  /// let list = List.fromArray<Nat>([1,2,3]);
+  /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
   /// list.reverseInPlace();
   /// assert list.values().toArray() == [3, 2, 1];
@@ -3106,7 +3109,7 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Iter "mo:core/Iter";
   ///
-  /// let list = List.fromArray<Nat>([1,2,3]);
+  /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
   /// let rlist = list.reverse();
   /// assert rlist.values().toArray() == [3, 2, 1];
@@ -3156,7 +3159,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// let list = List.fromArray<Nat>([2,0,3]);
+  /// let list = List.fromArray<Nat>([2, 0, 3]);
   /// assert not list.isEmpty();
   /// assert List.empty<Nat>().isEmpty();
   /// ```

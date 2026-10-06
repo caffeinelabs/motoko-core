@@ -40,7 +40,7 @@ module {
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/"
   ];
   */
-  // prettier-ignore
+  // mo-fmt-ignore
   private let alphabet : [Nat8] = [
     65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77,
     78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
@@ -141,7 +141,7 @@ module {
   // Reverse lookup table for the standard Base64 alphabet (RFC 4648 §4).
   // Index is the ASCII code point (0–127); value is the 6-bit decoded value (0–63),
   // or 0xFF to signal an invalid character.
-  // prettier-ignore
+  // mo-fmt-ignore
   private let decodeTable : [Nat8] = [
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0-15
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 16-31

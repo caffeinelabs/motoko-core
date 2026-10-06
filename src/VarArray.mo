@@ -523,7 +523,8 @@ module {
   ///
   /// let array = [var 4, 2, 0, 1];
   /// let newArray =
-  ///   array.filterMap( // mapping from Nat to Text values
+  ///   array.filterMap(
+  ///     // mapping from Nat to Text values
   ///     func x = if (x == 0) { null } else { ?Nat.toText(100 / x) } // can't divide by 0, so return null
   ///   );
   /// assert newArray.equal([var "25", "50", "100"], Text.equal);
@@ -711,7 +712,7 @@ module {
   /// left to right.
   ///
   /// ```motoko include=import
-  /// import {add} "mo:core/Nat";
+  /// import { add } "mo:core/Nat";
   ///
   /// let array = [var 4, 2, 0, 1];
   /// let sum =
@@ -740,7 +741,7 @@ module {
   /// right to left.
   ///
   /// ```motoko include=import
-  /// import {toText} "mo:core/Nat";
+  /// import { toText } "mo:core/Nat";
   ///
   /// let array = [var 1, 9, 4, 8];
   /// let bookTitle = array.foldRight("", func(x, acc) = toText(x) # acc);

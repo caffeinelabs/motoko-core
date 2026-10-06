@@ -92,7 +92,6 @@ module {
   /// left to right.
   ///
   /// ```motoko include=import
-  ///
   /// let text = "Mississippi";
   /// let count =
   ///   text.foldLeft(
