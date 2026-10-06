@@ -592,7 +592,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let list = List.fromArray<Nat>([10, 10, 10, 10]);
-  /// let newList = list.mapEntries<Nat, Nat>(func (x, i) = i * x);
+  /// let newList = list.mapEntries<Nat, Nat>(func(x, i) = i * x);
   /// assert newList.equal(List.fromArray<Nat>([0, 10, 20, 30]), Nat.equal);
   /// ```
   ///
@@ -2354,7 +2354,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// list.forEachEntry(func (i, x) {
+  /// list.forEachEntry(func(i, x) {
   ///   // prints each item (i,x) in list
   ///   Debug.print(i.toText() # x.toText());
   /// });
@@ -2547,7 +2547,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// list.reverseForEachEntry(func (i, x) {
+  /// list.reverseForEachEntry(func(i, x) {
   ///   // prints each item (i,x) in list
   ///   Debug.print(i.toText() # x.toText());
   /// });
@@ -2593,7 +2593,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// list.reverseForEach(func (x) {
+  /// list.reverseForEach(func(x) {
   ///   Debug.print(x.toText()); // prints each element in list in reverse order
   /// });
   /// ```
@@ -2967,7 +2967,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// assert list.foldLeft("", func (acc, x) { acc # x.toText() }) == "123";
+  /// assert list.foldLeft("", func(acc, x) { acc # x.toText() }) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`
@@ -3010,7 +3010,7 @@ module {
   ///
   /// let list = List.fromArray<Nat>([1, 2, 3]);
   ///
-  /// assert list.foldRight("", func (x, acc) { x.toText() # acc }) == "123";
+  /// assert list.foldRight("", func(x, acc) { x.toText() # acc }) == "123";
   /// ```
   ///
   /// Runtime: `O(size)`

@@ -461,7 +461,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [10, 10, 10, 10];
-  /// let newArray = array.mapEntries(func (x, i) = i * x);
+  /// let newArray = array.mapEntries(func(x, i) = i * x);
   /// assert newArray == [0, 10, 20, 30];
   /// ```
   ///

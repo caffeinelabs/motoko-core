@@ -1007,7 +1007,7 @@ module {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///   var sum = 0;
   ///   var text = "";
-  ///   map.forEach(func (key, value) {
+  ///   map.forEach(func(key, value) {
   ///     sum += key;
   ///     text #= value;
   ///   });
@@ -1040,7 +1040,7 @@ module {
   /// persistent actor {
   ///   let numberNames = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   let evenNames = numberNames.filter(func (key, value) {
+  ///   let evenNames = numberNames.filter(func(key, value) {
   ///     key % 2 == 0
   ///   });
   ///
@@ -1178,8 +1178,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert map.all(func (k, v) = v == k.toText());
-  ///   assert not map.all(func (k, v) = k < 2);
+  ///   assert map.all(func(k, v) = v == k.toText());
+  ///   assert not map.all(func(k, v) = k < 2);
   /// }
   /// ```
   ///
@@ -1208,8 +1208,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert map.any(func (k, v) = (k >= 0));
-  ///   assert not map.any(func (k, v) = (k >= 3));
+  ///   assert map.any(func(k, v) = (k >= 0));
+  ///   assert not map.any(func(k, v) = (k >= 3));
   /// }
   /// ```
   ///
@@ -1243,7 +1243,7 @@ module {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   func f(key : Nat, val : Text) : ?Text {
-  ///     if(key == 0) { null }
+  ///     if (key == 0) { null }
   ///     else { ?("Twenty " # val) }
   ///   };
   ///

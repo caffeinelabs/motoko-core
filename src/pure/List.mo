@@ -499,7 +499,7 @@ module {
   ///   assert List.foldLeft(
   ///     list,
   ///     "",
-  ///     func (acc, x) = acc # x.toText()
+  ///     func(acc, x) = acc # x.toText()
   ///   ) == "123";
   /// }
   /// ```
@@ -528,7 +528,7 @@ module {
   ///   assert List.foldRight(
   ///     list,
   ///     "",
-  ///     func (x, acc) = x.toText() # acc
+  ///     func(x, acc) = x.toText() # acc
   ///   ) == "123";
   /// }
   /// ```
@@ -835,7 +835,7 @@ module {
   ///   assert List.zipWith(
   ///     list1,
   ///     list2,
-  ///     func (n, c) = n.toText() # c.toText()
+  ///     func(n, c) = n.toText() # c.toText()
   ///   ) == ?("0a", ?("1b", null));
   /// }
   /// ```

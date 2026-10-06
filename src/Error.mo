@@ -29,7 +29,7 @@ module {
   ///   #future : Nat32;
   ///   // Error issuing inter-canister call
   ///   // (indicating destination queue full or freezing threshold crossed).
-  ///   #call_error : { err_code :  Nat32 }
+  ///   #call_error : { err_code : Nat32 }
   /// };
   /// ```
   public type ErrorCode = Prim.ErrorCode;

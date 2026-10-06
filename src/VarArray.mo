@@ -651,7 +651,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// let array = [var 10, 10, 10, 10];
-  /// let newArray = array.mapEntries<Nat, Nat>(func (x, i) = i * x);
+  /// let newArray = array.mapEntries<Nat, Nat>(func(x, i) = i * x);
   /// assert newArray.equal([var 0, 10, 20, 30], Nat.equal);
   /// ```
   ///

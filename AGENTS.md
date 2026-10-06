@@ -24,7 +24,7 @@ Use the `package.json` scripts:
 - `npm run docs` — generates `docs/` via mo-doc (run manually; there is no CI pages deploy).
 - `npm run check:mo` — runs `test:mops`, `bench`, and `check:orphans` together.
 
-Formatting is enforced by `mo-fmt`, pinned under `[toolchain]` in `mops.toml`, with its defaults (2-space indent, `syntax = "preserve"`). It keeps line breaks as written and only partly normalises spacing within a line. `// mo-fmt-ignore` leaves the next item as written.
+Formatting is enforced by `mo-fmt`, pinned under `[toolchain]` in `mops.toml`, with its defaults (2-space indent, `syntax = "preserve"`). It normalises spacing within a line but keeps line breaks as written. `// mo-fmt-ignore` leaves the next item as written.
 
 ## Layout
 

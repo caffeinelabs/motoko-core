@@ -48,7 +48,7 @@ module {
   /// import Cycles "mo:core/Cycles";
   ///
   /// persistent actor {
-  ///   public func main() : async() {
+  ///   public func main() : async () {
   ///     let balance = Cycles.balance();
   ///     assert balance > 0;
   ///   }
@@ -67,7 +67,7 @@ module {
   /// import Cycles "mo:core/Cycles";
   ///
   /// persistent actor {
-  ///   public func main() : async() {
+  ///   public func main() : async () {
   ///     let available = Cycles.available();
   ///     assert available >= 0;
   ///   }
@@ -84,11 +84,11 @@ module {
   /// import Cycles "mo:core/Cycles";
   ///
   /// persistent actor {
-  ///   public func main() : async() {
+  ///   public func main() : async () {
   ///     await (with cycles = 15_000_000) operation(); // accepts 10_000_000 cycles
   ///   };
   ///
-  ///   func operation() : async() {
+  ///   func operation() : async () {
   ///     let obtained = Cycles.accept<system>(10_000_000);
   ///     assert obtained == 10_000_000;
   ///   }
@@ -107,11 +107,11 @@ module {
   /// import Cycles "mo:core/Cycles";
   ///
   /// persistent actor {
-  ///   func operation() : async() {
+  ///   func operation() : async () {
   ///     ignore Cycles.accept<system>(10_000_000);
   ///   };
   ///
-  ///   public func main() : async() {
+  ///   public func main() : async () {
   ///     await (with cycles = 15_000_000) operation(); // accepts 10_000_000 cycles
   ///     assert Cycles.refunded() == 5_000_000;
   ///   }
@@ -128,7 +128,7 @@ module {
   /// import Cycles "mo:core/Cycles";
   ///
   /// persistent actor {
-  ///   public func main() : async() {
+  ///   public func main() : async () {
   ///     let burnt = Cycles.burn<system>(10_000_000);
   ///     assert burnt == 10_000_000;
   ///   }
