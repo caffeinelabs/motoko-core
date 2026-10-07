@@ -85,7 +85,7 @@ module {
   ///     call : () -> async ()
   ///   };
   ///
-  ///   public func example(callableActor : CallableActor) {
+  ///   public func example(callableActor : CallableActor) : async () {
   ///     try {
   ///       await (with timeout = 3) callableActor.call();
   ///     }

@@ -55,15 +55,21 @@ jobs:
           fi
 
   validate-docs:
+    name: validate-docs (moc ${{ matrix.moc || 'pinned' }}, shard ${{ matrix.shard }})
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
+        # mops.toml pins moc 1, but core must also work on moc 2.
+        # check-orphans and bench stay on the pin: `mops check` also type-checks the `matchers` dev-dependency, which moc 2 rejects.
+        moc: ["", "2.0.0"]
         shard: [0, 1, 2, 3, 4]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
+        with:
+          moc: ${{ matrix.moc }}
       - name: Validate doc examples (shard ${{ matrix.shard }}/5)
         run: npm run validate:docs -- --shard=${{ matrix.shard }}/5
         env:
@@ -77,13 +83,23 @@ jobs:
       - run: npm run format:check
 
   test:
+    # The pinned leg must report as `test`: the main branch ruleset requires that check name.
+    name: ${{ matrix.moc && format('test (moc {0})', matrix.moc) || 'test' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        moc: ["", "2.0.0"]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
+        with:
+          moc: ${{ matrix.moc }}
       - run: npm test
 
+      # moc 2 removed classical persistence.
       - name: Tests under legacy persistence
+        if: matrix.moc == ''
         run: npx ic-mops test List.allocation -- --legacy-persistence
 
   bench:

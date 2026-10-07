@@ -6,6 +6,10 @@ inputs:
     description: Whether to setup mops
     required: false
     default: "true"
+  moc:
+    description: moc version to use instead of the one pinned in mops.toml
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
@@ -30,3 +34,10 @@ runs:
     - name: Install dependencies
       shell: bash
       run: npm ci
+
+    - name: Override the pinned moc
+      if: ${{ inputs.moc != '' }}
+      shell: bash
+      env:
+        MOC: ${{ inputs.moc }}
+      run: npx ic-mops toolchain use moc "$MOC"

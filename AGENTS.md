@@ -6,7 +6,7 @@
 
 - Requires Node.js 24 (CI uses `node-version: 24`).
 - Run `npm ci`. The `postinstall` script runs `mops install`, which fetches Motoko dependencies and the pinned toolchain declared in `mops.toml`.
-- The Motoko toolchain versions (`moc`, `wasmtime`, `pocket-ic`, `mo-fmt`) are pinned under `[toolchain]` in `mops.toml`; do not assume system-installed versions. `[requirements] moc` is a minimum floor; `[toolchain] moc` is what CI pins and runs on.
+- The Motoko toolchain versions (`moc`, `wasmtime`, `pocket-ic`, `mo-fmt`) are pinned under `[toolchain]` in `mops.toml`; do not assume system-installed versions. `[requirements] moc` is a minimum floor; `[toolchain] moc` is what CI pins and runs on. The `test` and `validate-docs` jobs also run on moc 2.0.0 (the setup action's `moc` input swaps the pin on the runner via `mops toolchain use`), so code must compile on both.
 
 ## Build, test, lint, format
 
@@ -71,4 +71,4 @@ Concrete checks:
 - `.npmrc` sets `min-release-age=7`; newly published dependency versions younger than 7 days are not installed.
 - `mops.toml` sets `[moc] args = ["-E=M0154,M0223,M0236"]`, demoting those unused-identifier errors to warnings.
 - `tests.yml` runs every job on every PR and push, gated on one required aggregate job `ci:required` — a green gate means the full suite passed.
-- The `test` job also runs one Motoko test under legacy persistence: `npx ic-mops test List.allocation -- --legacy-persistence`.
+- The pinned-moc `test` job also runs one Motoko test under legacy persistence: `npx ic-mops test List.allocation -- --legacy-persistence`. moc 2 removed classical persistence, so the moc 2 leg skips it.

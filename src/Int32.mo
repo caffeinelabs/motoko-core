@@ -52,7 +52,7 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  /// assert Int32.fromIntWrap(-123_456) == (-123_456 : Int);
+  /// assert Int32.fromIntWrap(-123_456) == (-123_456 : Int32);
   /// ```
   public let fromIntWrap : Int -> Int32 = Prim.intToInt32Wrap;
 
