@@ -83,7 +83,8 @@ jobs:
       - run: npm run format:check
 
   test:
-    name: test (moc ${{ matrix.moc || 'pinned' }})
+    # The pinned leg must report as `test`: the main branch ruleset requires that check name.
+    name: ${{ matrix.moc && format('test (moc {0})', matrix.moc) || 'test' }}
     strategy:
       fail-fast: false
       matrix:
