@@ -515,7 +515,6 @@ module {
   ///
   /// Example:
   /// ```motoko include=import
-  ///
   /// assert Int64.bitrotLeft(0x2000_0000_0000_0001, 4) == +18 // 0x12.;
   /// ```
   ///

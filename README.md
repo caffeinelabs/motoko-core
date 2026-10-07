@@ -47,7 +47,7 @@ Below is a quick reference for commonly-used scripts during development:
 
 ```sh
 npm test # Run all tests
-npm run format # Format Motoko files
+npm run format # Format Motoko files and doc-comment examples
 npm run validate:api # Update the public API lockfile
 npm run validate:docs Array # Run code snippets in `src/Array.mo`
 ```

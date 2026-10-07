@@ -594,7 +594,7 @@ module {
   ///
   /// persistent actor {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3].values());
-  ///   assert queue.any(func (x) { x > 2 });
+  ///   assert queue.any(func(x) { x > 2 });
   /// }
   /// ```
   ///
@@ -694,7 +694,7 @@ module {
   ///   let queue = Queue.fromIter<Nat>([1, 2, 3, 4].values());
   ///   let evenDoubled = queue.filterMap<Nat, Nat>(
   ///     func(x) {
-  ///       if (x % 2 == 0) { ?(x * 2) } else  { null }
+  ///       if (x % 2 == 0) { ?(x * 2) } else { null }
   ///     }
   ///   );
   ///   assert evenDoubled.size() == 2;

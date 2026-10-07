@@ -116,7 +116,7 @@ module {
   ///
   /// ```motoko include=import
   /// // Use the equal function from the Nat module to compare Nats
-  /// import {equal} "mo:core/Nat";
+  /// import { equal } "mo:core/Nat";
   ///
   /// let array1 = [0, 1, 2, 3];
   /// let array2 = [0, 1, 2, 3];
@@ -333,11 +333,12 @@ module {
   /// and keeping all non-null elements. The ordering is retained.
   ///
   /// ```motoko include=import
-  /// import {toText} "mo:core/Nat";
+  /// import { toText } "mo:core/Nat";
   ///
   /// let array = [4, 2, 0, 1];
   /// let newArray =
-  ///   array.filterMap( // mapping from Nat to Text values
+  ///   array.filterMap(
+  ///     // mapping from Nat to Text values
   ///     func x = if (x == 0) { null } else { ?toText(100 / x) } // can't divide by 0, so return null
   ///   );
   /// assert newArray == ["25", "50", "100"];
@@ -460,7 +461,7 @@ module {
   ///
   /// ```motoko include=import
   /// let array = [10, 10, 10, 10];
-  /// let newArray = array.mapEntries(func (x, i) = i * x);
+  /// let newArray = array.mapEntries(func(x, i) = i * x);
   /// assert newArray == [0, 10, 20, 30];
   /// ```
   ///
@@ -517,7 +518,7 @@ module {
   /// left to right.
   ///
   /// ```motoko include=import
-  /// import {add} "mo:core/Nat";
+  /// import { add } "mo:core/Nat";
   ///
   /// let array = [4, 2, 0, 1];
   /// let sum =
@@ -546,7 +547,7 @@ module {
   /// right to left.
   ///
   /// ```motoko include=import
-  /// import {toText} "mo:core/Nat";
+  /// import { toText } "mo:core/Nat";
   ///
   /// let array = [1, 9, 4, 8];
   /// let bookTitle = array.foldRight("", func(x, acc) = toText(x) # acc);

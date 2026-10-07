@@ -394,8 +394,10 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   let lists = [ ?(0, ?(1, ?(2, null))),
-  ///                 ?(3, ?(4, ?(5, null))) ];
+  ///   let lists = [
+  ///     ?(0, ?(1, ?(2, null))),
+  ///     ?(3, ?(4, ?(5, null)))
+  ///   ];
   ///   assert List.join(lists.values()) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```
@@ -418,9 +420,13 @@ module {
   /// import List "mo:core/pure/List";
   ///
   /// persistent actor {
-  ///   let lists = ?(?(0, ?(1, ?(2, null))),
-  ///                ?(?(3, ?(4, ?(5, null))),
-  ///                  null));
+  ///   let lists = ?(
+  ///     ?(0, ?(1, ?(2, null))),
+  ///     ?(
+  ///       ?(3, ?(4, ?(5, null))),
+  ///       null
+  ///     )
+  ///   );
   ///   assert List.flatten(lists) == ?(0, ?(1, ?(2, ?(3, ?(4, ?(5, null))))));
   /// }
   /// ```
@@ -493,7 +499,7 @@ module {
   ///   assert List.foldLeft(
   ///     list,
   ///     "",
-  ///     func (acc, x) = acc # x.toText()
+  ///     func(acc, x) = acc # x.toText()
   ///   ) == "123";
   /// }
   /// ```
@@ -522,7 +528,7 @@ module {
   ///   assert List.foldRight(
   ///     list,
   ///     "",
-  ///     func (x, acc) = x.toText() # acc
+  ///     func(x, acc) = x.toText() # acc
   ///   ) == "123";
   /// }
   /// ```
@@ -829,7 +835,7 @@ module {
   ///   assert List.zipWith(
   ///     list1,
   ///     list2,
-  ///     func (n, c) = n.toText() # c.toText()
+  ///     func(n, c) = n.toText() # c.toText()
   ///   ) == ?("0a", ?("1b", null));
   /// }
   /// ```

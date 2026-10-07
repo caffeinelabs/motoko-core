@@ -18,7 +18,7 @@ module {
   ///
   /// ```motoko include=import
   /// Debug.print "Hello New World!";
-  /// Debug.print(debug_show(4)) // Often used with `debug_show` to convert values to Text
+  /// Debug.print(debug_show (4)) // Often used with `debug_show` to convert values to Text
   /// ```
   public let print : (text : Text) -> () = Prim.debugPrint;
 

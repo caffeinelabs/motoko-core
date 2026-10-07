@@ -100,7 +100,6 @@ module {
   /// import PriorityQueue "mo:core/PriorityQueue";
   /// import Nat "mo:core/Nat";
   ///
-  ///
   /// let pq = PriorityQueue.empty<Nat>();
   /// pq.push(5);
   /// pq.push(10);

@@ -76,7 +76,7 @@ moFiles.forEach((srcPath) => {
       source,
       match.index + matched.length
     );
-    // The marker window covers the declaration plus one more line, since prettier
+    // The marker window covers the declaration plus one more line, since mo-fmt
     // moves a trailing comment on a `func` declaration into the body's first line
     const declarationEnd = source.indexOf("\n", typeEnd);
     const markerWindow = source.slice(

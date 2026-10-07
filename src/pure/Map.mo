@@ -249,13 +249,13 @@ module {
   ///   let map0 = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   do {
-  ///      let (map1, old1) = map0.swap(0, "Nil");
-  ///      assert map1.entries().toArray() == [(0, "Nil"), (1, "One"), (2, "Two")];
-  ///      assert old1 == ?"Zero";
+  ///     let (map1, old1) = map0.swap(0, "Nil");
+  ///     assert map1.entries().toArray() == [(0, "Nil"), (1, "One"), (2, "Two")];
+  ///     assert old1 == ?"Zero";
   ///
-  ///      let (map2, old2) = map0.swap(3, "Three");
-  ///      assert map2.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two"), (3, "Three")];
-  ///      assert old2 == null;
+  ///     let (map2, old2) = map0.swap(3, "Three");
+  ///     assert map2.entries().toArray() == [(0, "Zero"), (1, "One"), (2, "Two"), (3, "Three")];
+  ///     assert old2 == null;
   ///   }
   /// }
   /// ```
@@ -291,10 +291,10 @@ module {
   ///     assert prev1 == ?"Zero";
   ///     assert map1.get(0) == ?"Nil";
   ///
-  ///     let (map2, prev2) = map1.replace(1, "One");  // no effect, key is absent
+  ///     let (map2, prev2) = map1.replace(1, "One"); // no effect, key is absent
   ///     assert prev2 == null;
   ///     assert map2.get(1) == null;
-  ///  }
+  ///   }
   /// }
   /// ```
   ///
@@ -395,7 +395,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   let map0 =  Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
+  ///   let map0 = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   do {
   ///     let (map1, prev1) = map0.take(0);
@@ -557,7 +557,7 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  /// let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
+  ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   assert map.values().toArray() == ["Zero", "One", "Two"];
   /// }
@@ -723,8 +723,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert map.all(func (k, v) = v == k.toText());
-  ///   assert not map.all(func (k, v) = k < 2);
+  ///   assert map.all(func(k, v) = v == k.toText());
+  ///   assert not map.all(func(k, v) = k < 2);
   /// }
   /// ```
   ///
@@ -743,8 +743,8 @@ module {
   /// persistent actor {
   ///   let map = Map.fromIter([(0, "0"), (2, "2"), (1, "1")].values(), Nat.compare);
   ///
-  ///   assert map.any(func (k, v) = (k >= 0));
-  ///   assert not map.any(func (k, v) = (k >= 3));
+  ///   assert map.any(func(k, v) = (k >= 0));
+  ///   assert not map.any(func(k, v) = (k >= 3));
   /// }
   /// ```
   ///
@@ -787,7 +787,7 @@ module {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///   var sum = 0;
   ///   var text = "";
-  ///   map.forEach(func (key, value) {
+  ///   map.forEach(func(key, value) {
   ///     sum += key;
   ///     text #= value;
   ///   });
@@ -814,7 +814,7 @@ module {
   /// persistent actor {
   ///   let numberNames = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
-  ///   let evenNames = numberNames.filter(func (key, value) {
+  ///   let evenNames = numberNames.filter(func(key, value) {
   ///     key % 2 == 0
   ///   });
   ///
@@ -844,8 +844,8 @@ module {
   ///   let map = Map.fromIter([(0, "Zero"), (2, "Two"), (1, "One")].values(), Nat.compare);
   ///
   ///   func f(key : Nat, val : Text) : ?Text {
-  ///     if(key == 0) {null}
-  ///     else { ?("Twenty " # val)}
+  ///     if (key == 0) { null }
+  ///     else { ?("Twenty " # val) }
   ///   };
   ///
   ///   let newMap = map.filterMap(f);
@@ -905,7 +905,7 @@ module {
   /// persistent actor {
   ///   let map1 = Map.fromIter([(0, "Zero"), (1, "One"), (2, "Two")].values(), Nat.compare);
   ///   let map2 = Map.fromIter([(2, "Two"), (1, "One"), (0, "Zero")].values(), Nat.compare);
-  ///   assert(map1.equal(map2));
+  ///   assert (map1.equal(map2));
   /// }
   /// ```
   ///

@@ -473,7 +473,7 @@ module {
   ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
   ///   var text = "";
-  ///   numbers.forEach(func (element) {
+  ///   numbers.forEach(func(element) {
   ///     text #= " " # element.toText()
   ///   });
   ///   assert text == " 0 1 2 3";
@@ -501,7 +501,7 @@ module {
   /// persistent actor {
   ///   let numbers = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let evenNumbers = numbers.filter(Nat.compare, func (number) {
+  ///   let evenNumbers = numbers.filter(Nat.compare, func(number) {
   ///     number % 2 == 0
   ///   });
   ///   assert evenNumbers.values().toArray() == [0, 2];
@@ -537,11 +537,11 @@ module {
   /// persistent actor {
   ///   let numbers = Set.fromIter([3, 0, 2, 1].values(), Nat.compare);
   ///
-  ///   let evenTextNumbers = numbers.filterMap(Text.compare, func (number) {
+  ///   let evenTextNumbers = numbers.filterMap(Text.compare, func(number) {
   ///     if (number % 2 == 0) {
-  ///        ?number.toText()
+  ///       ?number.toText()
   ///     } else {
-  ///        null // discard odd numbers
+  ///       null // discard odd numbers
   ///     }
   ///   });
   ///   assert evenTextNumbers.values().toArray() == ["0", "2"];
@@ -713,7 +713,7 @@ module {
   ///
   ///   var text = "";
   ///   for (number in set.values()) {
-  ///      text #= " " # number.toText();
+  ///     text #= " " # number.toText();
   ///   };
   ///   assert text == " 0 1 2 3";
   /// }
@@ -739,7 +739,7 @@ module {
   ///
   ///   var tmp = "";
   ///   for (number in set.reverseValues()) {
-  ///      tmp #= " " # number.toText();
+  ///     tmp #= " " # number.toText();
   ///   };
   ///   assert tmp == " 3 2 1 0";
   /// }
@@ -823,10 +823,10 @@ module {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
   ///   let text = set.foldLeft(
-  ///      "",
-  ///      func (accumulator, element) {
-  ///        accumulator # " " # element.toText()
-  ///      }
+  ///     "",
+  ///     func(accumulator, element) {
+  ///       accumulator # " " # element.toText()
+  ///     }
   ///   );
   ///   assert text == " 0 1 2 3";
   /// }
@@ -853,10 +853,10 @@ module {
   ///   let set = Set.fromIter([0, 3, 2, 1].values(), Nat.compare);
   ///
   ///   let text = set.foldRight(
-  ///      "",
-  ///      func (element, accumulator) {
-  ///         accumulator # " " # element.toText()
-  ///      }
+  ///     "",
+  ///     func(element, accumulator) {
+  ///       accumulator # " " # element.toText()
+  ///     }
   ///   );
   ///   assert text == " 3 2 1 0";
   /// }
@@ -908,7 +908,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let belowTen = set.all(func (number) {
+  ///   let belowTen = set.all(func(number) {
   ///     number < 10
   ///   });
   ///   assert belowTen;
@@ -932,7 +932,7 @@ module {
   /// persistent actor {
   ///   let set = Set.fromIter([0, 3, 1, 2].values(), Nat.compare);
   ///
-  ///   let aboveTen = set.any(func (number) {
+  ///   let aboveTen = set.any(func(number) {
   ///     number > 10
   ///   });
   ///   assert not aboveTen;
@@ -997,8 +997,8 @@ module {
   /// import Iter "mo:core/Iter";
   ///
   /// persistent actor {
-  ///   func setCompare(first: Set.Set<Nat>, second: Set.Set<Nat>) : Order.Order {
-  ///      first.compare(second, Nat.compare)
+  ///   func setCompare(first : Set.Set<Nat>, second : Set.Set<Nat>) : Order.Order {
+  ///     first.compare(second, Nat.compare)
   ///   };
   ///
   ///   let set1 = Set.fromIter([1, 2, 3].values(), Nat.compare);

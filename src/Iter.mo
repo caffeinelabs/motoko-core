@@ -190,7 +190,7 @@ module {
   /// the function to every element produced by the argument iterator.
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
-  /// let mappedIter = iter.map(func (x) = x * 2);
+  /// let mappedIter = iter.map(func(x) = x * 2);
   /// let result = mappedIter.toArray();
   /// assert result == [2, 4, 6];
   /// ```
@@ -212,7 +212,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4, 5].values();
-  /// let evenNumbers = iter.filter(func (x) = x % 2 == 0);
+  /// let evenNumbers = iter.filter(func(x) = x % 2 == 0);
   /// let result = evenNumbers.toArray();
   /// assert result == [2, 4];
   /// ```
@@ -232,7 +232,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3].values();
-  /// let evenNumbers = iter.filterMap(func (x) = if (x % 2 == 0) ?x else null);
+  /// let evenNumbers = iter.filterMap(func(x) = if (x % 2 == 0) ?x else null);
   /// let result = evenNumbers.toArray();
   /// assert result == [2];
   /// ```
@@ -273,7 +273,7 @@ module {
 
   /// Transforms every element of an iterator into an iterator and concatenates the results.
   /// ```motoko include=import
-  /// let iter = [1, 3, 5].values().flatMap(func (x) = [x, x + 1].values());
+  /// let iter = [1, 3, 5].values().flatMap(func(x) = [x, x + 1].values());
   /// let result = iter.toArray();
   /// assert result == [1, 2, 3, 4, 5, 6];
   /// ```
@@ -323,7 +323,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4, 5, 4, 3, 2, 1].values();
-  /// let result = iter.takeWhile(func (x) = x < 4);
+  /// let result = iter.takeWhile(func(x) = x < 4);
   /// let array = result.toArray();
   /// assert array == [1, 2, 3]; // note the difference between `takeWhile` and `filter`
   /// ```
@@ -363,7 +363,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4, 5, 4, 3, 2, 1].values();
-  /// let result = iter.dropWhile(func (x) = x < 4);
+  /// let result = iter.dropWhile(func(x) = x < 4);
   /// let array = result.toArray();
   /// assert array == [4, 5, 4, 3, 2, 1]; // notice that `takeWhile` and `dropWhile` are complementary
   /// ```
@@ -425,7 +425,7 @@ module {
   /// ```motoko include=import
   /// let iter1 = ["A", "B"].values();
   /// let iter2 = ["1", "2", "3"].values();
-  /// let zipped = iter1.zipWith(iter2, func (a, b) = a # b);
+  /// let zipped = iter1.zipWith(iter2, func(a, b) = a # b);
   /// let result = zipped.toArray();
   /// assert result == ["A1", "B2"]; // note that the third element from iter2 is not included, because iter1 is exhausted
   /// ```
@@ -444,7 +444,7 @@ module {
   /// let iter1 = ["A", "B"].values();
   /// let iter2 = ["1", "2", "3"].values();
   /// let iter3 = ["x", "y", "z", "xd"].values();
-  /// let zipped = iter1.zipWith3(iter2, iter3, func (a, b, c) = a # b # c);
+  /// let zipped = iter1.zipWith3(iter2, iter3, func(a, b, c) = a # b # c);
   /// let result = zipped.toArray();
   /// assert result == ["A1x", "B2y"]; // note that the unmatched elements from iter2 and iter3 are not included
   /// ```
@@ -461,8 +461,8 @@ module {
   /// It stops consuming elements from the original iterator as soon as the predicate returns false.
   ///
   /// ```motoko include=import
-  /// assert [1, 2, 3].values().all(func (x) = x < 4);
-  /// assert not [1, 2, 3].values().all(func (x) = x < 3);
+  /// assert [1, 2, 3].values().all(func(x) = x < 4);
+  /// assert not [1, 2, 3].values().all(func(x) = x < 3);
   /// ```
   public func all<T>(self : Iter<T>, f : T -> Bool) : Bool {
     for (x in self) {
@@ -475,8 +475,8 @@ module {
   /// It stops consuming elements from the original iterator as soon as the predicate returns true.
   ///
   /// ```motoko include=import
-  /// assert [1, 2, 3].values().any(func (x) = x == 2);
-  /// assert not [1, 2, 3].values().any(func (x) = x == 4);
+  /// assert [1, 2, 3].values().any(func(x) = x == 2);
+  /// assert not [1, 2, 3].values().any(func(x) = x == 4);
   /// ```
   public func any<T>(self : Iter<T>, f : T -> Bool) : Bool {
     for (x in self) {
@@ -491,7 +491,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = [1, 2, 3, 4].values();
-  /// assert ?2 == iter.find(func (x) = x % 2 == 0);
+  /// assert ?2 == iter.find(func(x) = x % 2 == 0);
   /// ```
   public func find<T>(self : Iter<T>, f : T -> Bool) : ?T {
     for (x in self) {
@@ -544,7 +544,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = ["A", "B", "C"].values();
-  /// let result = iter.foldLeft("S", func (acc, x) = "(" # acc # x # ")");
+  /// let result = iter.foldLeft("S", func(acc, x) = "(" # acc # x # ")");
   /// assert result == "(((SA)B)C)";
   /// ```
   public func foldLeft<T, R>(self : Iter<T>, initial : R, combine : (R, T) -> R) : R {
@@ -565,7 +565,7 @@ module {
   ///
   /// ```motoko include=import
   /// let iter = ["A", "B", "C"].values();
-  /// let result = iter.foldRight("S", func (x, acc) = "(" # x # acc # ")");
+  /// let result = iter.foldRight("S", func(x, acc) = "(" # x # acc # ")");
   /// assert result == "(A(B(CS)))";
   /// ```
   public func foldRight<T, R>(self : Iter<T>, initial : R, combine : (T, R) -> R) : R {
@@ -637,7 +637,7 @@ module {
   /// The `step` function takes the current state and returns the next element and the next state, or `null` if the iteration is finished.
   ///
   /// ```motoko include=import
-  /// let iter = Iter.unfold(1, func (x) = if (x <= 3) ?(x, x + 1) else null);
+  /// let iter = Iter.unfold(1, func(x) = if (x <= 3) ?(x, x + 1) else null);
   /// let result = iter.toArray();
   /// assert result == [1, 2, 3];
   /// ```

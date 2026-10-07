@@ -13,7 +13,7 @@
 ///
 /// ```motoko no-repl
 /// persistent actor {
-///   public shared(msg) func foo() {
+///   public shared (msg) func foo() {
 ///     let caller : Principal = msg.caller;
 ///   };
 /// }
