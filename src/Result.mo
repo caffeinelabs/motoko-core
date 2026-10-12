@@ -52,11 +52,11 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Text "mo:core/Text";
   ///
-  /// let result1 : Result.Result<Nat, Text> = #ok 10;
-  /// let result2 : Result.Result<Nat, Text> = #ok 10;
-  /// let result3 : Result.Result<Nat, Text> = #err "error";
+  /// let result1 = #ok 10;
+  /// let result2 = #ok 10;
+  /// let result3 = #err "error";
   ///
-  /// assert result1.equal(result2);
+  /// assert result1.equal<Nat, Text>(result2);
   /// assert not result1.equal(result3);
   /// ```
   public func equal<Ok, Err>(
@@ -84,12 +84,12 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Text "mo:core/Text";
   ///
-  /// let result1 : Result.Result<Nat, Text> = #ok 5;
-  /// let result2 : Result.Result<Nat, Text> = #ok 10;
-  /// let result3 : Result.Result<Nat, Text> = #err "error";
+  /// let result1 = #ok 5;
+  /// let result2 = #ok 10;
+  /// let result3 = #err "error";
   ///
-  /// assert result1.compare(result2) == #less;
-  /// assert result2.compare(result1) == #greater;
+  /// assert result1.compare<Nat, Text>(result2) == #less;
+  /// assert result2.compare<Nat, Text>(result1) == #greater;
   /// assert result1.compare(result3) == #greater;
   /// ```
   public func compare<Ok, Err>(
@@ -117,11 +117,11 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Text "mo:core/Text";
   ///
-  /// let ok : Result.Result<Nat, Text> = #ok 10;
-  /// let err : Result.Result<Nat, Text> = #err "error";
+  /// let ok = #ok 10;
+  /// let err = #err "error";
   ///
-  /// assert ok.toText() == "#ok(10)";
-  /// assert err.toText() == "#err(error)";
+  /// assert ok.toText<Nat, Text>() == "#ok(10)";
+  /// assert err.toText<Nat, Text>() == "#err(error)";
   /// ```
   public func toText<Ok, Err>(
     self : Result<Ok, Err>,

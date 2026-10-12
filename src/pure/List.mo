@@ -1088,7 +1088,7 @@ module {
   /// import Nat "mo:core/Nat";
   ///
   /// persistent actor {
-  ///   let list : List.List<Nat> = ?(1, ?(2, ?(3, null)));
+  ///   let list = ?(1, ?(2, ?(3, null)));
   ///   assert list.toText() == "PureList[1, 2, 3]";
   /// }
   /// ```
