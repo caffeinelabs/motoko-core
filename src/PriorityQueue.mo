@@ -294,5 +294,104 @@ module {
         pop(copy)
       }
     }
+  };
+
+  /// Tests whether two priority queues hold the same elements.
+  /// Elements are paired up in priority order and are equal when `compare` returns `#equal`,
+  /// so the order in which elements were pushed doesn't matter.
+  ///
+  /// `compare` – comparison function that defines priority ordering.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  ///
+  /// let pq1 = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
+  /// let pq2 = PriorityQueue.fromIter([3, 5, 10].values(), Nat.compare);
+  /// assert pq1.equal(pq2);
+  /// pq2.push(1);
+  /// assert not pq1.equal(pq2);
+  /// ```
+  ///
+  /// Runtime: `O(n * log(n))`.
+  /// Space: `O(n)`.
+  /// `n` denotes the number of elements in the priority queue.
+  public func equal<T>(self : PriorityQueue<T>, other : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Bool {
+    if (size(self) != size(other)) return false;
+    let iterator1 = values(self, compare);
+    let iterator2 = values(other, compare);
+    loop {
+      switch (iterator1.next(), iterator2.next()) {
+        case (null, null) return true;
+        case (?element1, ?element2) {
+          if (compare(element1, element2) != #equal) return false
+        };
+        case _ return false
+      }
+    }
+  };
+
+  /// Compares two priority queues lexicographically by their elements in priority order
+  /// (highest priority first). A queue whose elements are a prefix of the other's is less.
+  ///
+  /// `compare` – comparison function that defines priority ordering.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  ///
+  /// let pq1 = PriorityQueue.fromIter([10, 5].values(), Nat.compare);
+  /// let pq2 = PriorityQueue.fromIter([10, 3].values(), Nat.compare);
+  /// assert pq1.compare(pq2) == #greater;
+  /// assert pq2.compare(pq1) == #less;
+  /// assert pq1.compare(pq1.clone()) == #equal;
+  /// ```
+  ///
+  /// Runtime: `O(n * log(n))`.
+  /// Space: `O(n)`.
+  /// `n` denotes the number of elements in the priority queue.
+  public func compare<T>(self : PriorityQueue<T>, other : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order {
+    let iterator1 = values(self, compare);
+    let iterator2 = values(other, compare);
+    loop {
+      switch (iterator1.next(), iterator2.next()) {
+        case (null, null) return #equal;
+        case (null, _) return #less;
+        case (_, null) return #greater;
+        case (?element1, ?element2) {
+          let comparison = compare(element1, element2);
+          if (comparison != #equal) return comparison
+        }
+      }
+    }
+  };
+
+  /// Returns a textual representation of the priority queue for debugging purposes,
+  /// listing its elements in priority order (highest priority first).
+  ///
+  /// `compare` – comparison function that defines priority ordering.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import PriorityQueue "mo:core/PriorityQueue";
+  /// import Nat "mo:core/Nat";
+  ///
+  /// let pq = PriorityQueue.fromIter([5, 10, 3].values(), Nat.compare);
+  /// assert pq.toText() == "PriorityQueue[10, 5, 3]";
+  /// ```
+  ///
+  /// Runtime: `O(n * log(n))`.
+  /// Space: `O(n)`.
+  /// `n` denotes the number of elements in the priority queue.
+  public func toText<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order), toText : (implicit : T -> Text)) : Text {
+    var text = "PriorityQueue[";
+    var sep = "";
+    for (element in values(self, compare)) {
+      text #= sep # toText(element);
+      sep := ", "
+    };
+    text # "]"
   }
 }

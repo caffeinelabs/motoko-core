@@ -655,4 +655,64 @@ suite(
       }
     )
   }
+);
+
+suite(
+  "equal, compare, and toText",
+  func() {
+    test(
+      "equal ignores push order",
+      func() {
+        let pq1 = PriorityQueue.fromIter([5, 1, 4, 1, 3, 9, 2].values(), Nat.compare);
+        let pq2 = PriorityQueue.fromIter([9, 3, 1, 2, 5, 4, 1].values(), Nat.compare);
+        expect.bool(pq1.equal(pq2)).equal(true);
+        pq2.push(0);
+        expect.bool(pq1.equal(pq2)).equal(false);
+        expect.bool(PriorityQueue.empty<Nat>().equal(PriorityQueue.empty<Nat>())).equal(true)
+      }
+    );
+
+    test(
+      "equal compares elements with compare",
+      func() {
+        // Tasks with the same priority are equal, whatever their names
+        func byPriority(a : (Nat, Text), b : (Nat, Text)) : Order.Order = Nat.compare(a.0, b.0);
+        let pq1 = PriorityQueue.fromIter([(1, "a"), (2, "b")].values(), byPriority);
+        let pq2 = PriorityQueue.fromIter([(1, "x"), (2, "y")].values(), byPriority);
+        expect.bool(pq1.equal(pq2, byPriority)).equal(true)
+      }
+    );
+
+    test(
+      "compare is lexicographic in priority order",
+      func() {
+        let pq1 = PriorityQueue.fromIter([10, 5].values(), Nat.compare);
+        let pq2 = PriorityQueue.fromIter([10, 3].values(), Nat.compare);
+        let pq3 = PriorityQueue.fromIter([10].values(), Nat.compare);
+        expect.bool(pq1.compare(pq2) == #greater).equal(true);
+        expect.bool(pq2.compare(pq1) == #less).equal(true);
+        expect.bool(pq3.compare(pq1) == #less).equal(true);
+        expect.bool(pq1.compare(pq1.clone()) == #equal).equal(true)
+      }
+    );
+
+    test(
+      "toText lists elements in priority order",
+      func() {
+        let pq = PriorityQueue.fromIter([3, 1, 4, 1, 5].values(), Nat.compare);
+        expect.text(pq.toText()).equal("PriorityQueue[5, 4, 3, 1, 1]");
+        expect.nat(pq.size()).equal(5);
+        expect.text(PriorityQueue.empty<Nat>().toText()).equal("PriorityQueue[]")
+      }
+    );
+
+    test(
+      "derived for collections of queues",
+      func() {
+        let pq = PriorityQueue.fromIter([2, 1].values(), Nat.compare);
+        expect.text([pq].toText()).equal("[PriorityQueue[2, 1]]");
+        expect.bool([pq].equal([pq.clone()])).equal(true)
+      }
+    )
+  }
 )

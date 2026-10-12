@@ -41,6 +41,47 @@ module {
     }
   };
 
+  /// Compares two orders: `#less` comes before `#equal`, which comes before `#greater`,
+  /// matching the order in which `allValues` yields them.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import Order "mo:core/Order";
+  ///
+  /// let less : Order.Order = #less;
+  /// assert less.compare(#greater) == #less;
+  /// assert less.compare(#less) == #equal;
+  /// ```
+  public func compare(self : Order, other : Order) : Order {
+    let (selfRank, otherRank) = (rank(self), rank(other));
+    if (selfRank < otherRank) #less else if (selfRank == otherRank) #equal else #greater
+  };
+
+  func rank(order : Order) : Nat {
+    switch order {
+      case (#less) { 0 };
+      case (#equal) { 1 };
+      case (#greater) { 2 }
+    }
+  };
+
+  /// Returns the textual representation of an order: `"#less"`, `"#equal"`, or `"#greater"`.
+  ///
+  /// Example:
+  /// ```motoko
+  /// import Order "mo:core/Order";
+  ///
+  /// let order : Order.Order = #greater;
+  /// assert order.toText() == "#greater";
+  /// ```
+  public func toText(self : Order) : Text {
+    switch self {
+      case (#less) { "#less" };
+      case (#equal) { "#equal" };
+      case (#greater) { "#greater" }
+    }
+  };
+
   /// Returns an iterator that yields all possible `Order` values:
   /// `#less`, `#equal`, `#greater`.
   public func allValues() : Types.Iter<Order> {

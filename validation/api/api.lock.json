@@ -73,6 +73,7 @@
       "func notEqual(self : Blob, other : Blob) : Bool",
       "func size(self : Blob) : Nat",
       "func toArray(self : Blob) : [Nat8]",
+      "func toText(self : Blob) : Text",
       "func toVarArray(self : Blob) : [var Nat8]"
     ]
   },
@@ -1012,10 +1013,12 @@
     "exports": [
       "type Order = Types.Order",
       "func allValues() : Types.Iter<Order>",
+      "func compare(self : Order, other : Order) : Order",
       "func equal(self : Order, other : Order) : Bool",
       "func isEqual(self : Order) : Bool",
       "func isGreater(self : Order) : Bool",
-      "func isLess(self : Order) : Bool"
+      "func isLess(self : Order) : Bool",
+      "func toText(self : Order) : Text"
     ]
   },
   {
@@ -1051,7 +1054,9 @@
       "type PriorityQueue<T> = Types.PriorityQueue<T>",
       "func clear<T>(self : PriorityQueue<T>)",
       "func clone<T>(self : PriorityQueue<T>) : PriorityQueue<T>",
+      "func compare<T>(self : PriorityQueue<T>, other : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Order.Order",
       "func empty<T>() : PriorityQueue<T>",
+      "func equal<T>(self : PriorityQueue<T>, other : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Bool",
       "func fromIter<T>(iter : Types.Iter<T>, compare : (implicit : (T, T) -> Order.Order)) : PriorityQueue<T>",
       "func isEmpty<T>(self : PriorityQueue<T>) : Bool",
       "func peek<T>(self : PriorityQueue<T>) : ?T",
@@ -1059,6 +1064,7 @@
       "func push<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order), element : T)",
       "func singleton<T>(element : T) : PriorityQueue<T>",
       "func size<T>(self : PriorityQueue<T>) : Nat",
+      "func toText<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order), toText : (implicit : T -> Text)) : Text",
       "func values<T>(self : PriorityQueue<T>, compare : (implicit : (T, T) -> Order.Order)) : Types.Iter<T>"
     ]
   },
@@ -1512,6 +1518,14 @@
     ]
   },
   {
+    "name": "Unit",
+    "exports": [
+      "func compare(_ : (), _ : ()) : Types.Order",
+      "func equal(_ : (), _ : ()) : Bool",
+      "func toText(self : ()) : Text"
+    ]
+  },
+  {
     "name": "VarArray",
     "exports": [
       "func all<T>(self : [var T], predicate : T -> Bool) : Bool",
@@ -1562,6 +1576,12 @@
       "func toBlob(self : [var Nat8]) : Blob",
       "func toText<T>(self : [var T], f : (implicit : (toText : T -> Text))) : Text",
       "func values<T>(self : [var T]) : Types.Iter<T>"
+    ]
+  },
+  {
+    "name": "Variants",
+    "exports": [
+      "func toText(__variant : (Text, () -> Text)) : Text"
     ]
   },
   {

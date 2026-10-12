@@ -111,6 +111,17 @@ module {
   /// ```
   public let hash : (self : Blob) -> Types.Hash = Prim.hashBlob;
 
+  /// Returns the textual representation of `blob` for debugging purposes:
+  /// a blob literal with every byte escaped in hexadecimal, as `debug_show` prints it.
+  /// To decode UTF-8 text from a blob, use `Text.decodeUtf8` instead.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// let blob = "\00\FF\00" : Blob;
+  /// assert blob.toText() == "\"\\00\\FF\\00\"";
+  /// ```
+  public func toText(self : Blob) : Text = debug_show self;
+
   /// General purpose comparison function for `Blob` by comparing the value of
   /// the bytes. Returns the `Order` (either `#less`, `#equal`, or `#greater`)
   /// by comparing `blob1` with `blob2`.

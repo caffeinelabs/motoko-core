@@ -1,3 +1,4 @@
+import Array "../src/Array";
 import Order "../src/Order";
 import { test } "mo:test";
 
@@ -37,5 +38,27 @@ test(
     assert (iter.next() == ?#greater);
     assert (iter.next() == null);
     assert (iter.next() == null)
+  }
+);
+
+test(
+  "compare",
+  func() {
+    let lt : Order.Order = #less;
+    let eq : Order.Order = #equal;
+    let gt : Order.Order = #greater;
+    assert lt.compare(eq) == #less;
+    assert eq.compare(gt) == #less;
+    assert gt.compare(lt) == #greater;
+    assert eq.compare(eq) == #equal;
+    assert [gt, lt, eq].sort() == [lt, eq, gt]
+  }
+);
+
+test(
+  "toText",
+  func() {
+    let orders : [Order.Order] = [#less, #equal, #greater];
+    assert orders.toText() == "[#less, #equal, #greater]"
   }
 )

@@ -19,6 +19,7 @@ const expectedHeadOverrides: Record<string, string> = {
   VarArray: "[var]",
   Option: "?",
   RealTimeQueue: "Queue",
+  Unit: "()",
 };
 
 // Reduces a type to the shape used for comparison: an array, a mutable array, an option,

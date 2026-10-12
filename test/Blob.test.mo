@@ -198,4 +198,18 @@ suite(
       }
     )
   }
+);
+
+suite(
+  "toText",
+  func() {
+    test(
+      "escapes every byte",
+      func() {
+        expect.text(("\00\FF" : Blob).toText()).equal("\"\\00\\FF\"");
+        expect.text(("hi" : Blob).toText()).equal("\"\\68\\69\"");
+        expect.text(Blob.empty().toText()).equal("\"\"")
+      }
+    )
+  }
 )
