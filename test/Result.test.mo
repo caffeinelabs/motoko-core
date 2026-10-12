@@ -1,5 +1,8 @@
 import Result "../src/Result";
+import Array "../src/Array";
 import Int "../src/Int";
+import Nat "../src/Nat";
+import Text "../src/Text";
 import { suite; test } "mo:test";
 
 func makeNatural(x : Int) : Result.Result<Nat, Text> = if (x >= 0) {
@@ -103,6 +106,41 @@ suite(
       func() {
         Result.forErr(#ok 5, func(x : Nat) { counter += x });
         assert counter == 5
+      }
+    )
+  }
+);
+
+suite(
+  "implicits",
+  func() {
+    let ok : Result.Result<Nat, Text> = #ok 1;
+    let err : Result.Result<Nat, Text> = #err "1";
+
+    test(
+      "equal",
+      func() {
+        assert ok.equal(#ok 1);
+        assert not ok.equal(#ok 2);
+        assert not ok.equal(err);
+        assert err.equal(#err "1")
+      }
+    );
+
+    test(
+      "compare",
+      func() {
+        assert ok.compare(#ok 2) == #less;
+        assert ok.compare(err) == #greater
+      }
+    );
+
+    test(
+      "toText",
+      func() {
+        assert ok.toText() == "#ok(1)";
+        assert err.toText() == "#err(1)";
+        assert [ok, err].toText() == "[#ok(1), #err(1)]"
       }
     )
   }

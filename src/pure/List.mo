@@ -1089,14 +1089,14 @@ module {
   ///
   /// persistent actor {
   ///   let list = ?(1, ?(2, ?(3, null)));
-  ///   assert List.toText(list, Nat.toText) == "PureList[1, 2, 3]";
+  ///   assert list.toText() == "PureList[1, 2, 3]";
   /// }
   /// ```
   ///
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func toText<T>(self : List<T>, f : (implicit : T -> Text)) : Text {
+  public func toText<T>(self : List<T>, f : (implicit : (toText : T -> Text))) : Text {
     var text = "PureList[";
     var first = true;
     forEach(

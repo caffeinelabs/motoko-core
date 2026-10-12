@@ -1,5 +1,12 @@
 /// Contains modules for working with tuples of different sizes.
 ///
+/// `Tuple2`, `Tuple3`, and `Tuple4` provide `toText`, `equal`, and `compare` for tuples of their size.
+/// The top-level `toText`, `equal`, and `compare` functions let the compiler derive these implicit
+/// arguments for tuples of any size, as long as the element types have them.
+/// The compiler prefers the faster `Tuple2`, `Tuple3`, and `Tuple4` functions when they're in scope:
+/// on moc 2, importing this module is enough; on earlier versions, import them by name,
+/// for example `import { Tuple2 } "mo:core/Tuples"`.
+///
 /// Usage example:
 ///
 /// ```motoko
@@ -16,6 +23,77 @@
 import Types "Types";
 
 module {
+
+  /// Combines the `toText` results of a tuple's elements into `"(a, b, ...)"`.
+  ///
+  /// The compiler uses this function to derive an implicit `toText` argument for a tuple
+  /// of any size from the `toText` functions of its element types, so you don't call it directly.
+  ///
+  /// ```motoko
+  /// import Tuples "mo:core/Tuples";
+  /// import Array "mo:core/Array";
+  /// import Nat "mo:core/Nat";
+  /// import Text "mo:core/Text";
+  ///
+  /// let rows = [(1, "a", 2, "b", 3)];
+  /// assert rows.toText() == "[(1, a, 2, b, 3)]";
+  /// ```
+  public func toText(__tuple : [() -> Text]) : Text {
+    var text = "(";
+    var first = true;
+    for (element in __tuple.values()) {
+      if first { first := false } else { text #= ", " };
+      text #= element()
+    };
+    text # ")"
+  };
+
+  /// Combines the `equal` results of two tuples' elements, stopping at the first unequal element.
+  ///
+  /// The compiler uses this function to derive an implicit `equal` argument for a tuple
+  /// of any size from the `equal` functions of its element types, so you don't call it directly.
+  ///
+  /// ```motoko
+  /// import Tuples "mo:core/Tuples";
+  /// import Array "mo:core/Array";
+  /// import Nat "mo:core/Nat";
+  /// import Text "mo:core/Text";
+  ///
+  /// let rows = [(1, "a", 2, "b", 3)];
+  /// assert rows.equal([(1, "a", 2, "b", 3)]);
+  /// assert not rows.equal([(1, "a", 2, "b", 4)]);
+  /// ```
+  public func equal(__tuple : [() -> Bool]) : Bool {
+    for (elementEqual in __tuple.values()) {
+      if (not elementEqual()) return false
+    };
+    true
+  };
+
+  /// Combines the `compare` results of two tuples' elements lexicographically,
+  /// stopping at the first element that is not `#equal`.
+  ///
+  /// The compiler uses this function to derive an implicit `compare` argument for a tuple
+  /// of any size from the `compare` functions of its element types, so you don't call it directly.
+  ///
+  /// ```motoko
+  /// import Tuples "mo:core/Tuples";
+  /// import Array "mo:core/Array";
+  /// import Nat "mo:core/Nat";
+  /// import Text "mo:core/Text";
+  ///
+  /// let events = [(2026, 10, 12, 9, "standup"), (2026, 10, 12, 8, "coffee")];
+  /// assert events.sort()[0] == (2026, 10, 12, 8, "coffee");
+  /// ```
+  public func compare(__tuple : [() -> Types.Order]) : Types.Order {
+    for (elementCompare in __tuple.values()) {
+      switch (elementCompare()) {
+        case (#equal) {};
+        case order { return order }
+      }
+    };
+    #equal
+  };
 
   public module Tuple2 {
     /// Swaps the elements of a tuple.
@@ -81,47 +159,21 @@ module {
     };
 
     /// Creates a `toText` function for a tuple given `toText` functions for its elements.
-    /// This is useful when you need to reuse the same toText conversion multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple2 } "mo:core/Tuples";
-    /// import Nat "mo:core/Nat";
-    ///
-    /// let tupleToText = Tuple2.makeToText<Nat, Text>(Nat.toText, func x = x);
-    /// assert tupleToText((1, "hello")) == "(1, hello)";
-    /// ```
+    /// @deprecated Use `Tuple2.toText` instead. Omit the implicit argument to derive it, or pass `func t = t.toText()`.
     public func makeToText<A, B>(
       toTextA : (implicit : (toText : A -> Text)),
       toTextB : (implicit : (toText : B -> Text))
     ) : ((A, B)) -> Text = func t = toText(t, toTextA, toTextB);
 
     /// Creates an `equal` function for a tuple given `equal` functions for its elements.
-    /// This is useful when you need to reuse the same equality comparison multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple2 } "mo:core/Tuples";
-    /// import Nat "mo:core/Nat";
-    /// import Text "mo:core/Text";
-    ///
-    /// let tupleEqual = Tuple2.makeEqual(Nat.equal, Text.equal);
-    /// assert tupleEqual((1, "hello"), (1, "hello"));
-    /// ```
+    /// @deprecated Use `Tuple2.equal` instead. Omit the implicit argument to derive it, or pass `func(a, b) = a.equal(b)`.
     public func makeEqual<A, B>(
       equalA : (implicit : (equal : (A, A) -> Bool)),
       equalB : (implicit : (equal : (B, B) -> Bool))
     ) : ((A, B), (A, B)) -> Bool = func(t1, t2) = equal(t1, t2, equalA, equalB);
 
     /// Creates a `compare` function for a tuple given `compare` functions for its elements.
-    /// This is useful when you need to reuse the same comparison multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple2 } "mo:core/Tuples";
-    /// import Nat "mo:core/Nat";
-    /// import Text "mo:core/Text";
-    ///
-    /// let tupleCompare = Tuple2.makeCompare(Nat.compare, Text.compare);
-    /// assert tupleCompare((1, "hello"), (1, "world")) == #less;
-    /// ```
+    /// @deprecated Use `Tuple2.compare` instead. Omit the implicit argument to derive it, or pass `func(a, b) = a.compare(b)`.
     public func makeCompare<A, B>(
       compareA : (implicit : (compare : (A, A) -> Types.Order)),
       compareB : (implicit : (compare : (B, B) -> Types.Order))
@@ -190,15 +242,7 @@ module {
     };
 
     /// Creates a `toText` function for a 3-tuple given `toText` functions for its elements.
-    /// This is useful when you need to reuse the same toText conversion multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple3 } "mo:core/Tuples";
-    ///
-    /// import Nat "mo:core/Nat";
-    /// let toText = Tuple3.makeToText<Nat, Text, Nat>(Nat.toText, func x = x, Nat.toText);
-    /// assert toText((1, "hello", 2)) == "(1, hello, 2)";
-    /// ```
+    /// @deprecated Use `Tuple3.toText` instead. Omit the implicit argument to derive it, or pass `func t = t.toText()`.
     public func makeToText<A, B, C>(
       toTextA : (implicit : (toText : A -> Text)),
       toTextB : (implicit : (toText : B -> Text)),
@@ -206,16 +250,7 @@ module {
     ) : ((A, B, C)) -> Text = func t = toText(t, toTextA, toTextB, toTextC);
 
     /// Creates an `equal` function for a 3-tuple given `equal` functions for its elements.
-    /// This is useful when you need to reuse the same equality comparison multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple3 } "mo:core/Tuples";
-    ///
-    /// import Nat "mo:core/Nat";
-    /// import Text "mo:core/Text";
-    /// let equal = Tuple3.makeEqual(Nat.equal, Text.equal, Nat.equal);
-    /// assert equal((1, "hello", 2), (1, "hello", 2));
-    /// ```
+    /// @deprecated Use `Tuple3.equal` instead. Omit the implicit argument to derive it, or pass `func(a, b) = a.equal(b)`.
     public func makeEqual<A, B, C>(
       equalA : (implicit : (equal : (A, A) -> Bool)),
       equalB : (implicit : (equal : (B, B) -> Bool)),
@@ -223,16 +258,7 @@ module {
     ) : ((A, B, C), (A, B, C)) -> Bool = func(t1, t2) = equal(t1, t2, equalA, equalB, equalC);
 
     /// Creates a `compare` function for a 3-tuple given `compare` functions for its elements.
-    /// This is useful when you need to reuse the same comparison multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple3 } "mo:core/Tuples";
-    ///
-    /// import Nat "mo:core/Nat";
-    /// import Text "mo:core/Text";
-    /// let compare = Tuple3.makeCompare(Nat.compare, Text.compare, Nat.compare);
-    /// assert compare((1, "hello", 2), (1, "world", 1)) == #less;
-    /// ```
+    /// @deprecated Use `Tuple3.compare` instead. Omit the implicit argument to derive it, or pass `func(a, b) = a.compare(b)`.
     public func makeCompare<A, B, C>(
       compareA : (implicit : (compare : (A, A) -> Types.Order)),
       compareB : (implicit : (compare : (B, B) -> Types.Order)),
@@ -310,15 +336,7 @@ module {
     };
 
     /// Creates a `toText` function for a 4-tuple given `toText` functions for its elements.
-    /// This is useful when you need to reuse the same toText conversion multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple4 } "mo:core/Tuples";
-    ///
-    /// import Nat "mo:core/Nat";
-    /// let toText = Tuple4.makeToText(Nat.toText, func(x : Text) : Text = x, Nat.toText, Nat.toText);
-    /// assert toText((1, "hello", 2, 3)) == "(1, hello, 2, 3)";
-    /// ```
+    /// @deprecated Use `Tuple4.toText` instead. Omit the implicit argument to derive it, or pass `func t = t.toText()`.
     public func makeToText<A, B, C, D>(
       toTextA : (implicit : (toText : A -> Text)),
       toTextB : (implicit : (toText : B -> Text)),
@@ -327,16 +345,7 @@ module {
     ) : ((A, B, C, D)) -> Text = func t = toText(t, toTextA, toTextB, toTextC, toTextD);
 
     /// Creates an `equal` function for a 4-tuple given `equal` functions for its elements.
-    /// This is useful when you need to reuse the same equality comparison multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple4 } "mo:core/Tuples";
-    ///
-    /// import Nat "mo:core/Nat";
-    /// import Text "mo:core/Text";
-    /// let equal = Tuple4.makeEqual(Nat.equal, Text.equal, Nat.equal, Nat.equal);
-    /// assert equal((1, "hello", 2, 3), (1, "hello", 2, 3));
-    /// ```
+    /// @deprecated Use `Tuple4.equal` instead. Omit the implicit argument to derive it, or pass `func(a, b) = a.equal(b)`.
     public func makeEqual<A, B, C, D>(
       equalA : (implicit : (equal : (A, A) -> Bool)),
       equalB : (implicit : (equal : (B, B) -> Bool)),
@@ -345,16 +354,7 @@ module {
     ) : ((A, B, C, D), (A, B, C, D)) -> Bool = func(t1, t2) = equal(t1, t2, equalA, equalB, equalC, equalD);
 
     /// Creates a `compare` function for a 4-tuple given `compare` functions for its elements.
-    /// This is useful when you need to reuse the same comparison multiple times.
-    ///
-    /// ```motoko
-    /// import { Tuple4 } "mo:core/Tuples";
-    ///
-    /// import Nat "mo:core/Nat";
-    /// import Text "mo:core/Text";
-    /// let compare = Tuple4.makeCompare(Nat.compare, Text.compare, Nat.compare, Nat.compare);
-    /// assert compare((1, "hello", 2, 3), (1, "world", 1, 3)) == #less;
-    /// ```
+    /// @deprecated Use `Tuple4.compare` instead. Omit the implicit argument to derive it, or pass `func(a, b) = a.compare(b)`.
     public func makeCompare<A, B, C, D>(
       compareA : (implicit : (compare : (A, A) -> Types.Order)),
       compareB : (implicit : (compare : (B, B) -> Types.Order)),

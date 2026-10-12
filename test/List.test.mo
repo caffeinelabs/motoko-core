@@ -2076,7 +2076,7 @@ Test.suite(
           (512, 32_769),
           (768, 65_537)
         ];
-        Test.expect.array(sizes.toArray(), Tuple2.makeToText(Nat.toText, Nat.toText), Tuple2.makeEqual(Nat.equal, Nat.equal)).equal(expectedBlockResizes)
+        Test.expect.array<(Nat, Nat)>(sizes.toArray(), func t = t.toText(), func(a, b) = a.equal(b)).equal(expectedBlockResizes)
       }
     )
   }
