@@ -52,17 +52,17 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Text "mo:core/Text";
   ///
-  /// let result1 = #ok 10;
-  /// let result2 = #ok 10;
-  /// let result3 = #err "error";
+  /// let result1 : Result.Result<Nat, Text> = #ok 10;
+  /// let result2 : Result.Result<Nat, Text> = #ok 10;
+  /// let result3 : Result.Result<Nat, Text> = #err "error";
   ///
-  /// assert Result.equal<Nat, Text>(result1, result2, Nat.equal, Text.equal);
-  /// assert not Result.equal(result1, result3, Nat.equal, Text.equal);
+  /// assert result1.equal(result2);
+  /// assert not result1.equal(result3);
   /// ```
   public func equal<Ok, Err>(
     self : Result<Ok, Err>,
     other : Result<Ok, Err>,
-    equalOk : (implicit : (equal : Ok, Ok) -> Bool),
+    equalOk : (implicit : (equal : (Ok, Ok) -> Bool)),
     equalErr : (implicit : (equal : (Err, Err) -> Bool))
   ) : Bool {
     switch (self, other) {
@@ -84,13 +84,13 @@ module {
   /// import Nat "mo:core/Nat";
   /// import Text "mo:core/Text";
   ///
-  /// let result1 = #ok 5;
-  /// let result2 = #ok 10;
-  /// let result3 = #err "error";
+  /// let result1 : Result.Result<Nat, Text> = #ok 5;
+  /// let result2 : Result.Result<Nat, Text> = #ok 10;
+  /// let result3 : Result.Result<Nat, Text> = #err "error";
   ///
-  /// assert Result.compare<Nat, Text>(result1, result2, Nat.compare, Text.compare) == #less;
-  /// assert Result.compare<Nat, Text>(result2, result1, Nat.compare, Text.compare) == #greater;
-  /// assert Result.compare(result1, result3, Nat.compare, Text.compare) == #greater;
+  /// assert result1.compare(result2) == #less;
+  /// assert result2.compare(result1) == #greater;
+  /// assert result1.compare(result3) == #greater;
   /// ```
   public func compare<Ok, Err>(
     self : Result<Ok, Err>,
@@ -107,6 +107,30 @@ module {
       };
       case (#ok(_), _) { #greater };
       case (#err(_), _) { #less }
+    }
+  };
+
+  /// Returns the textual representation of a Result value for debugging purposes.
+  ///
+  /// Example:
+  /// ```motoko include=import
+  /// import Nat "mo:core/Nat";
+  /// import Text "mo:core/Text";
+  ///
+  /// let ok : Result.Result<Nat, Text> = #ok 10;
+  /// let err : Result.Result<Nat, Text> = #err "error";
+  ///
+  /// assert ok.toText() == "#ok(10)";
+  /// assert err.toText() == "#err(error)";
+  /// ```
+  public func toText<Ok, Err>(
+    self : Result<Ok, Err>,
+    toTextOk : (implicit : (toText : Ok -> Text)),
+    toTextErr : (implicit : (toText : Err -> Text))
+  ) : Text {
+    switch self {
+      case (#ok(ok)) { "#ok(" # toTextOk(ok) # ")" };
+      case (#err(err)) { "#err(" # toTextErr(err) # ")" }
     }
   };
 

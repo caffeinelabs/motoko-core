@@ -1,4 +1,5 @@
 ## Next
+* Derive `toText`, `equal`, and `compare` implicit arguments for records and tuples of any size whose fields have them, for example to sort an array of records or to use a record as a `Map` key. Import the new `Records` module, or `Tuples`, which gains top-level `toText`, `equal`, and `compare` combiners. Add `Result.toText`. Deprecate `makeToText`, `makeEqual`, and `makeCompare` in `Tuple2`, `Tuple3`, and `Tuple4`: omit the implicit argument to derive it, or pass a function such as `func t = t.toText()`. Fix `Result.equal` and `pure/List.toText`, whose implicit arguments couldn't be omitted because the compiler looked them up as `equalOk` and `f` (#559).
 
 ## 2.6.2
 * Modernize doc-comment code examples: convert module-function calls to dot notation, strip redundant implicit `compare`/`equal` arguments, and remove unnecessary inline lambda type annotations (#534).

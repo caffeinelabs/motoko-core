@@ -1533,7 +1533,7 @@ Test.suite(
         map.add(Nat.compare, 4, "4");
         func check(from : Nat, expected : [(Nat, Text)]) {
           let actual = map.entriesFrom(Nat.compare, from).toArray();
-          Test.expect.array(actual, Tuple2.makeToText(Nat.toText, Text.toText), Tuple2.makeEqual(Nat.equal, Text.equal)).equal(expected)
+          Test.expect.array<(Nat, Text)>(actual, func t = t.toText(), func(a, b) = a.equal(b)).equal(expected)
         };
         check(0, [(1, "1"), (2, "2"), (4, "4")]);
         check(1, [(1, "1"), (2, "2"), (4, "4")]);
@@ -1553,7 +1553,7 @@ Test.suite(
           for (j in Nat.range(0, i + 2)) {
             let actual = map.entriesFrom(Nat.compare, j).toArray();
             let expected = map.entries().dropWhile(func(k, v) = k < j).toArray();
-            Test.expect.array(actual, Tuple2.makeToText(Nat.toText, Text.toText), Tuple2.makeEqual(Nat.equal, Text.equal)).equal(expected)
+            Test.expect.array<(Nat, Text)>(actual, func t = t.toText(), func(a, b) = a.equal(b)).equal(expected)
           }
         }
       }
@@ -1573,7 +1573,7 @@ Test.suite(
         map.add(Nat.compare, 4, "4");
         func check(from : Nat, expected : [(Nat, Text)]) {
           let actual = map.reverseEntriesFrom(Nat.compare, from).toArray();
-          Test.expect.array(actual, Tuple2.makeToText(Nat.toText, Text.toText), Tuple2.makeEqual(Nat.equal, Text.equal)).equal(expected)
+          Test.expect.array<(Nat, Text)>(actual, func t = t.toText(), func(a, b) = a.equal(b)).equal(expected)
         };
         check(0, []);
         check(1, [(1, "1")]);
@@ -1593,7 +1593,7 @@ Test.suite(
           for (j in Nat.range(0, i + 2)) {
             let actual = map.reverseEntriesFrom(Nat.compare, j).toArray();
             let expected = map.reverseEntries().dropWhile(func(k, v) = k > j).toArray();
-            Test.expect.array(actual, Tuple2.makeToText(Nat.toText, Text.toText), Tuple2.makeEqual(Nat.equal, Text.equal)).equal(expected)
+            Test.expect.array<(Nat, Text)>(actual, func t = t.toText(), func(a, b) = a.equal(b)).equal(expected)
           }
         }
       }

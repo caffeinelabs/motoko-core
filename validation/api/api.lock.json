@@ -1145,6 +1145,14 @@
     ]
   },
   {
+    "name": "Records",
+    "exports": [
+      "func compare(__record : [(Text, () -> Types.Order)]) : Types.Order",
+      "func equal(__record : [(Text, () -> Bool)]) : Bool",
+      "func toText(__record : [(Text, () -> Text)]) : Text"
+    ]
+  },
+  {
     "name": "Region",
     "exports": [
       "type Region = Prim.Types.Region",
@@ -1182,7 +1190,7 @@
       "func assertOk(self : Result<Any, Any>)",
       "func chain<Ok1, Ok2, Err>(self : Result<Ok1, Err>, f : Ok1 -> Result<Ok2, Err>) : Result<Ok2, Err>",
       "func compare<Ok, Err>(self : Result<Ok, Err>, other : Result<Ok, Err>, compareOk : (implicit : (compare : (Ok, Ok) -> Order.Order)), compareErr : (implicit : (compare : (Err, Err) -> Order.Order))) : Order.Order",
-      "func equal<Ok, Err>(self : Result<Ok, Err>, other : Result<Ok, Err>, equalOk : (implicit : (equal : Ok, Ok) -> Bool), equalErr : (implicit : (equal : (Err, Err) -> Bool))) : Bool",
+      "func equal<Ok, Err>(self : Result<Ok, Err>, other : Result<Ok, Err>, equalOk : (implicit : (equal : (Ok, Ok) -> Bool)), equalErr : (implicit : (equal : (Err, Err) -> Bool))) : Bool",
       "func flatten<Ok, Err>(self : Result<Result<Ok, Err>, Err>) : Result<Ok, Err>",
       "func forErr<Ok, Err>(self : Result<Ok, Err>, f : Err -> ())",
       "func forOk<Ok, Err>(self : Result<Ok, Err>, f : Ok -> ())",
@@ -1193,6 +1201,7 @@
       "func mapErr<Ok, Err1, Err2>(self : Result<Ok, Err1>, f : Err1 -> Err2) : Result<Ok, Err2>",
       "func mapOk<Ok1, Ok2, Err>(self : Result<Ok1, Err>, f : Ok1 -> Ok2) : Result<Ok2, Err>",
       "func toOption<Ok, Err>(self : Result<Ok, Err>) : ?Ok",
+      "func toText<Ok, Err>(self : Result<Ok, Err>, toTextOk : (implicit : (toText : Ok -> Text)), toTextErr : (implicit : (toText : Err -> Text))) : Text",
       "func toUpper<Ok, Err>(self : Result<Ok, Err>) : { #Ok : Ok; #Err : Err }"
     ]
   },
@@ -1366,7 +1375,10 @@
     "exports": [
       "module Tuple2",
       "module Tuple3",
-      "module Tuple4"
+      "module Tuple4",
+      "func compare(__tuple : [() -> Types.Order]) : Types.Order",
+      "func equal(__tuple : [() -> Bool]) : Bool",
+      "func toText(__tuple : [() -> Text]) : Text"
     ]
   },
   {
@@ -1617,7 +1629,7 @@
       "func take<T>(self : List<T>, n : Nat) : List<T>",
       "func toArray<T>(self : List<T>) : [T]",
       "func toList<T>(self : Iter.Iter<T>) : List<T>",
-      "func toText<T>(self : List<T>, f : (implicit : T -> Text)) : Text",
+      "func toText<T>(self : List<T>, f : (implicit : (toText : T -> Text))) : Text",
       "func toVarArray<T>(self : List<T>) : [var T]",
       "func values<T>(self : List<T>) : Iter.Iter<T>",
       "func zip<T, U>(self : List<T>, other : List<U>) : List<(T, U)>",

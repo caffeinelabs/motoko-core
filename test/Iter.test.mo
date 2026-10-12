@@ -173,7 +173,7 @@ suite(
   func() {
     func mk(input1 : [Nat], input2 : [Nat], expected : [(Nat, Nat)]) {
       let actual = input1.values().zip(input2.values());
-      expect.array(actual.toArray(), Tuple2.makeToText(Nat.toText, Nat.toText), Tuple2.makeEqual(Nat.equal, Nat.equal)).equal(expected)
+      expect.array<(Nat, Nat)>(actual.toArray(), func t = t.toText(), func(a, b) = a.equal(b)).equal(expected)
     };
     test("matched", func() = mk([1, 2, 3], [4, 5, 6], [(1, 4), (2, 5), (3, 6)]));
     test("left skipped", func() = mk([1, 2, 3], [4, 5], [(1, 4), (2, 5)]));
@@ -205,7 +205,7 @@ suite(
   func() {
     func mk(input1 : [Nat], input2 : [Nat], input3 : [Nat], expected : [(Nat, Nat, Nat)]) {
       let actual = input1.values().zip3(input2.values(), input3.values());
-      expect.array(actual.toArray(), Tuple3.makeToText(Nat.toText, Nat.toText, Nat.toText), Tuple3.makeEqual(Nat.equal, Nat.equal, Nat.equal)).equal(expected)
+      expect.array<(Nat, Nat, Nat)>(actual.toArray(), func t = t.toText(), func(a, b) = a.equal(b)).equal(expected)
     };
     test("matched", func() = mk([1, 2, 3], [4, 5, 6], [7, 8, 9], [(1, 4, 7), (2, 5, 8), (3, 6, 9)]));
     test("left skipped", func() = mk([1, 2, 3], [4, 5], [7, 8, 9], [(1, 4, 7), (2, 5, 8)]));

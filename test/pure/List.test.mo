@@ -1579,6 +1579,13 @@ let toText = suite(
       M.equals(
         T.text "PureList[0, 1]"
       )
+    ),
+    test(
+      "implicit",
+      List.fromArray([0, 1]).toText(),
+      M.equals(
+        T.text "PureList[0, 1]"
+      )
     )
   ]
 );

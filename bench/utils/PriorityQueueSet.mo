@@ -112,7 +112,7 @@ module {
   ///
   /// Runtime: `O(log n)`. Space: `O(log n)`.
   public func push<T>(priorityQueue : PriorityQueue<T>, compare : (T, T) -> Order.Order, element : T) {
-    priorityQueue.set.add(Tuple2.makeCompare(compare, Nat.compare), (element, priorityQueue.counter));
+    priorityQueue.set.add((element, priorityQueue.counter));
     priorityQueue.counter += 1
   };
 
@@ -153,7 +153,7 @@ module {
   /// Runtime: `O(log n)`. Space: `O(log n)`.
   public func pop<T>(priorityQueue : PriorityQueue<T>, compare : (T, T) -> Order.Order) : ?T = do ? {
     let (element, nonce) = priorityQueue.set.max()!;
-    priorityQueue.set.remove(Tuple2.makeCompare(compare, Nat.compare), (element, nonce));
+    priorityQueue.set.remove((element, nonce));
     element
   }
 }
