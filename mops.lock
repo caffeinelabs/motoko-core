@@ -1,11 +1,11 @@
 {
   "version": 3,
-  "mopsTomlDepsHash": "a2bd5e82c6bd2b61b33ab73fab3f8573b0e55ce1b6493996aae3c8ee9e1a8390",
+  "mopsTomlDepsHash": "abdc09005f599efebde6900647a900685940cc40fd5859b231471bc98ac3698b",
   "deps": {
     "bench": "2.0.1",
     "bench-helper": "0.0.3",
     "core": "2.0.0",
-    "matchers": "2.1.0",
+    "matchers": "2.1.1",
     "test": "2.1.2"
   },
   "graph": {
@@ -15,7 +15,7 @@
     },
     "core@1.0.0": {},
     "core@2.0.0": {},
-    "matchers@2.1.0": {
+    "matchers@2.1.1": {
       "core": "1.0.0"
     },
     "test@2.1.2": {
@@ -90,15 +90,15 @@
       "core@2.0.0/src/pure/RealTimeQueue.mo": "ad0866b7bad9da97875e5e8d2f37e44909ac05899b244f844ffece6135559648",
       "core@2.0.0/src/pure/Set.mo": "f0155b1d548cbc8889fcff75ef52f0cab7998b034621e4faac8d3b79d7bbac07"
     },
-    "matchers@2.1.0": {
-      "matchers@2.1.0/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
-      "matchers@2.1.0/README.md": "fcb66d3af4a357d5dca48784c3ed62e0167c9feebb0dc7393f78ceab394d01b4",
-      "matchers@2.1.0/mops.toml": "0b68e8431b5296bba6c8023fc20f3fbaa889cabe294a238a78a300ada2ba77d1",
-      "matchers@2.1.0/src/Canister.mo": "72124da81cda9876f59e6c914ea464027360a4206e2154e68269242d059835bf",
-      "matchers@2.1.0/src/Matchers.mo": "3d25544316b4efe9923646194ceeaaad8952b7a63ff8c4e4a52448acef446d9b",
-      "matchers@2.1.0/src/Suite.mo": "9816a14a8c996cfd08402b5f0617093520d9bfce6f6d500be183f46c233cbf0e",
-      "matchers@2.1.0/src/Testable.mo": "aa030de0cd40b7f56975e0e943dc720204131348ac720424e1c7d904b9a55a72",
-      "matchers@2.1.0/src/matchers/Map.mo": "ac068d4e272d88f0b7738758892742cc7cc87b3d04b8ae78aa2f4d83e331ee8d"
+    "matchers@2.1.1": {
+      "matchers@2.1.1/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "matchers@2.1.1/README.md": "4899624a055429aa1644d6231383d8ddf14bd6208ff5c95bff85e949da5e4265",
+      "matchers@2.1.1/mops.toml": "ef2129d6397271dd8ccb7711b35b9d12fc6d025e7033ddf33a3a2caedf9f4c2a",
+      "matchers@2.1.1/src/Canister.mo": "df3392ae79ecb2faa9a6362d00208b841768feb32ae7fa2c2d7fbade672cac22",
+      "matchers@2.1.1/src/Matchers.mo": "3d25544316b4efe9923646194ceeaaad8952b7a63ff8c4e4a52448acef446d9b",
+      "matchers@2.1.1/src/Suite.mo": "9816a14a8c996cfd08402b5f0617093520d9bfce6f6d500be183f46c233cbf0e",
+      "matchers@2.1.1/src/Testable.mo": "aa030de0cd40b7f56975e0e943dc720204131348ac720424e1c7d904b9a55a72",
+      "matchers@2.1.1/src/matchers/Map.mo": "ac068d4e272d88f0b7738758892742cc7cc87b3d04b8ae78aa2f4d83e331ee8d"
     },
     "test@2.1.2": {
       "test@2.1.2/LICENSE": "ec415b57f8143746b567c94bfad243f5342f3edf110c94641a1a60e02722db55",

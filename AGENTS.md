@@ -6,7 +6,7 @@
 
 - Requires Node.js 24 (CI uses `node-version: 24`).
 - Run `npm ci`. The `postinstall` script runs `mops install`, which fetches Motoko dependencies and the pinned toolchain declared in `mops.toml`.
-- The Motoko toolchain versions (`moc`, `wasmtime`, `pocket-ic`, `mo-fmt`) are pinned under `[toolchain]` in `mops.toml`; do not assume system-installed versions. `[requirements] moc` is a minimum floor; `[toolchain] moc` is what CI pins and runs on. The `test` and `validate-docs` jobs also run on moc 2.0.0 (the setup action's `moc` input swaps the pin on the runner via `mops toolchain use`), so code must compile on both.
+- The Motoko toolchain versions (`moc`, `wasmtime`, `pocket-ic`, `mo-fmt`) are pinned under `[toolchain]` in `mops.toml`; do not assume system-installed versions. `[requirements] moc` is a minimum floor; `[toolchain] moc` is what CI pins and runs on. The `test`, `validate-docs`, `check-orphans`, and `bench` jobs also run on moc 2.0.0 (the setup action's `moc` input swaps the pin on the runner via `mops toolchain use`), so code must compile on both.
 
 ## Build, test, lint, format
 

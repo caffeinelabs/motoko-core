@@ -30,10 +30,17 @@ jobs:
       - run: npm run validate:version
 
   check-orphans:
+    name: check-orphans (moc ${{ matrix.moc || 'pinned' }})
+    strategy:
+      fail-fast: false
+      matrix:
+        moc: ["", "2.0.0"]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
+        with:
+          moc: ${{ matrix.moc }}
       - run: npm run check:orphans
 
   validate-api:
@@ -61,7 +68,6 @@ jobs:
       fail-fast: false
       matrix:
         # mops.toml pins moc 1, but core must also work on moc 2.
-        # check-orphans and bench stay on the pin: `mops check` also type-checks the `matchers` dev-dependency, which moc 2 rejects.
         moc: ["", "2.0.0"]
         shard: [0, 1, 2, 3, 4]
     runs-on: ubuntu-24.04
@@ -103,10 +109,17 @@ jobs:
         run: npx ic-mops test List.allocation -- --legacy-persistence
 
   bench:
+    name: bench (moc ${{ matrix.moc || 'pinned' }})
+    strategy:
+      fail-fast: false
+      matrix:
+        moc: ["", "2.0.0"]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
+        with:
+          moc: ${{ matrix.moc }}
       # `npm run bench` demotes M0236 because the canister wrapper `mops bench`
       # generates calls `Region.grow` in module style; enforce it here instead.
       - name: Type-check benchmarks
