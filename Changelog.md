@@ -1,4 +1,5 @@
 ## Next
+* Add `InternetComputer.subnetSelfNodeCount`, wrapping `ic0.subnet_self_node_count`, so sizing a flexible HTTPS outcall's committee no longer requires importing `mo:⛔` (#TBD).
 
 ## 2.7.0
 * Derive `toText` implicit arguments for variants: import the new `Variants` module, plus the new `Unit` module for cases without a payload, and a variant renders the way `debug_show` prints it, for example `#active` or `#banned(3, abuse)`. Add the `toText`, `equal`, and `compare` functions that derivation needs but that were missing: `Blob.toText`, `Order.compare`, `Order.toText`, and `PriorityQueue.equal`, `PriorityQueue.compare`, and `PriorityQueue.toText`, which list elements in priority order (#560).
