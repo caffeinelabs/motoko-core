@@ -1,4 +1,5 @@
 ## Next
+* `pure/Map` and `pure/Set` allocate less and run faster: `add`, `swap`, `insert`, `remove`, `delete`, `take` and `contains` no longer allocate closures or temporary tuples, and adding an element that is already in a `pure/Set` or removing an absent key or element returns the original without allocating. `add` takes 26–32% fewer instructions, `remove` 22–24% fewer, the removal of an absent key and the re-adding of a present element about 80% fewer, and `pure/Set.equal`/`isSubset` 53% fewer, without allocating (#563).
 
 ## 2.7.0
 * Derive `toText` implicit arguments for variants: import the new `Variants` module, plus the new `Unit` module for cases without a payload, and a variant renders the way `debug_show` prints it, for example `#active` or `#banned(3, abuse)`. Add the `toText`, `equal`, and `compare` functions that derivation needs but that were missing: `Blob.toText`, `Order.compare`, `Order.toText`, and `PriorityQueue.equal`, `PriorityQueue.compare`, and `PriorityQueue.toText`, which list elements in priority order (#560).

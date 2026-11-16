@@ -50,6 +50,7 @@
 /// * Stefan Kahrs, "Red-black trees with types", Journal of Functional Programming, 11(4): 425-432 (2001), [version 1 in web appendix](http://www.cs.ukc.ac.uk/people/staff/smk/redblack/rb.html).
 
 import Order "../Order";
+import Option "../Option";
 import Iter "../Iter";
 import Types "../Types";
 import Runtime "../Runtime";
@@ -196,9 +197,10 @@ module {
   /// Garbage collecting one of maps (e.g. after an assignment `m := Map.add(m, cmp, k, v)`)
   /// causes collecting `O(log(n))` nodes.
   public func insert<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K, value : V) : (Map<K, V>, Bool) {
-    switch (swap(self, compare, key, value)) {
-      case (map1, null) (map1, true);
-      case (map1, _) (map1, false)
+    let (map1, old) = swap(self, compare, key, value);
+    switch old {
+      case null (map1, true);
+      case _ (map1, false)
     }
   };
 
@@ -232,7 +234,8 @@ module {
   /// Garbage collecting one of maps (e.g. after an assignment `m := Map.add(m, cmp, k, v)`)
   /// causes collecting `O(log(n))` nodes.
   public func add<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K, value : V) : Map<K, V> {
-    swap(self, compare, key, value).0
+    let (map1, _) = swap(self, compare, key, value);
+    map1
   };
 
   /// Given `map` ordered by `compare`, add a mapping from `key` to `value`. Overwrites any existing entry with key `key`.
@@ -269,9 +272,10 @@ module {
   /// Garbage collecting one of maps (e.g. after an assignment `m := Map.swap(m, Nat.compare, k, v).0`)
   /// causes collecting `O(log(n))` nodes.
   public func swap<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K, value : V) : (Map<K, V>, ?V) {
-    switch (Internal.swap(self.root, compare, key, value)) {
-      case (t, null) { ({ root = t; size = self.size + 1 }, null) };
-      case (t, v) { ({ root = t; size = self.size }, v) }
+    let (t, old) = Internal.swap(self.root, compare, key, value);
+    switch old {
+      case null { ({ root = t; size = self.size + 1 }, null) };
+      case _ { ({ root = t; size = self.size }, old) }
     }
   };
 
@@ -339,9 +343,10 @@ module {
   /// Garbage collecting one of maps (e.g. after an assignment `map := Map.delete(map, compare, k).0`)
   /// causes collecting `O(log(n))` nodes.
   public func remove<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K) : Map<K, V> {
-    switch (Internal.remove(self.root, compare, key)) {
-      case (_, null) self;
-      case (t, ?_) { { root = t; size = self.size - 1 } }
+    let (t, y) = Internal.remove(self.root, compare, key);
+    switch y {
+      case null self;
+      case (?_) { { root = t; size = self.size - 1 } }
     }
   };
 
@@ -379,9 +384,10 @@ module {
   /// Garbage collecting one of maps (e.g. after an assignment `map := Map.delete(map, compare, k).0`)
   /// causes collecting `O(log(n))` nodes.
   public func delete<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K) : (Map<K, V>, Bool) {
-    switch (Internal.remove(self.root, compare, key)) {
-      case (_, null) { (self, false) };
-      case (t, ?_) { ({ root = t; size = self.size - 1 }, true) }
+    let (t, y) = Internal.remove(self.root, compare, key);
+    switch y {
+      case null { (self, false) };
+      case (?_) { ({ root = t; size = self.size - 1 }, true) }
     }
   };
 
@@ -418,9 +424,10 @@ module {
   /// Garbage collecting one of maps (e.g. after an assignment `map := Map.remove(map, compare, key)`)
   /// causes collecting `O(log(n))` nodes.
   public func take<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K) : (Map<K, V>, ?V) {
-    switch (Internal.remove(self.root, compare, key)) {
-      case (t, null) { ({ root = t; size = self.size }, null) };
-      case (t, v) { ({ root = t; size = self.size - 1 }, v) }
+    let (t, y) = Internal.remove(self.root, compare, key);
+    switch y {
+      case null { (self, null) };
+      case (?_) { ({ root = t; size = self.size - 1 }, y) }
     }
   };
 
@@ -918,18 +925,10 @@ module {
     let iterator1 = entries(self);
     let iterator2 = entries(other);
     loop {
-      let next1 = iterator1.next();
-      let next2 = iterator2.next();
-      switch (next1, next2) {
-        case (null, null) {
-          return true
-        };
-        case (?(key1, value1), ?(key2, value2)) {
-          if (not (compare(key1, key2) == #equal) or not equal(value1, value2)) {
-            return false
-          }
-        };
-        case _ { return false }
+      let ?(key1, value1) = iterator1.next() else return Option.isNull(iterator2.next());
+      let ?(key2, value2) = iterator2.next() else return false;
+      if (not (compare(key1, key2) == #equal) or not equal(value1, value2)) {
+        return false
       }
     }
   };
@@ -978,20 +977,15 @@ module {
     let iterator1 = entries(self);
     let iterator2 = entries(other);
     loop {
-      switch (iterator1.next(), iterator2.next()) {
-        case (null, null) return #equal;
-        case (null, _) return #less;
-        case (_, null) return #greater;
-        case (?(key1, value1), ?(key2, value2)) {
-          let keyComparison = compareKey(key1, key2);
-          if (keyComparison != #equal) {
-            return keyComparison
-          };
-          let valueComparison = compareValue(value1, value2);
-          if (valueComparison != #equal) {
-            return valueComparison
-          }
-        }
+      let ?(key1, value1) = iterator1.next() else return if (Option.isNull(iterator2.next())) #equal else #less;
+      let ?(key2, value2) = iterator2.next() else return #greater;
+      let keyComparison = compareKey(key1, key2);
+      if (keyComparison != #equal) {
+        return keyComparison
+      };
+      let valueComparison = compareValue(value1, value2);
+      if (valueComparison != #equal) {
+        return valueComparison
       }
     }
   };
@@ -1237,21 +1231,21 @@ module {
     };
 
     func lbalance<K, V>(left : Tree<K, V>, x : K, y : V, right : Tree<K, V>) : Tree<K, V> {
-      switch (left, right) {
-        case (#red(#red(l1, x1, y1, r1), x2, y2, r2), r) {
+      switch left {
+        case (#red(#red(l1, x1, y1, r1), x2, y2, r2)) {
           #red(
             #black(l1, x1, y1, r1),
             x2,
             y2,
-            #black(r2, x, y, r)
+            #black(r2, x, y, right)
           )
         };
-        case (#red(l1, x1, y1, #red(l2, x2, y2, r2)), r) {
+        case (#red(l1, x1, y1, #red(l2, x2, y2, r2))) {
           #red(
             #black(l1, x1, y1, l2),
             x2,
             y2,
-            #black(r2, x, y, r)
+            #black(r2, x, y, right)
           )
         };
         case _ {
@@ -1261,18 +1255,18 @@ module {
     };
 
     func rbalance<K, V>(left : Tree<K, V>, x : K, y : V, right : Tree<K, V>) : Tree<K, V> {
-      switch (left, right) {
-        case (l, #red(l1, x1, y1, #red(l2, x2, y2, r2))) {
+      switch right {
+        case (#red(l1, x1, y1, #red(l2, x2, y2, r2))) {
           #red(
-            #black(l, x, y, l1),
+            #black(left, x, y, l1),
             x1,
             y1,
             #black(l2, x2, y2, r2)
           )
         };
-        case (l, #red(#red(l1, x1, y1, r1), x2, y2, r2)) {
+        case (#red(#red(l1, x1, y1, r1), x2, y2, r2)) {
           #red(
-            #black(l, x, y, l1),
+            #black(left, x, y, l1),
             x1,
             y1,
             #black(r1, x2, y2, r2)
@@ -1284,55 +1278,41 @@ module {
       }
     };
 
-    type ClashResolver<A> = { old : A; new : A } -> A;
-
-    func insertWith<K, V>(
-      m : Tree<K, V>,
-      compare : (K, K) -> Order.Order,
-      key : K,
-      val : V,
-      onClash : ClashResolver<V>
-    ) : Tree<K, V> {
-      func ins(tree : Tree<K, V>) : Tree<K, V> {
-        switch tree {
-          case (#black(left, x, y, right)) {
-            switch (compare(key, x)) {
-              case (#less) {
-                lbalance(ins left, x, y, right)
-              };
-              case (#greater) {
-                rbalance(left, x, y, ins right)
-              };
-              case (#equal) {
-                let newVal = onClash({ new = val; old = y });
-                #black(left, key, newVal, right)
-              }
+    func ins<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, key : K, val : V) : (Tree<K, V>, ?V) {
+      switch tree {
+        case (#black(left, x, y, right)) {
+          switch (compare(key, x)) {
+            case (#less) {
+              let (newLeft, old) = ins(left, compare, key, val);
+              (lbalance(newLeft, x, y, right), old)
+            };
+            case (#greater) {
+              let (newRight, old) = ins(right, compare, key, val);
+              (rbalance(left, x, y, newRight), old)
+            };
+            case (#equal) {
+              (#black(left, key, val, right), ?y)
             }
-          };
-          case (#red(left, x, y, right)) {
-            switch (compare(key, x)) {
-              case (#less) {
-                #red(ins left, x, y, right)
-              };
-              case (#greater) {
-                #red(left, x, y, ins right)
-              };
-              case (#equal) {
-                let newVal = onClash { new = val; old = y };
-                #red(left, key, newVal, right)
-              }
-            }
-          };
-          case (#leaf) {
-            #red(#leaf, key, val, #leaf)
           }
-        }
-      };
-      switch (ins m) {
-        case (#red(left, x, y, right)) {
-          #black(left, x, y, right)
         };
-        case other { other }
+        case (#red(left, x, y, right)) {
+          switch (compare(key, x)) {
+            case (#less) {
+              let (newLeft, old) = ins(left, compare, key, val);
+              (#red(newLeft, x, y, right), old)
+            };
+            case (#greater) {
+              let (newRight, old) = ins(right, compare, key, val);
+              (#red(left, x, y, newRight), old)
+            };
+            case (#equal) {
+              (#red(left, key, val, right), ?y)
+            }
+          }
+        };
+        case (#leaf) {
+          (#red(#leaf, key, val, #leaf), null)
+        }
       }
     };
 
@@ -1342,13 +1322,11 @@ module {
       key : K,
       val : V
     ) : (Tree<K, V>, ?V) {
-      var oldVal : ?V = null;
-      func onClash(clash : { old : V; new : V }) : V {
-        oldVal := ?clash.old;
-        clash.new
-      };
-      let res = insertWith(m, compare, key, val, onClash);
-      (res, oldVal)
+      let (t, old) = ins(m, compare, key, val);
+      switch t {
+        case (#red(left, x, y, right)) { (#black(left, x, y, right), old) };
+        case _ { (t, old) }
+      }
     };
 
     public func add<K, V>(
@@ -1356,22 +1334,28 @@ module {
       compare : (K, K) -> Order.Order,
       key : K,
       val : V
-    ) : Tree<K, V> = swap(m, compare, key, val).0;
+    ) : Tree<K, V> {
+      let (t, _) = swap(m, compare, key, val);
+      t
+    };
 
     func balLeft<K, V>(left : Tree<K, V>, x : K, y : V, right : Tree<K, V>) : Tree<K, V> {
-      switch (left, right) {
-        case (#red(l1, x1, y1, r1), r) {
-          #red(
+      switch left {
+        case (#red(l1, x1, y1, r1)) {
+          return #red(
             #black(l1, x1, y1, r1),
             x,
             y,
-            r
+            right
           )
         };
-        case (_, #black(l2, x2, y2, r2)) {
+        case _ {}
+      };
+      switch right {
+        case (#black(l2, x2, y2, r2)) {
           rbalance(left, x, y, #red(l2, x2, y2, r2))
         };
-        case (_, #red(#black(l2, x2, y2, r2), x3, y3, r3)) {
+        case (#red(#black(l2, x2, y2, r2), x3, y3, r3)) {
           #red(
             #black(left, x, y, l2),
             x2,
@@ -1384,24 +1368,27 @@ module {
     };
 
     func balRight<K, V>(left : Tree<K, V>, x : K, y : V, right : Tree<K, V>) : Tree<K, V> {
-      switch (left, right) {
-        case (l, #red(l1, x1, y1, r1)) {
-          #red(
-            l,
+      switch right {
+        case (#red(l1, x1, y1, r1)) {
+          return #red(
+            left,
             x,
             y,
             #black(l1, x1, y1, r1)
           )
         };
-        case (#black(l1, x1, y1, r1), r) {
-          lbalance(#red(l1, x1, y1, r1), x, y, r)
+        case _ {}
+      };
+      switch left {
+        case (#black(l1, x1, y1, r1)) {
+          lbalance(#red(l1, x1, y1, r1), x, y, right)
         };
-        case (#red(l1, x1, y1, #black(l2, x2, y2, r2)), r3) {
+        case (#red(l1, x1, y1, #black(l2, x2, y2, r2))) {
           #red(
             lbalance(redden l1, x1, y1, l2),
             x2,
             y2,
-            #black(r2, x, y, r3)
+            #black(r2, x, y, right)
           )
         };
         case _ { Runtime.trap "pure/Map.balRight() impossible" }
@@ -1409,50 +1396,56 @@ module {
     };
 
     func append<K, V>(left : Tree<K, V>, right : Tree<K, V>) : Tree<K, V> {
-      switch (left, right) {
-        case (#leaf, _) { right };
-        case (_, #leaf) { left };
-        case (
-          #red(l1, x1, y1, r1),
-          #red(l2, x2, y2, r2)
-        ) {
-          switch (append(r1, l2)) {
-            case (#red(l3, x3, y3, r3)) {
-              #red(
-                #red(l1, x1, y1, l3),
-                x3,
-                y3,
-                #red(r3, x2, y2, r2)
-              )
+      switch left {
+        case (#leaf) { right };
+        case (#red(l1, x1, y1, r1)) {
+          switch right {
+            case (#leaf) { left };
+            case (#red(l2, x2, y2, r2)) {
+              switch (append(r1, l2)) {
+                case (#red(l3, x3, y3, r3)) {
+                  #red(
+                    #red(l1, x1, y1, l3),
+                    x3,
+                    y3,
+                    #red(r3, x2, y2, r2)
+                  )
+                };
+                case r1l2 {
+                  #red(l1, x1, y1, #red(r1l2, x2, y2, r2))
+                }
+              }
             };
-            case r1l2 {
-              #red(l1, x1, y1, #red(r1l2, x2, y2, r2))
+            case (#black(_, _, _, _)) {
+              #red(l1, x1, y1, append(r1, right))
             }
           }
         };
-        case (t1, #red(l2, x2, y2, r2)) {
-          #red(append(t1, l2), x2, y2, r2)
-        };
-        case (#red(l1, x1, y1, r1), t2) {
-          #red(l1, x1, y1, append(r1, t2))
-        };
-        case (#black(l1, x1, y1, r1), #black(l2, x2, y2, r2)) {
-          switch (append(r1, l2)) {
-            case (#red(l3, x3, y3, r3)) {
-              #red(
-                #black(l1, x1, y1, l3),
-                x3,
-                y3,
-                #black(r3, x2, y2, r2)
-              )
+        case (#black(l1, x1, y1, r1)) {
+          switch right {
+            case (#leaf) { left };
+            case (#red(l2, x2, y2, r2)) {
+              #red(append(left, l2), x2, y2, r2)
             };
-            case r1l2 {
-              balLeft(
-                l1,
-                x1,
-                y1,
-                #black(r1l2, x2, y2, r2)
-              )
+            case (#black(l2, x2, y2, r2)) {
+              switch (append(r1, l2)) {
+                case (#red(l3, x3, y3, r3)) {
+                  #red(
+                    #black(l1, x1, y1, l3),
+                    x3,
+                    y3,
+                    #black(r3, x2, y2, r2)
+                  )
+                };
+                case r1l2 {
+                  balLeft(
+                    l1,
+                    x1,
+                    y1,
+                    #black(r1l2, x2, y2, r2)
+                  )
+                }
+              }
             }
           }
         }
@@ -1461,54 +1454,59 @@ module {
 
     public func delete<K, V>(m : Tree<K, V>, compare : (K, K) -> Order.Order, key : K) : Tree<K, V> = remove(m, compare, key).0;
 
+    func isNull<V>(o : ?V) : Bool = switch o { case null true; case _ false };
+
     public func remove<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
-      var y0 : ?V = null;
-      func delNode(left : Tree<K, V>, x1 : K, y1 : V, right : Tree<K, V>) : Tree<K, V> {
-        switch (compare(x, x1)) {
-          case (#less) {
-            let newLeft = del left;
-            switch left {
-              case (#black(_, _, _, _)) {
-                balLeft(newLeft, x1, y1, right)
-              };
-              case _ {
-                #red(newLeft, x1, y1, right)
-              }
-            }
-          };
-          case (#greater) {
-            let newRight = del right;
-            switch right {
-              case (#black(_, _, _, _)) {
-                balRight(left, x1, y1, newRight)
-              };
-              case _ {
-                #red(left, x1, y1, newRight)
-              }
-            }
-          };
-          case (#equal) {
-            y0 := ?y1;
-            append(left, right)
-          }
-        }
-      };
-      func del(tree : Tree<K, V>) : Tree<K, V> {
-        switch tree {
-          case (#red(left, x, y, right)) {
-            delNode(left, x, y, right)
-          };
-          case (#black(left, x, y, right)) {
-            delNode(left, x, y, right)
-          };
-          case (#leaf) {
-            tree
-          }
-        }
-      };
-      switch (del(tree)) {
+      let (t, y0) = del(tree, compare, x);
+      switch t {
         case (#red(left, x, y, right)) { (#black(left, x, y, right), y0) };
-        case other { (other, y0) }
+        case _ { (t, y0) }
+      }
+    };
+
+    func del<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
+      switch tree {
+        case (#red(left, x1, y1, right)) {
+          delNode(tree, left, x1, y1, right, compare, x)
+        };
+        case (#black(left, x1, y1, right)) {
+          delNode(tree, left, x1, y1, right, compare, x)
+        };
+        case (#leaf) {
+          (tree, null)
+        }
+      }
+    };
+
+    func delNode<K, V>(tree : Tree<K, V>, left : Tree<K, V>, x1 : K, y1 : V, right : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
+      switch (compare(x, x1)) {
+        case (#less) {
+          let (newLeft, y0) = del(left, compare, x);
+          if (isNull(y0)) return (tree, null); // key absent: subtree unchanged
+          switch left {
+            case (#black(_, _, _, _)) {
+              (balLeft(newLeft, x1, y1, right), y0)
+            };
+            case _ {
+              (#red(newLeft, x1, y1, right), y0)
+            }
+          }
+        };
+        case (#greater) {
+          let (newRight, y0) = del(right, compare, x);
+          if (isNull(y0)) return (tree, null); // key absent: subtree unchanged
+          switch right {
+            case (#black(_, _, _, _)) {
+              (balRight(left, x1, y1, newRight), y0)
+            };
+            case _ {
+              (#red(left, x1, y1, newRight), y0)
+            }
+          }
+        };
+        case (#equal) {
+          (append(left, right), ?y1)
+        }
       }
     };
 
