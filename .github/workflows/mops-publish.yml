@@ -59,6 +59,17 @@ jobs:
       - run: mops install
       - run: mops publish
 
+      # mops publish exits 0 without publishing when the CLI is too old for the
+      # registry API, so confirm that the version arrived.
+      - name: Check that the version is on Mops
+        if: startsWith(env.PUBLISH_REF, 'v')
+        run: |
+          set -euo pipefail
+          if ! mops info core --versions | grep -qxF "${PUBLISH_REF#v}"; then
+            echo "::error::core ${PUBLISH_REF#v} is not on Mops after mops publish"
+            exit 1
+          fi
+
       # A failed publish leaves the tag pushed and the package unreleased, and a
       # tag pushed by the CI app notifies no one. Open an issue so it is seen.
       - name: Open an issue if the publish failed
@@ -69,4 +80,4 @@ jobs:
         run: |
           gh issue create --repo "${{ github.repository }}" \
             --title "Mops publish failed for $PUBLISH_REF" \
-            --body "The [publish run]($RUN_URL) for \`$PUBLISH_REF\` failed, so this version is not on Mops. After fixing the cause on \`main\`, re-run it as described in \`Releasing.md\`."
+            --body "The [publish run]($RUN_URL) for \`$PUBLISH_REF\` failed. Check whether the version is on [Mops](https://mops.one/core). If not, fix the cause on \`main\` and re-run the publish as described in \`Releasing.md\`."
