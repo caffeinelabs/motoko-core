@@ -88,7 +88,7 @@ jobs:
       # Runs again on merge, so a red dry run means no tag rather than a tag
       # that never publishes. The ruleset does not require this check.
       - name: Run the publish steps without uploading
-        if: steps.versions.outputs.bumped == 'true'
+        if: steps.versions.outputs.bumped == 'true' && (github.event.action != 'closed' || github.event.pull_request.merged)
         run: npx ic-mops publish --dry-run
 
   tag:
