@@ -39,6 +39,15 @@ module {
   /// `isReplicated` is true for update messages and for queries that passed through consensus.
   public let isReplicated : () -> Bool = Prim.isReplicatedExecution;
 
+  /// The number of nodes on the subnet this canister runs on.
+  ///
+  /// Useful for sizing a flexible HTTPS outcall, whose `total_requests` must not exceed it:
+  ///
+  /// ```motoko no-repl
+  /// let totalRequests = Nat32.min(InternetComputer.subnetSelfNodeCount(), 5);
+  /// ```
+  public let subnetSelfNodeCount : () -> Nat32 = Prim.subnetSelfNodeCount;
+
   /// Given computation, `comp`, counts the number of actual and (for IC system calls) notional WebAssembly
   /// instructions performed during the execution of `comp()`.
   ///
