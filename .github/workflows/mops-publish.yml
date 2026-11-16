@@ -43,10 +43,15 @@ jobs:
             exit 1
           fi
 
+      # Publish with the mops that CI tested this tree with. A separate pin here
+      # drifted to 3.1.0, whose bench canister fails under -E=M0236.
+      - name: Read the mops version from package.json
+        id: mops
+        run: echo "version=$(jq -r '.devDependencies["ic-mops"]' package.json)" >> "$GITHUB_OUTPUT"
+
       - uses: caffeinelabs/setup-mops@d2c135befc4edfae4b90058e5d00c81d89ecfdeb # v1.4.1 + sub-actions pinned by digest
         with:
-          # Keep in step with the ic-mops devDependency in package.json.
-          mops-version: "3.1.0"
+          mops-version: ${{ steps.mops.outputs.version }}
           identity-pem: ${{ secrets.MOPS_IDENTITY_PEM }}
       - run: mops install
       - run: mops publish
