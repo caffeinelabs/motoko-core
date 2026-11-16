@@ -80,12 +80,16 @@ jobs:
       # go out on a changelog that only warned.
       - uses: ./.github/actions/setup
         if: steps.versions.outputs.bumped == 'true'
-        with:
-          setup-mops: false
 
       - name: Require the changelog to match the new version
         if: steps.versions.outputs.bumped == 'true'
         run: npm run validate:changelog
+
+      # Runs again on merge, so a red dry run means no tag rather than a tag
+      # that never publishes. The ruleset does not require this check.
+      - name: Run the publish steps without uploading
+        if: steps.versions.outputs.bumped == 'true' && (github.event.action != 'closed' || github.event.pull_request.merged)
+        run: npx ic-mops publish --dry-run
 
   tag:
     needs: validate

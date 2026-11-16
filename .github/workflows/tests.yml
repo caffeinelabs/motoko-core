@@ -120,19 +120,26 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           moc: ${{ matrix.moc }}
-      # `npm run bench` demotes M0236 because the canister wrapper `mops bench`
-      # generates calls `Region.grow` in module style; enforce it here instead.
       - name: Type-check benchmarks
         run: npm run check:bench
       - name: Run benchmarks (same replica path as mops publish)
         run: npm run bench
+
+  # mops publish reruns tests and benchmarks with its own flags, after the tag
+  # is pushed. Run the same steps here so a release cannot fail only there.
+  publish-dry-run:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: npx ic-mops publish --dry-run
 
   # Single required check. Every job runs unconditionally, so a green gate means
   # the full suite ran. validate-changelog is advisory and deliberately absent.
   ci:
     name: "ci:required"
     if: always()
-    needs: [validate-version, check-orphans, validate-api, validate-docs, format, test, bench]
+    needs: [validate-version, check-orphans, validate-api, validate-docs, format, test, bench, publish-dry-run]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled
