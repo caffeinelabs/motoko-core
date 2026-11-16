@@ -70,6 +70,6 @@ Concrete checks:
 - Generated/local directories are git-ignored and must not be committed: `.mops/`, `docs/`, `test/generated/`, `_build/`, `_out/`.
 - `.npmrc` sets `min-release-age=7`; newly published dependency versions younger than 7 days are not installed.
 - `mops.toml` sets `[moc] args = ["-E=M0154,M0223,M0236"]`, promoting those warnings to errors (M0236 is the dot-notation suggestion).
-- `mops publish` (in `mops-publish.yml`) runs the tests and benchmarks again, with the `ic-mops` version from `package.json`. A release that is green in CI can still fail there, so check the publish run after the tag is pushed.
+- `mops publish` (in `mops-publish.yml`) reruns the tests and benchmarks with the `ic-mops` version from `package.json`. The `publish-dry-run` job in `tests.yml` runs the same steps on every PR, and a failed publish opens an issue.
 - `tests.yml` runs every job on every PR and push, gated on one required aggregate job `ci:required` — a green gate means the full suite passed.
 - The pinned-moc `test` job also runs one Motoko test under legacy persistence: `npx ic-mops test List.allocation -- --legacy-persistence`. moc 2 removed classical persistence, so the moc 2 leg skips it.

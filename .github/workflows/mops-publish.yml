@@ -19,6 +19,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # to report a failed publish
     env:
       PUBLISH_REF: ${{ inputs.tag || github.ref_name }}
 
@@ -55,3 +58,15 @@ jobs:
           identity-pem: ${{ secrets.MOPS_IDENTITY_PEM }}
       - run: mops install
       - run: mops publish
+
+      # A failed publish leaves the tag pushed and the package unreleased, and a
+      # tag pushed by the CI app notifies no one. Open an issue so it is seen.
+      - name: Open an issue if the publish failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Mops publish failed for $PUBLISH_REF" \
+            --body "The [publish run]($RUN_URL) for \`$PUBLISH_REF\` failed, so this version is not on Mops. After fixing the cause on \`main\`, re-run it as described in \`Releasing.md\`."
