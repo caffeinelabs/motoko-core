@@ -1059,26 +1059,23 @@ module {
 
   module Internal {
     public func contains<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, elem : T) : Bool {
-      func f(t : Tree<T>, x : T) : Bool {
-        switch t {
-          case (#black(l, x1, r)) {
-            switch (compare(x, x1)) {
-              case (#less) { f(l, x) };
-              case (#equal) { true };
-              case (#greater) { f(r, x) }
-            }
-          };
-          case (#red(l, x1, r)) {
-            switch (compare(x, x1)) {
-              case (#less) { f(l, x) };
-              case (#equal) { true };
-              case (#greater) { f(r, x) }
-            }
-          };
-          case (#leaf) { false }
-        }
-      };
-      f(tree, elem)
+      switch tree {
+        case (#black(l, x1, r)) {
+          switch (compare(elem, x1)) {
+            case (#less) { contains(l, compare, elem) };
+            case (#equal) { true };
+            case (#greater) { contains(r, compare, elem) }
+          }
+        };
+        case (#red(l, x1, r)) {
+          switch (compare(elem, x1)) {
+            case (#less) { contains(l, compare, elem) };
+            case (#equal) { true };
+            case (#greater) { contains(r, compare, elem) }
+          }
+        };
+        case (#leaf) { false }
+      }
     };
 
     public func max<V>(m : Tree<V>) : ?V {
