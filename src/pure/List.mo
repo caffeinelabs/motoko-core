@@ -462,11 +462,11 @@ module {
   ///
   /// Space: O(n)
   public func take<T>(self : List<T>, n : Nat) : List<T> = (
-    func go(n : Nat, list : List<T>, acc : List<T>) : List<T> = if (n == 0) reverse acc else switch list {
-      case (?(h, t)) go(n - 1 : Nat, t, ?(h, acc));
-      case null reverse acc
+    func go(n : Nat, list : List<T>, acc : List<T>, all : List<T>) : List<T> = switch list {
+      case (?(h, t)) if (n == 0) reverse acc else go(n - 1 : Nat, t, ?(h, acc), all);
+      case null all // n >= size: the whole list
     }
-  )(n, self, null);
+  )(n, self, null, self);
 
   /// Drop the first `n` elements from the given list.
   ///
@@ -871,11 +871,11 @@ module {
   ///
   /// Space: O(n)
   public func split<T>(self : List<T>, n : Nat) : (List<T>, List<T>) {
-    func go(n : Nat, list : List<T>, acc : List<T>) : (List<T>, List<T>) = if (n == 0) (reverse acc, list) else switch list {
-      case (?(h, t)) go(n - 1 : Nat, t, ?(h, acc));
-      case null (reverse acc, null)
+    func go(n : Nat, list : List<T>, acc : List<T>, all : List<T>) : (List<T>, List<T>) = switch list {
+      case (?(h, t)) if (n == 0) (reverse acc, list) else go(n - 1 : Nat, t, ?(h, acc), all);
+      case null (all, null) // n >= size: the whole list
     };
-    go(n, self, null)
+    go(n, self, null, self)
   };
 
   /// Split the given list into chunks of length `n`.
