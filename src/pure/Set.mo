@@ -1467,22 +1467,23 @@ module {
 
     public func delete<T>(s : Set<T>, compare : (T, T) -> Order.Order, x : T) : (Set<T>, Bool) {
       let (t, changed) = del(s.root, compare, x);
+      if (not changed) return (s, false);
       let newRoot = switch t {
         case (#red(left, x1, right)) {
           #black(left, x1, right)
         };
         case _ { t }
       };
-      if changed ({ root = newRoot; size = s.size - 1 }, true) else (s, false)
+      ({ root = newRoot; size = s.size - 1 }, true)
     };
 
     func del<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
       switch tree {
         case (#black(left, x1, right)) {
-          delNode(left, x1, right, compare, x)
+          delNode(tree, left, x1, right, compare, x)
         };
         case (#red(left, x1, right)) {
-          delNode(left, x1, right, compare, x)
+          delNode(tree, left, x1, right, compare, x)
         };
         case (#leaf) {
           (tree, false)
@@ -1490,27 +1491,29 @@ module {
       }
     };
 
-    func delNode<T>(left : Tree<T>, x1 : T, right : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
+    func delNode<T>(tree : Tree<T>, left : Tree<T>, x1 : T, right : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
       switch (compare(x, x1)) {
         case (#less) {
           let (newLeft, changed) = del(left, compare, x);
+          if (not changed) return (tree, false); // element absent: subtree unchanged
           switch left {
             case (#black(_, _, _)) {
-              (balLeft(newLeft, x1, right), changed)
+              (balLeft(newLeft, x1, right), true)
             };
             case _ {
-              (#red(newLeft, x1, right), changed)
+              (#red(newLeft, x1, right), true)
             }
           }
         };
         case (#greater) {
           let (newRight, changed) = del(right, compare, x);
+          if (not changed) return (tree, false); // element absent: subtree unchanged
           switch right {
             case (#black(_, _, _)) {
-              (balRight(left, x1, newRight), changed)
+              (balRight(left, x1, newRight), true)
             };
             case _ {
-              (#red(left, x1, newRight), changed)
+              (#red(left, x1, newRight), true)
             }
           }
         };
