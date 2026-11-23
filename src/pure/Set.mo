@@ -1466,57 +1466,58 @@ module {
     };
 
     public func delete<T>(s : Set<T>, compare : (T, T) -> Order.Order, x : T) : (Set<T>, Bool) {
-      var changed : Bool = false;
-      func delNode(left : Tree<T>, x1 : T, right : Tree<T>) : Tree<T> {
-        switch (compare(x, x1)) {
-          case (#less) {
-            let newLeft = del left;
-            switch left {
-              case (#black(_, _, _)) {
-                balLeft(newLeft, x1, right)
-              };
-              case _ {
-                #red(newLeft, x1, right)
-              }
-            }
-          };
-          case (#greater) {
-            let newRight = del right;
-            switch right {
-              case (#black(_, _, _)) {
-                balRight(left, x1, newRight)
-              };
-              case _ {
-                #red(left, x1, newRight)
-              }
-            }
-          };
-          case (#equal) {
-            changed := true;
-            append(left, right)
-          }
-        }
-      };
-      func del(tree : Tree<T>) : Tree<T> {
-        switch tree {
-          case (#black(left, x1, right)) {
-            delNode(left, x1, right)
-          };
-          case (#red(left, x1, right)) {
-            delNode(left, x1, right)
-          };
-          case (#leaf) {
-            tree
-          }
-        }
-      };
-      let newRoot = switch (del(s.root)) {
+      let (t, changed) = del(s.root, compare, x);
+      let newRoot = switch t {
         case (#red(left, x1, right)) {
           #black(left, x1, right)
         };
-        case other { other }
+        case _ { t }
       };
       if changed ({ root = newRoot; size = s.size - 1 }, true) else (s, false)
+    };
+
+    func del<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
+      switch tree {
+        case (#black(left, x1, right)) {
+          delNode(left, x1, right, compare, x)
+        };
+        case (#red(left, x1, right)) {
+          delNode(left, x1, right, compare, x)
+        };
+        case (#leaf) {
+          (tree, false)
+        }
+      }
+    };
+
+    func delNode<T>(left : Tree<T>, x1 : T, right : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
+      switch (compare(x, x1)) {
+        case (#less) {
+          let (newLeft, changed) = del(left, compare, x);
+          switch left {
+            case (#black(_, _, _)) {
+              (balLeft(newLeft, x1, right), changed)
+            };
+            case _ {
+              (#red(newLeft, x1, right), changed)
+            }
+          }
+        };
+        case (#greater) {
+          let (newRight, changed) = del(right, compare, x);
+          switch right {
+            case (#black(_, _, _)) {
+              (balRight(left, x1, newRight), changed)
+            };
+            case _ {
+              (#red(left, x1, newRight), changed)
+            }
+          }
+        };
+        case (#equal) {
+          (append(left, right), true)
+        }
+      }
     };
 
     // check binary search tree order of elements and black depth invariant of the RB-tree
