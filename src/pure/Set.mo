@@ -1323,14 +1323,16 @@ module {
           switch (compare(elem, x)) {
             case (#less) {
               let (newLeft, created) = ins(left, compare, elem);
-              (lbalance(newLeft, x, right), created)
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (lbalance(newLeft, x, right), true)
             };
             case (#greater) {
               let (newRight, created) = ins(right, compare, elem);
-              (rbalance(left, x, newRight), created)
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (rbalance(left, x, newRight), true)
             };
             case (#equal) {
-              (#black(left, x, right), false)
+              (tree, false)
             }
           }
         };
@@ -1338,14 +1340,16 @@ module {
           switch (compare(elem, x)) {
             case (#less) {
               let (newLeft, created) = ins(left, compare, elem);
-              (#red(newLeft, x, right), created)
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (#red(newLeft, x, right), true)
             };
             case (#greater) {
               let (newRight, created) = ins(right, compare, elem);
-              (#red(left, x, newRight), created)
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (#red(left, x, newRight), true)
             };
             case (#equal) {
-              (#red(left, x, right), false)
+              (tree, false)
             }
           }
         };
@@ -1361,13 +1365,14 @@ module {
       elem : T
     ) : (Set<T>, Bool) {
       let (t, newNodeIsCreated) = ins(s.root, compare, elem);
+      if (not newNodeIsCreated) return (s, false);
       let newRoot = switch t {
         case (#red(left, x, right)) {
           #black(left, x, right)
         };
         case _ { t }
       };
-      if newNodeIsCreated ({ root = newRoot; size = s.size + 1 }, true) else (s, false)
+      ({ root = newRoot; size = s.size + 1 }, true)
     };
 
     func balLeft<T>(left : Tree<T>, x : T, right : Tree<T>) : Tree<T> {
