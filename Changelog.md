@@ -1,5 +1,5 @@
 ## Next
-* `pure/List.concat` with an empty second list, `take` and `split` of at least the whole list, and `filter` that keeps every element return the list itself instead of a copy. This saves 40–46% of the instructions and at least half the allocation in those cases, and up to 99.9% for `concat`.
+* `pure/List.concat` with an empty second list, `take` and `split` of at least the whole list, and `filter` that keeps every element return the list itself instead of a copy. This saves 40–46% of the instructions and at least half the allocation in those cases, and up to 99.9% for `concat` (#569).
 
 ## 2.7.0
 * Derive `toText` implicit arguments for variants: import the new `Variants` module, plus the new `Unit` module for cases without a payload, and a variant renders the way `debug_show` prints it, for example `#active` or `#banned(3, abuse)`. Add the `toText`, `equal`, and `compare` functions that derivation needs but that were missing: `Blob.toText`, `Order.compare`, `Order.toText`, and `PriorityQueue.equal`, `PriorityQueue.compare`, and `PriorityQueue.toText`, which list elements in priority order (#560).
