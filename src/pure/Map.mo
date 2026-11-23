@@ -1284,55 +1284,41 @@ module {
       }
     };
 
-    type ClashResolver<A> = { old : A; new : A } -> A;
-
-    func insertWith<K, V>(
-      m : Tree<K, V>,
-      compare : (K, K) -> Order.Order,
-      key : K,
-      val : V,
-      onClash : ClashResolver<V>
-    ) : Tree<K, V> {
-      func ins(tree : Tree<K, V>) : Tree<K, V> {
-        switch tree {
-          case (#black(left, x, y, right)) {
-            switch (compare(key, x)) {
-              case (#less) {
-                lbalance(ins left, x, y, right)
-              };
-              case (#greater) {
-                rbalance(left, x, y, ins right)
-              };
-              case (#equal) {
-                let newVal = onClash({ new = val; old = y });
-                #black(left, key, newVal, right)
-              }
+    func ins<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, key : K, val : V) : (Tree<K, V>, ?V) {
+      switch tree {
+        case (#black(left, x, y, right)) {
+          switch (compare(key, x)) {
+            case (#less) {
+              let (newLeft, old) = ins(left, compare, key, val);
+              (lbalance(newLeft, x, y, right), old)
+            };
+            case (#greater) {
+              let (newRight, old) = ins(right, compare, key, val);
+              (rbalance(left, x, y, newRight), old)
+            };
+            case (#equal) {
+              (#black(left, key, val, right), ?y)
             }
-          };
-          case (#red(left, x, y, right)) {
-            switch (compare(key, x)) {
-              case (#less) {
-                #red(ins left, x, y, right)
-              };
-              case (#greater) {
-                #red(left, x, y, ins right)
-              };
-              case (#equal) {
-                let newVal = onClash { new = val; old = y };
-                #red(left, key, newVal, right)
-              }
-            }
-          };
-          case (#leaf) {
-            #red(#leaf, key, val, #leaf)
           }
-        }
-      };
-      switch (ins m) {
-        case (#red(left, x, y, right)) {
-          #black(left, x, y, right)
         };
-        case other { other }
+        case (#red(left, x, y, right)) {
+          switch (compare(key, x)) {
+            case (#less) {
+              let (newLeft, old) = ins(left, compare, key, val);
+              (#red(newLeft, x, y, right), old)
+            };
+            case (#greater) {
+              let (newRight, old) = ins(right, compare, key, val);
+              (#red(left, x, y, newRight), old)
+            };
+            case (#equal) {
+              (#red(left, key, val, right), ?y)
+            }
+          }
+        };
+        case (#leaf) {
+          (#red(#leaf, key, val, #leaf), null)
+        }
       }
     };
 
@@ -1342,13 +1328,11 @@ module {
       key : K,
       val : V
     ) : (Tree<K, V>, ?V) {
-      var oldVal : ?V = null;
-      func onClash(clash : { old : V; new : V }) : V {
-        oldVal := ?clash.old;
-        clash.new
-      };
-      let res = insertWith(m, compare, key, val, onClash);
-      (res, oldVal)
+      let (t, old) = ins(m, compare, key, val);
+      switch t {
+        case (#red(left, x, y, right)) { (#black(left, x, y, right), old) };
+        case _ { (t, old) }
+      }
     };
 
     public func add<K, V>(
