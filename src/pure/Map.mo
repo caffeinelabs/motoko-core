@@ -419,7 +419,7 @@ module {
   /// causes collecting `O(log(n))` nodes.
   public func take<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K) : (Map<K, V>, ?V) {
     switch (Internal.remove(self.root, compare, key)) {
-      case (t, null) { ({ root = t; size = self.size }, null) };
+      case (_, null) { (self, null) };
       case (t, v) { ({ root = t; size = self.size - 1 }, v) }
     }
   };
@@ -1445,6 +1445,8 @@ module {
 
     public func delete<K, V>(m : Tree<K, V>, compare : (K, K) -> Order.Order, key : K) : Tree<K, V> = remove(m, compare, key).0;
 
+    func isNull<V>(o : ?V) : Bool = switch o { case null true; case _ false };
+
     public func remove<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
       let (t, y0) = del(tree, compare, x);
       switch t {
@@ -1456,10 +1458,10 @@ module {
     func del<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
       switch tree {
         case (#red(left, x1, y1, right)) {
-          delNode(left, x1, y1, right, compare, x)
+          delNode(tree, left, x1, y1, right, compare, x)
         };
         case (#black(left, x1, y1, right)) {
-          delNode(left, x1, y1, right, compare, x)
+          delNode(tree, left, x1, y1, right, compare, x)
         };
         case (#leaf) {
           (tree, null)
@@ -1467,10 +1469,11 @@ module {
       }
     };
 
-    func delNode<K, V>(left : Tree<K, V>, x1 : K, y1 : V, right : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
+    func delNode<K, V>(tree : Tree<K, V>, left : Tree<K, V>, x1 : K, y1 : V, right : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
       switch (compare(x, x1)) {
         case (#less) {
           let (newLeft, y0) = del(left, compare, x);
+          if (isNull(y0)) return (tree, null); // key absent: subtree unchanged
           switch left {
             case (#black(_, _, _, _)) {
               (balLeft(newLeft, x1, y1, right), y0)
@@ -1482,6 +1485,7 @@ module {
         };
         case (#greater) {
           let (newRight, y0) = del(right, compare, x);
+          if (isNull(y0)) return (tree, null); // key absent: subtree unchanged
           switch right {
             case (#black(_, _, _, _)) {
               (balRight(left, x1, y1, newRight), y0)
