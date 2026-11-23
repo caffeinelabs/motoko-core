@@ -1317,51 +1317,55 @@ module {
       insert(set, compare, elem).0
     };
 
+    func ins<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, elem : T) : (Tree<T>, Bool) {
+      switch tree {
+        case (#black(left, x, right)) {
+          switch (compare(elem, x)) {
+            case (#less) {
+              let (newLeft, created) = ins(left, compare, elem);
+              (lbalance(newLeft, x, right), created)
+            };
+            case (#greater) {
+              let (newRight, created) = ins(right, compare, elem);
+              (rbalance(left, x, newRight), created)
+            };
+            case (#equal) {
+              (#black(left, x, right), false)
+            }
+          }
+        };
+        case (#red(left, x, right)) {
+          switch (compare(elem, x)) {
+            case (#less) {
+              let (newLeft, created) = ins(left, compare, elem);
+              (#red(newLeft, x, right), created)
+            };
+            case (#greater) {
+              let (newRight, created) = ins(right, compare, elem);
+              (#red(left, x, newRight), created)
+            };
+            case (#equal) {
+              (#red(left, x, right), false)
+            }
+          }
+        };
+        case (#leaf) {
+          (#red(#leaf, elem, #leaf), true)
+        }
+      }
+    };
+
     public func insert<T>(
       s : Set<T>,
       compare : (T, T) -> Order.Order,
       elem : T
     ) : (Set<T>, Bool) {
-      var newNodeIsCreated : Bool = false;
-      func ins(tree : Tree<T>) : Tree<T> {
-        switch tree {
-          case (#black(left, x, right)) {
-            switch (compare(elem, x)) {
-              case (#less) {
-                lbalance(ins left, x, right)
-              };
-              case (#greater) {
-                rbalance(left, x, ins right)
-              };
-              case (#equal) {
-                #black(left, x, right)
-              }
-            }
-          };
-          case (#red(left, x, right)) {
-            switch (compare(elem, x)) {
-              case (#less) {
-                #red(ins left, x, right)
-              };
-              case (#greater) {
-                #red(left, x, ins right)
-              };
-              case (#equal) {
-                #red(left, x, right)
-              }
-            }
-          };
-          case (#leaf) {
-            newNodeIsCreated := true;
-            #red(#leaf, elem, #leaf)
-          }
-        }
-      };
-      let newRoot = switch (ins(s.root)) {
+      let (t, newNodeIsCreated) = ins(s.root, compare, elem);
+      let newRoot = switch t {
         case (#red(left, x, right)) {
           #black(left, x, right)
         };
-        case other { other }
+        case _ { t }
       };
       if newNodeIsCreated ({ root = newRoot; size = s.size + 1 }, true) else (s, false)
     };
