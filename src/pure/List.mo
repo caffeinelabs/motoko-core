@@ -385,7 +385,10 @@ module {
   /// Runtime: O(size(l))
   ///
   /// Space: O(size(l))
-  public func concat<T>(self : List<T>, other : List<T>) : List<T> = revAppend(reverse self, other);
+  public func concat<T>(self : List<T>, other : List<T>) : List<T> = switch other {
+    case null self;
+    case _ revAppend(reverse self, other)
+  };
 
   /// Flatten, or repatedly concatenate, an iterator of lists as a list.
   ///
