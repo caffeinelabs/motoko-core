@@ -273,12 +273,18 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func filter<T>(self : List<T>, f : T -> Bool) : List<T> = (
+  public func filter<T>(self : List<T>, f : T -> Bool) : List<T> {
     func go(list : List<T>, f : T -> Bool, acc : List<T>) : List<T> = switch list {
       case (?(h, t)) if (f h) go(t, f, ?(h, acc)) else go(t, f, acc);
       case null reverse acc
-    }
-  )(self, f, null);
+    };
+    // As long as no element is dropped, the result is the list itself.
+    func keepAll(list : List<T>, f : T -> Bool, acc : List<T>, all : List<T>) : List<T> = switch list {
+      case (?(h, t)) if (f h) keepAll(t, f, ?(h, acc), all) else go(t, f, acc);
+      case null all
+    };
+    keepAll(self, f, null, self)
+  };
 
   /// Call the given function on each list element, and collect the non-null results
   /// in a new list.
