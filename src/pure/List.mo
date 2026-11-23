@@ -257,8 +257,9 @@ module {
     }
   )(self, f, null);
 
-  /// Create a new list with only those elements of the original list for which
+  /// Returns a list with only those elements of the original list for which
   /// the given function (often called the _predicate_) returns true.
+  /// If it returns true for every element, the result is the original list.
   ///
   /// Example:
   /// ```motoko
