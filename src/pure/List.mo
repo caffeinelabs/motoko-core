@@ -451,8 +451,8 @@ module {
   )(self, null);
 
   /// Returns the first `n` elements of the given list.
-  /// If the given list has fewer than `n` elements, this function returns
-  /// a copy of the full input list.
+  /// If the given list has `n` elements or fewer, this function returns
+  /// the full input list.
   ///
   /// Example:
   /// ```motoko
