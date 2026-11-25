@@ -39,16 +39,28 @@ module {
       return "0"
     };
 
-    let isNegative = self < 0;
-    var int = if isNegative { -self } else { self };
-
+    // One big-number division per 18 digits, from the least significant end
+    let chunk = 1_000_000_000_000_000_000; // 10 ** 18
+    var nat = Prim.abs(self);
     var text = "";
-    let base = 10;
+    while (nat >= chunk) {
+      let rest = nat / chunk;
+      text := chunkDigits(Prim.natToNat64(nat - rest * chunk), 18) # text;
+      nat := rest
+    };
+    text := chunkDigits(Prim.natToNat64(nat), 0) # text;
 
-    while (int > 0) {
-      let rem = int % base;
+    return if (self < 0) { "-" # text } else { text }
+  };
+
+  // The decimal digits of `n`, which is below 10 ** 18, with leading zeros up to `width` digits
+  func chunkDigits(n : Nat64, width : Nat) : Text {
+    var text = "";
+    var rest = n;
+    var count = 0;
+    while (rest > 0 or count < width) {
       text := (
-        switch (rem) {
+        switch (rest % 10) {
           case 0 { "0" };
           case 1 { "1" };
           case 2 { "2" };
@@ -62,10 +74,10 @@ module {
           case _ { Runtime.unreachable() }
         }
       ) # text;
-      int := int / base
+      rest /= 10;
+      count += 1
     };
-
-    return if isNegative { "-" # text } else { text }
+    text
   };
 
   /// Creates a integer from its textual representation. Returns `null`
