@@ -1,4 +1,5 @@
 ## Next
+* Add `InternetComputer.subnetSelfNodeCount`, wrapping `ic0.subnet_self_node_count`, so sizing a flexible HTTPS outcall's committee no longer requires importing `mo:⛔` (#TBD).
 
 ## 2.7.1
 * Speed up `Int.toText` and `Nat.toText`, by up to 97% on large numbers: they convert 18 digits per big-number division instead of one (#570).
