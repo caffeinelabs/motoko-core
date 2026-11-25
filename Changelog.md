@@ -1,5 +1,6 @@
 ## Next
 * `pure/Map` and `pure/Set` no longer allocate closures in `add`, `swap`, `insert`, `remove`, `delete`, `take` and `pure/Set.contains`, and removing an absent key or element, or adding an element that is already in a `pure/Set`, returns the original without rebuilding the path to it. With moc 2.2.4, `add` takes 11–14% fewer instructions, `remove` 9–11% fewer, `pure/Set.contains` 7–8% fewer, and removing an absent key or re-adding a present element 71–78% fewer (#567).
+* `pure/List.concat` with an empty second list, `take` and `split` of at least the whole list, and `filter` that keeps every element return the list itself instead of a copy. This saves 40–46% of the instructions and at least half the allocation in those cases, and up to 99.9% for `concat` (#569).
 
 ## 2.7.1
 * Speed up `Int.toText` and `Nat.toText`, by up to 97% on large numbers: they convert 18 digits per big-number division instead of one (#570).

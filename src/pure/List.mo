@@ -257,8 +257,9 @@ module {
     }
   )(self, f, null);
 
-  /// Create a new list with only those elements of the original list for which
+  /// Returns a list with only those elements of the original list for which
   /// the given function (often called the _predicate_) returns true.
+  /// If it returns true for every element, the result is the original list.
   ///
   /// Example:
   /// ```motoko
@@ -273,12 +274,18 @@ module {
   /// Runtime: O(size)
   ///
   /// Space: O(size)
-  public func filter<T>(self : List<T>, f : T -> Bool) : List<T> = (
+  public func filter<T>(self : List<T>, f : T -> Bool) : List<T> {
     func go(list : List<T>, f : T -> Bool, acc : List<T>) : List<T> = switch list {
       case (?(h, t)) if (f h) go(t, f, ?(h, acc)) else go(t, f, acc);
       case null reverse acc
-    }
-  )(self, f, null);
+    };
+    // As long as no element is dropped, the result is the list itself.
+    func keepAll(list : List<T>, f : T -> Bool, acc : List<T>, all : List<T>) : List<T> = switch list {
+      case (?(h, t)) if (f h) keepAll(t, f, ?(h, acc), all) else go(t, f, acc);
+      case null all
+    };
+    keepAll(self, f, null, self)
+  };
 
   /// Call the given function on each list element, and collect the non-null results
   /// in a new list.
@@ -385,7 +392,10 @@ module {
   /// Runtime: O(size(l))
   ///
   /// Space: O(size(l))
-  public func concat<T>(self : List<T>, other : List<T>) : List<T> = revAppend(reverse self, other);
+  public func concat<T>(self : List<T>, other : List<T>) : List<T> = switch other {
+    case null self;
+    case _ revAppend(reverse self, other)
+  };
 
   /// Flatten, or repatedly concatenate, an iterator of lists as a list.
   ///
@@ -442,8 +452,8 @@ module {
   )(self, null);
 
   /// Returns the first `n` elements of the given list.
-  /// If the given list has fewer than `n` elements, this function returns
-  /// a copy of the full input list.
+  /// If the given list has `n` elements or fewer, this function returns
+  /// the full input list.
   ///
   /// Example:
   /// ```motoko
@@ -459,11 +469,11 @@ module {
   ///
   /// Space: O(n)
   public func take<T>(self : List<T>, n : Nat) : List<T> = (
-    func go(n : Nat, list : List<T>, acc : List<T>) : List<T> = if (n == 0) reverse acc else switch list {
-      case (?(h, t)) go(n - 1 : Nat, t, ?(h, acc));
-      case null reverse acc
+    func go(n : Nat, list : List<T>, acc : List<T>, all : List<T>) : List<T> = switch list {
+      case (?(h, t)) if (n == 0) reverse acc else go(n - 1 : Nat, t, ?(h, acc), all);
+      case null all // n >= size: the whole list
     }
-  )(n, self, null);
+  )(n, self, null, self);
 
   /// Drop the first `n` elements from the given list.
   ///
@@ -868,11 +878,11 @@ module {
   ///
   /// Space: O(n)
   public func split<T>(self : List<T>, n : Nat) : (List<T>, List<T>) {
-    func go(n : Nat, list : List<T>, acc : List<T>) : (List<T>, List<T>) = if (n == 0) (reverse acc, list) else switch list {
-      case (?(h, t)) go(n - 1 : Nat, t, ?(h, acc));
-      case null (reverse acc, null)
+    func go(n : Nat, list : List<T>, acc : List<T>, all : List<T>) : (List<T>, List<T>) = switch list {
+      case (?(h, t)) if (n == 0) (reverse acc, list) else go(n - 1 : Nat, t, ?(h, acc), all);
+      case null (all, null) // n >= size: the whole list
     };
-    go(n, self, null)
+    go(n, self, null, self)
   };
 
   /// Split the given list into chunks of length `n`.
