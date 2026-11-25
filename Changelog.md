@@ -1,4 +1,5 @@
 ## Next
+* `pure/List.concat` with an empty second list, `take` and `split` of at least the whole list, and `filter` that keeps every element return the list itself instead of a copy. This saves 40–46% of the instructions and at least half the allocation in those cases, and up to 99.9% for `concat` (#569).
 
 ## 2.7.1
 * Speed up `Int.toText` and `Nat.toText`, by up to 97% on large numbers: they convert 18 digits per big-number division instead of one (#570).
