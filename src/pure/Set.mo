@@ -1059,26 +1059,23 @@ module {
 
   module Internal {
     public func contains<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, elem : T) : Bool {
-      func f(t : Tree<T>, x : T) : Bool {
-        switch t {
-          case (#black(l, x1, r)) {
-            switch (compare(x, x1)) {
-              case (#less) { f(l, x) };
-              case (#equal) { true };
-              case (#greater) { f(r, x) }
-            }
-          };
-          case (#red(l, x1, r)) {
-            switch (compare(x, x1)) {
-              case (#less) { f(l, x) };
-              case (#equal) { true };
-              case (#greater) { f(r, x) }
-            }
-          };
-          case (#leaf) { false }
-        }
-      };
-      f(tree, elem)
+      switch tree {
+        case (#black(l, x1, r)) {
+          switch (compare(elem, x1)) {
+            case (#less) { contains(l, compare, elem) };
+            case (#equal) { true };
+            case (#greater) { contains(r, compare, elem) }
+          }
+        };
+        case (#red(l, x1, r)) {
+          switch (compare(elem, x1)) {
+            case (#less) { contains(l, compare, elem) };
+            case (#equal) { true };
+            case (#greater) { contains(r, compare, elem) }
+          }
+        };
+        case (#leaf) { false }
+      }
     };
 
     public func max<V>(m : Tree<V>) : ?V {
@@ -1320,53 +1317,62 @@ module {
       insert(set, compare, elem).0
     };
 
+    func ins<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, elem : T) : (Tree<T>, Bool) {
+      switch tree {
+        case (#black(left, x, right)) {
+          switch (compare(elem, x)) {
+            case (#less) {
+              let (newLeft, created) = ins(left, compare, elem);
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (lbalance(newLeft, x, right), true)
+            };
+            case (#greater) {
+              let (newRight, created) = ins(right, compare, elem);
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (rbalance(left, x, newRight), true)
+            };
+            case (#equal) {
+              (tree, false)
+            }
+          }
+        };
+        case (#red(left, x, right)) {
+          switch (compare(elem, x)) {
+            case (#less) {
+              let (newLeft, created) = ins(left, compare, elem);
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (#red(newLeft, x, right), true)
+            };
+            case (#greater) {
+              let (newRight, created) = ins(right, compare, elem);
+              if (not created) return (tree, false); // element present: subtree unchanged
+              (#red(left, x, newRight), true)
+            };
+            case (#equal) {
+              (tree, false)
+            }
+          }
+        };
+        case (#leaf) {
+          (#red(#leaf, elem, #leaf), true)
+        }
+      }
+    };
+
     public func insert<T>(
       s : Set<T>,
       compare : (T, T) -> Order.Order,
       elem : T
     ) : (Set<T>, Bool) {
-      var newNodeIsCreated : Bool = false;
-      func ins(tree : Tree<T>) : Tree<T> {
-        switch tree {
-          case (#black(left, x, right)) {
-            switch (compare(elem, x)) {
-              case (#less) {
-                lbalance(ins left, x, right)
-              };
-              case (#greater) {
-                rbalance(left, x, ins right)
-              };
-              case (#equal) {
-                #black(left, x, right)
-              }
-            }
-          };
-          case (#red(left, x, right)) {
-            switch (compare(elem, x)) {
-              case (#less) {
-                #red(ins left, x, right)
-              };
-              case (#greater) {
-                #red(left, x, ins right)
-              };
-              case (#equal) {
-                #red(left, x, right)
-              }
-            }
-          };
-          case (#leaf) {
-            newNodeIsCreated := true;
-            #red(#leaf, elem, #leaf)
-          }
-        }
-      };
-      let newRoot = switch (ins(s.root)) {
+      let (t, newNodeIsCreated) = ins(s.root, compare, elem);
+      if (not newNodeIsCreated) return (s, false);
+      let newRoot = switch t {
         case (#red(left, x, right)) {
           #black(left, x, right)
         };
-        case other { other }
+        case _ { t }
       };
-      if newNodeIsCreated ({ root = newRoot; size = s.size + 1 }, true) else (s, false)
+      ({ root = newRoot; size = s.size + 1 }, true)
     };
 
     func balLeft<T>(left : Tree<T>, x : T, right : Tree<T>) : Tree<T> {
@@ -1460,57 +1466,61 @@ module {
     };
 
     public func delete<T>(s : Set<T>, compare : (T, T) -> Order.Order, x : T) : (Set<T>, Bool) {
-      var changed : Bool = false;
-      func delNode(left : Tree<T>, x1 : T, right : Tree<T>) : Tree<T> {
-        switch (compare(x, x1)) {
-          case (#less) {
-            let newLeft = del left;
-            switch left {
-              case (#black(_, _, _)) {
-                balLeft(newLeft, x1, right)
-              };
-              case _ {
-                #red(newLeft, x1, right)
-              }
-            }
-          };
-          case (#greater) {
-            let newRight = del right;
-            switch right {
-              case (#black(_, _, _)) {
-                balRight(left, x1, newRight)
-              };
-              case _ {
-                #red(left, x1, newRight)
-              }
-            }
-          };
-          case (#equal) {
-            changed := true;
-            append(left, right)
-          }
-        }
-      };
-      func del(tree : Tree<T>) : Tree<T> {
-        switch tree {
-          case (#black(left, x1, right)) {
-            delNode(left, x1, right)
-          };
-          case (#red(left, x1, right)) {
-            delNode(left, x1, right)
-          };
-          case (#leaf) {
-            tree
-          }
-        }
-      };
-      let newRoot = switch (del(s.root)) {
+      let (t, changed) = del(s.root, compare, x);
+      if (not changed) return (s, false);
+      let newRoot = switch t {
         case (#red(left, x1, right)) {
           #black(left, x1, right)
         };
-        case other { other }
+        case _ { t }
       };
-      if changed ({ root = newRoot; size = s.size - 1 }, true) else (s, false)
+      ({ root = newRoot; size = s.size - 1 }, true)
+    };
+
+    func del<T>(tree : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
+      switch tree {
+        case (#black(left, x1, right)) {
+          delNode(tree, left, x1, right, compare, x)
+        };
+        case (#red(left, x1, right)) {
+          delNode(tree, left, x1, right, compare, x)
+        };
+        case (#leaf) {
+          (tree, false)
+        }
+      }
+    };
+
+    func delNode<T>(tree : Tree<T>, left : Tree<T>, x1 : T, right : Tree<T>, compare : (T, T) -> Order.Order, x : T) : (Tree<T>, Bool) {
+      switch (compare(x, x1)) {
+        case (#less) {
+          let (newLeft, changed) = del(left, compare, x);
+          if (not changed) return (tree, false); // element absent: subtree unchanged
+          switch left {
+            case (#black(_, _, _)) {
+              (balLeft(newLeft, x1, right), true)
+            };
+            case _ {
+              (#red(newLeft, x1, right), true)
+            }
+          }
+        };
+        case (#greater) {
+          let (newRight, changed) = del(right, compare, x);
+          if (not changed) return (tree, false); // element absent: subtree unchanged
+          switch right {
+            case (#black(_, _, _)) {
+              (balRight(left, x1, newRight), true)
+            };
+            case _ {
+              (#red(left, x1, newRight), true)
+            }
+          }
+        };
+        case (#equal) {
+          (append(left, right), true)
+        }
+      }
     };
 
     // check binary search tree order of elements and black depth invariant of the RB-tree

@@ -419,7 +419,7 @@ module {
   /// causes collecting `O(log(n))` nodes.
   public func take<K, V>(self : Map<K, V>, compare : (implicit : (K, K) -> Order.Order), key : K) : (Map<K, V>, ?V) {
     switch (Internal.remove(self.root, compare, key)) {
-      case (t, null) { ({ root = t; size = self.size }, null) };
+      case (_, null) { (self, null) };
       case (t, v) { ({ root = t; size = self.size - 1 }, v) }
     }
   };
@@ -1284,55 +1284,41 @@ module {
       }
     };
 
-    type ClashResolver<A> = { old : A; new : A } -> A;
-
-    func insertWith<K, V>(
-      m : Tree<K, V>,
-      compare : (K, K) -> Order.Order,
-      key : K,
-      val : V,
-      onClash : ClashResolver<V>
-    ) : Tree<K, V> {
-      func ins(tree : Tree<K, V>) : Tree<K, V> {
-        switch tree {
-          case (#black(left, x, y, right)) {
-            switch (compare(key, x)) {
-              case (#less) {
-                lbalance(ins left, x, y, right)
-              };
-              case (#greater) {
-                rbalance(left, x, y, ins right)
-              };
-              case (#equal) {
-                let newVal = onClash({ new = val; old = y });
-                #black(left, key, newVal, right)
-              }
+    func ins<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, key : K, val : V) : (Tree<K, V>, ?V) {
+      switch tree {
+        case (#black(left, x, y, right)) {
+          switch (compare(key, x)) {
+            case (#less) {
+              let (newLeft, old) = ins(left, compare, key, val);
+              (lbalance(newLeft, x, y, right), old)
+            };
+            case (#greater) {
+              let (newRight, old) = ins(right, compare, key, val);
+              (rbalance(left, x, y, newRight), old)
+            };
+            case (#equal) {
+              (#black(left, key, val, right), ?y)
             }
-          };
-          case (#red(left, x, y, right)) {
-            switch (compare(key, x)) {
-              case (#less) {
-                #red(ins left, x, y, right)
-              };
-              case (#greater) {
-                #red(left, x, y, ins right)
-              };
-              case (#equal) {
-                let newVal = onClash { new = val; old = y };
-                #red(left, key, newVal, right)
-              }
-            }
-          };
-          case (#leaf) {
-            #red(#leaf, key, val, #leaf)
           }
-        }
-      };
-      switch (ins m) {
-        case (#red(left, x, y, right)) {
-          #black(left, x, y, right)
         };
-        case other { other }
+        case (#red(left, x, y, right)) {
+          switch (compare(key, x)) {
+            case (#less) {
+              let (newLeft, old) = ins(left, compare, key, val);
+              (#red(newLeft, x, y, right), old)
+            };
+            case (#greater) {
+              let (newRight, old) = ins(right, compare, key, val);
+              (#red(left, x, y, newRight), old)
+            };
+            case (#equal) {
+              (#red(left, key, val, right), ?y)
+            }
+          }
+        };
+        case (#leaf) {
+          (#red(#leaf, key, val, #leaf), null)
+        }
       }
     };
 
@@ -1342,13 +1328,11 @@ module {
       key : K,
       val : V
     ) : (Tree<K, V>, ?V) {
-      var oldVal : ?V = null;
-      func onClash(clash : { old : V; new : V }) : V {
-        oldVal := ?clash.old;
-        clash.new
-      };
-      let res = insertWith(m, compare, key, val, onClash);
-      (res, oldVal)
+      let (t, old) = ins(m, compare, key, val);
+      switch t {
+        case (#red(left, x, y, right)) { (#black(left, x, y, right), old) };
+        case _ { (t, old) }
+      }
     };
 
     public func add<K, V>(
@@ -1461,54 +1445,59 @@ module {
 
     public func delete<K, V>(m : Tree<K, V>, compare : (K, K) -> Order.Order, key : K) : Tree<K, V> = remove(m, compare, key).0;
 
+    func isNull<V>(o : ?V) : Bool = switch o { case null true; case _ false };
+
     public func remove<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
-      var y0 : ?V = null;
-      func delNode(left : Tree<K, V>, x1 : K, y1 : V, right : Tree<K, V>) : Tree<K, V> {
-        switch (compare(x, x1)) {
-          case (#less) {
-            let newLeft = del left;
-            switch left {
-              case (#black(_, _, _, _)) {
-                balLeft(newLeft, x1, y1, right)
-              };
-              case _ {
-                #red(newLeft, x1, y1, right)
-              }
-            }
-          };
-          case (#greater) {
-            let newRight = del right;
-            switch right {
-              case (#black(_, _, _, _)) {
-                balRight(left, x1, y1, newRight)
-              };
-              case _ {
-                #red(left, x1, y1, newRight)
-              }
-            }
-          };
-          case (#equal) {
-            y0 := ?y1;
-            append(left, right)
-          }
-        }
-      };
-      func del(tree : Tree<K, V>) : Tree<K, V> {
-        switch tree {
-          case (#red(left, x, y, right)) {
-            delNode(left, x, y, right)
-          };
-          case (#black(left, x, y, right)) {
-            delNode(left, x, y, right)
-          };
-          case (#leaf) {
-            tree
-          }
-        }
-      };
-      switch (del(tree)) {
+      let (t, y0) = del(tree, compare, x);
+      switch t {
         case (#red(left, x, y, right)) { (#black(left, x, y, right), y0) };
-        case other { (other, y0) }
+        case _ { (t, y0) }
+      }
+    };
+
+    func del<K, V>(tree : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
+      switch tree {
+        case (#red(left, x1, y1, right)) {
+          delNode(tree, left, x1, y1, right, compare, x)
+        };
+        case (#black(left, x1, y1, right)) {
+          delNode(tree, left, x1, y1, right, compare, x)
+        };
+        case (#leaf) {
+          (tree, null)
+        }
+      }
+    };
+
+    func delNode<K, V>(tree : Tree<K, V>, left : Tree<K, V>, x1 : K, y1 : V, right : Tree<K, V>, compare : (K, K) -> Order.Order, x : K) : (Tree<K, V>, ?V) {
+      switch (compare(x, x1)) {
+        case (#less) {
+          let (newLeft, y0) = del(left, compare, x);
+          if (isNull(y0)) return (tree, null); // key absent: subtree unchanged
+          switch left {
+            case (#black(_, _, _, _)) {
+              (balLeft(newLeft, x1, y1, right), y0)
+            };
+            case _ {
+              (#red(newLeft, x1, y1, right), y0)
+            }
+          }
+        };
+        case (#greater) {
+          let (newRight, y0) = del(right, compare, x);
+          if (isNull(y0)) return (tree, null); // key absent: subtree unchanged
+          switch right {
+            case (#black(_, _, _, _)) {
+              (balRight(left, x1, y1, newRight), y0)
+            };
+            case _ {
+              (#red(left, x1, y1, newRight), y0)
+            }
+          }
+        };
+        case (#equal) {
+          (append(left, right), ?y1)
+        }
       }
     };
 
