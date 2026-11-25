@@ -101,6 +101,21 @@ run(
         "large number",
         Int.toText(largeNumber),
         M.equals(T.text(largeNumberText))
+      ),
+      test(
+        "chunk boundary",
+        Int.toText(1_000_000_000_000_000_000),
+        M.equals(T.text("1000000000000000000"))
+      ),
+      test(
+        "just below a chunk boundary",
+        Int.toText(999_999_999_999_999_999),
+        M.equals(T.text("999999999999999999"))
+      ),
+      test(
+        "zero chunk in the middle",
+        Int.toText(-1_000_000_000_000_000_000_000_000_000_000_000_001),
+        M.equals(T.text("-1000000000000000000000000000000000001"))
       )
     ]
   )

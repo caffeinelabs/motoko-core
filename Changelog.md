@@ -1,6 +1,9 @@
 ## Next
 * `pure/Map` and `pure/Set` no longer allocate closures in `add`, `swap`, `insert`, `remove`, `delete`, `take` and `pure/Set.contains`, and removing an absent key or element, or adding an element that is already in a `pure/Set`, returns the original without rebuilding the path to it. With moc 2.2.4, `add` takes 11–14% fewer instructions, `remove` 9–11% fewer, `pure/Set.contains` 7–8% fewer, and removing an absent key or re-adding a present element 71–78% fewer (#567).
 
+## 2.7.1
+* Speed up `Int.toText` and `Nat.toText`, by up to 97% on large numbers: they convert 18 digits per big-number division instead of one (#570).
+
 ## 2.7.0
 * Derive `toText` implicit arguments for variants: import the new `Variants` module, plus the new `Unit` module for cases without a payload, and a variant renders the way `debug_show` prints it, for example `#active` or `#banned(3, abuse)`. Add the `toText`, `equal`, and `compare` functions that derivation needs but that were missing: `Blob.toText`, `Order.compare`, `Order.toText`, and `PriorityQueue.equal`, `PriorityQueue.compare`, and `PriorityQueue.toText`, which list elements in priority order (#560).
 * Derive `toText`, `equal`, and `compare` implicit arguments for records and tuples of any size whose fields have them, for example to sort an array of records or to use a record as a `Map` key. Import the new `Records` module, or `Tuples`, which gains top-level `toText`, `equal`, and `compare` combiners. Add `Result.toText`. Deprecate `makeToText`, `makeEqual`, and `makeCompare` in `Tuple2`, `Tuple3`, and `Tuple4`: omit the implicit argument to derive it, or pass a function such as `func t = t.toText()`. Fix `Result.equal` and `pure/List.toText`, whose implicit arguments couldn't be omitted because the compiler looked them up as `equalOk` and `f` (#559).
